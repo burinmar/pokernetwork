@@ -1,0 +1,164 @@
+<% info %>
+titleNew=New article
+titleEdit=Edit article
+
+404=Item not found!
+error1=Title required
+error2=Invalid date
+error3=Please choose another uri, this one is in use
+error9=System error!
+
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>News</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new article</a></div>
+</div>
+
+<!--# Filtro forma -->
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table><tr>
+		<td><label>Title: <input name="filter[text]" value="{text}" size="20" maxlength="30"/></label></td>
+		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show deleted</label></td>
+		<td><input type="submit" value="Filter" /></td>
+		</tr></table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filtras}%>
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<input type="hidden" name="event-clear" value="{goClear}" />
+		<table class="list">
+		<colgroup>
+			<col style="width: 100px" />
+			<col />
+			<col style="width: 150px" />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby1}">Date</a></th>
+			<th><span>Title</span></th>
+			<th><a href="{orderby2}">Created</a></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+			<% loop{items} %>
+				<tr class="{class}">
+					<td{styleTD}>{date}</td>
+					<td class="title">
+						<a href="{goEdit}">{title}</a>
+						<div class="explain"><%if{authors}%>Author: {authors}<%end%> <%if{category}%> | Category: {category}<%end%></div>
+					</td>
+					<td><a href="">{created}</a></td>
+					<td><input type="checkbox" name="it[]" value="{id}" /></td>
+				</tr>
+			<% end{items} %>
+		</tbody>
+		</table>
+
+		<div class="list-footer clrfix">
+			<input type="button" class="button fr btDel" value="Delete selected" />
+		</div>
+	</form>
+	{puslapiai}
+<% else {items} %>
+	<p class="explain">There are no items</p>
+<% end {if} %>
+
+
+
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>News</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr">
+		<input type="submit" value="Save" /> <input type="submit" name="return" value="Save & Return" />
+	</div><span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+
+<!--# forma -->
+<dl>
+
+<dt><label for="i_title">Title</label></dt>
+<dd class="w100">
+	<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="required"/>
+	<% if {id} %>
+	<div><a href="{uriPrefix}{uri}.htm" onclick="window.open(this.href);return false;" class="newwindow">View article in new tab</a></div>
+	<% end {id} %>
+</dd>
+
+<dt><label for="i_date">Publish Settings</label></dt>
+<dd class="dd100">
+	<input type="text" name="date" id="i_date" value="{date}" size="10" maxlength="10" class="required isDate" /> <input type="text" maxlength="5" size="5" name="time" value="{time}" class="required"/>
+	<label style="margin-left: 30px"><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> Hide this article</label>
+</dd>
+
+<dt><label for="i_content">Content</label></dt>
+<dd class="w100">
+	{toolbar}
+	<textarea rows="25" cols="70" name="content" id="i_content">{content}</textarea>
+</dd>
+
+<%if{imgAllowed}%>
+<dt><label>Leading picture</label></dt>
+<dd>
+	<input type="file" name="img" size="35" /> &nbsp; &nbsp; &nbsp; Alt:&nbsp;<input type="text" name="img_alt" value="{img_alt}" size="30" maxlength="128" />
+	<div class="explain">.jpg, .gif, .png images only. Recomended size - {imgWH} px (larger images will be resized)</div>
+
+	<%if{imgSrc}%>
+	<div style="float:left; margin:10px 20px 0 0;">
+		<a href="{imgTool}" onclick="window.open(this.href,'im'+'{id}','width=670,height=560,toolbars=no');return false;"><img src="{imgSrc}" alt="" /></a>
+	</div>
+	<div  style="float:left">
+		<div style="margin: 10px 0 20px 0;"><img src="{imgSrcThumb}" alt="" /></div>
+		<div style="margin-bottom:20px"><label><input type="checkbox" name="del_img" value="1" /> Delete</label></div>
+	</div>
+	<div class="clr"></div>
+	<%end{imgSrc}%>
+
+</dd>
+<%end{imgAllowed}%>
+
+<!--#
+<dt><label for="i_meta_description">Meta description</label></dt>
+<dd class="w100">
+	<textarea rows="3" cols="60" name="meta_description" id="i_meta_description">{meta_description}</textarea>
+</dd>
+-->
+
+<dt><label for="i_uri">URI</label></dt>
+<dd>
+	<i>{uriPrefix}</i> <input type="text" name="uri" id="i_uri" value="{uri}" size="50" maxlength="60" class="required" onfocus="fillUri(this,'i_title')" /> .htm
+</dd>
+
+
+<dt><label for="i_summary">Summary</label></dt>
+<dd class="w100">
+	<textarea rows="4" cols="70" name="summary" id="i_summary">{summary}</textarea>
+</dd>
+
+
+</dl>
+
+<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" />
+</div>
+
+</form>
+</div>
+

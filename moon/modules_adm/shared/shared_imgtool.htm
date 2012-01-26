@@ -1,0 +1,446 @@
+<% close %>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Image editor</title>
+</head>
+<script type="text/javascript">
+/*<![CDATA[*/
+	var err=new Array;
+	err[1]='You are not logged!';
+	err[2]='Image not found!';
+	err[3]='Unexpected error!';
+	if ({error}>0) alert(err[{error}]);
+	if ( window.opener && !window.opener.closed ) {
+		if (window.opener.refreshUrl) window.opener.location.href=window.opener.refreshUrl;
+	}
+    window.close();
+/*]]>*/
+</script>
+</html>
+
+
+<% main %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Image editor</title>
+<base href="{home_url}" />
+<!--
+<meta http-equiv="imagetoolbar" content="no">
+-->
+<script type="text/javascript" src="js/itool/SelectionRect.js?1"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+var selectionRect = new SelectionRect();
+var action = "crop", orgWidth, orgHeight;
+var imageStatus = "";
+var orgPath = "{imgUrl}";
+var demo = "false";
+var demoMsg = "";
+var fileName = "{name}";
+var msg = "";
+
+function init() {
+	if (msg != "") {
+		action = "";
+		alert(msg);
+	}
+
+	var elm = document.getElementById("imageWrapper");
+	var image = document.getElementById("image");
+
+	var formObj = document.forms[0];
+    orgWidth = image.width;
+	orgHeight = image.height;
+    formObj.resize_width_field.value = orgWidth;
+	formObj.resize_height_field.value = orgHeight;
+
+	var sw = window.screen.width-20;
+	var sh = window.screen.height-60;
+    elm.style.width = (orgWidth > sw) ? sw+'px' : 20+orgWidth+'px';
+	elm.style.height = (orgHeight > sh) ? sh+'px' : 20+orgHeight+'px';
+
+	selectionRect.onSelection = onSelectionHandler;
+	selectionRect.init(elm);
+	selectionRect.setSelectionColor("white");
+	/*selectionRect.setRect(0,0,100,100);
+	selectionRect.resize=false;*/
+	selectionRect.fixedProps={fixed_props};
+	selectionRect.min_width = {min_width};
+	selectionRect.min_height = {min_height};
+
+	var selW,selH;
+    if (selectionRect.fixedProps && selectionRect.min_width>0 && selectionRect.min_height) {
+    	var k=selectionRect.min_width/selectionRect.min_height;
+		var ck=orgWidth/orgHeight;
+		if (ck>k) {
+        	selW=Math.min(parseInt(orgHeight*k), orgWidth);
+			selH=orgHeight;
+		} else {
+            selW=orgWidth;
+			selH=Math.min(parseInt(orgWidth/k), orgHeight);
+        }
+	} else {
+    	selW=Math.max(selectionRect.min_width,orgWidth-10);
+		selH=Math.max(selectionRect.min_height,orgHeight-10);
+	}
+    selectionRect.setRect(Math.max((orgWidth-selW)/2,0),Math.max((orgHeight-selH)/2,0),selW,selH);
+
+
+	selectionRect.setBounderies(0, 0, orgWidth, orgHeight);
+
+	setClassLock('switchSelectionTool', false);
+	switchClass('switchSelectionTool', 'mceButtonDisabled');
+	setClassLock('switchSelectionTool', true);
+
+	if (imageStatus != "processed") {
+		setClassLock('saveTool', false);
+		switchClass('saveTool', 'mceButtonDisabled');
+		setClassLock('saveTool', true);
+
+		setClassLock('revertTool', false);
+		switchClass('revertTool', 'mceButtonDisabled');
+		setClassLock('revertTool', true);
+	}// else switchClass('saveTool','mceButtonNormal');
+
+	if (imageStatus == "saved" && window.opener)
+		window.opener.execFileCommand("refresh");
+
+	if (action == "crop") {
+		action = "";
+		toggleCropTool();
+	}
+
+	if (action == "resize") {
+		action = "";
+		toggleResizeTool();
+	}
+}
+
+function onSelectionHandler(selection, rect) {
+	var formObj = document.forms[0];
+
+	formObj.x_field.value = rect.x;
+	formObj.y_field.value = rect.y;
+	formObj.width_field.value = rect.width;
+	formObj.height_field.value = rect.height;
+}
+
+function updateSelection(type) {
+	var formObj = document.forms[0];
+
+	if (action == "crop")
+		selectionRect.setRect(parseInt(formObj.x_field.value), parseInt(formObj.y_field.value), parseInt(formObj.width_field.value), parseInt(formObj.height_field.value));
+	else if (action == "resize") {
+		var elm = document.getElementById("image");
+		var newWidth = formObj.resize_width_field.value;
+		var newHeight = formObj.resize_height_field.value;
+
+		if (formObj.resize_proportions.checked) {
+			if (type == "width") {
+				newHeight = Math.round(orgHeight * (newWidth / orgWidth));
+				formObj.resize_height_field.value = newHeight;
+			} else {
+				newWidth = Math.round(orgWidth * (newHeight / orgHeight));
+				formObj.resize_width_field.value = newWidth;
+			}
+		}
+
+		elm.width = newWidth;
+		elm.height = newHeight;
+	}
+
+	return false;
+}
+
+function toggleSelectionColor() {
+	if (getClassLock('switchSelectionTool'))
+		return;
+
+	document.getElementById('savePanel').style.display = "none";
+
+	selectionRect.setSelectionColor(selectionRect.getSelectionColor() == "white" ? "black" : "white");
+}
+
+function toggleCropTool() {
+	action = action == "crop" ? "" : "crop";
+
+	if (action == "crop") {
+		selectionRect.setVisible(true);
+
+		switchClass('cropTool', 'mceButtonSelected');
+		setClassLock('cropTool', true);
+
+		setClassLock('switchSelectionTool', false);
+		switchClass('switchSelectionTool', 'mceButtonNormal');
+
+		setClassLock('resizeTool', false);
+		switchClass('resizeTool', 'mceButtonNormal');
+
+		document.getElementById('cropPanel').style.display = "block";
+		document.getElementById('resizePanel').style.display = "none";
+		document.getElementById('savePanel').style.display = "none";
+
+		var elm = document.getElementById("image");
+		elm.width = orgWidth;
+		elm.height = orgHeight;
+
+		var formObj = document.forms[0];
+		formObj.resize_width_field.value = orgWidth;
+		formObj.resize_height_field.value = orgHeight;
+	} else {
+		selectionRect.setVisible(false);
+
+		setClassLock('cropTool', false);
+		switchClass('cropTool', 'mceButtonNormal');
+
+		setClassLock('resizeTool', false);
+		switchClass('resizeTool', 'mceButtonNormal');
+
+		setClassLock('switchSelectionTool', false);
+		switchClass('switchSelectionTool', 'mceButtonDisabled');
+		setClassLock('switchSelectionTool', true);
+
+		document.getElementById('cropPanel').style.display = "none";
+	}
+}
+
+function toggleResizeTool() {
+	action = action == "resize" ? "" : "resize";
+
+	if (action == "resize") {
+		selectionRect.setVisible(false);
+
+		setClassLock('cropTool', false);
+		switchClass('cropTool', 'mceButtonNormal');
+
+		setClassLock('switchSelectionTool', false);
+		switchClass('switchSelectionTool', 'mceButtonDisabled');
+		setClassLock('switchSelectionTool', true);
+
+		switchClass('resizeTool', 'mceButtonSelected');
+		setClassLock('resizeTool', true);
+
+		document.getElementById('cropPanel').style.display = "none";
+		document.getElementById('resizePanel').style.display = "block";
+		document.getElementById('savePanel').style.display = "none";
+	} else {
+		setClassLock('resizeTool', false);
+		switchClass('resizeTool', 'mceButtonNormal');
+
+		setClassLock('cropTool', false);
+		switchClass('cropTool', 'mceButtonNormal');
+
+		document.getElementById('resizePanel').style.display = "none";
+
+		var elm = document.getElementById("image");
+		elm.width = orgWidth;
+		elm.height = orgHeight;
+
+		var formObj = document.forms[0];
+		formObj.resize_width_field.value = orgWidth;
+		formObj.resize_height_field.value = orgHeight;
+	}
+}
+
+function switchClass(element_id, class_name) {
+	var element = document.getElementById(element_id);
+	if (element != null && !element.classLock) {
+		element.oldClassName = element.className;
+		element.className = class_name;
+	}
+}
+
+function restoreClass(element_id) {
+	var element = document.getElementById(element_id);
+	if (element != null && element.oldClassName && !element.classLock) {
+		element.className = element.oldClassName;
+		element.oldClassName = null;
+	}
+}
+
+function setClassLock(element_id, lock_state) {
+	var element = document.getElementById(element_id);
+	if (element != null)
+		element.classLock = lock_state;
+}
+
+function getClassLock(element_id) {
+	var element = document.getElementById(element_id);
+	if (element != null)
+		return element.classLock;
+
+	return false;
+}
+
+function cropImage() {
+	var formObj1 = document.forms[0];
+	var formObj2 = document.forms[1];
+
+	formObj2.action.value = "crop";
+	formObj2.orgwidth.value = orgWidth;
+	formObj2.orgheight.value = orgHeight;
+	formObj2.left.value = formObj1.x_field.value;
+	formObj2.top.value = formObj1.y_field.value;
+	formObj2.newwidth.value = formObj1.width_field.value;
+	formObj2.newheight.value = formObj1.height_field.value;
+
+	if ((formObj1.x_field.value == "") || (formObj1.y_field.value == "") || (formObj1.width_field.value == "") || (formObj1.height_field.value == "")) {
+		alert("Use the selection tool to select an area to crop.");
+		return;
+	}
+
+	document.getElementById('processingDialog').style.display = 'block';
+
+	formObj2.submit();
+}
+
+function resizeImage() {
+	var formObj1 = document.forms[0];
+	var formObj2 = document.forms[1];
+
+	formObj2.action.value = "resize";
+	formObj2.orgwidth.value = orgWidth;
+	formObj2.orgheight.value = orgHeight;
+	formObj2.left.value = "0";
+	formObj2.top.value = "0";
+	formObj2.newwidth.value = formObj1.resize_width_field.value;
+	formObj2.newheight.value = formObj1.resize_height_field.value;
+
+	if ((formObj1.resize_width_field.value == "") || (formObj1.resize_height_field.value == "")) {
+		alert("You must insert a width and height in order to resize the image.");
+		return;
+	}
+
+	document.getElementById('processingDialog').style.display = 'block';
+
+	formObj2.submit();
+}
+
+function saveImage() {
+	if (getClassLock('saveTool'))
+		return;
+
+	if (demo == "true") {
+		alert(demoMsg);
+		return;
+	}
+
+	var formObj = document.forms[1];
+
+	formObj.action.value = "save";
+	formObj.filename.value = document.getElementById('saveFileAs').value;
+
+	formObj.submit();
+}
+
+function toggleSaveTool() {
+	action = action == "save" ? "" : "save";
+
+	if (action == "save") {
+		setClassLock('switchSelectionTool', false);
+		switchClass('switchSelectionTool', 'mceButtonNormal');
+
+		setClassLock('cropTool', false);
+		switchClass('cropTool', 'mceButtonNormal');
+
+		setClassLock('resizeTool', false);
+		switchClass('resizeTool', 'mceButtonNormal');
+
+		selectionRect.setVisible(false);
+		document.getElementById('cropPanel').style.display = "none";
+		document.getElementById('resizePanel').style.display = "none";
+		document.getElementById('savePanel').style.display = "block";
+	} else {
+		selectionRect.setVisible(false);
+		document.getElementById('cropPanel').style.display = "none";
+		document.getElementById('resizePanel').style.display = "none";
+		document.getElementById('savePanel').style.display = "none";
+	}
+}
+
+function revertImage() {
+	document.location = "<?=$self?>?path=" + escape(orgPath) + "&action=" + action;
+}
+/*]]>*/
+</script>
+<link href="/js/itool/crop_tool.css" rel="stylesheet" type="text/css" /></head><body onload="init();">
+
+<form action="#" onsubmit="return updateSelection();">
+	<div class="toolbar">
+		<div class="tools">
+            <!--
+<a href="javascript:toggleSaveTool();" onmouseover="switchClass('saveTool','mceButtonOver');" onmouseout="switchClass('saveTool','mceButtonNormal');" onmousedown="switchClass('saveTool','mceButtonNormal');"><img id="saveTool" src="js/itool/save_tool.gif" class="mceButtonDisabled" alt="Save image" title="Save image" border="0"></a>
+			<a href="javascript:revertImage();" onmouseover="switchClass('revertTool','mceButtonOver');" onmouseout="switchClass('revertTool','mceButtonNormal');" onmousedown="switchClass('revertTool','mceButtonNormal');"><img id="revertTool" src="js/itool/revert_tool.gif" class="mceButtonDisabled" alt="Revert to last saved" title="Revert to last saved" border="0"></a>
+-->
+			<a href="javascript:toggleSelectionColor();" onmouseover="switchClass('switchSelectionTool','mceButtonOver');" onmouseout="switchClass('switchSelectionTool','mceButtonNormal');" onmousedown="switchClass('switchSelectionTool','mceButtonNormal');"><img id="switchSelectionTool" src="js/itool/toggle_selection_color.gif" class="mceButtonDisabled" alt="Toggle selection color" title="Toggle selection color" border="0" /></a>
+           <!--
+	<a href="javascript:toggleCropTool();" onmouseover="switchClass('cropTool','mceButtonOver');" onmouseout="switchClass('cropTool','mceButtonNormal');" onmousedown="switchClass('cropTool','mceButtonNormal');"><img id="cropTool" src="js/itool/crop_tool.gif" class="mceButtonNormal" alt="Crop image" title="Crop image" border="0"></a>
+			<a href="javascript:toggleResizeTool();" onmouseover="switchClass('resizeTool','mceButtonOver');" onmouseout="switchClass('resizeTool','mceButtonNormal');" onmousedown="switchClass('resizeTool','mceButtonNormal');"><img id="resizeTool" src="js/itool/resize_tool.gif" class="mceButtonNormal" alt="Resize image" title="Resize image" border="0"></a>
+-->
+		</div>
+
+		<div id="cropPanel">
+			<div class="cropDimentions">
+				x: <input class="inputtext" id="x_field" name="x_field" value="" onkeyup="updateSelection();" onchange="updateSelection();" type="text" />
+				y: <input class="inputtext" id="y_field" name="y_field" value="" onkeyup="updateSelection();" onchange="updateSelection();" type="text" />
+				w: <input class="inputtext" id="width_field" name="width_field" value="" onchange="updateSelection();" type="text" />
+				h: <input class="inputtext" id="height_field" name="height_field" value="" onchange="updateSelection();" type="text" />
+			</div>
+			<div class="confirmAction">
+                <!--
+<a href="javascript:toggleCropTool();" onmouseover="switchClass('cropCancel','mceButtonOver');" onmouseout="switchClass('cropCancel','mceButtonNormal');" onmousedown="switchClass('cropCancel','mceButtonNormal');"><img id="cropCancel" src="js/itool/cancel.gif" class="mceButtonNormal" border="0"></a>
+-->
+				<a href="javascript:cropImage();" onmouseover="switchClass('cropApply','mceButtonOver');" onmouseout="switchClass('cropApply','mceButtonNormal');" onmousedown="switchClass('cropApply','mceButtonNormal');"><img id="cropApply" src="js/itool/apply.gif" class="mceButtonNormal" border="0" alt="" /></a>
+			</div>
+		</div>
+
+		<div id="resizePanel">
+			<div class="cropDimentions">
+				w: <input class="inputtext" id="resize_width_field" name="resize_width_field" value="" onkeyup="updateSelection('width');" onchange="updateSelection('width');" type="text" />
+				h: <input class="inputtext" id="resize_height_field" name="resize_height_field" value="" onkeyup="updateSelection('height');" onchange="updateSelection('height');" type="text" />
+				<input class="inputcheckbox" id="resize_proportions" name="resize_proportions" checked="checked" type="checkbox" /><label>Constrain proportions</label>
+			</div>
+			<div class="confirmAction">
+				<a href="javascript:toggleResizeTool();" onmouseover="switchClass('resizeCancel','mceButtonOver');" onmouseout="switchClass('resizeCancel','mceButtonNormal');" onmousedown="switchClass('resizeCancel','mceButtonNormal');"><img id="resizeCancel" src="js/itool/cancel.gif" class="mceButtonNormal" border="0" alt="" /></a>
+				<a href="javascript:resizeImage();" onmouseover="switchClass('resizeApply','mceButtonOver');" onmouseout="switchClass('resizeApply','mceButtonNormal');" onmousedown="switchClass('resizeApply','mceButtonNormal');"><img id="resizeApply" src="js/itool/apply.gif" class="mceButtonNormal" border="0" alt="" /></a>
+			</div>
+		</div>
+
+		<div id="savePanel">
+			<div class="saveImage">
+				File name: <input class="inputtext" id="saveFileAs" name="saveFileAs" value="teddybear.jpg" type="text" />
+			</div>
+			<div class="confirmAction">
+				<a href="javascript:toggleSaveTool();" onmouseover="switchClass('saveCancel','mceButtonOver');" onmouseout="switchClass('saveCancel','mceButtonNormal');" onmousedown="switchClass('saveCancel','mceButtonNormal');"><img id="saveCancel" src="js/itool/cancel.gif" class="mceButtonNormal" border="0" alt="" /></a>
+				<a href="javascript:saveImage();" onmouseover="switchClass('saveApply','mceButtonOver');" onmouseout="switchClass('saveApply','mceButtonNormal');" onmousedown="switchClass('saveApply','mceButtonNormal');"><img id="saveApply" src="js/itool/apply.gif" class="mceButtonNormal" border="0" alt="" /></a>
+			</div>
+		</div>
+	</div>
+
+	<br style="clear: both;" />
+</form>
+
+<div id="imageWrapper"><img id="image" src="{imgUrl}" style="cursor: crosshair;" alt="" /></div>
+
+<div id="processingDialog"><div id="processingMsg">Processing image, please wait...</div></div>
+
+<form action="{!action}" method="post">
+	<input name="event" value="{event}" type="hidden" />{refresh}
+	<input name="id" value="{id}" type="hidden" />
+	<input name="action" value="" type="hidden" />
+	<input name="orgpath" value="" type="hidden" />
+	<input name="path" value="" type="hidden" />
+	<input name="filename" value="" type="hidden" />
+	<input name="orgwidth" value="" type="hidden" />
+	<input name="orgheight" value="" type="hidden" />
+	<input name="top" value="" type="hidden" />
+	<input name="left" value="" type="hidden" />
+	<input name="newwidth" value="" type="hidden" />
+	<input name="newheight" value="" type="hidden" />
+</form>
+
+</body></html>
+

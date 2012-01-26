@@ -1,0 +1,22 @@
+﻿<% toolbar %>
+{!sharedIt}
+<ul class="shareButtons">
+	<li class="facebook"><a title="Share this on Facebook" href="http://www.facebook.com/share.php?u={jsURL}">Facebook</a></li>
+	<li class="twitter"><a onclick="if (this.href.indexOf('go_twitter') != -1) this.href +='=1'" title="Tweet this" rel="nofollow" href="{twitterURL}">Twitter</a></li>
+	<li class="gplus">
+		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+		<div class="g-plusone" data-size="standard" data-count="false"></div>
+	</li>
+</ul><span class="clr"></span>
+
+<% facebook_like %>
+<div class="facebookLike">
+	<iframe id="bfLikeButton" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:250px; height:30px; display:none;" allowTransparency="true"></iframe>
+	<script type="text/javascript">
+	/*<![CDATA[*/
+		$(document).ready(function(){
+			$('#bfLikeButton').attr('src', 'http://www.facebook.com/plugins/like.php?href={jsURL}&layout=standard&show_faces=false&width=200&action=like&font=arial&colorscheme=light&height=35').show();
+		});
+	/*]]>*/
+	</script>
+</div>

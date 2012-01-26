@@ -1,0 +1,6 @@
+<% subMenu %>
+    <ul class="nav3">
+	<%loop{items += subItem}%>
+		<li{isOn}><a href="{url}">{text}</a></li>
+	<%end%>
+	</ul>

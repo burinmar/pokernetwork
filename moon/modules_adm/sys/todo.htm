@@ -1,0 +1,26 @@
+<%todo_box%>
+<div class="n">
+	<b>You have:</b>
+	<ul>
+		<%if{hasTranslation}%><li class="translation"><a href="/adm/translator-tasks/"><%if{tasksInProgress}%><span>{tasksInProgress} new translation(s) tasks.</span><%end%><%if{tasksReturned}%>&nbsp;&nbsp;&nbsp;<span>{tasksReturned} translation(s) was returned.</span><%end%></a></li><%end%>
+		<%if{freerolls}%><li class="freerolls"><a href="/adm/tour-special/"><span>{freerolls}</span> freeroll(s) to check and update.</a></li><%end%>
+		<%if{games}%><li class="freerolls"><a href="/adm/games-freegames/"><span>{games}</span> freegame(s) to check and update.</a></li><%end%>
+		<%if{promotions}%><li class="promotions"><a href="/adm/reviews-promotions/"><span>{promotions}</span> promotion(s) to check and update.</a></li><%end%>
+		<%if{feedback}%><li class="faq"><a href="/adm/faq-feedback/"><span>{feedback}</span> FAQ support request(s) to respond.</a></li><%end%>
+		<%if{support}%><li class="support"><a href="{url.support}" onclick="window.open(this.href);return false"><span>{support}</span> support request(s) to respond.</a></li><%end%>
+		<%if{whatsnew}%><li class="whatsnew"><a href="/adm/whatsnew/edit/{wID}.htm">New cms feature: <span>{wTitle}</span></a></li><%end%>
+		{t}
+	</ul><span class="clear">&nbsp;</span>
+</div>
+
+<%message%>
+0=Profile of league <span>{title}</span> updated
+1=<span>{c}</span> News comment(s) marked as spam
+2=<span>{c}</span> Video comment(s) marked as spam
+3=<span>{c}</span> Casino reviews comment(s) marked as spam
+4=Synchronize updated leagues
+5=<span>{c}</span> Audition comment(s) marked as spam
+6=League page <span>{title}</span> updated
+
+<%item%>
+<li{a}><a href="{url}">{t}</a></li>

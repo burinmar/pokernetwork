@@ -1,0 +1,66 @@
+[lt]
+#engine
+engine.bad_event=Nepavyko perduoti veiksmo komponentui <b>{name}</b>.
+engine.bad_component=Nepavyko pakrauti komponento <b>{name}</b>.
+engine.noxml=Nerastas xml failas <b>{name}</b>.
+#page
+page.badpar=Neleistini simboliai parametre: <b>{param}</b>
+page.postdenied=Duomenų perdavimo klaida. Pakartokite siuntimą (spauskite naršyklės 'Refresh' arba 'Reload' mygtuką)
+page.noxml=Nerastas XML failas (<b>{file}</b>)
+#sys
+sys.db1=sys::db. Pagrindinis INI failas neturi grupės <b>database{con}</b>.
+sys.db2=sys::db. Pagrindiniame INI faile grupėje <b>database{con}</b> kintamasis <b>dbtype</b> nerastas.
+sys.ini1=sys::ini. Nepavyko rasti klasės <b>ini_file</b>
+sys.locale1=sys::locale. Nepavyko rasti klasės <b>locale</b>
+sys.w1=sys::window. Nepavyko rasti objekto <b>{name}</b>
+#db_mysql
+mysql.1=Prie serverio <b>{server}</b> prisijungti nepavyko. Klaida: <i>{error}</i>. Vieta: {where}.
+mysql.2=Prie duomenų bazės <b>{database}</b> prisijungti nepavyko. Klaida: <i>{error}</i>. Vieta: {where}.
+mysql.3=Neteisinga užklausa <b>{sql}</b>. Klaida: <i>{error}</i>. Vieta: {where}.
+mysql.4=<i>single_query</i> užklausa grąžino daugiau nei vieną eilutę. Užklausa: <b>{sql}</b>. Vieta: {where}.
+#ini_file
+ini.1=INI failas <b>{file}</b> nerastas.
+ini.2=INI failo išsaugoti nepavyko, nes nenurodytas jo pavadinimas.
+ini.3=INI failo pavadinimas nenurodytas.
+ini.4=INI failo <b>{file}</b> išsaugoti nepavyko.
+ini.5=INI failas <i>{file}</i> grupės <b>{group}</b> neturi.
+ini.6=INI faile <i>{file}</i> bandoma sukurti grupę <b>{group}</b>, kuri jau yra.
+ini.7=INI faile <i>{file}</i> grupėje <b>{group}</b> nėra kintamojo <b>{var}</b>.
+
+#template
+template.1=Nerastas šablonų failas <b>{file}</b>.
+template.2=Nekorektiško formato arba sugadintas šablonų failas {file}.
+template.3=Nekorektiškas šablonų failas {file} - nerasta skilties <b>{match}</b> pabaiga.
+template.4=Nekorektiškas šablonų failas <b>{file}</b>.
+template.5=Šablonų faile {file} nerasta skiltis <b>{match}</b>.
+template.old_template_file=Šablonų failas {file} užrašytas senu formatu, kuris jau nebepalaikomas.
+template.ifs_not_closed=Klaida šablonų faile {file} - bloke <b>{block}</b> klaidinga "if" sintaksė.
+template.dublicate_block=Klaida šablonų faile {file} - pasikartojantis blokas <b>{block}</b>.
+#log
+log.cant_write=Nepavyko įrašyti log failo <b>{file}</b>.
+#xml
+xml.xml_error=Nekorektiškas xml failas ({file}). Klaida <i>{error}</i> eilutėje <b>{line}</b>.
+xml.not_found=Nerastas XML failas (<b>{file}</b>)
+#mail
+mail.bad_email=Neteisngas <i>{where}</i> el. pašto adresas (<b>{email}</b>). Vieta: {where}.
+mail.nofile=Nepavyko perskaityti failo <b>{file}</b>. Vieta: {where}.
+mail.noto=Nenurodytas laiško gavėjas. Vieta: {where}.
+mail.mail_send=Laiškas neišsisiuntė. mail() grąžino FALSE (To: {email}). Vieta: {where}.
+mail.smtp.tls=SMTP server error: TLS. Vieta: {where}.
+mail.smtp.helo=SMTP server error: HELO. Vieta: {where}.
+mail.smtp.authenticate=SMTP Error: Could not authenticate. Vieta: {where}.
+mail.smtp.connect_host=SMTP Error: Could not connect to SMTP host. Vieta: {where}.
+mail.smtp.from_failed=The following From address failed: {email}. Vieta: {where}.
+mail.smtp.recipients_failed=SMTP Error. The following recipients failed: {emails}. Vieta: {where}.
+mail.smtp.data_not_accepted=SMTP Error: Data not accepted. Vieta: {where}.
+#moon_file
+upload.error=Failo nusiųsti nepavyko. Klaidos kodas: {error}
+#pop3
+pop3.bad_server=Nekorektiškai nurodytas serverio adresas: <b>{server}</b>
+pop3.no_connection=Prie serverio <b>{server}</b> prisijungti nepavyko. Patikrinkite ar teisingai nurodyti pop3.prisijungimo duomenys. Grąžinta klaida: <i>{error}</i>
+pop3.no_answer=Gautas atsakymas ne toks kokio tikėtasi: <i>{error}</i>
+pop3.bad_command=Serveris nepriėmė komandos <b>{command}</b>. Atsakymas: <i>{error}</i>
+pop3.bad_user=Vartotojui <b>{user}</b> atsakyta. Patikrinkite prisijungimo duomenis.
+pop3.bad_msg=Nepavyko gauti žinutės. Gauta: <i>{msg}</i>
+#cron
+cron.noIniFile=Nepavyko rasti ini failo: <i>{file}</i>. 

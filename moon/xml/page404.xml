@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<page>
+	<layout>col2</layout>
+	<com><part>column</part><name>none</name></com>
+	<com><part>center</part><name>sys.page404</name></com>
+	<com><part>footer</part><name>sys.footer</name></com>
+	<com><part>header</part><name>sys.header</name></com>
+
+</page>

@@ -1,0 +1,96 @@
+<% info %>
+title=Job Info
+404=Item not found!
+
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+</div>
+
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+		<input type="hidden" name="event" value="{goFilter}" />
+		<table>
+		<tr>
+			<td><label>Event: <select name="filter[task]"><option value=""></option>{task}</select></label></td>
+			<td><label>Message: <input name="filter[text]" value="{text}" size="20" maxlength="30" /></label></td>
+			<td><input type="submit" value="Filter" /></td>
+			<%if{isOn}%>
+			<%end%>
+		</tr>
+		</table>
+		<a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a>
+	</form>
+<% end {filtras}%>
+
+<%if {items}%>
+	<form action="{!action}" method="post" name="list-form" >
+		<input type="hidden" name="event" value="{goDelete}" />
+		<input type="hidden" name="event-clear" value="{goClear}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 135px" />
+			<col style="width: 80px" />
+			<col style="width: 210px" />
+			<col />
+			<col />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th><a href="{orderby1}">Date</a></th>
+				<th class="tar"><span>Duration</span></th>
+				<th><span>Event</span></th>
+				<th><span>Message</span></th>
+				<th></th>
+				<th class="checkall"></th>
+			</tr>
+		</thead>
+		<tbody>
+		<% loop{items} %>
+			<tr>
+				<td>{started}</td>
+				<td class="tar">{duration}</td>
+				<td>#{task_id} <a href="{goEdit}">{event}</a></td>
+				<td><span style="font-size: 11px; width:400px; height:200px; overflow: hidden;">{message}</span></td>
+				<td><a href="{goEdit}">More</a></td>
+				<td><input type="checkbox" name="it[]" value="{id}" /></td>
+			</tr>
+		<% end{items} %>
+		</tbody>
+	</table>
+
+	<div class="list-footer">
+		<input type="button" class="button fr btDel" value="Delete selected" />
+	</div>
+
+	</form>
+	{puslapiai}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="aform">
+	<h2 class="formTitle">{formTitle}</h2>
+	<span class="clr"></span>
+
+	<dl>
+		<dt><label>Event:</label></dt><dd>{event}</dd>
+		<dt><label>Started On</label></dt><dd>{start_time}</dd>
+		<dt><label>End Time</label></dt><dd>{end_time} (lasted {duration})</dd>
+		<dt><label>Message</label></dt><dd>{message}</dd>
+	</dl>
+
+	<div class="formButton">
+		<input type="button" value="Back" onclick="window.location.href='{goBack}'" style="margin-left: 0" />
+	</div>
+</form>

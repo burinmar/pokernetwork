@@ -1,0 +1,78 @@
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Module:<select name="filter[module]"><option value=""></option>{modules}</select></label></td>
+		<td><label>User:<select name="filter[user_id]"><option value=""></option>{users}</select></label></td>
+		<td><label>Action:<select name="filter[action]"><option value=""></option>{actions}</select></label></td>
+		<td><label>Item Id:<input type="text" name="filter[item_id]" size="5" value="{item_id}" /></label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<table class="list">
+		<colgroup>
+			<col style="width: 140px" />
+			<col style="width: 140px" />
+			<col style="width: 100px" />
+			<col style="width: 100px" />
+			<col />
+			<col style="width: 50px" />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th><a href="{orderby1}">Date</a></th>
+				<th><a href="{orderby2}">User</a></th>
+				<th><a href="{orderby3}">Action</a></th>
+				<th><span>Module</span></th>
+				<th><span>Component</span></th>
+				<th><span>ID</span></th>
+				<th class="checkall"></th>
+			</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr>
+			<td>{date}<em> at </em>{time}&nbsp;</td>
+			<td>{user}&nbsp;</td>
+			<td {actionStyle}>&nbsp;{action}&nbsp;</td>
+			<td>&nbsp;{module}&nbsp;</td>
+			<td><em style="color:#666666;">&nbsp;{component}&nbsp;</em></td>
+			<td>
+				<% if {itemUri} %>
+				<a href="{itemUri}" style="color:#000000;">{item_id}
+				</a>
+				<% else {itemUri} %>
+					{item_id}&nbsp;
+				<% end {itemUri} %>
+			</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+
+	<div class="list-footer clrfix">
+		<input type="button" class="button fr btDel" value="Delete selected" />
+	</div>
+</form>
+{paging}
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>

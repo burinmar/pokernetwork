@@ -1,0 +1,17 @@
+News {ico=news, admin=content}
+	other.news = News
+
+SiteMap {ico=sitemap, admin=content}
+	Sitemap {link=other.sitemap, admin=content}
+		other.sitemap = Sitemap
+		other.sitemap_sort = Menu sorting {admin=developer}
+#	navigation.links = Useful links {admin=chief-editor}
+#	navigation.redirects = 301 redirects {admin=developer}
+
+System {ico=system, admin=developer}
+	sys.errors404=404 errors
+	#sys.permissions=Permissions {admin=}
+	#Cron Tasks {link=sys.cron, admin=developer}
+		#sys.cron=Tasks
+		#sys.cronlog=Cron Log
+	sys.blame=Blame {admin=}

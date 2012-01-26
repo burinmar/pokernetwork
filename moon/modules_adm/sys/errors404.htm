@@ -1,0 +1,74 @@
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+</div>
+
+
+<!--# Filtro forma -->
+<% insert {filtras} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table style="margin-bottom: 10px">
+		<tr>
+			<td><label>Request URI: <input name="filter[request]" value="{request}" size="55" maxlength="30" /></label></td>
+			<td><label><input type="checkbox" name="filter[group]" value="{group}" /> Group results</label></td>
+			<td><input type="submit" value="Filter"/></td>
+		</tr>
+	</table>
+	<table>
+		<tr>
+			<td><span style="padding-right:29px">Referer:</span> <input name="filter[referer]" value="{referer}" size="30" maxlength="30"/></td>
+			<td>
+				<label><input type="radio" name="filter[ref]" value="{ref1}" /> required</label>
+				<label style="margin: 0 10px"><input type="radio" name="filter[ref]" value="{ref0}" /> empty</label>
+				<label><input type="radio" name="filter[ref]" value="{refx}" /> doesn't matter</label>
+			</td>
+		</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filtras}%>
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<input type="hidden" name="event-clear" value="{goClear}" />
+		<table class="list">
+			<colgroup>
+				<col style="width: 140px" />
+				<col />
+				<col style="width: 20px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th class="{countClass}"><span class="order-desc">{groupBy}</span></th>
+					<th><span>Requested uri</span></th>
+					<th class="checkall"></th>
+				</tr>
+			</thead>
+			<tbody>
+			<% loop{items} %>
+				<tr>
+					<td{styleTD}>{date}</td>
+					<td>
+						<a href="#" style="color: #000" title="IP {ip}. User Agent: {agent}." onclick="alert(this.title); return false;">{uri}</a>
+						<div class="explain"><a href="{referer}">{referer}</a></div>
+					</td>
+					<td><input type="checkbox" name="it[]" value="{id}" /></td>
+				</tr>
+				<% end{items} %>
+			</tbody>
+		</table>
+
+		<div class="list-footer">
+			<input type="button" class="button fr btDel" value="Delete selected" />
+		</div>
+	</form>
+	{puslapiai}
+	<br />
+	<div class="explain">Hint: Use <a href="{self}?urldecode"><i>?urldecode</i></a> in adress bar to view decoded uri.</div>
+	<% else {items} %>
+		<p>There are no items</p>
+	<% end {if} %>

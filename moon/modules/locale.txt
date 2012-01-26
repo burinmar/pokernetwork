@@ -1,0 +1,35 @@
+[en]
+
+footer=Phone: <span>+37052105595</span>, Fax: <span>+37052105596</span>, E-mail: post@tp-eng.eu
+l1=Asset Management
+l2=Whole of life asset solutions based on best practice and experience
+l3=Engineering Services
+l4=Provision of engineering design, drafting, analytical and emission monitoring services
+l5=Maintenance & Shutdown Services
+l6=Provision of essential services to heavy industry in the management of maintenance and shutdown programs
+l7=IT Solutions
+l8=Development of innovative software programs to meet Client requirements
+l9=Partners
+c1=News
+c2=Contact Us
+c3=About Us
+c4=Career
+err1=You did not enter the message text.
+err2=You did not enter your name or e-mail.
+err3=The entered e-mail is not valid.
+err4=Enter the code shown.
+err20=The message has not been sent because of technical problems. Please try to send it later.
+contacts1=Thank you!
+contacts2=We've received your question and someone will be responding shortly.
+contacts3=Ask another question
+name=Name
+email=Email
+message=Message
+send=Send
+login=Login
+more=More News
+latestNews=Latest News
+404=HTTP 404 Not Found
+404text=This page may have moved or is no longer available.
+s1=Regional operations
+s2=France, Hungary, Lithuania, Latvia, Azerbaijan, Kazakhstan, Qatar, United Arab Emirates

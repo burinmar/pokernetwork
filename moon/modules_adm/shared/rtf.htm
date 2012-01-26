@@ -1,0 +1,327 @@
+<% info %>
+new-video=Add video
+new-html=Add HTML code
+new-img=Add image
+new-file=Add file
+edit-video=Edit video code
+edit-html=Edit HTML code
+edit-img=Edit image settings
+edit-file=Edit file description
+msg-inserted=
+msg-updated=
+
+err.video.notext= Please, enter video embed code.
+err.html.notext=Please, enter HTML code.
+err.file.extension=Unsupported file type.
+err.file.nofile= Please, choose file.
+err.file.toobig= File is too large.
+err.img.extension= Unsupported imge file.
+err.img.nofile= Image file not found.
+err.preview.nocontent=
+
+fico_default=file
+fico_show=txt, doc|docx, pdf, htm|html, ppt, gif, png, jpg, rar, zip, odt, mp3
+
+
+
+<% toolbar %>
+	<script type="text/javascript">
+	/*<![CDATA[*/
+	    var {name} = new rtfObject({
+	        textarea: '{fld}',
+			instance: '{instance}',
+	        uriPreview: '{go_preview}',
+	        <% if {buttons} %>buttons: '{buttons}',<% end %>
+			<% if {attachments} %>attachments: '{attachments}',<% end %>
+	        uriObjects: '{goObjList}'
+	    });
+	/*]]>*/
+	</script>
+
+
+
+
+
+<% obj_browser %>
+	<div class="objbrowser">
+	    <script type="text/javascript">
+	    /*<![CDATA[*/
+		var obj{i};
+		if (obj{i}=findRTF('{instanceID}')) {
+			obj{i}.create=function (what){
+	            var url='';
+				switch (what) {
+					case 'link': url='{urlLink}'; break;
+					case 'video': url='{urlVideo}'; break;
+					case 'file': url='{urlFile}'; break;
+					case 'html': url='{urlHtml}'; break;
+					case 'img':
+					default: url='{urlImg}';
+				}
+
+				if (url!=='') {
+					this.modal.openURL(url,620,420);
+				}
+			};
+			jQuery(document).ready(function (){obj{i}.show({hasFiles})});
+
+            <% if {msg} %>obj{i}.modal.open("{msg}");<% end %>
+		}
+	    /*]]>*/
+		</script>
+		<div class="attachments-head">Attachments. Add:
+			<%loop {available}%>
+				<a href="javascript:void(0)" onclick="obj{i}.create('{objtype}');return false">{objtype}</a>
+			<%end%>
+		</div>
+		<% if {items} %>
+			<table style="text-overflow: auto">
+			<tr>{items}</tr>
+			</table>
+		<% end %>
+	</div>
+
+
+
+
+<% obj_item %>
+	<td style="padding:0 10px 0 0" align="center">{tag}
+	    <% if {img_src} %>
+	    	<div class="obj-img" onclick="return obj{i}.insertText('{tag}');"><img src="{img_src}" alt="" width="{w}" height="{h}" style="margin-top:{padding}px" /></div>
+	    <% else {img_src} %>
+	    	<div class="obj-html" onclick="return obj{i}.insertText('{tag}');">{comment}</div>
+	    <% end %>
+	    <a href="#" onclick="obj{i}.edit('{go_edit}'); return false;">[edit]</a>
+	    <a href="{go_delete}" onclick="if (confirm('Do you really want delete this item?')) obj{i}.reload(this.href);return false" >[delete]</a>
+	</td>
+
+<% itemFile %>
+	<td style="padding:0 10px 0 0" align="center">{tag}
+    	<div class="obj-html" onclick="return obj{i}.insertText('{tag}');" style="background:white url(/img/fico/i32_{fico}.gif) no-repeat center center">{fname}<br/>{fsize}</div>
+	    <a href="#" onclick="obj{i}.edit('{go_edit}'); return false;">[edit]</a>
+	    <a href="{go_delete}" onclick="if (confirm('Do you really want delete this item?')) obj{i}.reload(this.href);return false" >[delete]</a>
+	</td>
+
+
+
+<% return %>
+    <h1>Results</h1>
+	<script type="text/javascript">
+    /*<![CDATA[*/
+	    var obj{i};
+		if (obj{i}=findRTF('{instanceID}')) {
+            obj{i}.reload();
+			<% if {new_obj_tag_problem} %>obj{i}.insertText('{new_obj_tag}');<% end %>
+			<% if {msg} %>
+		    <% else {msg} %>
+		        obj{i}.modal.close();
+			<% end %>
+		}
+    /*]]>*/
+	</script>
+   <% if {msg} %><div style="clear:both">{msg}</div><% end %>
+
+
+
+
+
+<% preview %>
+   <h1>Preview</h1>
+   <div style="clear:both">{text}</div>
+
+
+
+<% forms %>
+	<h1>{header}</h1>
+	<form action="{!action}" method="post" enctype="multipart/form-data" class="rtf-object aform">
+		<input type="hidden" name="event" value="{event}" />{refresh}
+		<input type="hidden" name="wid" value="{instanceID}" />
+		<input type="hidden" name="parent_id" value="{parent_id}" />
+		<input type="hidden" name="content_type" value="{content_type}" />
+		<input type="hidden" name="id" value="{id}" />
+		<% if {error} %><div class="alerts alert-f">{error}</div><% end %>
+		{form}
+	</form>
+
+
+
+
+<% form_img %>
+	<div id="singleImg">
+		<p class="explain">Allowed images <i>.gif, .jpg, .jpeg, .png</i>
+			<%if{swfupload}%>&nbsp; &nbsp; <a href="" onclick="jQuery('#singleImg').hide();jQuery('#multiImg').show();return false;">Multiple image upload</a><%end%>
+		</p>
+		<%if{img_src}%><img src="{img_src}" alt="" width="{w}" height="{h}"/><%end%>
+		<dl>
+		<%if{img_src}%>
+			<dt><label for="i-file">Replace image</label></dt>
+			<dd><input class="inputtext" type="file" name="file" size="35" id="i-file" /></div></dd>
+		<%else{img_src}%>
+			<dt><label for="i-file">Image File</label></dt>
+			<dd><input class="inputtext" type="file" name="file" size="35" id="i-file" /></dd>
+			<dt><label for="i-url">or Image URL</label></dt>
+			<dd class="w100"><input class="inputtext" name="url" value="{url}" size="35" id="i-url" /></dd>
+		<%end%>
+			<dt><label for="i-align">Alignment</label></dt>
+			<dd>
+				<input type="radio" name="options" value="{align-default}" id="i-align0" /><label for="i-align0">default</label> &nbsp;
+				<input type="radio" name="options" value="{align-left}" id="i-align1" /><label for="i-align1">left</label> &nbsp;
+				<input type="radio" name="options" value="{align-center}"  id="i-align2" /><label for="i-align2">center</label> &nbsp;
+				<input type="radio" name="options" value="{align-right}" id="i-align3" /><label for="i-align3">right</label>
+			</dd>
+			<dt><label for="i-comment">Description</label></dt>
+			<dd class="w100"><textarea cols="30" rows="3" name="comment" id="i-comment">{comment}</textarea></dd>
+		</dl>
+		<div class="formButton"><input type="submit" value="Save" /></div>
+	</div>
+
+
+<%if{swfupload}%>
+<script type="text/javascript">
+/*<![CDATA[*/
+$(document).ready(function () {
+	var settings_object = {
+		upload_url : '{!action}', // flash session cookie fix
+		flash_url : '/js/swfupload/swfupload.swf',
+		file_post_name: 'file',
+		post_params: {'swfupload':1, 'event': '{event}', 'wid':'{instanceID}', 'parent_id':'{parent_id}','content_type':'{content_type}'/*,'SI':phpSessionId*/},
+
+		// File Upload Settings
+		file_size_limit : '10 MB',
+		file_types : '*.jpg;*.jpeg;*.gif;*.png',//"*.*",
+		file_types_description : "Images",
+		file_upload_limit : '60',
+		file_queue_limit : '60',
+		// The event handler functions are defined in handlers.js
+		file_queued_handler : fileQueued,
+		file_queue_error_handler : fileQueueError,
+		file_dialog_complete_handler : fileDialogComplete,
+		upload_start_handler : uploadStart,
+		upload_progress_handler : uploadProgress,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,
+		upload_complete_handler : uploadCompleteHandler,
+		queue_complete_handler : queueComplete,	// Queue plugin event
+
+
+		// Button Settings
+		//button_image_url : "http://adm.pokernews.dev/i/adm/button_browse.png",
+		button_placeholder_id : "spanButtonPlaceholder1",
+		button_text: '<span class="theFont">Select...</span>',
+		button_text_style: ".theFont {font-size: 16}",
+		//button_text_left_padding: 12,
+		//button_text_top_padding: 3,
+
+		button_width: 70,
+		button_height: 22,
+		button_action : SWFUpload.BUTTON_ACTION.SELECT_FILES,
+
+		swfupload_element_id : "flashUI2",	// Setting from graceful degradation plugin
+		degraded_element_id : "degradedUI2",	// Setting from graceful degradation plugin
+
+		custom_settings : {
+			progressTarget : "fsUploadProgress1",
+			cancelButtonId : "btnUpload" // for enable/disable effect
+		}
+	};
+	swfu = new SWFUpload(settings_object);
+	$('#btnUpload').click(function(e){
+		swfu.startUpload();
+		e.preventDefault();
+	});
+});
+var swfu;
+var uploadCompleteHandler = function () {
+	var filesLeft = swfu.getStats().files_queued;
+	if (!filesLeft) {
+		var obj{i};
+		if (obj{i}=findRTF('{instanceID}')) {
+            obj{i}.reload();
+			obj{i}.modal.close();
+		}
+		//document.location.href = document.location.href;
+	}
+};
+/*]]>*/
+</script>
+
+<div class="upload" id="multiImg" style="display: none">
+	<p>Upload multiple images:</p>
+	<div class="swfButton"><span id="spanButtonPlaceholder1">Select</span></div>
+	<dl>
+		<dd style="">
+			<div class="fieldset flash" id="fsUploadProgress1" style="max-height:230px; overflow:auto;"></div>
+			<div id="divStatus"></div>
+		</dd>
+	</dl>
+	<div class="formButton"><input type="submit" value="Save" id="btnUpload" disabled="disabled" /></div>
+</div>
+<%end{swfupload}%>
+
+
+
+
+<% form_video %>
+	<dl>
+		<dt><label for="i-code">Embed code</label></dt>
+		<dd class="w100">
+			<textarea cols="30" rows="11" name="comment" id="code">{comment}</textarea>
+			<p class="explain">Something like <i>&lt;object width="425" height="344"&gt;...&lt;/embed>&lt;/object&gt;</i></p>
+		</dd>
+	</dl>
+	<div class="formButton"><input type="submit" value="Save" /></div>
+
+
+<% form_file %>
+	<p class="intro">This file will be displayed as attachment.</p>
+	<dl>
+		<dt><label for="i-file">File</label></dt>
+		<dd>
+			<input class="inputtext" type="file" name="file" size="35" id="i-file" />
+			<div class="explain">Only files of type <i>{extensions}</i></div>
+		</dd>
+
+		<dt><label for="i-comment">Description</label></dt>
+		<dd class="w100">
+			<textarea cols="30" rows="5" name="comment" id="i-comment">{comment}</textarea>
+			<div class="explain">Tell for users what is inside the file.</div>
+		</dd>
+
+	</dl>
+	<div class="form-footer"><input type="submit" value="Save" class="btOK" /></div>
+
+
+
+<% form_html %>
+	<dl>
+		<dt><label for="i-code">HTML</label></dt>
+		<dd class="w100">
+			<textarea cols="30" rows="13" name="comment" id="code">{comment}</textarea>
+		</dd>
+	</dl>
+	<div class="formButton"><input type="submit" value="Save"/></div>
+	
+<% article_img_slideshow %>
+<% if {items:images} %>
+<div class="pnGallery">
+	<a href="#" class="next fr" title="Next">Next ›</a>
+	<a href="#" class="previous fl hide" title="Previous">‹ Previous</a>
+	<div class="activePhoto">
+		<% loop {items:images} %>
+		<a <%if{hide}%>style="display:none;"<%end%> target="_blank" class="pnSlideshowImage imageLink" href="{imgSrc}"></a>
+		<%if{description}%><p <%if{hide}%>style="display:none;"<%end%> class="imageInfo pnSlideshowImageInfo">{description}</p><%end%>
+		<% end %>
+	</div>
+	<div style="overflow: hidden;">
+		<div class="pnSlideshowTabItems tabItems">
+			<% loop {items:tabs} %><a class="tabItem pnSlideshowTabItem" href="{thumbSrc}" title=""></a><% end %>
+		</div>
+	</div>
+	<p class="status">Displaying: <span>1</span> of <span>?</span></p>
+</div>
+<script type="text/javascript">
+/*<![CDATA[*/
+$('.pnGallery').pnSlideshow();
+/*]]>*/
+</script>
+<% end %>

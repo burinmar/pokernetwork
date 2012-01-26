@@ -1,0 +1,43 @@
+<% errors %>
+err1=Incorrect username or password.
+err2=You do not have permission to access content manager.
+err10=System error (10)
+err11=System error (11)
+
+
+<% main %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>Sign In | PokerNews CMS</title>
+	<base href="{home_url}" />
+	<link rel="stylesheet" type="text/css" href="{!_AIMG_}style.css" />
+</head>
+
+<body class="login">
+	<div id="wrapper">
+		<div id="header">
+			<p title="PokerNews Content Management System"><img src="i/adm/site_logo.png" alt="PokerNews" class="logo" /></p>
+		</div>
+		<div id="main">
+			<div id="content" class="clrfix">
+				<form action="{!action}" method="post">
+					<span class="keys"></span>
+					<input type="hidden" name="event" value="{event}" />
+					<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+					<label for="i1">Username</label>
+					<input type="text" name="username" value="{username}" size="25" id="i1" class="input-text" />
+
+					<label for="i2">Password</label>
+					<input type="password" name="pass" value="{pass}" size="25" id="i2" class="input-text" />
+					
+					<input type="submit" value="Sign In" />
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+</body></html>

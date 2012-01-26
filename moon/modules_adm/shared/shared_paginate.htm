@@ -1,0 +1,28 @@
+﻿<% default %>
+active=<a href="{url}" class="pnSliderPager"></a>&nbsp;
+inactive=<a href="{url}" class="pnSliderPager current"></a>&nbsp;
+
+
+<% nav_block %>
+<%if{puslapiai}%>
+<div class="pagerLine">
+<div class="SliderPager">
+	{puslapiai}
+</div>
+</div>
+<%end%>
+
+
+<% default_adm %>
+active=<a href="{url}">{pgv}</a>
+inactive=<b>{pgv}</b>
+left=&laquo; Prev
+right=Next &raquo;
+nuo_iki={from}-{to}&nbsp;of&nbsp;{atall}
+
+<% nav_block_adm %>
+<div class="paginate">
+<div class="pages">{puslapiai}</div>
+<div class="info">{irasai}</div>
+<div class="clr"></div>
+</div>

@@ -1,0 +1,130 @@
+<% info %>
+titleNew=Add new task
+titleEdit=Edit task
+404=Item not found!
+error1=Event required
+
+<% status %>
+running=<b style="color:red">In progress</b>
+disabled=<span class="hiddenIco" title="Disabled">Disabled</span>
+never=Never
+instantly=Instantly
+unknown=Unknown
+
+
+<% viewList %>
+{submenu}
+<div class="tabzoneHeader clrfix">
+	<h1 class="fl">{title}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new task</a></div>
+</div>
+
+<p>Server time: <span id="server_time">{server_time}</span> {server_gmt}</p>
+<script type="text/javascript">
+	/*<![CDATA[*/
+	function zero(n) {return ((n < 10 ? '0' : '') + n)}
+	function tictac(s) {
+		s = parseInt(s);
+		var d = new Date(s);
+		jQuery('#server_time').html(
+			d.getFullYear() + '-' + zero(d.getMonth() + 1) + '-' + zero(d.getDate()) + ' ' +
+			zero(d.getHours()) + ':' + zero(d.getMinutes()) + ':' +  zero(d.getSeconds())
+		);
+		s += 1000;
+		setTimeout('tictac(' + s + ')', 1000);
+	}
+		var dateNow = new Date();
+		tictac({server_time_ms}+60*1000*dateNow.getTimezoneOffset());
+	/*]]>*/
+</script>
+
+<%if {items}%>
+<form action="{!action}" method="post" name="list-form" >
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+	<colgroup>
+		<col style="width: 80px" />
+		<col />
+		<col style="width: 100px" />
+		<col style="width: 100px" />
+		<col style="width: 80px" />
+		<col style="width: 60px" />
+		<col style="width: 20px" />
+	</colgroup>
+	<thead>
+		<tr>
+			<th><a href="{orderby1}">Priority</a></th>
+			<th><a href="{orderby4}">Event</a></th>
+			<th><a href="{orderby2}">Last Run</a></th>
+			<th><a href="{orderby3}">Next Run</a></th>
+			<th></th>
+			<th></th>
+			<th class="checkall"></th>
+		</tr>
+	</thead>
+	<tbody>
+		<% loop{items} %>
+		<tr class="{class}">
+			<td class="tar">{priority}</td>
+			<td><a href="{goEdit}">{event}</a><div class="explain">{comment}</div>{schedule}</td>
+			<td>{last_run}</td>
+			<td>{next_run}</td>
+			<td><a href="{goLog}{id}">View Log</a></td>
+			<td><a href="{goRun}" class="run" title="Run now">Run now</a></td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<%end%>
+	</tbody>
+	</table>
+
+	<div class="list-footer clrfix">
+		<input type="button" class="button fr btDel" value="Delete selected" />
+	</div>
+</form>
+
+{puslapiai}
+<%end%>
+
+
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack fr">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="aform">
+	<input type="hidden" name="_event_" value="{_event_}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr">
+		<input type="submit" value="Save" /> <input type="submit" name="return" value="Save & Return" />
+	</div><span class="clr"></span>
+
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<p>Server time: {server_time}</p>
+
+	<dl>
+		<dt><label>Event</label></dt>
+		<dd><input type="text" name="event" value="{event}" size="70" maxlength="100" class="required" /> <label><input type="checkbox" name="disabled" value="{disabled}" /> Disabled</label></dd>
+
+		<dt><label>Comment</label></dt>
+		<dd class="w100"><input type="text" name="comment" value="{comment}" size="80" maxlength="255" /></dd>
+
+		<dt><label>Special</label></dt>
+		<dd><label><input type="checkbox" name="in_background" value="{in_background}" /> Run task as separate background process.</label></dd>
+
+		<dt><label>Priority</label></dt>
+		<dd><input type="text" name="priority" value="{priority}" size="2" maxlength="2" /> <span class="explain">1 (highest priority) to 99 (lowest)</span></dd>
+
+		<dt><label>Schedule:</label></dt>
+		<dd class="w100"><input type="text" name="schedule" value="{schedule}" size="80" maxlength="255" />
+			<div class="explain">Example: w[7]d[1-7] h[22,12] m[32,50] ; h[11-14,20]; w[2,3,4] on[14:00, 16:30]</div>
+		</dd>
+	</dl>
+
+	<div class="formButton">
+		<input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" />
+	</div>
+</form>

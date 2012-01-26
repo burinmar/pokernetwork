@@ -1,0 +1,79 @@
+.article h2 {
+	font-size: 18px;
+	line-height: 24px;
+	margin-bottom: 10px;
+	font-weight: normal;
+}
+
+.article ul {
+	list-style-type: square;
+	margin-bottom: 15px;
+	padding-left: 20px;
+	overflow: hidden;
+}
+.article ol {
+	margin-bottom: 15px;
+	padding-left: 20px;
+	overflow: hidden;
+}
+.article li {padding: 3px 0;}
+
+.article table {
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin-bottom: 15px;
+}
+.article table th {padding: 5px 10px;}
+.article table tr td {background: #ccc; color: #000}
+.article table tr:nth-child(odd) td {background: transparent; color: #fff}
+.article table td {padding: 5px 10px;}
+
+.article blockquote {
+	overflow: hidden;
+	background: #ccc;
+	color: #000;
+	font-style: italic;
+	padding: 10px;
+	margin-bottom: 20px;
+	font-size: 11px;
+	line-height: 16px;
+	border: 1px solid #999;
+	border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+} .article blockquote p {margin: 0}
+
+.article .img div,
+.article .img-center div,
+.article .img-left div,
+.article .img-right div {
+	color: #fff;
+	font-size: 90%;
+	padding-top: 2px;
+}
+.article .img {
+	margin: 10px 0 15px 0;
+	clear: left;
+}
+.article .img-left {
+	float: left;
+	margin: 10px 10px 15px 0
+}
+.article .img-right {
+	float: right;
+	margin: 10px 0 15px 10px
+}
+.article .img-center {
+	text-align: center;
+	margin: 10px 0 15px 0;
+	clear: left
+}
+.article .img-center div {margin: 0 auto}
+
+.article .video-object {
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.article iframe {margin-bottom: 20px;}

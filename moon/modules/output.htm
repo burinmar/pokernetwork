@@ -1,0 +1,49 @@
+<% common_header %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<base href="{home_url}" />
+	<title>{title}</title>
+	{head.tags}
+	<link rel="stylesheet" href="/i/style.css?{main.css-timestamp}" type="text/css" media="screen" />
+	<% if {googleID} %>
+		<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '{googleID}']);
+		_gaq.push(['_trackPageview']);
+		_gaq.push(['_trackPageLoadTime']);
+		(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+		</script>
+	<% end %>
+</head>
+
+
+<% page %>
+{common_header}
+<body>
+{content}
+{foot.scripts}
+</body>
+</html>
+
+
+<% print %>
+<div class="print article">
+	<div class="content">
+		<div id="printHeader"><img src="/img/site_logo.png" alt="" border="0" /></div>
+		{content}<div id="printFootnotes"></div>
+		<div id="printFooter"><a href="{url}" class="ignore">{url}</a></div>
+	</div>
+</div>
+<script type="text/javascript">
+<!--
+//naudoja print.js
+var linksHeading = "Links";
+//-->
+</script>

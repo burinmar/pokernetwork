@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<page>
+	<template>adm</template>
+
+	<com><part>centras</part><name>fake</name></com>
+
+	<!--<delayed>
+	<com><part>head</part><name>sys.admhead</name></com>
+	</delayed>-->
+	
+</page>

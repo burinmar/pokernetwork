@@ -1,0 +1,29 @@
+<% viewList %>
+<div class="left fl">
+	<ul class="news">
+		<%loop{items}%>
+		<li>
+			<%if{img}%><a href="{url.article}"><img src="{img}" alt="{img_alt}" class="fl" /></a><%end%>
+			<div class="newsright">
+				<strong><a href="{url.article}">{title}</a></strong>
+				<em class="meta">{date}</em>
+				<p>{summary}</p>
+			</div>
+		</li>
+		<%end%>
+	</ul>
+</div>
+
+<% viewArticle %>
+<div class="left fl">
+	<ul class="news">
+		<li>
+			<%if{img}%><a href="{url.self}"><img src="{img}" alt="{img_alt}" /></a><%end%>
+			<strong class="headline"><a href="{url.self}">{title}</a></strong>
+			<em class="meta">{date}</em>
+			<div class="article">
+				{content_html}
+			</div>
+		</li>
+	</ul>
+</div>

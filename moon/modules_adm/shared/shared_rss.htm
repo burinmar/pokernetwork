@@ -1,0 +1,69 @@
+<% rss_main %>
+<?xml version="1.0" encoding="utf-8"?>
+<!--# <?xml-stylesheet type="text/xsl" href="/css/rss.xsl" media="screen"?> -->
+<rss version="2.0"  xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>CasinoGrinder</title>
+		<link>{url:page}</link>
+		<atom:link href="{url:feed}" rel="self" type="application/rss+xml" />
+		<description>{description}</description>
+		<lastBuildDate>{updated}</lastBuildDate>
+
+		<% loop {sarasas += rss_item} %>
+			<item>
+				<title>{title}</title>
+				<link>{url}</link>
+				<pubDate>{created}</pubDate>
+				<guid isPermaLink="true">{url}</guid>
+
+				<% if {url:comments} %><comments>{url:comments}</comments><% end %>
+
+				<% if {summary:html} %>
+					<description>{summary:html}</description>
+				<% else {summary:html} %>
+					<description>{summary}</description>
+				<% end %>
+			</item>
+		<% end %>
+
+	</channel>
+</rss>
+
+
+
+<% atom_main %>
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--# <?xml-stylesheet type="text/xsl" href="/css/atom.xsl" media="screen"?> -->
+<feed xmlns="http://www.w3.org/2005/Atom">
+	<link rel="alternate" type="text/html" href="{url:page}" />
+	<link rel="self" type="application/atom+xml" href="{url:feed}" />
+	<title type="text">CasinoGrinder</title>
+	<id>{url:feed}</id>
+	<subtitle type="text">{description}</subtitle>
+	<updated>{updated}</updated>
+	<author><name>{author}</name></author>
+
+	<% loop {sarasas += atom_item} %>
+		<entry>
+			<title>{title}</title>
+			<link rel="alternate" type="text/html" href="{url}" />
+			<id>{url}</id>
+			<published>{created}</published>
+			<updated>{updated}</updated>
+
+			<% if{summary:html} %>
+				<summary type="html">{summary:html}</summary>
+			<% else{summary:html} %>
+				<summary type="text">{summary}</summary>
+			<% end %>
+
+			<% if{content:html} %>
+				<content type="html">{content:html}</content>
+			<% else{content:html} %>
+				<content type="text">{content}</content>
+			<% end %>
+			
+		</entry>
+	<% end %>
+
+</feed>

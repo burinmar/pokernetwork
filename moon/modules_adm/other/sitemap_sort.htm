@@ -1,0 +1,35 @@
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1 class="pagetitle fl">{pageTitle}</h1>
+</div>
+
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="" />
+	<input type="hidden" name="event-saveorder" value="{goSort}" />
+	<table class="list sortable">
+		<thead>
+		<tr>
+			<th><span>Title</span></th>
+			<th><span>Uri</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+		<tr id="row{id}" {classHidden}>
+			<td class="title"><a href="{uriMenuTab}">{title}</a>&nbsp;</td>
+			<td><a href="{uri}" class="explain" target="_blank">{uri}</a></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer"></div>
+</form>
+
+<% else {items} %>
+	<div class="explain">There are no menu tabs</div>
+<% end {items} %>
+
+<div style="clear:both;line-height:1px;">&nbsp;</div>

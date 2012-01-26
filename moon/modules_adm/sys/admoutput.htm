@@ -1,0 +1,101 @@
+<% common_header %>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<title>{title}</title>
+	<base href="{home_url}" />
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<script type="text/javascript" src="{!_AIMG_}moon.calendar.js"></script>
+	<script type="text/javascript" src="{!_AIMG_}adm.core.js"></script>
+	<script type="text/javascript">
+		<!--
+		home_url="{home_url}";
+		lang="{lang}";
+		//-->
+	</script>
+	<link rel="stylesheet" type="text/css" href="{!_AIMG_}style.css" />
+	<link rel="stylesheet" type="text/css" href="{!_AIMG_}local.css" />
+	{head.tags}
+</head>
+
+
+
+<% page %>
+{header}
+<body>
+<div id="wrapper">
+	<div id="header">
+		<p title="TP Engineering Content Management System"><img src="i/adm/site_logo.png?1" alt="TP Engineering" class="logo" /></p>
+		<div class="user">
+			<span class="nick">{username}</span>
+			<div class="popup">
+				<span></span>
+				<ul>
+					<li><a href="{goSite}" target="_blank" class="visit">Visit Website</a></li>
+					<li><a href="{goLogout}" class="signout">Sign Out</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div id="main">
+		<%if{alerts}%>
+			<%loop{alerts}%><div class="alerts alert-{tipas}">{msg}</div><%end%>
+		<%end%>
+		{content}
+	</div>
+</div>
+</body>
+</html>
+
+
+
+<% none %>{content}
+
+<% modal %>
+{header}
+<body class="modal">
+	<div class="modalWindowContent">
+		<script language="JavaScript" type="text/javascript">
+		/*<![CDATA[*/
+		document.write('<a href="./" onclick="if (top.modalActive) top.modalActive.close();return false;" class="modalWindowClose" title="Close">Close</a>');
+		document.close();
+		/*]]>*/
+		</script>
+		{content}
+	</div>
+</body>
+</html>
+
+<!--# ****************  Meniu elementai ************** -->
+<% tabs %>
+	<%if{tabs}%>
+	<ul class="tabs clrfix">
+		<%loop{tabs += tab}%>
+			<li{classes}>
+				<a href="{url}">{text}</a>
+				<%if{submenu}%>
+				<div>
+					<%loop{submenu}%>
+					<a href="{url}" {classOn}>{text}</a>
+					<%end%>
+				</div>
+				<%end%>
+			</li>
+		<%end%>
+	</ul>
+	<%end%>
+
+<% left_meniu %>
+	<ul id="leftmenu">
+		<%loop{items += item}%>
+		<li{classOn}><a href="{url}" class="{ico}">{text}</a></li>
+		<%end%>
+	</ul>
+
+<% group %>
+	<li class="group"><a href="{url}">{name}</a></li>
+
+<% group_active %>
+	<li class="group on"><b>{name}</b></li>

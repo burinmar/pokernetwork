@@ -1,0 +1,292 @@
+<% info %>
+titleNew=New page
+titleEdit=Edit
+addNew=Add page
+titleLinkNew=New link
+titleLinkEdit=Edit link
+
+error404=Item not found!
+error1=Title required
+error2=Uri required
+error5=Please choose another uri, this one is in use
+error6=Parent required!
+error7=There is a limit of 20 links in sitemap! You have to remove some items.
+error9=System error!
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1 class="pagetitle fl">{pageTitle}</h1>
+	<div class="fr"><a href="{goNewLink}" class="button buttonAddNew">Add new Link</a> <%if{canEditAll}%><a href="{goNew}" class="button buttonAddNew">Add new Page</a><%end%></div>
+</div>
+
+
+<%if{canEditAll}%>
+<!--# filter -->
+<% insert {filter} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+		<input type="hidden" name="event" value="{goFilter}" />
+		<table>
+		<tr>
+			<td>
+				<label><input type="checkbox" name="filter[is_deleted]" value="{is_deleted}" /> Show deleted items</label>
+			</td>
+			<td>
+				<button type="submit" name="filtruok" class="btOK">Filter</button>
+			</td>
+		</tr>
+		</table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filter} %>
+<% end %>
+
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list sitemap">
+		<colgroup>
+			<col style="width: 20px;" />
+			<col />
+			<col />
+			<col style="width: 150px" />
+			<col style="width: 20px" />
+			<col style="width: 20px" />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th></th>
+				<th class="title"><span>Title</span></th>
+				<th><span>Uri</span></th>
+				<th><span>Page id</span></th>
+				<th><span>Xml</span></th>
+				<th><span>Control</span></th>
+				<th class="checkall"></th>
+			</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+			<tr {classHidden}>
+				<td>{activeTab}</td>
+				<td class="title<%if{is_deleted}%> deleted<%end%>"><span style="padding-left: {indentLeft}px;"><a href="{goEdit}">{title}</a>&nbsp;<%if{is_deleted}%><em class="explain">(deleted)</em><%end%></span><%if{is_link}%><span class="link" title="Link">link</span><%end%><%if{geo_target}%><span class="geo" title="Geo targeting">geo</span><%end%></td>
+				<td><a href="{uri}" target="_blank" class="explain">{uri}</a></td>
+				<td>{page_id}&nbsp;</td>
+				<td <% if {markHasXml} %>title="{xml}"<% end {markHasXml} %>><% if {markHasXml} %><span class="check">&nbsp;</span><% end {markHasXml} %></td>
+				<td <% if {markHasControl} %>title="{control}"<% end {markHasControl} %>><% if {markHasControl} %><span class="check">&nbsp;</span><% end {markHasXml} %></td>
+				<td><%if{enableDeleteItem}%><input type="checkbox" name="it[]" value="{id}" /><%end%></td>
+			</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+
+	<!--# delete items -->
+	<div class="list-footer clrfix">
+		<input type="button" class="button fr btDel" value="Delete selected" />
+	</div>
+</form>
+<% end {items} %>
+
+<% else {viewList} %>
+<script type="text/javascript">
+/*<![CDATA[*/
+$(document).ready(function(){
+	$('input[name="content_type"]').click(function(){
+		if ($('.contentType:checked').val() == 'html') {
+			$('#radioTypeText').hide();
+			$('#radioTypeHTML').show();
+		}
+		else {
+			$('#radioTypeText').show();
+			$('#radioTypeHTML').hide();
+		}
+	});
+});
+/*]]>*/
+</script>
+
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />
+	<input type="hidden" name="id" value="{id}" />
+
+	<h2 class="formTitle">{formTitle} <% if {showLastEdited} %><em class="explain" style="margin-left: 20px">Last edited on <span style="color: #000">{lastEditedTime}</span>, by <span style="color: #000">{lastEditedUsername}</span></em><% end {showLastEdited} %></h2>
+	<div class="formButton fr">
+		<input type="submit" value="Save" /><input type="submit" value="Save & Return" />
+	</div><span class="clr"></span>
+
+		
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<% if {canEditAll} %>
+			<dt><label for="i_parent_id">Parent</label></dt>
+			<dd>
+				<select id="i_parent_id" name="parent_id">
+					<option value="0"></option>
+					{optTree}
+				</select>
+			</dd>
+
+		<% end {canEditAll} %>
+			<dt><label for="i_title">Title</label></dt>
+			<dd class="w100">
+				<input type="text" name="title" id="i_title" value="{title}" size="88" maxlength="255" class="count_chars_59 required" /> &nbsp; &nbsp; &nbsp;
+			</dd>
+
+
+			<dt><label for="i_uri">Uri</label><div class="explain">Start Uri with '<b>/</b>', please.</div></dt>
+			<dd style="color:#666666;">
+				<input type="text" name="uri" id="i_uri" value="{uri}" size="60" maxlength="100" <% if {limitedRights} %>disabled<%else{limitedRights}%>onfocus="var n = this.value == '';fillUri(this,'i_title'); if (n) this.value='/'+this.value+'.htm'" <% end {limitedRights} %> />
+				
+				<% if {showViewPageLink} %>
+				<div class="explain"><a href="{uri}" onclick="window.open('{uri}');return false;" class="newwindow">View this page in new window</a></div>
+				<% end {showViewPageLink} %>
+			</dd>
+			
+			<dt>
+				<label for="i_content">Content</label><br />
+				<label> <input type="radio" name="content_type" value="{type-text}"  id="chooseTypeText"  class="contentType" /> Text</label>
+				<label><input type="radio" name="content_type" value="{type-html}"  id="chooseTypeHTML"  class="contentType" /> HTML</label>
+			</dt>
+			<dd class="w100">
+				<div class="padding-set-3" style="<%if{not-type-text-css}%>display:none;<%end%>" id="radioTypeText">
+					{toolbar}
+					<textarea name="content" id="i_content" rows="25" cols="65">{content}</textarea>
+				</div>
+				<div class="padding-set-3" style="<%if{not-type-html-css}%>display:none;<%end%>" id="radioTypeHTML">
+					<textarea name="content_html" id="i_content_html" rows="25" cols="65">{content_html}</textarea>
+				</div>
+			</dd>
+			
+			<dt><label for="i_meta_title">Meta title</label></dt>
+			<dd class="w100"><input type="text" name="meta_title" id="i_meta_title" value="{meta_title}" size="88" maxlength="255" class="count_chars_59" /></dd>
+			
+			<dt><label for="i_meta_keywords">Meta keywords</label></dt>
+			<dd class="w100"><input type="text" name="meta_keywords" id="i_meta_keywords" value="{meta_keywords}" size="88" maxlength="255" /></dd>
+			
+			<dt><label for="i_meta_description">Meta description</label></dt>
+			<dd class="w100"><textarea rows="2" cols="65" name="meta_description" id="i_meta_description" class="count_chars_156">{meta_description}</textarea></dd>
+
+		<% if {canEditAll} %>
+
+		        <dt><label for="i_xml">Page id</label></dt>
+		        <dd><input type="text" name="page_id" id="i_page_id" value="{page_id}" size="28" maxlength="255" /></dd>
+
+
+			<dt><label for="i_active_tab">Menu tab</label></dt>
+			<dd>
+				<label><input type="checkbox" name="active_tab" id="i_active_tab" value="{active_tab}" /> Yes</label>
+				&nbsp; &nbsp; &nbsp; &nbsp;
+				<label for="i_menu_tab_class">Add additional class for this tab:</label> <input type="text" name="menu_tab_class" id="i_menu_tab_class" value="{menu_tab_class}" size="28" maxlength="255" />
+			</dd>
+
+
+			<dt><label for="i_css">Css</label></dt>
+			<dd>
+				<input type="text" name="css" id="i_css" value="{css}" size="28" maxlength="255" />
+				<span class="explain">(eg. /css/article.css)</span>
+			</dd>
+
+
+		        <dt><label for="i_xml">Xml</label></dt>
+		        <dd>
+				<input type="text" name="xml" id="i_xml" value="{xml}" size="50" maxlength="255" />
+				<span class="explain">(eg. Common3cols)</span>
+			</dd>
+
+
+		        <dt><label for="i_control">Control</label></dt>
+		        <dd>
+				<input type="text" name="control" id="i_control" value="{control}" size="50" maxlength="255" />
+				<span class="explain">(eg. pokergame.rules#read_uri)</span>
+			</dd>
+
+			<dd>
+				<label><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> Hide this item</label>
+			</dd>
+			<%if{show_is_deleted}%>
+			<dd>
+				<label><input type="checkbox" name="is_deleted" id="i_is_deleted" value="{is_deleted}" /> Delete item</label>
+			</dd>
+			<%end%>
+
+		<% end {canEditAll} %>
+	</dl>
+
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" />
+	</div>
+</form>
+
+<% if {items.subcat} %>
+<h2 class="headline">Sort subcategories</h2>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="" />
+	<input type="hidden" name="parent_id" value="{id}" />
+	<input type="hidden" name="event-saveorder" value="{goSort}" />
+	<table class="list sortable">
+
+		<% loop {items.subcat += item.subcat} %>
+		<tr id="row{id}" {classHidden}>
+			<td class="title"><a href="{uriMenuTab}">{title}</a></td>
+		</tr>
+		<% end {items.subcat} %>
+
+	</table>
+	<div class="list-footer"></div>
+</form>
+<% end %>
+<div class="clr"></div>
+</div>
+
+<% end {viewList} %>
+
+
+
+<% viewFormLink %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle} : Link</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" method="post" class="aform" >
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr">
+		<input type="submit" value="Save" /><input type="submit" value="Save & Return" />
+	</div><span class="clr"></span>
+		<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_parent_id">Parent</label></dt>
+		<dd>
+			<select id="i_parent_id" name="parent_id" class="required">
+				<option value="0"></option>
+				{optTree}
+			</select>
+		</dd>
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100">
+			<input type="text" name="title" id="i_title" value="{title}" size="30" maxlength="30" class="required"/>
+			<div class="explain">Limited to 30 chars</div>
+		</dd>
+		<dt><label for="i_uri">URL</label></dt>
+		<dd class="w100">
+			<input type="text" name="uri" id="i_uri" value="{uri}" size="80" maxlength="128" class="required" />
+			<% if {id} %>
+			<div><a href="{uri}" onclick="window.open(this.href);return false;" class="newwindow">View this link in new window</a></div>
+			<% end {id} %>
+		</dd>
+		<dt></dt>
+		<dd>
+			<label><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> Hide this link</label>
+		</dd>
+	</dl>
+
+	<div class="formButton"><input type="submit" value="Save"/><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+</div>

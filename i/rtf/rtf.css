@@ -1,0 +1,200 @@
+/*
+ * Sitas css kontroliuoja
+ * toolbara ir prisegtu attachmentu sarasa
+ */
+
+/* WYSIWYG Editor Controls */
+/***************************/
+.wysiwygControls {
+	display: block;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+	.wysiwygControls li {
+		display: inline-block;
+		position: relative;
+		*display: inline; *zoom: 1; /* IE7*/
+		} .wysiwygControls > li {
+		margin-right: 2px;
+	}
+		.wysiwygControls li .btn {
+			background: #e5e5e5;
+			border: 1px solid #cccccc;
+			border-radius: 3px;
+			-khtml-border-radius: 3px;
+			-moz-border-radius: 3px;
+			-webkit-border-radius: 3px;
+			display: block;
+			padding: 3px;
+		}
+		.wysiwygControls li .btnExpanding {
+			background: #e5e5e5 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAKklEQVR42mJcuHDhfwYkwGRtbc0IYjAyMkIEQARMECwAk7GysgIzAAIMAPiPBQNqRe4+AAAAAElFTkSuQmCC') no-repeat right top;
+			border-radius: 3px 0 3px 3px;
+			-khtml-border-radius: 3px 0 3px 3px;
+			-moz-border-radius: 3px 0 3px 3px;
+			-webkit-border-radius: 3px 0 3px 3px;
+			} html[dir="rtl"] .wysiwygControls li .btnExpanding {
+			background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAAECAYAAACp8Z5+AAAAKklEQVR42mJcuHDhfwYkwAQiGBkZwRxra2tGJpgMiANXYWVlxQhTCRBgAPATBQPfxOncAAAAAElFTkSuQmCC');
+			background-position: left top;
+			border-radius: 0 3px 3px 3px;
+			-khtml-border-radius: 0 3px 3px 3px;
+			-moz-border-radius: 0 3px 3px 3px;
+			-webkit-border-radius: 0 3px 3px 3px;
+		}
+		.wysiwygControls li:hover .btn {
+			background-color: #ffffff;
+			border-color: #bec5c9;
+		}
+		html .wysiwygControls li.expanded .btn {
+			background: #ffffff;
+			border-color: #bec5c9;
+			border-top: 0;
+			border-radius: 0 0 3px 3px;
+			-khtml-border-radius: 0 0 3px 3px;
+			-moz-border-radius: 0 0 3px 3px;
+			-webkit-border-radius: 0 0 3px 3px;
+			margin-top: -3px;
+			padding-top: 6px;
+			position: relative;
+			z-index: 2;
+		}
+		.wysiwygControls li .btnPopup {
+			background: #ffffff;
+			bottom: 25px;
+			border: 1px solid #bec5c9;
+			border-radius: 5px 5px 5px 0;
+			-khtml-border-radius: 5px 5px 5px 0;
+			-moz-border-radius: 5px 5px 5px 0;
+			-webkit-border-radius: 5px 5px 5px 0;
+			display: none;
+			left: 0;
+			padding: 10px;
+			position: absolute;
+			z-index: 1;
+			} html[dir="rtl"] .wysiwygControls li .btnPopup {
+			border-radius: 5px 5px 0 5px;
+			-khtml-border-radius: 5px 5px 0 5px;
+			-moz-border-radius: 5px 5px 0 5px;
+			-webkit-border-radius: 5px 5px 0 5px;
+			left: auto;
+			right: 0;
+			} .wysiwygControls li .btnPopupsmiles {
+			padding-top: 5px;
+			} .wysiwygControls li.expanded .btnPopup {
+			display: block;
+		}
+			.wysiwygControls li .btnPopup .btnPopupTitle {
+				color: #373737;
+				font-size: 13px;
+				font-weight: bold;
+			}
+			.wysiwygControls li .btnPopup .btnPopupRow {
+				display: block;
+				list-style: none;
+				margin: 0 0 5px 0;
+				padding: 0;
+				*width: 300px; /* IE7 */
+			}
+				.wysiwygControls li .btnPopupcards .btnPopupRow,
+				.wysiwygControls li .btnPopupsmiles .btnPopupRow {
+					white-space: nowrap;
+					*width: auto; /* IE7 */
+				}
+				.wysiwygControls li .btnPopup .btnPopupRow li {
+					display: inline-block;
+					margin-right: 3px;
+					vertical-align: top;
+					*display: inline; *zoom: 1; /* IE7 */
+				}
+				.wysiwygControls li .btnPopupsmiles .btnPopupRow li {
+					height: 26px;
+					min-width: 20px;
+					_width: 20px; /* IE6 */
+				}
+				.wysiwygControls li .btnPopup .btnPopupRow li img {
+					display: block;
+				}
+				.wysiwygControls li .btnPopupsmiles .btnPopupRow li img {
+					margin: 6px auto 0 auto;
+					padding: 1px;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/crying.gif"],
+					.wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/sick.gif"],
+					.wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/tongue.gif"],
+					.wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/unsure.gif"],
+					.wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/whistling.gif"] {
+					margin-top: 7px;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/confused.gif"],
+					.wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/sleep.gif"] {
+					margin-top: 1px;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/drool.gif"] {
+					margin-bottom: -2px;
+					margin-top: 7px;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/inlove.gif"] {
+					margin-top: 0;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/cursing.gif"] {
+					margin-top: 2px;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img[src="/img/smilies/scared.gif"] {
+					margin-top: 5px;
+					} .wysiwygControls li .btnPopupsmiles .btnPopupRow li img:hover {
+					border-radius: 3px;
+					-moz-outline-radius: 3px;
+					outline: 2px solid #cccccc;
+					*background: #cccccc; /* IE7 */
+				}
+				.wysiwygControls li .btnPopupcards .btnPopupRow li img:hover {
+					border-radius: 3px;
+					-moz-outline-radius: 3px;
+					outline: 2px solid #cccccc;
+				}
+				.wysiwygControls li .btnPopup .btnPopupRow label {
+					display: inline-block;
+					width: 70px; 
+				}
+				.wysiwygControls li .btnPopup .btnPopupRow label.checkboxLabel {
+					width: auto;
+				}
+				.wysiwygControls li .btnPopup .btnPopupRow input[type="text"] {
+					width: 200px;
+				}
+				.wysiwygControls li .btnPopup .btnPopupRow input[type="checkbox"] {
+					width: auto;
+				}
+			.wysiwygControls li .btnPopup button {
+				margin-top: 10px;
+			}
+
+/* footer of textarea: attachments*/
+/***************************/
+
+.attachments .attachments-head{
+	background: url('paperclip.png') no-repeat left 3px;
+	line-height: 22px;
+	padding-left: 18px;
+}
+
+/* existing attachments*/
+/***************************/
+
+.obj-img,
+.obj-html{
+	background:#fff;
+	border:1px solid #000;
+	color:#000;
+	cursor:pointer;
+	font:9px/8pt verdana;
+	height:100px;
+	overflow:hidden;
+	text-align:center;
+	width:100px;
+}
+.obj-img{
+	margin:0;
+	text-align:center;
+}
+
+.obj-html{
+	clear:both;
+	text-align:left;
+	text-decoration:none;
+}
