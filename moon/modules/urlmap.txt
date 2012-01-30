@@ -1,0 +1,14 @@
+[en]
+page = & sys.page#
+
+reviews* = & reviews.review#make_uri
+
+navigation.international# = {page:navigation}
+sys.captcha# = captcha.php
+
+sys.clicks_tracker* = clicks-tracker/
+articles.export# = news-export-xml/
+
+sys.tmp = temp
+
+

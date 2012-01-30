@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 <page>
 	<layout>index</layout>
-	<com><part>left</part><name>sys.news_homepage</name></com>
+	<!--
+<com><part>left</part><name>sys.news_homepage</name></com>
+-->
 	<com><part>header</part><name>sys.header</name></com>
 	<com><part>footer</part><name>sys.footer</name></com>
 </page>
