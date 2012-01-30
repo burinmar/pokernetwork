@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('Europe/Vilnius');
+date_default_timezone_set('Australia/Melbourne');
 
 function is_dev() {
 	static $_isDev = NULL;
