@@ -1,0 +1,286 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+
+error404=Item not found!
+error1=Title required
+error2=Uri required
+error3=Incorrect date
+error4=Incorrect time
+error5=Please choose another uri, this one is in use
+error6=Please select category
+error9=System error!
+
+errorImage1=Image error: Incorrect extension!
+errorImage2=Image error: Techical error!
+errorImage3=Article will remain hidden until you upload leading picture!
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+		<% if {enableNewsImport} %>
+			<span style="float:right;padding-top:5px;"><em><a style="text-decoration:none;" href="{goImportNews}" title="Please wait until import is complete. It may take some time">Import news</a></em></span>
+		<% end {enableNewsImport} %>
+
+		<input type="hidden" name="event" value="{goFilter}" />
+		<table>
+		<tr>
+			<td><label>Title: <input type="text" name="filter[title]" size="25" value="{title}" /></td>
+			<%if {categories} %>
+			<td><label>Category:
+				<select style="width:205px;" name="filter[category]">
+					<option value="">All</option>
+					{categories}
+				</select>
+				</label>
+			</td>
+			<% end %>
+			<% if {showBrokenLinks} %>
+			<td><label><input type="checkbox" name="filter[has_broken_links]" value="{has_broken_links}" /> Have broken links</label></td>
+			<% end %>
+			<td><button type="submit" name="filtruok">Filter</button></td>
+		</tr>
+		</table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 120px" />
+			<col />
+			<col style="width: 70px" />
+			<col style="width: 70px" />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby1}">Date</a></th>
+			<th><a href="{orderby2}">Title</a></th>
+			<th class="tar"><a href="{orderby3}">Status</a></th>
+			<th class="tar"><a href="{orderby4}">Views</a></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr {classHidden}>
+			<td {styleImported}>{date} <span class="explain">{time}</span></td>
+			<td>
+				<a href="{goEdit}">{title}</a> 
+				<%if{categoryTitle}%><div class="explain">{categoryTitle}</div><%end%>
+			</td>
+			<td class="tac"><%if{classHiddenTd}%><span class="scheduledIco" title="Scheduled"></span><%else{classHiddenTd}%>{status}<%end%></td>
+			<td class="tar"><%if{views_count}%><span class="explainGreen">{views_count}</span><%end%></td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+	{paging}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<!--# item form -->
+
+	<script type="text/javascript">
+	var refreshUrl = '{selfUrl}';
+	var articleId = '{id}';
+
+	var authorsSuggest = [{authors_suggest}];
+	var tagsSuggest = [{tags_suggest}];
+	jQuery(document).ready(function(){
+		jQuery('#i_authors').autocomplete(authorsSuggest, {
+			multiple: true,
+			autoFill: true,
+			minChars: 1
+		});
+		jQuery('#i_tags').autocomplete(tagsSuggest, {
+			multiple: true,
+			autoFill: true,
+			minChars: 1,
+			multipleSeparator: ','
+		});
+	});
+
+	</script>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<div class="hide" id="linksCheckResults1"></div><span class="clr"></span>
+	<dl>
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100">
+			<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required" />
+			<% if {id} %>
+			<div><a href="{uriPrefix}{uri}.htm" onclick="window.open(this.href);return false;" class="newwindow">View this article in new window</a></div>
+			<% end {id} %>
+		</dd>
+
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd >
+			<i>{uriPrefix}</i>
+			<input type="text" name="uri" id="i_uri" value="{uri}" size="89" maxlength="128" class="required" onfocus="fillUri(this,'i_title')" /><i>.htm</i>
+		</dd>
+
+		<dt><label for="i_published">Publish Settings</label></dt>
+		<dd >
+			<input type="text" name="published_date" id="i_published" value="{publishedDate}" size="10" maxlength="10" class="required isDate" />
+			<input type="text" maxlength="5" size="5" name="published_time" value="{publishedTime}" class="required"/>
+			<div class="explain" style="margin: 0 0 10px 30px">yyyy-mm-dd <span style="display: inline-block; margin-left: 25px">hh:mm</span></div>
+
+			<label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide this article</label>
+
+			<% if {showPromo} %>
+			<br /><label><input type="checkbox" name="is_promo" id="i_is_promo" value="{is_promo}" /> PokerNetwork promotion</label>
+			<% end %>
+		</dd>
+
+		<% if{showHomepageSlider} %>
+		<dt><label><input type="checkbox" name="homepage_promo" id="i_homepage_promo" value="{homepage_promo}" /> Stick to news slider</label></dt>
+		<dd><label>Short title (for slider): <input type="text" name="short_title" id="i_short_title" value="{short_title}" size="30" maxlength="30"/></label></dd>
+		<%end%>
+
+		<dt><label>Content</label></dt>
+
+		<dd class="w100">
+			{toolbar}
+			<textarea rows="25" cols="65" name="content" id="i_content" >{content}</textarea>
+		</dd>
+
+		<dt><label for="i_summary">Summary</label></dt>
+		<dd><textarea rows="3" cols="65" name="summary" id="i_summary">{summary}</textarea></dd>
+
+		<dt><label for="i_meta_description">Meta description</label></dt>
+		<dd><textarea rows="3" cols="65" name="meta_description" id="i_meta_description" class="count_chars_156">{meta_description}</textarea></dd>
+
+		<dt><label>Leading picture</label></dt>
+		<dd>
+			<input type="file" name="img" size="20" />
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alt:&nbsp;
+			<input type="text" name="img_alt" value="{img_alt}" size="33" maxlength="128" />
+			<div class="explain">
+				.jpg, .gif, .png images only.
+				Recomended size - 380x250 px (larger images will be resized)
+			</div><br />
+			<script type="text/javascript">initMultiUpload('img',6);</script>
+			<% if {imgSrc} %>
+				<a href="{imgTool}" onclick="window.open(this.href,'im'+'{id}','width=670,height=560,toolbars=no');return false;" style="float: left; margin: 10px 20px 0 0;"><img src="{imgSrc}" alt="" /></a>
+				<img src="{imgSrcThumb}" alt="" style="margin-top: 10px; vertical-align: top" />
+				<span class="clr"></span>
+				<label><input type="checkbox" name="del_img" value="1" />Delete</label>
+			<% end {imgSrc} %>
+		</dd>
+
+		<% if {showCategories} %>
+		<dt><label for="i_category_id">Category</label></dt>
+		<dd>
+			<select name="category_id" id="i_category_id" class="required">
+				<option value="0">--</option>
+				{optCategories}
+			</select>
+		</dd>
+		<% end %>
+
+		<dt><label for="i_authors">Authors</label></dt>
+		<dd>
+			<input type="text" name="authors" id="i_authors" value="{authors}" size="88" maxlength="255" />
+			<div class="explain">Separate multiple authors with comma.</div>
+		</dd>
+
+		<dt><label for="i_tags">Tags</label></dt>
+		<dd>
+			<input type="text" name="tags" id="i_tags" value="{tags}" size="88" maxlength="255" />
+			<div class="explain">Separate multiple tags with comma.</div>
+			<div id="recommended-tags" style="width: 600px;display: none;">
+			</div>
+			<br />
+		</dd>
+
+		<dt><label for="i_room_id">Room for banner rotation:</label></dt>
+		<dd>
+			<select name="room_id" id="i_room_id">
+				<option value="0"></option>
+				{optRooms}
+			</select>
+			<input type="checkbox" name="double_banner" id="i_double_banner" value="{double_banner}" />
+			<label for="i_double_banner">Enable bottom banner</label>&nbsp;&nbsp;&nbsp;
+			<!--#
+			<input type="checkbox" name="promo_box_on" id="i_promo_box_on" value="{promo_box_on}" />
+			<label for="i_promo_box_on">Enable promo box</label>&nbsp;&nbsp;&nbsp;
+			-->
+		</dd>
+
+		<!--#
+		<dt><label for="i_promo_text">Text in the promo box</label></dt>
+		<dd >
+			<textarea rows="5" cols="60" name="promo_text" id="i_promo_text" >{promo_text}</textarea>
+			<div class="explain">Visible, if room above is selected and the checkbox "Enable promo box" is checked.</div>
+		</dd>
+		-->
+
+		<%if{showTwitter}%>
+		<dt><label for="i_twitter_text">Twitter message text</label></dt>
+		<dd >
+			<textarea rows="2" cols="60" name="twitter_text" id="i_twitter_text" class="count_chars_110">{twitter_text}</textarea>
+			<div class="explain">112 characters max. Short link to post will be added automatically at the end of the message.</div>
+		</dd>
+
+		<dt><label for="i_twitter_tags">Twitter Hashtags</label></dt>
+		<dd class="dd100">
+			<input type="text" name="twitter_tags" id="i_twitter_tags" value="{twitter_tags}" size="62" maxlength="255" />
+			<div class="explain">"#" Symbols will be appended automatically. Separate multiple tags with comma.</div>
+		</dd>
+		<%end%>
+
+		<%if{showFacebook}%>
+		<dt><label for="i_facebook_summary">Facebook post summary</label></dt>
+		<dd ><textarea rows="3" cols="60" name="facebook_summary" id="i_facebook_summary">{facebook_summary}</textarea></dd>
+		<%end%>
+
+		<% if {showGeoTarget} %>
+		<dt>Geo target <div class="explain">(for homepage list)</div></dt>
+		<dd>
+			<% loop {geo_zones} %>
+			<label><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="geo_target[]" value="{value}"  /> {name}</label><br />
+			<% end %><br />
+			<div class="explain">Item will be shown for users in checked countries, if at leat one is checked.</div>
+		</dd>
+		<% end %>
+
+	</dl>
+
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+<%if{showCheckLinks}%>
+<div id="linksCheckResults" style="float:right;">
+	<a id="linksCheck" href="#">Check article links</a>
+</div>
+<div class="clr"></div>
+<%end%>
+
+<% end {viewList} %>

@@ -1,0 +1,178 @@
+<% info %>
+titleNew=New author
+titleEdit=Edit author
+
+error404=Item not found!
+error1=Name required 
+error2=Uri required
+error3=The author by the name you provided is already exists
+error4=This uri is already exists
+error5=Dublicate names conflict
+error9=System error!
+
+<% main %>
+
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+	
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Name: <input type="text" name="filter[name]" size="25" value="{name}" /></label></td>
+		<td><label><input type="checkbox" name="filter[is_deleted]" value="{is_deleted}" /> Show deleted</label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 100px" />
+			<col />
+			<col />
+			<col />
+			<col />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby2}">Created</a></th>
+			<th><a href="{orderby1}">Name</a></th>
+			<th><span>Uri</span></th>
+			<th><span>Nickname</span></th>
+			<th><span>Email</span></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+		<tr {classHidden}>
+			<td>{created_on}</td>
+			<td><a href="{goEdit}">{name}</a></td>
+			<td><a href="{goUri}" target="_blank" class="explain">{uri}</a></td>
+			<td>{nickname}</td>
+			<td>{email}</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+
+<% insert {paging} %><% end {paging} %>
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+
+	<!--# item form -->
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+	<% if {confirmDuplicate} %>
+	<form action="{!action}" name="frm" id="frm" method="post" class="aForm" enctype="multipart/form-data">
+		<input type="hidden" name="event" value="{event}" />
+		<input type="hidden" name="id" value="{id}" />
+		<div style="background-color: #ffc; padding: 0 10px 10px 10px">
+			<h2 class="headline">Warning</h2>
+			<p>You changed the author's name from <strong>{name_before}</strong> to <strong>{name}</strong>.</p>
+			<p>The author by the name <strong>{name}</strong> is already in the authors list. If you choose to confirm changes, the author <strong>{name_before}</strong> will be deleted and all articles written by <strong>{name_before}</strong> will be reassigned to <strong>{name}</strong>.</p>
+		</div>
+		<div class="formButton clrfix" style="margin-left: 0">
+			<input type="hidden" name="name" value="{name}" /><input type="submit" name="save" value="Confirm" /><input type="button" name="cancel" value="Cancel" onclick="window.location.href='{goBack}'" />
+			{refresh}
+		</div>
+	</form>
+	<% else {confirmDuplicate} %>
+	<script type="text/javascript">
+		var refreshUrl = '{selfUrl}';
+	</script>
+	<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+		<input type="hidden" name="event" value="{event}" />{refresh}
+		<input type="hidden" name="id" value="{id}" />
+		<input type="hidden" name="name_before" value="{name_before}" />
+		<h2 class="formTitle">{formTitle}</h2>
+		<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+		<span class="clr"></span>
+		<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+		
+		<dl>
+			<dt><label for="i_name">Name</label></dt>
+			<dd><input type="text" name="name" id="i_name" value="{name}" size="70" maxlength="255" class="required" /></dd>
+			
+			<dt><label for="i_uri">Uri</label></dt>
+			<dd>
+				<i>{uriPrefix}</i>
+				<input type="text" name="uri" id="i_uri" value="{uri}" size="60" maxlength="60" onfocus="fillUri(this,'i_name')" />
+				/
+				<%if{uri}%>
+					<div class="explain"><a href="{vieAuthor}" onclick="window.open('{vieAuthor}');return false;" class="newwindow">View this author in new window</a></div>
+				<%end%>
+			</dd>
+			<%if{showPicture}%>
+			<dt>
+				<%if{imgSrc}%>
+					<a href="{imgTool}" onclick="window.open(this.href,'im'+'{id}','width=670,height=560,toolbars=no');return false;"><img src="{imgSrc}" alt="" width="100%" /></a>
+						<label><input type="checkbox" name="del_img" value="1" /> Delete</label>
+				<%else{imgSrc}%>
+					<label for="i_img">Picture</label>
+				<%end{imgSrc}%>
+			</dt>
+			<dd <%if{imgSrc}%>style="min-height: 150px"<%end{imgSrc}%>>
+				<input type="file" name="img" id="i_img" size="35" />
+				<input type="hidden" name="img" value="{img}" />
+				<div class="explain">.jpg, .gif, .png images only. Recomended size - 170x170 px (larger images will be resized)</div>
+			</dd>
+			<%end%>
+			<dt>
+				<label for="i_nickname">Nickname</label>
+			</dt>
+			<dd>
+				<input type="text" name="nickname" id="i_nickname" value="{nickname}" size="70" maxlength="255" />
+			</dd>
+			
+			<dt><label for="i_email">Email</label></dt>
+			<dd>
+				<input type="text" name="email" id="i_email" value="{email}" size="70" maxlength="255" />
+			</dd>
+			
+			<dt><label for="i_about">About</label></dt>
+			<dd class="w100">
+				{toolbar}<textarea rows="15" cols="52" name="about" id="i_about">{about}</textarea>
+			</dd>
+
+			<dt><label for="i_twitter">Twitter username</label></dt>
+			<dd>
+				<input type="text" name="twitter" id="i_twitter" value="{twitter}" size="70" maxlength="15" /> 
+				<%if{twitter}%><div class="explain"><a href="http://twitter.com/#!/{twitter}" onclick="window.open(this.href);return false;">http://twitter.com/#!/{twitter}</a></div><%end%>
+			</dd>
+
+			<dt><label for="i_gplus_url">Google plus URL</label></dt>
+			<dd>
+				<input type="text" name="gplus_url" id="i_gplus_url" value="{gplus_url}" size="70" maxlength="60" /> &nbsp; &nbsp; &nbsp;
+				<%if{gplus_url}%><div class="explain"><a href="{gplus_url}" onclick="window.open(this.href);return false;">{gplus_url}</a></div><%end%>
+			</dd>
+			
+		</dl>
+		
+		<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+		
+	</form>
+	<% end %>
+<% end {viewList} %>

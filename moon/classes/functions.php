@@ -8,7 +8,7 @@ function is_dev() {
 	}
 	return $_isDev;
 }
-
+define('_W_DIR_', 'w/');
 
 function url_logic($ev = false, $par = false) {
 	$e = & moon :: engine();

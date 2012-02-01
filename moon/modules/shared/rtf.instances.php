@@ -41,12 +41,12 @@ if (strpos($instance, '~')) {
 switch ($instance) {
 
 	//news
-	case 'news' :
+	case 'articles' :
 		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'), 'allowScript' => TRUE);
-		$cfg['features'] = '-code,-smiles,-underline,-img,-video,-spoiler,-cards,-timer,-game,-twitter';
-		$cfg['tableObjects'] = 'news_attachments';
-		$cfg['fileDir'] = 'w/news-attachments/';
-		$cfg['fileSRC'] = '/w/news-attachments/';
+		$cfg['features'] = '-code,-smiles,-underline,-img,-video,-spoiler,-game,twitter';
+		$cfg['tableObjects'] = 'articles_attachments';
+		$cfg['fileDir'] = _W_DIR_ . 'articles/att/';
+		$cfg['fileSRC'] = '/' . _W_DIR_ . 'articles/att/';
 		$cfg['attachments'] = 'image+, video, html';
 		break;
 

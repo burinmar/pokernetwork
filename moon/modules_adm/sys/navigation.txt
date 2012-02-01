@@ -8,7 +8,10 @@ SiteMap {ico=sitemap, admin=content}
 #	navigation.redirects = 301 redirects {admin=developer}
 
 News {ico=news, admin=content}
-	other.news = News
+	articles.news = News
+	articles.categories_news = News categories
+	articles.authors = Authors
+	articles.tags = Tags
 
 System {ico=system, admin=developer}
 	sys.errors404=404 errors

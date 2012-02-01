@@ -1,0 +1,93 @@
+<% info %>
+titleNew=New tag
+titleEdit=Edit tag
+addNew=Add tag
+
+error404=Item not found!
+error1=Tag name required
+error2=Please choose different name, this tag is already exists
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">{addNew}</a></div>
+</div>
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Name: <input type="text" name="filter[name]" size="25" value="{name}" /></label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col />
+			<col />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby1}">Name</a></th>
+			<th><a href="{orderby2}">Status</a></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+		<tr id="item_{id}" {classHidden}>
+			<td class="title"><a href="{goEdit}">{name}</a>&nbsp;</td>
+			<td>{status}&nbsp;</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+{paging}
+
+<% else {items} %>
+	<p>There are no tags</p>
+<% end {items} %>
+
+<% else {viewList} %>
+<!--# item form -->
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<dl>
+		<dt><label for="i_name">Name</label></dt>
+		<dd><input type="text" name="name" id="i_name" value="{name}" size="78" maxlength="255" class="required" /></dd>
+		
+		<dt><label for="i_description">Description</label></dt>
+		<dd class="w100"><textarea rows="10" cols="75" name="description" id="i_description" >{description}</textarea></dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" />Hide</label></dd>
+		
+	</dl>
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+<% end {viewList} %>
