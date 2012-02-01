@@ -1,14 +1,14 @@
 
-
 SiteMap {ico=sitemap, admin=content}
-	Sitemap {link=other.sitemap, admin=content}
-		other.sitemap = Sitemap
-		other.sitemap_sort = Menu sorting {admin=developer}
+ 	Sitemap {link=other.sitemap, admin=content}
+ 		other.sitemap = Sitemap
+ 		other.sitemap_sort = Menu sorting {admin=developer}
 #	navigation.links = Useful links {admin=chief-editor}
 #	navigation.redirects = 301 redirects {admin=developer}
 
 News {ico=news, admin=content}
 	articles.news = News
+	articles.turbo = Turbo
 	articles.categories_news = News categories
 	articles.authors = Authors
 	articles.tags = Tags

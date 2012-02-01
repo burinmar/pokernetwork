@@ -134,16 +134,16 @@ errorImage3=Article will remain hidden until you upload leading picture!
 	<dl>
 		<dt><label for="i_title">Title</label></dt>
 		<dd class="w100">
-			<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required" />
+			<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required" /> 
 			<% if {id} %>
-			<div><a href="{uriPrefix}{uri}.htm" onclick="window.open(this.href);return false;" class="newwindow">View this article in new window</a></div>
+			<div><a href="{uriPrefix}{uri}{uriNumericSuffix}.htm" onclick="window.open(this.href);return false;" class="newwindow">View this article in new window</a></div>
 			<% end {id} %>
 		</dd>
 
 		<dt><label for="i_uri">Uri</label></dt>
-		<dd >
-			<i>{uriPrefix}</i>
-			<input type="text" name="uri" id="i_uri" value="{uri}" size="89" maxlength="128" class="required" onfocus="fillUri(this,'i_title')" /><i>.htm</i>
+		<dd>
+			<i>{uriPrefix}</i> <input type="text" name="uri" id="i_uri" value="{uri}" size="72" maxlength="128" class="required" onfocus="fillUri(this,'i_title')" />
+			<i>{uriNumericSuffix}.htm</i>
 		</dd>
 
 		<dt><label for="i_published">Publish Settings</label></dt>
@@ -165,7 +165,6 @@ errorImage3=Article will remain hidden until you upload leading picture!
 		<%end%>
 
 		<dt><label>Content</label></dt>
-
 		<dd class="w100">
 			{toolbar}
 			<textarea rows="25" cols="65" name="content" id="i_content" >{content}</textarea>

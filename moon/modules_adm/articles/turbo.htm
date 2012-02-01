@@ -1,0 +1,532 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+
+error404=Item not found!
+error1=Title required
+error2=Uri required
+error3=Incorrect date
+error4=Incorrect time
+error5=Please choose another uri, this one is in use
+error6=Please select category
+error9=System error!
+
+errorImage1=Image error: Incorrect extension!
+errorImage2=Image error: Techical error!
+errorImage3=Article will remain hidden until you upload leading picture!
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Title: <input type="text" name="filter[title]" size="35" value="{title}" /></label></td>
+		<td><button type="submit" name="filtruok" >Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 120px" />
+			<col />
+			<col style="width: 85px" />
+			<col style="width: 70px" />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby1}">Date</a></th>
+			<th><a href="{orderby2}">Title</a></th>
+			<th class="tac"><a href="{orderby3}">Status</a></th>
+			<th class="tar"><span>Views</span></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr {classHidden}>
+			<td {classHiddenTd} {styleImported}>{date} <span class="explain">{time}</span></td>
+			<td>
+				<a href="{goEdit}">{title}</a> 
+				<div class="explain">{categoryTitle}</div>
+			</td>
+			<td class="tac">
+				{status} 
+				<% if {turbo_sent_cnt} %>
+				<span class="email" title="Email sent"></span>
+				<% end {turbo_sent_cnt} %>
+			</td>
+			<td class="tar">
+				<%if{views_count}%><span class="explainGreen">{views_count}</span><%end%>
+			</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+{paging}
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<!--# item form -->
+	<script type="text/javascript">
+	var refreshUrl = '{selfUrl}';
+	var articleId = '{id}';
+
+	var authorsSuggest = [{authors_suggest}];
+	var tagsSuggest = [{tags_suggest}];
+	jQuery(document).ready(function(){
+		jQuery('#i_authors').autocomplete(authorsSuggest, {
+			multiple: true,
+			autoFill: true,
+			minChars: 1
+		});
+		jQuery('#i_tags').autocomplete(tagsSuggest, {
+			multiple: true,
+			autoFill: true,
+			minChars: 1,
+			multipleSeparator: ','
+		});
+	});
+	</script>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBackList}" class="goBack">Back to list</a>
+	<%if{goBackArticle}%><a href="{goBackArticle}" class="goBack" style="margin-right: 30px">Back to article</a><%end%>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<div class="hide" id="linksCheckResults1"></div>
+
+	<dl>
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100">
+			<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required" /> 
+			<% if {id} %>
+			<div><a href="{uriPrefix}{uri}{uriNumericSuffix}.htm" onclick="window.open(this.href);return false;" class="newwindow">View this article in new window</a></div>
+			<% end {id} %>
+		</dd>
+
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd>
+			<i>{uriPrefix}</i> <input type="text" name="uri" id="i_uri" value="{uri}" size="72" maxlength="128" class="required" onfocus="fillUri(this,'i_title')" />
+			<i>{uriNumericSuffix}.htm</i>
+		</dd>
+
+		<dt><label for="i_published">Publish Settings</label></dt>
+		<dd >
+			<input type="text" name="published_date" id="i_published" value="{publishedDate}" size="10" maxlength="10" class="required isDate" />
+			<input type="text" maxlength="5" size="5" name="published_time" value="{publishedTime}" class="required"/>
+			<div class="explain" style="margin: 0 0 10px 30px">yyyy-mm-dd <span style="display: inline-block; margin-left: 25px">hh:mm</span></div>
+
+			<label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide this article</label>
+
+			<% if {showPromo} %>
+			<br /><label><input type="checkbox" name="is_promo" id="i_is_promo" value="{is_promo}" /> PokerNetwork promotion</label>
+			<% end %>
+		</dd>
+		
+		<% if{showHomepageSlider} %>
+		<dt><label><input type="checkbox" name="homepage_promo" id="i_homepage_promo" value="{homepage_promo}" /> Stick to news slider</label></dt>
+		<dd><label>Short title (for slider): <input type="text" name="short_title" id="i_short_title" value="{short_title}" size="30" maxlength="30"/></label></dd>
+		<%end%>
+
+		<dt><label>Content</label></dt>
+		<dd class="w100">
+			{toolbar}
+			<textarea rows="25" cols="65" name="content" id="i_content" >{content}</textarea>
+		</dd>
+<dt><label for="i_summary">Summary</label></dt>
+		<dd><textarea rows="3" cols="65" name="summary" id="i_summary">{summary}</textarea></dd>
+
+		<dt><label for="i_meta_description">Meta description</label></dt>
+		<dd><textarea rows="3" cols="65" name="meta_description" id="i_meta_description" class="count_chars_156">{meta_description}</textarea></dd>
+
+		<dt><label>Leading picture</label></dt>
+		<dd>
+			<input type="file" name="img" size="20" />
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alt:&nbsp;
+			<input type="text" name="img_alt" value="{img_alt}" size="33" maxlength="128" />
+			<div class="explain">
+				.jpg, .gif, .png images only.
+				Recomended size - 380x250 px (larger images will be resized)
+			</div><br />
+			<script type="text/javascript">initMultiUpload('img',6);</script>
+			<% if {imgSrc} %>
+				<a href="{imgTool}" onclick="window.open(this.href,'im'+'{id}','width=670,height=560,toolbars=no');return false;" style="float: left; margin: 10px 20px 0 0;"><img src="{imgSrc}" alt="" /></a>
+				<img src="{imgSrcThumb}" alt="" style="margin-top: 10px; vertical-align: top" />
+				<span class="clr"></span>
+				<label><input type="checkbox" name="del_img" value="1" />Delete</label>
+			<% end {imgSrc} %>
+		</dd>
+
+		<% if {showCategories} %>
+		<dt><label for="i_category_id">Category</label></dt>
+		<dd>
+			<select name="category_id" id="i_category_id" class="required">
+				<option value="0">--</option>
+				{optCategories}
+			</select>
+		</dd>
+		<% end %>
+
+		<dt><label for="i_authors">Authors</label></dt>
+		<dd>
+			<input type="text" name="authors" id="i_authors" value="{authors}" size="88" maxlength="255" />
+			<div class="explain">Separate multiple authors with comma.</div>
+		</dd>
+
+		<dt><label for="i_tags">Tags</label></dt>
+		<dd>
+			<input type="text" name="tags" id="i_tags" value="{tags}" size="88" maxlength="255" />
+			<div class="explain">Separate multiple tags with comma.</div>
+			<div id="recommended-tags" style="width: 600px;display: none;">
+			</div>
+			<br />
+		</dd>
+
+		<dt><label for="i_room_id">Room for banner rotation:</label></dt>
+		<dd>
+			<select name="room_id" id="i_room_id">
+				<option value="0"></option>
+				{optRooms}
+			</select>
+			<input type="checkbox" name="double_banner" id="i_double_banner" value="{double_banner}" />
+			<label for="i_double_banner">Enable bottom banner</label>&nbsp;&nbsp;&nbsp;
+			<!--#
+			<input type="checkbox" name="promo_box_on" id="i_promo_box_on" value="{promo_box_on}" />
+			<label for="i_promo_box_on">Enable promo box</label>&nbsp;&nbsp;&nbsp;
+			-->
+		</dd>
+
+		<!--#
+		<dt><label for="i_promo_text">Text in the promo box</label></dt>
+		<dd >
+			<textarea rows="5" cols="60" name="promo_text" id="i_promo_text" >{promo_text}</textarea>
+			<div class="explain">Visible, if room above is selected and the checkbox "Enable promo box" is checked.</div>
+		</dd>
+		-->
+
+		<%if{showTwitter}%>
+		<dt><label for="i_twitter_text">Twitter message text</label></dt>
+		<dd >
+			<textarea rows="2" cols="60" name="twitter_text" id="i_twitter_text" class="count_chars_110">{twitter_text}</textarea>
+			<div class="explain">112 characters max. Short link to post will be added automatically at the end of the message.</div>
+		</dd>
+
+		<dt><label for="i_twitter_tags">Twitter Hashtags</label></dt>
+		<dd class="dd100">
+			<input type="text" name="twitter_tags" id="i_twitter_tags" value="{twitter_tags}" size="62" maxlength="255" />
+			<div class="explain">"#" Symbols will be appended automatically. Separate multiple tags with comma.</div>
+		</dd>
+		<%end%>
+
+		<%if{showFacebook}%>
+		<dt><label for="i_facebook_summary">Facebook post summary</label></dt>
+		<dd ><textarea rows="3" cols="60" name="facebook_summary" id="i_facebook_summary">{facebook_summary}</textarea></dd>
+		<%end%>
+
+		<% if {showGeoTarget} %>
+		<dt>Geo target <div class="explain">(for homepage list)</div></dt>
+		<dd>
+			<% loop {geo_zones} %>
+			<label><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="geo_target[]" value="{value}"  /> {name}</label><br />
+			<% end %><br />
+			<div class="explain">Item will be shown for users in checked countries, if at leat one is checked.</div>
+		</dd>
+		<% end %>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBackArticle}'" /></div>
+</form>
+
+<% end {viewList} %>
+
+<% show_article %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<table>
+	<tr>
+		<td class="turboLeft">
+			<div class="article">
+				<h1>{title}</h1>
+				<div class="date"><span style="color: #666;">{shortDate}</span>, {authors}</div>
+				<div style="min-height:180px;">
+					<img src="{imgSrc}" alt="" class="picture" />
+					{content_html}
+					<span class="clr"> </span>
+				</div>
+			</div>
+		</td>
+		<td class="turboRight">
+			<a href="{uriPrefix}{uri}{uriNumericSuffix}.htm" onclick="window.open('{uriPrefix}{uri}{uriNumericSuffix}.htm');return false;" class="newwindow">View in new window</a>
+			<a href="{goEditArticle}" class="editArticle">Edit article</a>
+
+			<% if {enableSendButton} %>
+				<% if {turbo_sent_cnt} %>
+					<span class="email">Newsletter was sent {turbo_sent_cnt} time(s).</span>
+				<% else {turbo_sent_cnt} %>
+					<span class="email">Newsletter has not been sent yet. <a href="{goShowSaved}" style="text-decoration: underline">Send now!</a></span>
+				<% end {turbo_sent_cnt} %>
+			<% end {enableSendButton} %>
+			
+			<%if{turbo_ic_spam_info}%>
+			<br /><br />
+			<strong>Spam score:</strong>
+			<div{spam_color}>Total: {turbo_ic_spam_score}</div>
+			{turbo_ic_spam_info}
+			<br /><br />
+			<div class="explain">Each message is SpamChecked on send. If the spam score is 5.0 or greater, the system will not send it. To correct a message which was given a high spam score, modify its content and then try to send the message again.</div>
+			<%end%>
+		</td>
+	</tr>
+<% loop {turbo_items+=turbo_item} %>
+<tr><td class="turboSep"></td></tr>
+<tr>
+	<td class="turboLeft">
+		<p><i><b>{title}</b></i></p>
+		{content_html}
+		<span class="clr"> </span>
+	</td>
+	<td class="turboRight">
+		<div class="explain"> <em>{saveAction}</em> {shortDate}</div><br />
+		<a href="{goEditTurbo}" class="show-edit-form editArticle">Edit article</a>
+		<a href="" onclick="confirmDelete('{goDeleteTurbo}');return false;" class="deleteArticle">Delete article</a>
+	</td>
+</tr>
+<% end {turbo_items} %>
+
+</table>
+<a id="add-new-story" href="#" class="button buttonAddNew clrfix" style="margin: 20px 0 0 0">Add new story</a>
+
+
+<% insert {formTurbo} %>
+<td class="turboLeft">
+<div <% if {hideForm} %>id="story-item-form" style="display: none;" <% end {hideForm} %>><!-- class="form-hidden" -->
+	<div class="tabzoneHeader clrfix" style="margin-top: 30px">
+		<h1>{formTitle}</h1>
+		<div class="formButton fr"><input type="button" name="cancel" value="Cancel" onclick="window.location.href='{goBackTurbo}'" /></div><span class="clr"></span>
+	</div>
+	<form action="{action}" class="aform" name="frm" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="event" value="{event}" />
+		<input type="hidden" name="id" value="{id}" />
+		<dl>
+			<dt><label for="i_title">Title</label></dt>
+			<dd class="w100"><input type="text" name="title" id="i_title" value="{title}" size="78" maxlength="255" class="required" /></dd>
+
+			<dt><label for="i_content_{id}">Text</label></dt>
+			<dd class="w100">{toolbar}
+				<textarea rows="15" cols="76" name="content" id="i_content_{id}" class="required" >{content}</textarea>
+			</dd>
+		</dl>
+		<div class="formButton clrfix"><input type="hidden" name="parent_id" value="{parent_id}" /><input type="submit" name="save" value="Save" /><input type="button" name="cancel" value="Cancel" onclick="window.location.href='{goBackTurbo}'" />{refresh}</div>
+	</form>
+</div>
+</td>
+<% end {formTurbo} %>
+
+<% show_saved %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goShowArticle}" class="goBack">Back to article</a>
+</div>
+
+<% if {enableSendButton} %>
+	<form action="{!action}" class="editForm" method="post" enctype="multipart/form-data" id="send-turbo-form" style="background: none;">
+		<div class="explain fl">
+			This is the preview of the newsletter. You can send newsletter now or later.<br /><br />
+			<i><strong>Note:</strong> The sending process may take time up to 30 seconds. <u>Please wait</u> until sending is completed</i>
+		</div>
+		<div class="formButton fr"><input type="submit" name="save" value="Send Newsletter" /><input type="button" name="cancel" value="Not now" onclick="window.location.href='{goShowArticle}'" /></div><span class="clr"></span>
+		<input type="hidden" name="event" value="{event}" />
+		<input type="hidden" name="id" value="{id}" />
+		{refresh}
+	</form>
+
+<% end {enableSendButton} %>
+<br /><br /><br />{newsletter_html}
+<!--
+<div class="box">
+	<div class="article">
+		<h1>{title}</h1>
+		<div class="date"><span style="color: #666;">{shortDate}</span>, {authors}</div>
+		<div>
+			<img src="{imgSrc}" alt="" class="picture" />
+			{content_html}
+
+			<% loop {turbo_items_saved+=turbo_item_saved} %>
+				<p><i><b>{title}</b></i></p>
+				{content_html}
+			<% end {turbo_items_saved} %>
+
+			<span class="clr"> </span>
+		</div>
+	</div>
+</div>
+-->
+
+<script type="text/javascript">
+/*<![CDATA[*/
+	var form = $('#send-turbo-form');
+	form.bind('submit', function(e){
+		form.find("input[type='submit']").attr('disabled', 'TRUE').val('Sending. Please wait...');
+	});
+/*]]>*/
+</script>
+
+<% newsletter_txt %>
+News Update {date}
+{title} ({url})
+
+******
+
+{contents}
+
+Read full story ({url})
+
+******
+
+
+See how others have the latest poker news at their finger tips - join us on Facebook (http://facebook.com/) and Twitter (http://twitter.com/)
+-Team PokerNews-
+
+
+******
+
+<% newsletter_html %>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>PokerNews: The Nightly Turbo</title>
+<style type="text/css">
+/*<![CDATA[*/
+table h2 {
+float:none;
+}
+/*]]>*/
+</style>
+
+</head>
+<body alink="#0098d9" bgcolor="#c0c0c0" link="#0098d9" text="#ffffff" vlink="#0098d9" style="background: #c0c0c0; font: 12px Arial, Helvetica, sans-serif; margin: 0; padding: 0;">
+	<table align="center" bgcolor="#00366b" width="860" style="font: 12px Arial, Helvetica, sans-serif;background: #00203f url('{homeUrl}i/nturbo/main_bg.jpg') no-repeat top;">
+		<tr>
+			<td width="75"></td>
+			<td width="710"><br><h1><a style="color: #FFFFFF;" href="{homeUrl}" title="Visit PokerNews.com"><img src="{homeUrl}i/nturbo/header_logos.png" alt="PokerNews: The Nightly Turbo" height="42" width="707"></a></h1></td>
+			<td width="75"></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td bgcolor="#002040" style="background: url('{homeUrl}i/nturbo/00040.png'); padding: 20px;">
+				<table summary="PokerNews.com menu links" valign="middle" width="100%" style="font-size: 14px;">
+					<tr bgcolor="#001020" style="background: url('{homeUrl}i/nturbo/00050.png');">
+						<td style="border-right: 1px solid #5c6670;"><a href="{homeUrl}news/" style="color: #ffffff; display: block; padding: 5px 25px; text-align: center; text-decoration: none;">News</a></td>
+						<td style="border-right: 1px solid #5c6670;"><a href="{homeUrl}play-poker/" style="color: #ffffff; display: block; padding: 5px 25px; text-align: center; text-decoration: none;">Play Poker</a></td>
+						<td style="border-right: 1px solid #5c6670;"><a href="{homeUrl}learn-poker/" style="color: #ffffff; display: block; padding: 5px 25px; text-align: center; text-decoration: none;">Learn Poker</a></td>
+						<td style="border-right: 1px solid #5c6670;"><a href="{homeUrl}live-reporting/" style="color: #ffffff; display: block; padding: 5px 25px; text-align: center; text-decoration: none;">Live Reporting</a></td>
+						<td style="color: #b3b8bd; font-size: 12px; font-style: italic; padding: 5px 5px 5px 50px; text-align: right;">
+							Follow us:
+							<a href="https://twitter.com/pokernews" title="Twitter" style="margin-left: 2px;"><img src="{homeUrl}i/nturbo/twitter_small.png" alt="Twitter" border="0" height="14" width="14" style="color: #FFFFFF;vertical-align: text-top;"></a>
+							<a href="http://www.facebook.com/pokernewsdotcom" title="Facebook" style="margin-left: 2px; margin-right: 2px;"><img src="{homeUrl}i/nturbo/facebook_small.png" alt="Facebook" border="0" height="14" width="14" style="color: #FFFFFF;vertical-align: text-top;"></a>
+							<a href="https://plus.google.com/117945828453116003974" title="Google +" style="margin-left: 2px; margin-right: 2px;"><img src="{homeUrl}i/nturbo/gplus_small.png" alt="Google +" border="0" height="14" width="14" style="color: #FFFFFF;vertical-align: text-top;"></a>
+							<a href="http://www.youtube.com/pokernewsdotcom" title="YouTube" style="margin-left: 2px;"><img src="{homeUrl}i/nturbo/youtube_small.png" alt="YouTube" border="0" height="14" width="14" style="color: #FFFFFF;vertical-align: text-top;"></a>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td bgcolor="#1a1a1a" style="background: #1a1a1a;">
+				<table style="font: 12px Arial, Helvetica, sans-serif;" cellpadding="20" summary="Nightly Turbo articles" valign="top" width="100%">
+					<tr valign="top">
+						<td colspan="2" style="border-bottom: 1px dotted #6c7072;"><a href="http://www.pokernews.com/poker-hotels/"><img src="http://www.pokernews.com/i/nt-hotels-banner.jpg" height="83" width="670"/></a></td>
+					</tr>
+					{contents}
+					<tr valign="top">
+						<td colspan="2">
+							<table bgcolor="#313131" cellpadding="20" width="100%" style="color: #ffffff; font-size: 12px; width: 100%;">
+								<tr>
+									<td>
+										<h2 style="color: #ffffff; font: 36px Arial, Helvetica, sans-serif; margin: 0; padding: 0;"><b><i>Follow Us</i></b></h2>
+										<p style="color: #ffffff; margin: 0; padding: 10px 0 0 0;"><i>If you're not following us on Twitter by now, you should be, and you should be a fan on Facebook. What are you waiting for?</i></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a href="https://twitter.com/pokernews" title="Twitter" style="color: #FFFFFF;margin-left: 10px;"><img src="{homeUrl}i/nturbo/twitter_big.png" alt="Twitter" border="0" height="59" width="57"></a>
+										<a href="http://www.facebook.com/pokernewsdotcom" title="Facebook" style="color: #FFFFFF;margin-left: 10px;"><img src="{homeUrl}i/nturbo/facebook_big.png" alt="Facebook" border="0" height="59" width="57"></a>
+										<a href="https://plus.google.com/117945828453116003974" title="Google +" style="color: #FFFFFF;margin-left: 10px;"><img src="{homeUrl}i/nturbo/gplus_big.png" alt="Google +" border="0" height="59" width="57"></a>
+										<a href="http://www.youtube.com/pokernewsdotcom" title="YouTube" style="color: #FFFFFF;margin-left: 10px;"><img src="{homeUrl}i/nturbo/youtube_big.png" alt="YouTube" border="0" height="59" width="57"></a>
+									</td>
+								</tr>
+							</table>
+							<br>
+							<a href="http://blogs.pokernews.com" style="color: #0098d9;">blogs.pokernews.com</a> 
+							<a href="{homeUrl}" style="color: #0098d9;">pokernews.com</a>
+							<br><br><br>
+						</td>
+					</tr>
+				</table>
+			</td>
+			<td></td>
+		</tr>
+	</table>
+</body>
+</html>
+
+<% newsletter_turbo_item %>
+<% if {leading_story} %>
+<tr valign="top">
+	<td style="border-bottom: 1px dotted #6c7072;">
+		<h2 style="font: 24px/32px Arial, Helvetica, sans-serif; margin: 0; padding: 0;"><a href="{url}" style="color: #ffffff; font: 24px/32px Arial, Helvetica, sans-serif;">{title}</a></h2>
+		<p style="color: #bbbbbb; margin: 0; padding: 10px 0;">{date}</p>
+		<table valign="top" width="100%" style="font: 12px Arial, Helvetica, sans-serif;">
+			<tr valign="top">
+				<td>
+					<a href="{url}"><img style="float:none;border:1px solid #000000;margin-right:20px;" src="{imgSrc}" alt="{imgAlt}" width="290" height="190"></a>
+				</td>
+				<td>
+					{contentHtml}
+				</td>
+			</tr>
+		</table>
+	</td>
+</tr>
+<% else {leading_story} %>
+<tr valign="top">
+	<td style="border-bottom: 1px dotted #6c7072;" colspan="2">
+		<h2 style="font: 24px/32px Arial, Helvetica, sans-serif; margin: 0; padding: 0;"><a href="{url}" style="color: #ffffff; font: 24px/32px Arial, Helvetica, sans-serif;">{title}</a></h2>
+		<p style="color: #ffffff; margin: 0; padding: 10px 0;">{contentHtml}</p>
+	</td>
+</tr>
+<% end %>
