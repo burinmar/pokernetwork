@@ -10,8 +10,8 @@ error2 = You can't change status of administrator!
 <% viewList %>
 <div class="tabzoneHeader clrfix">
 	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new user</a></div>
 </div>
-
 <!--# Filtro forma -->
 <% insert {filtras} %>
 	<form action="{!action}" method="post" class="filterForm{classIsOn}">
@@ -24,25 +24,16 @@ error2 = You can't change status of administrator!
 	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
 	</form>
 <% end {filtras}%>
-
-
 <!--# sarasas -->
 <% if {items} %>
 	<table class="list">
-	<colgroup>
-		<col />
-		<col />
-		<col />
-		<col style="width: 100px" />
-		<col style="width: 100px" />
-	</colgroup>
 	<thead>
 	<tr>
 		<th><a href="{orderby1}">Nick</a></th>
 		<th><a href="{orderby2}">Email</a></th>
 		<th><span>Name</span></th>
-		<th><a href="{orderby3}">Last login</a></th>
-		<th><a href="{orderby4}">Created</a></th>
+		<th style="width: 100px"><a href="{orderby3}">Last login</a></th>
+		<th style="width: 100px"><a href="{orderby4}">Created</a></th>
 	</tr>
 	</thead>
 	<tbody>
@@ -62,7 +53,191 @@ error2 = You can't change status of administrator!
 
 
 
+<% viewListAdmins %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+<!--# Filtro forma -->
+<% insert {filtrasA } %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Permissions:
+			<select name="filter[key]">
+				<option value=""></option>
+				<optgroup label="Admin Groups">
+					{agroups}
+				</optgroup>
+				<optgroup label="Permissions">
+					{permissions}
+				</optgroup>
+			</select></label>
+		</td>
+		<td><input type="submit" value="Filter" class="btFilter"/></td>
+		</tr></table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filtras}%>
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<table class="list">
+		<thead>
+		<tr>
+		<th><a href="{orderby1}">Nick</a></th>
+			<th><span>Permissions</span></th>
+			<th><span>E-mail, name</span></th>
+		<th><a href="{orderby2}">Created</a></th>
+		</tr>
+		</thead>
+		<tbody>
+		    <% loop{items += itemsA} %>
+				<tr class="{class}">
+					<td class="title"><a href="{goEdit}">{nick}</a></td>
+					<td>{agroup}&nbsp;</td>
+					<td>{email} <%if{name}%><span class="explain"> | {name}</span><%end%></td>
+				<td>{created}</td>
+				</tr>
+			<% end{items} %>
+			</tbody>
+		</table>
+	</form>
+<% else {items} %>
+	<p class="explain">There are no items</p>
+<% end {if} %>
+
+
+
 <% viewForm %>
+<script type="text/javascript">
+var rolesArr = new Array();
+{jsRolesArray}
+function changeRole(obj){
+	if (obj.value == -1){
+		//custom
+		jQuery("#custom").show();
+		jQuery("#predefined").hide();
+	}else{
+		jQuery("#custom").hide();
+		if (obj.value == 0){
+			//none
+			jQuery("#predefined").hide();
+		}else{
+			//predefined
+			if (rolesArr[obj.value] != undefined) {
+				var pHtml = '';
+				jQuery.each(rolesArr[obj.value], function() {
+					if (pHtml) {
+						pHtml += ', ';
+					}
+					pHtml += '<span class="box">';
+					pHtml += this;
+					pHtml += '</span>';
+				});
+				jQuery("#predefined").html(pHtml).show();
+			}
+		}
+	}
+}
+</script>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr">
+		<input type="submit" value="Save" /><input type="submit" value="Save &amp; Return" />
+	</div><span class="clr"></span>
+
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<!--# forma -->
+	<dl>
+
+	<dt><label for="i_nick">Nick</label></dt>
+	<dd>
+		<input type="text" name="nick" id="i_nick" value="{nick}" size="50" maxlength="60" class="required"/>
+		<div class="explain">4-50 characters.</div>
+	</dd>
+
+	<dt><label for="i_password">Password</label></dt>
+	<dd>
+		<input type="text" name="password" id="i_password" value="{password}" size="50" maxlength="60" />
+		<%if{id}%><div class="explain">Leave the field empty if you do not want to change the password of this user.</div><%end%>
+	</dd>
+
+	<dt><label for="i_email">E-mail</label></dt>
+	<dd>
+		<input type="text" name="email" id="i_email" value="{email}" size="50" maxlength="50" class="required"/>
+	</dd>
+
+	<dt><label for="i_name">Name</label></dt>
+	<dd>
+		<input type="text" name="name" id="i_name" value="{name}" size="50" maxlength="45" />
+	</dd>
+
+	<dt><label for="i_name">Status</label></dt>
+	<dd>
+		<select name="status">{status}</select>
+	</dd>
+
+	<dt><label for="i_name">Permissions</label></dt>
+	<dd>
+		<table id="sites">
+		<tr valign="top"{classRowHide} id="row">
+			<td>
+				<select name="role" onchange="changeRole(this)" style="margin-bottom: 10px"><option value="0"></option>{roles}</select> &nbsp;
+				<div id="predefined">{predefined}</div>
+				<div id="custom"{classHideCustom}>
+				<% loop{keys} %><label><input type="checkbox" name="keys[]" value="{key}" />{kName}</label>  <br /><% end%>
+				</div>
+			</td>
+		</tr>
+		</table>
+	</dd>
+
+	</dl>
+
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+
+</form>
+
+
+
+<% usedIP %>
+<h2 class="headline">IP addresses used by this user</h2>
+<p class="explain">Here are IP addresses listed from which user has been logged:</p>
+<%if {ipitems}%>
+	<table class="list" style="width:auto">
+		<colgroup>
+			<col />
+			<col width="80" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>IP</span></th>
+			<th><span class="order-desc">When</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		<%loop {ipitems}%>
+		<tr>
+			<td>&nbsp;{ip} &nbsp;</td>
+			<td>{created}</td>
+		</tr>
+		<%end%>
+		</tbody>
+	</table>
+	<%end%>
+
+
+
+<% viewFormView %>
 <div class="tabzoneHeader clrfix">
 	<h1>User: {nick}</h1>
 	<a href="{goBack}" class="goBack">Back to list</a>
@@ -74,8 +249,11 @@ error2 = You can't change status of administrator!
 	<h2 class="formTitle">{formTitle}</h2>
 	<span class="clr"></span>
 	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
-	<img src="{avatar}" height="200" border="0" alt="" class="fl" />
+	<!--
+<img src="{avatar}" height="200" border="0" alt="" class="fl" />
 	<dl style="margin-left: 220px">
+-->
+	<dl>
 		<dt><label>Email</label></dt>
 		<dd>{email}</dd>
 
@@ -98,6 +276,6 @@ error2 = You can't change status of administrator!
 		<dt><label>ID</label></dt>
 		<dd>{id}</dd>
 	</dl>
-	<div class="formButton clrfix" style="margin-left: 200px"><input type="button"  value="Back to list" onclick="window.location.href='{goBack}'" /></div>
+	<div class="formButton clrfix" style="margin-left: 0px"><input type="button"  value="Back to list" onclick="window.location.href='{goBack}'" /></div>
 
 </form>

@@ -55,7 +55,7 @@ class stats extends moon_com {
 			DATE_FORMAT(created, '%Y-%m') AS `year_month`,
 			COUNT(*) AS `registered`
 		FROM `".$this->table('Users')."`
-		WHERE status <> 'N' AND created <> '0000-00-00'
+		WHERE status = 1
 		GROUP BY `year_month`";
 
 		$result = array();
@@ -67,24 +67,6 @@ class stats extends moon_com {
 		return $result;
 	}
 
-    // kazkuris saitas uþklausia savo statistikos. naudoja per call_pn_event
-	function getStatsForRemote($siteID) {
-		$sql =
-		"SELECT
-			DATE_FORMAT(p.created, '%Y-%m') AS `year_month`,
-			COUNT(*) AS `registered`
-		FROM `users`, users_portals p
-		WHERE id=user_id AND site_id='". $this->db->escape($siteID) ."' AND `status` <> 'N'
-		GROUP BY `year_month`";
-
-		$result = array();
-		$dbResult = $this->db->query($sql);
-		while ($row = $this->db->fetch_row_assoc($dbResult)) {
-			list($year, $month) = explode("-", $row["year_month"]);
-			$result[$year][(int)$month] = $row["registered"];
-		}
-		return $result;
-	}
 
 }
 

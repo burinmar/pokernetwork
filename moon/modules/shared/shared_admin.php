@@ -145,7 +145,7 @@ class shared_admin {
 			}
 			$d = array();
 			foreach ($a as $k => $v) {
-				$d['isOn'] = ($k == $active) ? ' class="on"' : '';
+				$d['isOn'] = ($k == $active) ? ' class="active"' : '';
 				if (is_array($replace)) {
 					foreach ($replace as $kk => $vv) {
 						$v['name'] = str_replace($kk, $vv, $v['name']);
@@ -160,6 +160,7 @@ class shared_admin {
 		}
 		$page = & moon :: page();
 		$page->set_local('admin.subMenu', $r);
+		return $r;
 	}
 
 
