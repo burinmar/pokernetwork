@@ -79,7 +79,7 @@ class output extends moon_com {
 			'lang' => $loc->language(),
 			'title' => htmlspecialchars($title),
 			'head.tags' => $p->get_local('head.tags'),
-			'main.css-timestamp' => filemtime('i/style.css')
+			'main.css-timestamp' => filemtime('css/style.css')
 		);
 		$p->head_link('/favicon.ico', 'favicon');
 

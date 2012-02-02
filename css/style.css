@@ -17,7 +17,7 @@ td {vertical-align: top}
 th {text-align: left; font-weight: normal}
 p {margin-bottom: 10px; color: #000}
 .noMarginBottom {margin-bottom: 0 !important}
-.noMarginRight {margin-right: 0 !important}
+.noMarginRight {margin-right: 0 !important}	
 .noPadding {padding: 0 !important}
 input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
@@ -182,12 +182,12 @@ html {
 		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.8);
 		box-shadow: 0 0 5px rgba(0,0,0,0.8);
 		position: relative;
-		background: #013097 url('i/header.jpg');
+		background: #013097 url('/i/header.jpg');
 		height: 116px;
 		z-index: 20;
 	}
 		a.siteLogo {
-			background: url('i/logo.png') no-repeat 0 0;
+			background: url('/i/logo.png') no-repeat 0 0;
 			color: #d4e7ff;
 			font-size: 12px;
 			font-weight: bold;
@@ -341,7 +341,7 @@ html {
 			font-size: 11px;
 		}
 			#footer .fl p {
-				background: url('i/logo-footer.png') no-repeat 0 0;
+				background: url('/i/logo-footer.png') no-repeat 0 0;
 				line-height: 14px;
 				padding-top: 60px;
 				margin-top: -20px;
@@ -350,7 +350,7 @@ html {
 			}
 			#footer .fl b {text-transform: uppercase;}
 			#footer .socialIcons a {
-				background-image: url('i/social-footer.png');
+				background-image: url('/i/social-footer.png');
 				float: left;
 				width: 22px;
 				height: 22px;
@@ -409,11 +409,11 @@ html {
 			position: absolute;
 			width: 100%;
 		}
-		.wHalf {background-image: url('i/body-bg-half.png')}
+		.wHalf {background-image: url('/i/body-bg-half.png')}
 			.wHalf .left {width: 481px}
 			.wHalf .right {width: 517px}
-		.wFull {background-image: url('i/body-bg-full.png')}
-		.wCol {background-image: url('i/body-bg-col.png')}
+		.wFull {background-image: url('/i/body-bg-full.png')}
+		.wCol {background-image: url('/i/body-bg-col.png')}
 			.wCol .left {width: 515px}
 			.wCol .right {width: 483px}
 		
@@ -451,7 +451,7 @@ html {
 				.wHalf .right .widgetW50 {width: 238px} /*.wHalf .left .widgetW50 {width: 220px}*/
 			
 			.pageIntro, .darkBannerZone {
-				background: url('i/body-bg-fulldark.png');
+				background: url('/i/body-bg-fulldark.png');
 				margin: -10px -10px 20px;
 				padding: 10px 10px 1px;
 			}
@@ -547,7 +547,7 @@ html {
 	}
 	.liveReportingIndexBox .tourBanner:after {
 		content: '';
-		background: url('i/live.png');
+		background: url('/i/live.png');
 		width: 67px;
 		height: 69px;
 		position: absolute;
@@ -729,7 +729,7 @@ html {
 	.roomsList .os {line-height: 20px}
 		.os span {
 			display: inline-block;
-			background-image: url('i/os.png');
+			background-image: url('/i/os.png');
 			width: 20px;
 			height: 20px;
 			vertical-align: top;
