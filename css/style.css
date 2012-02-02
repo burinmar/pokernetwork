@@ -123,6 +123,7 @@ fieldset {
 	}
 	.stepper .prev {margin: 5px 13px 0 11px;}
 	.stepper .next {background-position: top right}
+
 /*Forms*/
 input[type="text"], input[type="password"], input[type="file"] {
 	padding: 3px 7px;
@@ -449,18 +450,25 @@ html {
 			.widgetW50.sep {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAEMR9hLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABNJREFUeNpiuHHtOECAMXz+9BoAFH8FRpwJ+yQAAAAASUVORK5CYII=') repeat-y top right}
 				.wHalf .right .widgetW50.fl {width: 239px} /*.wHalf .left .widgetW50.fl {width: 221px}*/
 				.wHalf .right .widgetW50 {width: 238px} /*.wHalf .left .widgetW50 {width: 220px}*/
+			.path {
+				background: url('/i/path.png');
+				padding: 4px 10px;
+			}
+				.path a {color: #0050bd}
+				.path .current {color: #858585}
+			.pageIntro {
+				border-bottom: 1px solid #d8d6c7;
+				margin: 0 -10px 15px;
+				padding: 0 10px 5px;
+			}
+				.pageTitle {
+					color: #000;
+					font-size: 16px;
+					margin-bottom: 15px;
+				}
 			
-			.pageIntro, .darkBannerZone {
-				background: url('/i/body-bg-fulldark.png');
-				margin: -10px -10px 20px;
-				padding: 10px 10px 1px;
-			}
-			.pageTitle {
-				color: #000;
-				font-size: 16px;
-				margin-bottom: 10px;
-			}
 .filterTabs {
+	margin-top: -15px;
 	margin-bottom: 20px;
 	line-height: 28px;
 	text-transform: uppercase;
