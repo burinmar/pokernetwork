@@ -1,0 +1,253 @@
+<% info %>
+err3={!profile_err3}
+err4={!profile_err4}
+err5={!profile_err5}
+err6={!profile_err6}
+err7={!profile_err7}
+err8={!profile_err8}
+err20={!profile_err20}
+err21={!profile_err21}
+err22={!profile_err22}
+err23={!profile_err23}
+err30={!profile_err30}
+err31={!profile_err31}
+err32={!profile_err32}
+err51={!profile_err51}
+
+changeEmailMsg={!changeEmailMsg}
+
+okSettings = {!okSettings}
+okPassword = {!okPassword}
+okNotifications = {!okNotifications}
+okForum = {!okForum}
+okForumSubscriptions = {!okForumSubscriptions}
+
+
+<% tabs %>
+tab1 = # | {!tab1}
+tab2 = #password | {!tab2}
+tab3  #notifications | {!tab3}
+tab5  #forum-subscriptions | {!tab5}
+tab4  #forum | {!tab4}
+
+
+<% main %>
+	<h1>{pageTitle}</h1>
+	<ul class="navigationButtons">
+	<%loop{tab-item}%>
+		<%if{on}%>
+		<li><a href="{url}" class="current">{name}</a></li>
+		<%else{on}%>
+		<li><a href="{url}">{name}</a></li>
+		<%end%>
+	<%end%>
+	</ul>
+
+	{page}
+
+
+
+<% viewAnonymous %>
+<p class="widgetIntro">{!not_loged_in}</p>
+
+
+<% viewSaved %>
+<p class="successMessage">{msg}</p>
+<p class="backLink"><a href="{!action}">{!back}</a></p>
+
+
+<% viewSettings %>
+	<h1>{!tab1}</h1>
+	<div class="widget forms">
+
+	<form id="editProfilePersonalInformation" action="{!action}" method="post" enctype="multipart/form-data">
+	<%if{error}%><p class="error">{error}</p><%end%>
+
+		<input type="hidden" name="MAX_FILE_SIZE" value="204800" />
+		<input type="hidden" name="event" value="{event}" />{refresh}
+		<input type="hidden" name="id" value="{id}" />
+
+    	<div class="photo">
+			<label>{!photo}</label>
+			<%if{avatarSrc}%>
+			<img src="{avatarSrc}" border="0" alt="" />
+			<%else{avatarSrc}%>
+			<img src="/img/avatar-200x200.png" width="200" height="200" border="0" alt="" />
+			<%end%>
+			<label style="color: #000">{!upload} <input type="file" id="avatar" size="35" name="avatar"></label>
+			<em class="tip">{!recommended}</em><span class="clr"></span>
+			<%if{avatarSrc}%><label><input type="checkbox" name="del_avatar" id="delAvatar" value="1" /> {!delete}</label><%end%>
+		</div>
+
+		<div class="col fl">
+			<label for="email"><img style="vertical-align: center; position: relative; top: 3px" src="/img/important.png" title="{!email_tip}" /> {!email}</label>
+			<input type="text" name="email" id="email" value="{email}" maxlength="50" />
+			<label for="realname">{!name}</label>
+			<input type="text" name="name" id="realname" value="{name}" maxlength="32" />
+
+			<label for="year">{!birth_date} <em>(YYYY/MM/DD)</em></label>
+			<input class="date" type="text" id="year" name="birthdate[y]" value="{birthdate[y]}" size="4" maxlength="4" />
+			<select id="month" name="birthdate[m]" class="date">
+				{birthdate[m]}
+			</select>
+			<input class="date" type="text" id="day" name="birthdate[d]" value="{birthdate[d]}" size="2" maxlength="2" />
+		</div>
+
+
+		<div class="col fr">
+
+			<label for="timezone">{!time_zone}</label>
+			<select name="timezone" id="timezone">{timezone}</select>
+
+			<label for="twitter">{!twitter_username}</label>
+			<input type="text" name="twitter" id="twitter" value="{twitter}" maxlength="15" />
+
+			<label for="homepage">{!homepage}</label>
+			<input type="text" name="homepage" value="{homepage}" id="homepage" maxlength="128" />
+
+			<label>{!gender}</label>
+			<label class="fl sex"><input type="radio" name="sex" value="{sex=M}" /> {!male}</label>
+			<label class="fl sex"><input type="radio" name="sex" value="{sex=F}" /> {!female}</label>
+
+		</div><span class="clr"></span>
+
+		<label for="about">{!about}</label>
+		<textarea name="about" id="about" cols="70" rows="8">{about}</textarea>
+
+		<button type="submit" class="actionButton">{!save}</button>
+	</form>
+	</div>
+
+
+	<h1>{!change_password}</h1>
+	<div class="widget forms">
+	<%if{errorPWD}%><p class="error">{errorPWD}</p><%end%>
+	<form id="editProfilePassword" action="{!action}#fpwd" method="post" id="fpwd">
+		<div class="col fl">
+			<input type="hidden" name="event" value="{event_pwd}" />{refresh}
+			<label id="currentPassword">{!old_password}</label><input type="password" name="password" value="{password}" size="30" />
+		</div>
+		<div class="col fr">
+			<label id="newPassword1">{!new_password}</label><input type="password" name="pass1" value="{pass1}" size="30" />
+			<label id="newPassword2">{!confirm_password}</label><input type="password" name="pass2" value="{pass2}" size="30" />
+		</div><span class="clr"></span>
+		<button type="submit" class="actionButton">{!save}</button>
+	</form>
+	</div>
+
+
+<% viewPassword %>
+<h1>{!change_password}</h1>
+	<div class="widget forms">
+	<%if{error}%><p class="error">{error}</p><%end%>
+	<form id="editProfilePassword" action="{!action}#fpwd" method="post" id="fpwd">
+		<div class="col fl">
+			<input type="hidden" name="event" value="{event}" />{refresh}
+			<label id="currentPassword">{!old_password}</label><input type="password" name="password" value="{password}" size="30" />
+		</div>
+		<div class="col fr">
+			<label id="newPassword1">{!new_password}</label><input type="password" name="pass1" value="{pass1}" size="30" />
+			<label id="newPassword2">{!confirm_password}</label><input type="password" name="pass2" value="{pass2}" size="30" />
+		</div><span class="clr"></span>
+		<button type="submit" class="actionButton">{!save}</button>
+	</form>
+	</div>
+
+
+<% viewNotifications %>
+	<%if{error}%><p class="error">{error}</p><%end%>
+	<form id="editProfileNotifications" action="{!action}" method="post">
+		<div>
+			<input type="hidden" name="event" value="{event}" />
+			<label><input type="checkbox" name="pm_mailnotify" id="pm_mailnotify" value="{pm_mailnotify}" /><span class="labelText"> {!notify_email}</span></label>
+
+			<%if{icontact}%>
+			<label><input type="checkbox" name="subscribe" id="subscribe" value="{subscribe}" /><span class="labelText"> {!notify_email2}</span></label>
+			<%end%>
+			<button type="submit" name="csave">{!save}</button>
+		</div>
+	</form>
+
+
+<% viewForumSubscriptions %>
+	<%if{error}%><p class="error">{error}</p><%end%>
+	<form id="editSubscriptions" action="{!action}" method="post">
+		<div>{!forum_subscription_notice}</div>
+		<div>
+			<input type="hidden" name="event" value="{event}" />{refresh}
+			<%if {list.subscribed} %>
+			{list.subscribed}
+			<button type="submit">{!unsubscribe}</button>
+			<%else {list.subscribed}%>
+			<label>{!not_subscribed}</label>
+			<%end%>
+		</div>
+	</form>
+
+<% viewForumSubscriptionsItem %>
+	<label><input type="checkbox" name="id[{id}]" value="1" /><span class="labelText"> <a href="{url}">{title}</a></span></label>
+
+
+
+<% viewForum %>
+	<form id="editProfileForumSettings" action="{!action}" method="post">
+		<div>
+			<input type="hidden" name="event" value="{event}" />
+			<label><span class="labelText">{!signature}</span>
+				<textarea name="forum_signature" rows="3" cols="91" id="signatureIn">{forum_signature}</textarea>
+			</label>
+			<table cellpadding="0" cellspacing="0">{tools}</table>
+			<span class="label">
+				<span class="labelText">{!forum_posts} </span>
+				<label id="forumPaging"><input type="radio" name="forum_paging" value="{paging20}" checked="checked" /> 20</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label id="forumPaging"><input type="radio" name="forum_paging" value="{paging50}" /> 50</label>&nbsp;&nbsp;&nbsp;&nbsp;
+				<label id="forumPaging"><input type="radio" name="forum_paging" value="{paging100}" /> 100</label>
+			</span>
+			<button type="submit" name="csave">{!save}</button>
+		</div>
+	</form>
+<script type="text/javascript">
+/*<![CDATA[*/
+function caretTracker()
+{
+	if (this.createTextRange) this.caretPos = this.document.selection.createRange().duplicate();
+	else if (typeof(this.selectionStart) != "undefined") this.caretPos = this.selectionStart;
+}
+jQuery('#signatureIn').bind('click select keyup', caretTracker);
+
+function justInsert(str) {
+	var t = jQuery('#signatureIn').get(0);
+	if (t) {
+		if (t.createTextRange && t.caretPos) {
+			t.caretPos.text = str;
+		}
+		else if (typeof(t.selectionStart) != "undefined" && typeof(t.caretPos) != "undefined") {
+            var scrollHeight = t.scrollHeight;
+    		var scrollTop = t.scrollTop;
+			var s = t.value.substr(0, t.caretPos) + str + t.value.substr(t.caretPos + t.selectionEnd - t.selectionStart);
+			t.value = s;
+			t.caretPos = t.caretPos + str.length;
+			t.setSelectionRange(t.caretPos, t.caretPos);
+			t.caretPos = t.selectionStart;
+            if (scrollTop) {
+      			t.scrollTop = scrollTop + (t.scrollHeight - scrollHeight);
+    		}
+		} else {
+			t.value = str + t.value;
+		}
+		t.focus();
+	}
+}
+/*]]>*/
+</script>
+
+
+<% mailChangeHeaders%>
+from=CasinoGrinder.com <info@casinogrinder.com>
+subject={!confirm_change_email}
+
+
+<% mailChange %>
+{!change_email_click}
+{url.change}
+{!clicking_not_working}

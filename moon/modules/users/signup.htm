@@ -1,0 +1,229 @@
+<% info %>
+title = {!register}
+titleLogin = {!sign_in}
+
+err101 = {!su_err101}
+err102 = {!su_err102}
+err103 = {!su_err103}
+err104 = {!su_err104}
+err105 = {!su_err105}
+err106 = {!su_err106}
+err1 = {!su_err1}
+err2 = {!su_err2}
+err3 = {!su_err3}
+err4 = {!su_err4}
+err5 = {!su_err5}
+err6 = {!su_err6}
+err7 = {!su_err7}
+err8 = {!su_err8}
+err9 = {!su_err9}
+err10 = {!su_err10}
+err13 = {!su_err13}
+
+<% viewSignup %>
+<!--# CREATE ACCOUNT form -->
+<div class="widget simpleWidget forms">
+	<form method="post" action="{!action}">
+	<input type="hidden" name="event" value="{eventCreate}" />
+		<%if{error2}%><p class="error">{error2}</p><%end%>
+		<p><b>{!register}</b></p>
+		<div class="col fl">
+			<label for="name">{!username}*</label>
+			<input type="text" class="altStyle" name="nick" value="{nick}" maxlength="15" id="name" />
+
+			<label for="password">{!tab2}</label>
+			<input type="password" class="altStyle" name="password" value="{password}" id="password" />
+		</div>
+		<div class="col fr">
+			<label for="email">{!email}*</label>
+			<input type="text" class="altStyle" name="email" value="{email}" id="email" maxlength="50" />
+
+			<label for="confirmpassword">{!retype}</label>
+			<input type="password" class="altStyle" name="password2" value="{password2}" id="confirmpassword" />
+		</div><span class="clr"></span>
+		<em class="tip">{!case_sensitive}</em>
+		<label class="smalltext"><input type="checkbox"  name="subscribe" value="{subscribe}" /> {!like_recieve}</label>
+		<label class="smalltext"><input type="checkbox"  name="toc" value="{toc}" id="acceptTOC" /> {!must_accept}</label>
+
+		<div class="captcha"><label for="reg-captcha" class="smalltext">{!verify}</label> <img width="103" height="32" id="imgCaptcha" alt="CAPTCHA image" <%if{srcCaptcha}%>src="{srcCaptcha}"<%end%> /> <span><input type="text" class="captchaField" name="code" value="{code}"  id="reg-captcha" /></span></div><span class="clr"></span>
+
+		<button type="submit" class="actionButton">{!submit}</button>
+	</form>
+</div>
+
+
+<% jsSignup %>
+<div class="form registration">
+	<form method="post" action="{!action}" id="formSignUp">
+	<input type="hidden" name="event" value="{eventCreate}" />
+		<dl>
+			<dt><label for="reg-username">{!username}</label></dt>
+			<dd><input type="text" class="altStyle" name="nick" value="{nick}" maxlength="15" id="reg-username" /></dd>
+			<dt><label for="reg-email">{!email}</label></dt>
+			<dd><input type="text" class="altStyle" name="email" value="{email}" id="reg-email" maxlength="50" /></dd>
+			<dt><label for="reg-password">{!tab2}</label></dt>
+			<dd><input type="password" class="altStyle" name="password" value="{password}" id="reg-password" /></dd>
+			<dt><label for="reg-password">{!retype}</label></dt>
+			<dd><input type="password" class="altStyle" name="password2" value="{password2}" id="reg-password2" /> <em class="tip">{!case_sensitive}</em></dd>
+			<dt>&nbsp;</dt>
+			<dd class="agree">
+				<label><input type="checkbox"  name="subscribe" value="{subscribe}" /> {!like_recieve}</label>
+				<label><input type="checkbox"  name="toc" value="{toc}" id="acceptTOC" /> {!must_accept}</label>
+				<em class="tip errorTip"></em>
+			</dd>
+			<dt><span class="clr"></span><label for="reg-captcha">{!verify}</label></dt>
+			<dd class="captcha">
+				<img width="103" height="32" id="imgCaptcha" alt="CAPTCHA image"  <%if{srcCaptcha}%>src="{srcCaptcha}"<%end%> /> <span><input type="text" id="reg-captcha" value="{code}" name="code" /></span>
+				<em class="tip errorTip"></em>
+			</dd>
+			<dt>&nbsp;</dt>
+			<dd><button type="submit">{!submit}</button></dd>
+		</dl>
+	</form>
+</div>
+
+
+
+<% viewLogin %>
+<!--# LOGIN form -->
+<div class="widget simpleWidget forms">
+	<form action="{!action}" method="post">
+		<%if{error}%><p class="error">{error}</p><%end%>
+		<input type="hidden" name="event" value="{eventLogin}" />
+		<p><b>{!sign_in}</b></p>
+		<div class="col fl">
+			<label for="name">{!username}*</label>
+			<input type="text" name="nick" value="{nick}" class="altStyle hasPlaceholder" title="{!username}" id="name" />
+		</div>
+		<div class="col fr">
+			<label for="password">{!tab2}</label>
+			<input type="password"  name="password"  value="{password}" class="altStyle hasPlaceholder" title="{!tab2}" id="password" />
+		</div><span class="clr"></span>
+		<em class="tip">{!case_sensitive}</em>
+		<label class="smalltext"><input type="checkbox" name="remember" value="{remember}" /> {!remember_me}</label>
+		<a href="{url.forgot}" id="urlForgot">{!forgot_password}</a>
+		<button type="submit" class="actionButton">{!sign_in}</button>
+	</form>
+</div>
+
+
+
+<% jsLogin %>
+<div class="form login">
+	<form action="{!action}" method="post">
+		<input type="hidden" name="event" value="{eventLogin}" />
+		<input type="text" name="nick" value="{nick}" class="altStyle hasPlaceholder" title="{!username}" />
+		<input type="password"  name="password"  value="{password}" class="altStyle hasPlaceholder" title="{!tab2}" />
+		<em class="tip">{!case_sensitive}</em>
+		<label><input type="checkbox" name="remember" value="{remember}" /> {!remember_me}</label>
+		<a href="{url.forgot}" id="urlForgot">{!forgot_password}</a>
+		<button type="submit">{!sign_in}</button>
+	</form>
+</div>
+
+
+<% viewActivation %>
+<div class="widget simpleWidget forms">
+	<h1>{!last_step}</h1>
+	<p>{!almost}</p>
+	<p>{!almost2}</p>
+	<p>{!almost3}</p>
+	<%if{error1}%><p class="error">{error1}</p><%end%>
+	<form action="{!action}" method="post" id="fLogin">
+		<div>
+			<input type="hidden" name="event" value="{eventActivate}" />
+			<label>{!activation_code}</label> <input type="text" name="code" value="{code}" size="15">
+			<span class="clr"></span>
+			<a href="{url.resend}" style="text-decoration: underline">{!resend}</a>
+			<button type="submit" class="actionButton">{!activate}</button>
+		</div>
+	</form>
+</div>
+<div class="widget simpleWidget forms">
+	<h1>{!trouble}</h1>
+	<p>{!trouble1}</p>
+	<p>{!trouble2}</p>
+	<p>{!trouble3}</p>
+	<%if{error2}%><p class="error">{error2}</p><%end%>
+	<form action="{!action}" method="post" id="fSignin">
+		<div>
+			<input type="hidden" name="event" value="{eventChangeEmail}" />
+			<label>{!your_email}</label> <input type="text" name="email" value="{email}" size="35" maxlength="50" />
+			<button type="submit" class="actionButton">{!change}Change</button>
+		</div>
+	</form>
+</div>
+
+<% mailActivationHeaders %>
+mail_subject = {!activation_mail_subject}
+mail_from = CasinoGrinder.com <info@casinogrinder.com>
+
+<% mailActivation %>
+{!welcome}
+
+{!activation-text}
+
+{!activation_link}:
+{url_activate}
+
+{!activation_code}:
+{code}
+
+{!activation_thanks}
+
+{!team}
+
+----
+{!mailtip_forgot}
+{url_password}
+
+{!recieve_reason}
+
+
+<%javascript%>
+error.messages = {
+{jsErrors}
+};
+function signupInsertDropdown(id, html)
+{
+	if(jQuery.browser.msie && !(jQuery.browser.opera) && (parseInt(jQuery.browser.version) < 7)) return; // ignore IE6 and lower
+	var div ='';
+	/*div = '<div class="headerDropdown"><div class="ctr"></div><div class="cbl"></div><div class="cbr"></div>' + html;
+	div += '<a href="" class="hideDropdown" onclick="return(!($(this).parent().parent().removeClass(\'expanded\')));"></a>';
+	div += '</div>';
+	*/
+	div = html;
+	var li = $(id);
+	//li.addClass('expanding');
+	$('a', li).after(div);
+	$('a', li).click(function(e) {
+		var clickedEl = e.srcElement ? e.srcElement : e.target;
+		if (!clickedEl.id || (clickedEl.id != "urlForgot" && clickedEl.id != "terms-conditions")) {
+			this.blur();
+			$(this).parent().siblings().removeClass('active');
+			$(this).parent().toggleClass('active');
+			return false;
+		}
+	});
+	if (id.indexOf('createAccount')) {
+        $('a', li).click(function() {
+			var i = $('img#imgCaptcha');
+			if (!i.attr('src')) {
+				i.attr('src', '{srcCaptcha}');
+			}
+		});
+	}
+}
+$(document).ready(function (){
+	signupInsertDropdown('#toolbar ul.user > li.signIn', "{fLogin}");
+	signupInsertDropdown('#toolbar ul.user > li.createAccount', "{fSignup}");
+
+	var context = $('#formSignUp');
+	//prikabinam
+	//$('input', context).focus(error.evFocus);
+	$('input', context).blur(error.evBlur);
+	$(context).submit(error.evSubmit);
+	if (fixPlaceholders) {
+		fixPlaceholders();
+	}
+});
