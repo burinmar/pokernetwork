@@ -12,6 +12,11 @@ News {ico=news, admin=content}
 	articles.authors = Authors
 	articles.tags = Tags
 
+Users {ico=users, admin=users}
+	users.users=Users
+	users.admins=Administrators
+	users.stats=Stats
+
 System {ico=system, admin=developer}
 	sys.errors404=404 errors
 	#sys.permissions=Permissions {admin=}

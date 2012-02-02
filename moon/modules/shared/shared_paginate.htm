@@ -1,16 +1,26 @@
-﻿<% default %>
-active=<a href="{url}" class="pnSliderPager"></a>&nbsp;
-inactive=<a href="{url}" class="pnSliderPager current"></a>&nbsp;
+<% default %>
+active=<a href="{url}" class="page">{pgv}</a>
+inactive=<span class="page current">{pgv}</span>
 
 
 <% nav_block %>
 <%if{puslapiai}%>
-<div class="pagerLine">
-<div class="SliderPager">
-	{puslapiai}
-</div>
-</div>
+<p class="paging">
+	<span class="a11y">Pages </span>
+	<%if{goPrev}%>
+		<a class="prev" href="{goPrev}"><span class="a11y">Previous</span></a>
+	<%else{goPrev}%>
+		<span class="prev"><span class="a11y">Previous</span></span>
+	<%end%>
+    {puslapiai}
+	<%if{goNext}%>
+		<a class="next" href="{goNext}"><span class="a11y">Next</span></a>
+	<%else{goNext}%>
+		<span class="next"><span class="a11y">Next</span></span>
+	<%end%>
+</p>
 <%end%>
+
 
 
 <% default_adm %>

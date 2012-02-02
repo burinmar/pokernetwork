@@ -1,0 +1,103 @@
+﻿<% info %>
+titleNew=New user
+titleEdit=Edit user
+
+404=Item not found!
+error1 = Can't connect to database!
+error2 = You can't change status of administrator!
+
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+
+<!--# Filtro forma -->
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table><tr>
+		<td><select name="filter[kur]">{kur}</select>: <input type="text" name="filter[text]" value="{text}" size="20" maxlength="30"/></td>
+		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show inactive</label></td>
+		<td><input type="submit" value="Filter" /></td>
+		</tr></table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filtras}%>
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<table class="list">
+	<colgroup>
+		<col />
+		<col />
+		<col />
+		<col style="width: 100px" />
+		<col style="width: 100px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<th><a href="{orderby1}">Nick</a></th>
+		<th><a href="{orderby2}">Email</a></th>
+		<th><span>Name</span></th>
+		<th><a href="{orderby3}">Last login</a></th>
+		<th><a href="{orderby4}">Created</a></th>
+	</tr>
+	</thead>
+	<tbody>
+		<% loop{items} %>
+			<tr class="{class}">
+				<td><a href="{goEdit}">{nick}</a></td>
+				<td>{email}</td>
+				<td>{name}</td>
+				<td>{login_date}</td>
+				<td>{created}</td>
+			</tr>
+		<% end{items} %>
+	</tbody>
+	</table>
+	{puslapiai}
+<% end {if} %>
+
+
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>User: {nick}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<img src="{avatar}" height="200" border="0" alt="" class="fl" />
+	<dl style="margin-left: 220px">
+		<dt><label>Email</label></dt>
+		<dd>{email}</dd>
+
+		<%if{name}%>
+		<dt><label>Name</label></dt>
+		<dd>{name}</dd>
+		<%end%>
+
+		<dt><label>Status</label></dt>
+		<dd> {status}</dd>
+
+		<dt><label>Created on</label></dt>
+		<dd>{created}</dd>
+
+		<%if{login_date}%>
+		<dt><label>Last login</label></dt>
+		<dd>{login_date}</dd>
+		<%end%>
+
+		<dt><label>ID</label></dt>
+		<dd>{id}</dd>
+	</dl>
+	<div class="formButton clrfix" style="margin-left: 200px"><input type="button"  value="Back to list" onclick="window.location.href='{goBack}'" /></div>
+
+</form>
