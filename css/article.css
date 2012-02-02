@@ -2,15 +2,15 @@
 .article h1 {
 	font-size: 18px;
 	line-height: 20px;
-	color: #0050bd;
+	color: #000;
 	margin-bottom: 10px;
 }
 .article h2 {
-	font-size: 16px;
-	margin-bottom: 10px;
+	font-size: 13px;
+	margin: 10px 0 15px;
 }
 .article .meta {margin-bottom: 20px; color: #858585}
-.article p {margin-bottom: 20px}
+.article p {margin-bottom: 15px}
 .article ul {
 	list-style-type: square;
 	margin-bottom: 20px;
@@ -115,17 +115,13 @@
 .article .followAuthor img {vertical-align: middle; margin-left: 5px}
 
 
-.leadingPhoto {
-	padding: 10px 10px 10px 12px;
-	margin-left: -2px;
+.leadingPhoto img {border: 1px solid #0b57be;}
+.leadingPhoto em {
+	font-size: 11px;
+	line-height: 12px;
+	display: block;
+	margin-top: 10px
 }
-	.leadingPhoto img {border: 1px solid #0b57be;}
-	.leadingPhoto em {
-		font-size: 11px;
-		line-height: 12px;
-		display: block;
-		margin-top: 10px
-	}
 .tags {font-size: 13px}
 .relatedPlayers li, .relatedTours li {
 	float: left;

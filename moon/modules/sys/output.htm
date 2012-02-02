@@ -1,12 +1,11 @@
 <% common_header %>
-<!DOCTYPE html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<base href="{home_url}" />
 	<title>{title}</title>
-{head.tags}
 	<link rel="stylesheet" href="/css/style.css?{main.css-timestamp}" type="text/css" media="screen" />
 	<% if {googleID} %>
 		<script type="text/javascript">
@@ -21,6 +20,7 @@
 		})();
 		</script>
 	<% end %>
+	{head.tags}
 </head>
 
 

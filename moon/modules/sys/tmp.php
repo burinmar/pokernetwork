@@ -7,8 +7,9 @@ class tmp extends moon_com {
 		}
 		
 		$page = & moon :: page();
-		//$page->set_local('nobanners', 1);
 		$page->css('/css/article.css');
+		//$page->set_local('nobanners', 1);
+		
 
 		$navi = & moon :: shared('sitemap');
 		$navi->on('none');

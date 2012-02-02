@@ -79,13 +79,13 @@ fieldset {
 	border: 0 none;
 	border-top: 1px solid #d8d6c7;
 	padding-top: 10px;
-}
+} .right fieldset {border-color: #b6b4a8}
 	legend {
 		padding-right: 10px;
 		font-weight: bold;
 		text-transform: uppercase;
 		color: #a9a79a;
-	}
+	} .right legend {color: #858585}
 .paging {
 	text-transform: uppercase;
 	font-weight: bold;
@@ -425,6 +425,10 @@ html {
 			margin-bottom: 10px;
 		}
 			.right .widget {color: #515151;}
+			.rightInsert {
+				padding: 10px 10px 10px 12px;
+				margin-left: -2px;
+			}
 			.widget .widgetTitle, .widgetTitle a, .widget .more {color: inherit}
 			.widget .widgetTitle, .widget .more {
 				font-size: 11px;
@@ -454,9 +458,12 @@ html {
 			.path {
 				background: url('/i/path.png');
 				padding: 4px 10px;
+				text-transform: uppercase;
+				color: #858585;
+				font-size: 11px;
 			}
-				.path a {color: #0050bd}
-				.path .current {color: #858585}
+				.path a {color: #0050bd; display: inline-block; vertical-align: text-top}
+				.path .current {color: inherit}
 			.pageIntro {
 				border-bottom: 1px solid #d8d6c7;
 				margin: 0 -10px 15px;
@@ -709,6 +716,52 @@ html {
 	}
 	#roomsIndexBox .roomsList ul {font-size: 11px}
 
+/*News list +  News Article*/
+.newsList {}
+	.newsList img {
+		float: left;
+		border: 1px solid #0b57be;
+	}
+	.newsList div {
+		margin-left: 145px;
+	}
+	.newsList .title {
+		line-height: inherit;
+	}
+	.newsList .meta {
+		color: #a9a79a;
+		font-weight: bold;
+		margin-bottom: 10px;
+	}
+
+.comments {}
+	.comments li {
+		margin-bottom: 20px;
+		min-height: 37px;
+		position: relative;
+	}
+		.comments li img {
+			float: left;
+			border: 1px solid #0b57be;
+		}
+		.comments li div {margin-left: 47px;}
+		.comments li .meta {margin-bottom: 5px}
+		.comments form {
+			border-top: 1px solid #dddbce;
+			margin: 0 -10px;
+			padding: 10px 10px 0;
+		}
+		.comments label {display: block}
+		.comments input[type="text"], .comments input[type="password"] {
+			margin-bottom: 10px;
+			margin-right: 20px;
+		}
+		.comments .adminTools {
+			position: absolute;
+			top: 0;
+			right: 0;
+		}
+
 /*Rooms - Reviews*/
 .twoColsList {
 	margin: 0 -10px !important;
@@ -757,22 +810,21 @@ html {
 			font-size: 22px;
 			color: #0050bd;
 		}
-	.roomsList h2 {
+	.roomsList h2, .review .rightInsert h2 {
 		margin-bottom: 15px;
 		clear: both;
 	}
-	.roomsList ul {
+	.roomsList ul, .review .rightInsert ul {
 		list-style: disc;
 		margin: 0 0 20px 20px;
 	}
 	.roomsList .ratings {
 		width: 250px;
 		margin: 15px 0 30px;
-		
 	}
 	.roomsList .ratings tr:last-child td {padding-top: 10px}
-		.roomsList .ratings .ratingBarBackground {
-			background: #d2d0c4 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAGCAIAAAH6dVPwAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAClJREFUeNpiunThCEAAMd2/ewkggJhuXDsJEGBMVy8fY2JnZ2diZeUAAJ8mCg3/Tk5XAAAAAElFTkSuQmCC') repeat-x;
+		.roomsList .ratings .ratingBarBackground, .review .ratings .ratingBarBackground {
+			background: #d2d0c4 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAHCAIAAAExKYBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACtJREFUeNpiunThCEAAMd29fR4ggJiuXz3BxMXFCxBgTFcuHWViY2MDYg4Avd8KImcaLSwAAAAASUVORK5CYII=') repeat-x;
 			display: block;
 			font-size: 1px;
 			height: 6px;
@@ -780,8 +832,8 @@ html {
 			border: 1px solid #d4d2bf;
 			margin-top: 5px;
 		}
-		.roomsList .ratings .ratingBar {
-			background: #004db6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAGCAIAAAH6dVPwAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAChJREFUeNpiMig8CRBATAx+OwECiIk74gBAgDEpph9juv/iGxPDv18AX/EJpIb5D9sAAAAASUVORK5CYII=') repeat-x;
+		.roomsList .ratings .ratingBar, .review .ratings .ratingBar {
+			background: #004db6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAHCAIAAAExKYBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAC1JREFUeNpiMig8CRBATAz+uwACiEks/jDTq3efAQKMSS3rONOtZ9+YGP79BgCXawyLzWyyngAAAABJRU5ErkJggg==') repeat-x;
 			display: block;
 			height: 6px;
 		}
@@ -799,49 +851,60 @@ html {
 		margin-bottom: 15px;
 		font-size: 18px;
 	}
-
-/*News list +  News Article*/
-.newsList {}
-	.newsList img {
-		float: left;
+.review {}
+	.review .commingPromos {
+		border-bottom: 1px solid #d8d6c7;
+		padding-bottom: 10px;
+	}
+		.review .commingPromos .promoImg {margin-bottom: 10px;}
+	.review .screenShots img {
 		border: 1px solid #0b57be;
+		float: left;
+		margin-left: 20px;
+	} .review .screenShots a:first-child img {margin-left: 0}
+	.review .depositOptions img {
+		vertical-align: middle;
+		margin: 0 5px 5px;
 	}
-	.newsList div {
-		margin-left: 145px;
-	}
-	.newsList .title {
-		line-height: inherit;
-	}
-	.newsList .meta {
-		color: #a9a79a;
-		font-weight: bold;
-		margin-bottom: 10px;
-	}
-
-.comments {}
-	.comments li {
-		margin-bottom: 20px;
-		min-height: 37px;
-		position: relative;
-	}
-		.comments li img {
+	.review dl {color: #000}
+		.review dt {
 			float: left;
-			border: 1px solid #0b57be;
+			font-weight: bold;
 		}
-		.comments li div {margin-left: 47px;}
-		.comments li .meta {margin-bottom: 5px}
-		.comments form {
-			border-top: 1px solid #dddbce;
-			margin: 0 -10px;
-			padding: 10px 10px 0;
+		.review dd {
+			margin-left: 160px;
 		}
-		.comments label {display: block}
-		.comments input[type="text"], .comments input[type="password"] {
-			margin-bottom: 10px;
-			margin-right: 20px;
-		}
-		.comments .adminTools {
-			position: absolute;
-			top: 0;
-			right: 0;
-		}
+	.review .freerolls {margin-bottom: 15px}
+	.review .freerolls li {
+		position: relative;
+		margin-top: 10px;
+		padding-top: 10px;
+		border-top: 1px solid #b6b4a8;
+	} .review .freerolls li:first-child {border: 0 none; padding: 0}
+	.review .freerolls .title {margin-bottom: 5px}
+	.review .freerolls .timeLeft {
+		position: absolute;
+		top: 20px;
+		right: 0;
+		color: #fff;
+		line-height: 20px;
+		padding: 0 5px;
+		background: #a92712;
+		font-weight:  bold;
+	}
+	.review .rightInsert h2 {font-size: 16px}
+	.review .ratings {
+		width: 100%;
+		margin-bottom: 20px;
+		border-bottom: 1px solid #d8d6c7;
+	}
+	
+		.review .ratings td {line-height: 20px}
+		.review .ratings .ratingBarBackground {
+				height: 7px;
+				width: 260px;
+				margin-top: 5px;
+			}
+			.review .ratings .ratingBar {height: 7px;}
+			.review .ratings b {font-size: 16px}
+			.review .ratings tr:last-child td {padding: 15px 0 10px}
