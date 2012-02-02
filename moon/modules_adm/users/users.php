@@ -1,8 +1,6 @@
 <?php
 
-
 class users extends moon_com {
-
 
 	function onload() {
 		$this->compA = $this->my('name') == 'admins';
@@ -10,7 +8,7 @@ class users extends moon_com {
 		/* form of item */
 		$this->form = & $this->form();
 		$this->form->names('id', 'nick', 'password', 'email', 'name', 'timezone', 'status', 'access');
-		$this->form->fill(array('status'=>1));
+		$this->form->fill(array('status' => 1));
 
 		/* form of filter */
 		$this->formFilter = & $this->form('hidden', 'text', 'kur');
@@ -20,13 +18,12 @@ class users extends moon_com {
 		$this->myTable = $this->table('Users');
 	}
 
-
-function events($event, $par) {
+	function events($event, $par) {
 		$this->use_page('Common');
 		switch ($event) {
 
-			case 'edit' :
-				$id = isset ($par[0]) ? intval($par[0]) : 0;
+			case 'edit':
+				$id = isset ($par[0]) ? intval($par[0]):0;
 				if ($id) {
 					if (count($values = $this->getItem($id))) {
 						$this->form->fill($values);
@@ -38,7 +35,7 @@ function events($event, $par) {
 				$this->set_var('view', 'form');
 				break;
 
-			case 'save' :
+			case 'save':
 				if ($id = $this->saveItem()) {
 					if (isset ($_POST['return'])) {
 						$this->redirect('#edit', $id);
@@ -52,9 +49,8 @@ function events($event, $par) {
 				}
 				break;
 
-
-			case 'filter' :
-				$filter = isset ($_POST['filter']) ? $_POST['filter'] : '';
+			case 'filter':
+				$filter = isset ($_POST['filter']) ? $_POST['filter']:'';
 				if ($this->compA) {
 					$this->set_var('filterA', $filter);
 				}
@@ -66,8 +62,7 @@ function events($event, $par) {
 				$this->forget();
 				break;
 
-
-			default :
+			default:
 				if (isset ($_GET['ord'])) {
 					if ($this->compA) {
 						$this->set_var('sortA', (int) $_GET['ord']);
@@ -84,16 +79,13 @@ function events($event, $par) {
 		}
 	}
 
-
 	function properties() {
 		return array('psl' => 1, 'filter' => '', 'filterA' => '', 'sort' => '', 'sortA' => '', 'view' => 'list');
 	}
 
-
 	function main($vars) {
 		$win = & moon :: shared('admin');
 		$win->active($this->my('fullname'));
-		//$win->submenu();
 		$page = & moon :: page();
 		$vars['pageTitle'] = $win->getTitle();
 		if ($vars['view'] == 'form') {
@@ -106,7 +98,6 @@ function events($event, $par) {
 			return $this->viewList($vars);
 		}
 	}
-
 
 	function viewList($vars) {
 		$t = & $this->load_template();
@@ -128,19 +119,18 @@ function events($event, $par) {
 		$selKur = array('nick' => 'Nick', 'email' => 'E-mail', 'name' => 'Name');
 		$fm = array();
 		$fm['text'] = $f->html_values('text');
-		//$fm['tag'] = $f->html_values('tag');
 		$fm['kur'] = $f->options('kur', $selKur);
 		$fm['hidden'] = $f->checked('hidden', 1);
 		$fm['goFilter'] = $this->my('fullname') . '#filter';
 		$fm['noFilter'] = $this->linkas('#filter');
 		$fm['isOn'] = '';
 		foreach ($filter as $k => $v) {
-			if ($k!='kur' && $v) {
+			if ($k != 'kur' && $v) {
 				$fm['isOn'] = 1;
 				break;
 			}
 		}
-		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on' : '';
+		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on':'';
 		$m['filtras'] = $t->parse('filtras', $fm);
 
 		/* generuojam sarasa */
@@ -159,7 +149,8 @@ function events($event, $par) {
 			$loc = & moon :: locale();
 			$now = $loc->now();
 			foreach ($dat as $d) {
-				$d['class'] = $d['status'] != 1 ? 'item-hidden' : '';
+				$d['class'] = $d['status'] != 1 ? 'item-hidden':'';
+				$d['admin'] = $d['status'] == 1 && $d['access'] ? 1:0;
 				$d['email'] = htmlspecialchars($d['email']);
 				$d['name'] = htmlspecialchars($d['name']);
 				$d['nick'] = htmlspecialchars($d['nick']);
@@ -175,10 +166,9 @@ function events($event, $par) {
 			}
 		}
 		$m['goNew'] = $this->linkas('#edit');
-		$m['goDelete'] = $this->my('fullname') . '#delete';
 		$m['pageTitle'] = htmlspecialchars($vars['pageTitle']);
 		$res = $t->parse('viewList', $m);
-		$save = array('psl' => $vars['psl'], 'sort' => (int) $vars['sort'], 'filterA'=>$vars['filterA'], 'sortA' => (int) $vars['sortA']);
+		$save = array('psl' => $vars['psl'], 'sort' => (int) $vars['sort'], 'filterA' => $vars['filterA'], 'sortA' => (int) $vars['sortA']);
 		foreach ($filter as $k => $v) {
 			if ($v !== '') {
 				$save['filter'] = $filter;
@@ -188,7 +178,6 @@ function events($event, $par) {
 		$this->save_vars($save);
 		return $res;
 	}
-
 
 	function viewAdmins($vars) {
 		$t = & $this->load_template();
@@ -230,7 +219,7 @@ function events($event, $par) {
 				break;
 			}
 		}
-		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on' : '';
+		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on':'';
 		$m['filtrasA'] = $t->parse('filtrasA', $fm);
 
 		/* generuojam sarasa */
@@ -239,37 +228,36 @@ function events($event, $par) {
 			/* sarasas */
 			$goEdit = $this->linkas('#edit', '{id}');
 			$t->save_parsed('itemsA', array('goEdit' => $goEdit));
-		$loc = & moon :: locale();
+			$loc = & moon :: locale();
 			$txt = & moon :: shared('text');
-		// kas as
-		$user = & moon :: user();
-		$iDeveloper = $user->i_admin('developer');
-		$sitemap = & moon :: shared('sitemap');
+			// kas as
+			$user = & moon :: user();
+			$iDeveloper = $user->i_admin('developer');
+			$sitemap = & moon :: shared('sitemap');
 			foreach ($dat as $d) {
 				$d['class'] = '';
-			$d['name'] = htmlspecialchars($d['name']);
+				$d['name'] = htmlspecialchars($d['name']);
 				$d['nick'] = htmlspecialchars($d['nick']);
-			$d['created'] = $loc->datef($d['created']);
-			if ($d['access']) {
-				$d['agroup'] = $d['access'];
-				$pos = strpos($d['agroup'], '@');
-				if ( $pos !== FALSE) {
-					$d['agroup'] = substr($d['agroup'], $pos);
-					list($d['agroup']) = explode(',', $d['agroup']);
-					$d['agroup'] = strtoupper(ltrim($d['agroup'], '@'));
-					if (!$iDeveloper && $d['agroup'] === 'DEVELOPER') {
-						// tik developeriams rodom developerius
-						continue;
+				$d['created'] = $loc->datef($d['created']);
+				if ($d['access']) {
+					$d['agroup'] = $d['access'];
+					$pos = strpos($d['agroup'], '@');
+					if ($pos !== FALSE) {
+						$d['agroup'] = substr($d['agroup'], $pos);
+						list($d['agroup']) = explode(',', $d['agroup']);
+						$d['agroup'] = strtoupper(ltrim($d['agroup'], '@'));
+						if (!$iDeveloper && $d['agroup'] === 'DEVELOPER') {
+							// tik developeriams rodom developerius
+							continue;
+						}
+					}
+					else {
+						$d['agroup'] = $txt->excerpt($d['agroup'], 40);
 					}
 				}
 				else {
-					$d['agroup'] = $txt->excerpt($d['agroup'], 40);
+					$d['agroup'] = '<i style="color:red">unknown</i>';
 				}
-			}
-			else {
-				$d['agroup'] = '<i style="color:red">unknown</i>';
-			}
-			//$d['created'] = $loc->datef($d['created'], 'Date');
 				$m['items'] .= $t->parse('itemsA', $d);
 			}
 		}
@@ -279,11 +267,9 @@ function events($event, $par) {
 				//	$m['filtras'] = '';
 			}
 		}
-		$m['goNew'] = $this->linkas('#edit');
-		$m['goDelete'] = $this->my('fullname') . '#delete';
 		$m['pageTitle'] = htmlspecialchars($vars['pageTitle']);
 		$res = $t->parse('viewListAdmins', $m);
-		$save = array('psl' => $vars['psl'], 'sort' => (int) $vars['sort'], 'filter'=>$vars['filter'], 'sortA' => (int) $vars['sortA']);
+		$save = array('psl' => $vars['psl'], 'sort' => (int) $vars['sort'], 'filter' => $vars['filter'], 'sortA' => (int) $vars['sortA']);
 		foreach ($filter as $k => $v) {
 			if ($v !== '') {
 				$save['filterA'] = $filter;
@@ -294,37 +280,36 @@ function events($event, $par) {
 		return $res;
 	}
 
-
 	function viewForm($vars) {
 		$tpl = & $this->load_template();
 		$info = $tpl->parse_array('info');
 		$page = & moon :: page();
 
 		/******* FORM **********/
-		$err = (isset ($vars['error'])) ? $vars['error'] : 0;
+		$err = (isset ($vars['error'])) ? $vars['error']:0;
 		$f = $this->form;
-		$title = $f->get('id') ? $info['titleEdit'] : $info['titleNew'];
+		$title = $f->get('id') ? $info['titleEdit']:$info['titleNew'];
 		$page->title($title);
-		// main settings
+
+		/* main settings */
 		$m = array();
-		$m['error'] = $err ? $info['error' . $err] : '';
+		$m['error'] = $err ? $info['error' . $err]:'';
 		$m['event'] = $this->my('fullname') . '#save';
 		$m['refresh'] = $page->refresh_field();
 		$m['id'] = ($id = $f->get('id'));
 		$m['goBack'] = $this->linkas('#');
 		$m['pageTitle'] = $vars['pageTitle'];
 		$m['formTitle'] = htmlspecialchars($title);
-		//$m['toolbar'] = '';
-		//$m['hide'] = $f->checked('hide', 1);
 		$m += $f->html_values();
-		// Other settings
+
+		/* Other settings */
 		$m['password'] = '';
-		$statuses = array(1 => 'Active', 0 => 'Not Active', -1 => 'Banned');
+		$statuses = array(1 => 'Active', 0 => 'Not Active', - 1 => 'Banned');
 		$m['status'] = $f->options('status', $statuses);
 		//$i = $f->get('status');
 		//$m['status'] = isset($statuses[$i]) ? $statuses[$i] : $i;
 
-		// permissions
+		/* permissions */
 		$permArr = $this->getPermissionGroups();
 		$roles = array();
 		$m['jsRolesArray'] = '';
@@ -341,7 +326,7 @@ function events($event, $par) {
 		}
 		$userID = $id;
 		$keys = $this->form->get('access');
-		$keys = $keys ? explode(',',$keys) : array();
+		$keys = $keys ? explode(',', $keys):array();
 		///*********************
 		$allKeys = $this->getPermissionGroups('');
 		$sKeys = '';
@@ -354,9 +339,9 @@ function events($event, $par) {
 			}
 			$sKeys .= $tpl->parse('keys', $d);
 		}
-		$myRole = isset ($keys[0]) ? $keys[0] : '';
+		$myRole = isset ($keys[0]) ? $keys[0]:'';
 		if ($myRole !== '') {
-			$myRole = ($myRole[0] === '@') ? ltrim($myRole, '@') : - 1;
+			$myRole = ($myRole[0] === '@') ? ltrim($myRole, '@'):- 1;
 			if ($myRole !== - 1 && !isset ($roles[$myRole])) {
 				$myRole = - 1;
 			}
@@ -365,13 +350,11 @@ function events($event, $par) {
 		$f->fill(array('role' => $myRole));
 		$roles = $f->options('role', $roles);
 		$m['keys'] = $sKeys;
-
 		$m['roles'] = $roles;
-		$m['classRowHide'] = $myRole !== '' ? '' : ' class="empty"';
-		$m['classHideCustom'] = $myRole == - 1 ? '' : ' class="hide"';
-		$m['classHide'] = $myRole != - 1 ? '' : ' class="hide"';
-		$m['predefined'] = $myRole!='' && $myRole != - 1 ? implode(', ', $this->getPermissionGroups($myRole)) : '';
-
+		$m['classRowHide'] = $myRole !== '' ? '':' class="empty"';
+		$m['classHideCustom'] = $myRole == - 1 ? '':' class="hide"';
+		$m['classHide'] = $myRole != - 1 ? '':' class="hide"';
+		$m['predefined'] = $myRole != '' && $myRole != - 1 ? implode(', ', $this->getPermissionGroups($myRole)):'';
 		$res = $tpl->parse('viewForm', $m);
 
 		/* dabar paskutiniai IP */
@@ -383,14 +366,11 @@ function events($event, $par) {
 			$res .= $tpl->parse('usedIP', $m);
 		}
 
-
 		/* resave vars for list */
 		$save = array('psl' => $vars['psl'], 'sort' => $vars['sort'], 'filter' => $vars['filter']);
 		$this->save_vars($save);
 		return $res;
 	}
-
-
 
 	//***************************************
 	//           --- DB AND OTHER ---
@@ -422,22 +402,19 @@ function events($event, $par) {
 			}
 		}
 		$w[] = "access<>''";
-		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
-        //sql
+		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)):'';
+		//sql
 		$sql = '
 			SELECT id, nick, email, name, created, login_date, avatar, status, access
 			FROM ' . $this->table('Users') . $where . $order . ' limit 1000';
 		return $this->db->array_query_assoc($sql);
 	}
 
-
-
 	function getListCount() {
 		$sql = 'SELECT count(*) FROM ' . $this->myTable . $this->_where();
 		$m = $this->db->single_query($sql);
-		return (count($m) ? $m[0] : 0);
+		return (count($m) ? $m[0]:0);
 	}
-
 
 	function getList($limit = '', $order = '') {
 		if ($order) {
@@ -447,7 +424,6 @@ function events($event, $par) {
 		return $this->db->array_query_assoc($sql);
 	}
 
-
 	function _where() {
 		if (isset ($this->tmpWhere)) {
 			return $this->tmpWhere;
@@ -455,27 +431,25 @@ function events($event, $par) {
 		$a = $this->formFilter->get_values();
 		$w = array();
 		//$w[] = "login_date<>'0000-00-00'";
-		//$w[] = 'hide<2';
 		if (empty ($a['hidden'])) {
 			$w[] = "status<>0";
 		}
 		if ($a['text'] !== '') {
-			$find = $this->db->escape($a['text'], TRUE);
+			$find = (strlen($a['text']) > 2 ? '%':'') . $this->db->escape($a['text'], TRUE);
 			switch ($a['kur']) {
 
-				case 'email' :
-				case 'nick' :
-				case 'name' :
-					$w[] = $a['kur'] . " like '%$find%'";
+				case 'email':
+				case 'nick':
+				case 'name':
+					$w[] = $a['kur'] . " like '$find%'";
 					break;
 
-				default :
+				default:
 			}
 		}
-		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
+		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)):'';
 		return ($this->tmpWhere = $where);
 	}
-
 
 	function getItem($id) {
 		return $this->db->single_query_assoc('
@@ -483,8 +457,7 @@ function events($event, $par) {
 			id = ' . intval($id));
 	}
 
-
-   function saveItem() {
+	function saveItem() {
 		$form = & $this->form;
 		$form->fill($_POST);
 		$d = $form->get_values();
@@ -493,7 +466,7 @@ function events($event, $par) {
 		/* gautu duomenu apdorojimas */
 		$d['timezone'] = 0;
 		//permissions
-		$permissions = isset ($_POST['keys']) ? $_POST['keys'] : array();
+		$permissions = isset ($_POST['keys']) ? $_POST['keys']:array();
 		$role = $_POST['role'];
 		$ins = array('user_id' => $id);
 		if ($role == '-1') {
@@ -515,7 +488,8 @@ function events($event, $par) {
 		elseif ($d['email'] === '') {
 			$err = 2;
 		}
-		elseif ($ilg < 4 || $ilg > 50 /*|| preg_match('/[^a-z0-9_.-]/i', $d['nick'], $rMas)*/) {
+		elseif ($ilg < 4 || $ilg > 50) {
+			//|| preg_match('/[^a-z0-9_.-]/i', $d['nick'], $rMas)
 			$err = 3;
 		}
 		elseif (!moon :: mail()->is_email($d['email'])) {
@@ -524,10 +498,10 @@ function events($event, $par) {
 		else {
 			//check for duplicates
 			$sql = "SELECT SUM( IF(nick='" . $this->db->escape($d['nick']) . "',100,1) )
-		FROM " . $this->myTable . "
-		WHERE (nick='" . $this->db->escape($d['nick']) . "' OR email='" . $this->db->escape($d['email']) . "') AND id<>" . $id;
+			FROM " . $this->myTable . "
+			WHERE (nick='" . $this->db->escape($d['nick']) . "' OR email='" . $this->db->escape($d['email']) . "') AND id<>" . $id;
 			if (count($a = $this->db->single_query($sql)) && $a[0]) {
-				$err = $a[0] > 99 ? 6 : 5;
+				$err = $a[0] > 99 ? 6:5;
 			}
 		}
 		if ($err) {
@@ -548,7 +522,6 @@ function events($event, $par) {
 			$ins['password'] = md5($d['password']);
 		}
 		//
-		//$ins['updated'] = time();
 		$db = & $this->db();
 		if ($id) {
 			$db->update_query($ins, $this->myTable, array('id' => $id));
@@ -562,12 +535,8 @@ function events($event, $par) {
 			blame($this->my('fullname'), 'Created', $id);
 		}
 		$form->fill(array('id' => $id));
-		if (!isset ($was['email']) || $was['email'] != $ins['email'] || isset ($ins['password']) || $was['nick'] != $ins['nick'] || $was['name'] != $ins['name']) {
-			$this->broadcast($id);
-		}
 		return $id;
 	}
-
 
 	/****************************************
 	/           --- OTHER ---
@@ -585,9 +554,9 @@ function events($event, $par) {
 		return $m;
 	}
 
-	function getPermissionGroups($group=false, $perm=false) {
+	function getPermissionGroups($group = false, $perm = false) {
 		$oLogin = $this->object('login_object');
-		return $oLogin->getPermissionGroups($group,$perm);
+		return $oLogin->getPermissionGroups($group, $perm);
 	}
 
 }

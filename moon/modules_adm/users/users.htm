@@ -3,8 +3,12 @@ titleNew=New user
 titleEdit=Edit user
 
 404=Item not found!
-error1 = Can't connect to database!
-error2 = You can't change status of administrator!
+error1=Nick required
+error2=E-mail required
+error3=Nick doesn't seem correct.
+error4=Email doesn't seem correct.
+error5=E-mail already in use.
+error6=User with such nick already exists.
 
 
 <% viewList %>
@@ -30,6 +34,7 @@ error2 = You can't change status of administrator!
 	<thead>
 	<tr>
 		<th><a href="{orderby1}">Nick</a></th>
+		<th width="20"></th>
 		<th><a href="{orderby2}">Email</a></th>
 		<th><span>Name</span></th>
 		<th style="width: 100px"><a href="{orderby3}">Last login</a></th>
@@ -40,6 +45,7 @@ error2 = You can't change status of administrator!
 		<% loop{items} %>
 			<tr class="{class}">
 				<td><a href="{goEdit}">{nick}</a></td>
+				<td><%if{admin}%><span class="star"></span><%end%></td>
 				<td>{email}</td>
 				<td>{name}</td>
 				<td>{login_date}</td>
@@ -188,18 +194,12 @@ function changeRole(obj){
 
 	<dt><label for="i_name">Permissions</label></dt>
 	<dd>
-		<table id="sites">
-		<tr valign="top"{classRowHide} id="row">
-			<td>
-				<select name="role" onchange="changeRole(this)" style="margin-bottom: 10px"><option value="0"></option>{roles}</select> &nbsp;
-				<div id="predefined">{predefined}</div>
-				<div id="custom"{classHideCustom}>
-				<% loop{keys} %><label><input type="checkbox" name="keys[]" value="{key}" />{kName}</label>  <br /><% end%>
-				</div>
-			</td>
-		</tr>
-		</table>
-	</dd>
+		<select name="role" onchange="changeRole(this)" style="margin-bottom: 10px"><option value="0"></option>{roles}</select> &nbsp;
+		<div id="predefined">{predefined}</div>
+		<div id="custom"{classHideCustom}>
+		<% loop{keys} %><label><input type="checkbox" name="keys[]" value="{key}" />{kName}</label>  <br /><% end%>
+		</div>
+	 </dd>
 
 	</dl>
 
@@ -214,14 +214,10 @@ function changeRole(obj){
 <p class="explain">Here are IP addresses listed from which user has been logged:</p>
 <%if {ipitems}%>
 	<table class="list" style="width:auto">
-		<colgroup>
-			<col />
-			<col width="80" />
-		</colgroup>
 		<thead>
 		<tr>
 			<th><span>IP</span></th>
-			<th><span class="order-desc">When</span></th>
+			<th width="80"><span class="order-desc">When</span></th>
 		</tr>
 		</thead>
 		<tbody>
@@ -234,48 +230,3 @@ function changeRole(obj){
 		</tbody>
 	</table>
 	<%end%>
-
-
-
-<% viewFormView %>
-<div class="tabzoneHeader clrfix">
-	<h1>User: {nick}</h1>
-	<a href="{goBack}" class="goBack">Back to list</a>
-</div>
-
-<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
-	<input type="hidden" name="event" value="{event}" />{refresh}
-	<input type="hidden" name="id" value="{id}" />
-	<h2 class="formTitle">{formTitle}</h2>
-	<span class="clr"></span>
-	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
-	<!--
-<img src="{avatar}" height="200" border="0" alt="" class="fl" />
-	<dl style="margin-left: 220px">
--->
-	<dl>
-		<dt><label>Email</label></dt>
-		<dd>{email}</dd>
-
-		<%if{name}%>
-		<dt><label>Name</label></dt>
-		<dd>{name}</dd>
-		<%end%>
-
-		<dt><label>Status</label></dt>
-		<dd> {status}</dd>
-
-		<dt><label>Created on</label></dt>
-		<dd>{created}</dd>
-
-		<%if{login_date}%>
-		<dt><label>Last login</label></dt>
-		<dd>{login_date}</dd>
-		<%end%>
-
-		<dt><label>ID</label></dt>
-		<dd>{id}</dd>
-	</dl>
-	<div class="formButton clrfix" style="margin-left: 0px"><input type="button"  value="Back to list" onclick="window.location.href='{goBack}'" /></div>
-
-</form>
