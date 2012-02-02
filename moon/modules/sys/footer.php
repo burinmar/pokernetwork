@@ -1,40 +1,42 @@
 <?php
-class footer extends moon_com {
+class footer extends moon_com 
+{
+	function main($vars) 
+	{
+		$page = moon::page();
+		$navi = moon :: shared('sitemap');
+		$tpl  = $this->load_template();
+		$mainMenu = $page->get_local('sys.footer:menu');
+		$tplArgv = array(
+			'fat_sections' => '',
+			'thin_sections'=> '',
+			'url_sitemap' => $navi->getLink('sitemap'),
+			'url_privacy_policy' => $navi->getLink('privacy'),
+			'url_disclaimer' => $navi->getLink('disclaimer'),
+		);
 
-
-	function main($vars) {
-		return $this->load_template()->parse('main');
-/*
-		$tpl = & $this->load_template();
-		$navi = & moon :: shared('sitemap');
-		// submenu
-		$child = array();
-		foreach ($navi->items as $id => $d) {
-			if ($d['parent'] && empty ($d['hide'])) {
-				if (empty ($child[$d['parent']])) {
-					$child[$d['parent']] = '';
+		foreach ($mainMenu as $item) {
+			if (0 == count($item['children'])) {
+				$tplArgv['thin_sections'] .= $tpl->parse('thin_sections', array(
+					'title' => htmlspecialchars($item['title']),
+					'url' => $item['url']
+				));
+			} else {
+				$subsestions = '';
+				foreach ($item['children'] as $child) {
+					$subsestions .= $tpl->parse('sub_sections', array(
+						'title' => htmlspecialchars($child['title']),
+						'url' => $child['url']
+					));
 				}
-				$d['title'] = htmlspecialchars($d['title']);
-				$child[$d['parent']] .= $tpl->parse('submenu', $d);
+				$tplArgv['fat_sections'] .= $tpl->parse('fat_sections', array(
+					'title' => htmlspecialchars($item['title']),
+					'url' => $item['url'],
+					'sub_sections' => $subsestions
+				));
 			}
 		}
-		// main menu
-		$mainMenu = $navi->listLevel(1);
-		$m = array('menu' => '');
-		foreach ($mainMenu as $id => $d) {
-			if (isset ($child[$id])) {
-				$d['submenu'] = $child[$id];
-			}
-			$d['title'] = htmlspecialchars($d['title']);
-			$m['menu'] .= $tpl->parse('menu', $d);
-		}
-		return $tpl->parse('main', $m);
-		*/
+
+		return $tpl->parse('main', $tplArgv);
 	}
-	//***************************************
-	//           --- DB AND OTHER ---
-	//***************************************
-
-
 }
-?>

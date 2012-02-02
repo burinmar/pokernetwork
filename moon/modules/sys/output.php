@@ -24,7 +24,7 @@ class output extends moon_com {
 		}
 		$page=&moon::page();
 		//$page->css('/css/main.css');
-		//$page->js('/js/jquery.js');
+		$page->js('/js/jquery.js');
 
 	}
 
@@ -70,15 +70,16 @@ class output extends moon_com {
 		$loc = & moon :: locale();
 		//title
 		$title = $p->title();
-		$sub = '| Grandes Ecoles Poker Tour 2012';
+		$sub = '| PokerNetwork.com';
 		if (strpos($title, $sub) === false) {
 			$title .= ' ' . $sub;
 		}
 		$m = array(
-		'home_url' => $p->home_url(),
-		'lang' => $loc->language(),
-		'title' => htmlspecialchars($title),
-		'head.tags' => $p->get_local('head.tags'),
+			'home_url' => $p->home_url(),
+			'lang' => $loc->language(),
+			'title' => htmlspecialchars($title),
+			'head.tags' => $p->get_local('head.tags'),
+			'main.css-timestamp' => filemtime('i/style.css')
 		);
 		$p->head_link('/favicon.ico', 'favicon');
 

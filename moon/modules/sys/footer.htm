@@ -1,2 +1,31 @@
 <% main %>
-<div class="footer">Créer un site gratuit avec e-monsite.com - Signaler un contenu illicite.</div>
+<div id="footer" class="clrfix">
+	<div class="fl">
+		<p>Short copy describing PNW. Sed vitae diam in nunc adipiscing viverra at vitae quam. Integer id arcu quam, quis tempus dolor. Suspendisse potenti. Maecenas vel justo dui, ac malesuada est.</p>
+		<b>Follow us on other sites</b>
+		<div class="socialIcons">
+			<a href="#" class="facebook" target="_blank">Facebook</a>
+			<a href="#" class="twitter" target="_blank">Twitter</a>
+			<a href="#" class="rss" target="_blank">RSS</a>
+			<a href="#" class="youtube" target="_blank">Youtube</a>
+			<a href="#" class="gplus" target="_blank">Google +</a>
+		</div>
+	</div>
+	<div class="fr">
+		<table>
+		<tr>
+			<%loop {fat_sections} %><td>
+				<a href="{url}"><b>{title}</b></a>
+				<%loop {sub_sections} %><a href="{url}">{title}</a><%end%>
+			</td><%end%>
+			<td>
+				<%loop {thin_sections} %><a href="{url}"><b>{title}</b></a><%end%>
+			</td>
+		</tr>
+		</table>
+		<div class="copy clrfix">
+			<p>© 2012 PokerNews Ltd. All rights reserved.</p>
+			<a href="{url_sitemap}">Sitemap</a><a href="{url_privacy_policy}">Privacy Policy</a><a href="{url_disclaimer}">Disclaimer</a><!--# <a href="{url_career}">Career</a> -->
+		</div>
+	</div>
+</div>

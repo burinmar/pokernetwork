@@ -1,7 +1,36 @@
 <% main %>
-<a href="./" id="head"><img src="i/head.jpg" width="940" height="137" alt="Grandes Ecoles Poker Tour 2012" /></a>
-<ul id="menu">
-	<%loop{menu}%>
-		<li><a {td:class} href="{url}">{title}</a></li>
-	<%end%>
-</ul><span class="clr"></span>
+<div id="header">
+	<h1><a href="#" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a></h1>
+	<ul id="menu">
+		<%loop {menu += menu.item} %><li {td:class}><a href="{url}">{title}</a><% insert{submenu} %><ul>{menu}</ul><%end%></li><%end%>
+	</ul>
+	<div class="search">
+		<form action="#">
+			<input type="text" placeholder="Search" />
+			<button type="submit" title="Find"><span class="hide">Find</span></button>
+		</form>
+	</div>
+	{user_block}
+</div>
+
+
+<% user_block.nouser %>
+<ul class="userControl">
+	<li><a href="{url.register}">Sign Up</a></li>
+	<li><a href="{url.forgot}">Forgot Password</a></li>
+	<li class="signIn">
+		<a href="#" onclick="return false;">Sign In</a>
+		<div class="loginForm">
+			<div class="error" style="display:none">Bad login username or password</div>
+			<input type="text" placeholder="Username" />
+			<input type="password" placeholder="Password" /><button type="submit" title="Sign In"><span class="hide">Sign In</span></button>
+		</div>
+	</li>
+</ul>
+
+<% user_block.user %>
+<ul class="userControl">
+	<li><span>Welcome back, <b>{nick}</b></span></li>
+	<li><a href="{profile_url}">Account Settings</a></li>
+	<li><a href="{sign_out}">Sign Out</a></li>
+</ul>
