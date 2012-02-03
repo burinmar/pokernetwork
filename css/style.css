@@ -23,7 +23,7 @@ input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
 input[type="checkbox"] {vertical-align: middle}
 button, input[type="submit"] {cursor: pointer}
-#body, #footer, .tweets li, .widget, .newslistIndexBox .photo {zoom: 1;}
+#body, #footer, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert {zoom: 1;}
 
 /*Global*/
 .meta {
@@ -166,7 +166,37 @@ textarea {
 	font-weight: bold;
 	text-transform: uppercase;
 } .button:hover {color: #fff}
-
+a.bigButton {
+	display: inline-block;
+	background-image: url('/i/big-buttons.png');
+	background-repeat: no-repeat;
+	height: 62px;
+	line-height: 62px;
+	text-transform: uppercase;
+	text-align: center;
+	font-weight: bold;
+	font-size: 16px;
+	padding-left: 35px;
+	position: relative;
+	*padding-right: 30px;
+}
+.bigButton:before {
+	content: '';
+	position: absolute;
+	top: 0;
+	right: -35px;
+	height: 62px;
+	width: 35px;
+	background-image: url('/i/big-buttons.png');
+}
+	.blueButton, a.blueButton:hover {
+		background-position: bottom left;
+		color: #fff;
+	} .blueButton:before {background-position: bottom right;}
+	.whiteButton, a.whiteButton:hover {
+		background-position: top left;
+		color: #0050bd;
+	} .whiteButton:before {background-position: top right}
 /*Layout*/
 html {
 	font: 12px/16px Arial, Helvetica, sans-serif;
@@ -415,10 +445,10 @@ html {
 			.wHalf .left {width: 481px}
 			.wHalf .right {width: 517px}
 		.wFull {background-image: url('/i/body-bg-full.png')}
+		.wFullDark {background-image: url('/i/body-bg-fulldark.png')}
 		.wCol {background-image: url('/i/body-bg-col.png')}
 			.wCol .left {width: 515px}
 			.wCol .right {width: 483px}
-		
 		.widget {
 			padding: 10px 10px 0;
 			color: #858585;
@@ -474,6 +504,16 @@ html {
 					font-size: 16px;
 					margin-bottom: 15px;
 				}
+			.twoColsList {
+				margin: 0 -10px !important;
+				color: #000;
+			}
+				.twoColsList > li {
+					float: left;
+					width: 475px;
+					margin: 0 12px 20px;
+				}
+				.twoColsList > li.odd {clear: left}
 			
 .filterTabs {
 	margin-top: -15px;
@@ -763,83 +803,72 @@ html {
 		}
 
 /*Rooms - Reviews*/
-.twoColsList {
-	margin: 0 -10px !important;
-	color: #000;
+.roomsList .download {text-align: center}
+	.roomsList .download .button {
+		margin-bottom: 10px;
+		padding: 0 45px 0 35px;
+		position: relative;
+	}
+	.roomsList .download .button:after {
+		content: '';
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAMCAYAAAHDrncIAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALhJREFUeNpi/P//PwMQ8DBCGQwAAcQAZJwBEW8BAggmBCIEAAIIJCIBkgILAgm5/xAA5oDwLhANEEAwDkwWBPiRJb4hSYDNYgGargLE1xjQAEAAwaw/gyRmguwmuEImBiwAJOiBJiYEc4UZ1AWcID4j2Meo4AhAgMFUonvmP7rHQBirA3ACoI5AIP75Hz+4CgpxZGfYAPFnNEWHgZgHpgZZMQzrAvEcIGZDlwP5GhTuKwi49ggQFwAAr1kT8rNE4+wAAAAASUVORK5CYII=');
+		width: 11px;
+		height: 12px;
+		position: absolute;
+		top: 6px;
+		right: 30px;
+	}
+.roomsList .os {line-height: 20px}
+	.os span {
+		display: inline-block;
+		background-image: url('/i/os.png');
+		width: 20px;
+		height: 20px;
+		vertical-align: top;
+		margin-left: 5px;
+	}
+	.osMac {background-position: -20px 0}
+	.osLinux {background-position: -40px 0}
+.reviewBonus {
+	padding: 25px 0 15px;
+	font-size: 14px;
+	line-height: 25px;
+	clear: both;
 }
-	.twoColsList > li {
-		float: left;
-		width: 475px;
-		margin: 0 12px 20px;
+	.reviewBonus strong {
+		display: block;
+		font-size: 22px;
+		color: #0050bd;
 	}
-	.twoColsList > li.odd {clear: left}
-	.roomsList .download {text-align: center}
-		.roomsList .download .button {
-			margin-bottom: 10px;
-			padding: 0 45px 0 35px;
-			position: relative;
-		}
-		.roomsList .download .button:after {
-			content: '';
-			background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAAMCAYAAAHDrncIAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALhJREFUeNpi/P//PwMQ8DBCGQwAAcQAZJwBEW8BAggmBCIEAAIIJCIBkgILAgm5/xAA5oDwLhANEEAwDkwWBPiRJb4hSYDNYgGargLE1xjQAEAAwaw/gyRmguwmuEImBiwAJOiBJiYEc4UZ1AWcID4j2Meo4AhAgMFUonvmP7rHQBirA3ACoI5AIP75Hz+4CgpxZGfYAPFnNEWHgZgHpgZZMQzrAvEcIGZDlwP5GhTuKwi49ggQFwAAr1kT8rNE4+wAAAAASUVORK5CYII=');
-			width: 11px;
-			height: 12px;
-			position: absolute;
-			top: 6px;
-			right: 30px;
-		}
-	.roomsList .os {line-height: 20px}
-		.os span {
-			display: inline-block;
-			background-image: url('/i/os.png');
-			width: 20px;
-			height: 20px;
-			vertical-align: top;
-			margin-left: 5px;
-		}
-		.osMac {background-position: -20px 0}
-		.osLinux {background-position: -40px 0}
-	.roomsList .bonus {
-		padding: 25px 0 15px;
-		font-size: 14px;
-		line-height: 25px;
-		clear: both;
+.roomsList h2, .review .rightInsert h2 {
+	margin-bottom: 15px;
+	clear: both;
+}
+.roomsList ul, .review .rightInsert ul {
+	list-style: disc;
+	margin: 0 0 20px 20px;
+}
+.roomsList .ratings {
+	width: 250px;
+	margin: 15px 0 30px;
+}
+.roomsList .ratings tr:last-child td {padding-top: 10px}
+	.roomsList .ratings .ratingBarBackground, .review .ratings .ratingBarBackground {
+		background: #d2d0c4 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAHCAIAAAExKYBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACtJREFUeNpiunThCEAAMd29fR4ggJiuXz3BxMXFCxBgTFcuHWViY2MDYg4Avd8KImcaLSwAAAAASUVORK5CYII=') repeat-x;
+		display: block;
+		font-size: 1px;
+		height: 6px;
+		width: 113px;
+		border: 1px solid #d4d2bf;
+		margin-top: 5px;
 	}
-		.roomsList .bonus strong {
-			display: block;
-			font-size: 22px;
-			color: #0050bd;
-		}
-	.roomsList h2, .review .rightInsert h2 {
-		margin-bottom: 15px;
-		clear: both;
+	.roomsList .ratings .ratingBar, .review .ratings .ratingBar {
+		background: #004db6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAHCAIAAAExKYBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAC1JREFUeNpiMig8CRBATAz+uwACiEks/jDTq3efAQKMSS3rONOtZ9+YGP79BgCXawyLzWyyngAAAABJRU5ErkJggg==') repeat-x;
+		display: block;
+		height: 6px;
 	}
-	.roomsList ul, .review .rightInsert ul {
-		list-style: disc;
-		margin: 0 0 20px 20px;
-	}
-	.roomsList .ratings {
-		width: 250px;
-		margin: 15px 0 30px;
-	}
-	.roomsList .ratings tr:last-child td {padding-top: 10px}
-		.roomsList .ratings .ratingBarBackground, .review .ratings .ratingBarBackground {
-			background: #d2d0c4 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAHCAIAAAExKYBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACtJREFUeNpiunThCEAAMd29fR4ggJiuXz3BxMXFCxBgTFcuHWViY2MDYg4Avd8KImcaLSwAAAAASUVORK5CYII=') repeat-x;
-			display: block;
-			font-size: 1px;
-			height: 6px;
-			width: 113px;
-			border: 1px solid #d4d2bf;
-			margin-top: 5px;
-		}
-		.roomsList .ratings .ratingBar, .review .ratings .ratingBar {
-			background: #004db6 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAHCAIAAAExKYBVAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAC1JREFUeNpiMig8CRBATAz+uwACiEks/jDTq3efAQKMSS3rONOtZ9+YGP79BgCXawyLzWyyngAAAABJRU5ErkJggg==') repeat-x;
-			display: block;
-			height: 6px;
-		}
-	.roomsList .bonusCode {
-		padding-left: 267px;
-	}
+.roomsList .bonusCode {padding-left: 267px;}
+.bonusCode {color: #000}
 	.bonusCode span {
 		display: inline-block;
 		background: #fff9c4;
@@ -852,6 +881,50 @@ html {
 		font-size: 18px;
 	}
 .review {}
+	.reviewHeader {
+		padding: 15px;
+		position: relative;
+		margin-bottom: 10px;
+	}
+	.reviewHeader:after {
+		content: '';
+		position: absolute;
+		bottom: -3px;
+		left: 0px;
+		height: 3px;
+		width: 100%;
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAADCAYAAAEl2lUUAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAB1JREFUeNpi+P//PwNAADF8/vT6P0CAMdy4dvw/AEvZCkFpH37tAAAAAElFTkSuQmCC') repeat-x;
+	}
+	.reviewHeader .fr {width: 460px; text-align: right; color: #858585}
+	.reviewHeader .fl {width: 510px;}
+	.reviewHeader .bigButton {
+		margin-right: 27px;
+		margin-top: -6px;
+		padding: 0 33px 0 45px;
+		min-width: 120px;
+		*margin-right: -2px;
+	}
+	.reviewHeader .blueButton {margin-left: 10px}
+	.reviewHeader .bigButtonIcon:after {
+		content: '';
+		width: 16px;
+		height: 19px;
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAATCAYAAAGGkz9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAepJREFUeNpi+P//PwMQG4NohoC9/xmBDDYGBoafjIH7gBQDIyNYhoEBRDCCGAABBBLgB9KcQBXPQQIsQPyBAQHAWv7DOCACIIBgZngD8RYgrgRqbcemAG4RUAHcQhAACCCYAmMo/yzUeXBdLFD6DLKxSPQ0JmTVQPCHAQ0wIan+gmQiDGSBwgkZPISGHRwDBBCyL2BehYFKIO6AOholOJEA2I2EwH98kujhiAx+ATE7UriC6LNoauSQPQ1zHiiSJdEUnsGi2QRbRDFgccVlfF4ACCBkL6AbArcRPfaJDQNGJM0gcAmI9dADmJhYuIRPkhgDGAgZsBqH/0BiacQYEArEs7DI+aOJq0CjExnDE386EL8A4joo3xaIj6AZyIXNBcgJqR5qyHEgvoDFZnRg8n+9EwMoR3n/xw0YCGFYOaWCI4zOEgpEgABDTki4sjU6AGdztFSKHnvvgHgNAbttgFiLhYE24Ck0YvGBaSAHMFHBsv+EcgtNcxI1ciIIMAPxIqhvthDQ0w6tXaKo6YC/QBwHLcH68Kj/DsSe0Py3DI86Xahn8OFMXFFQDHVIGZIYKFWbQ0uDHYRyFrEYWBAwwnKBHBB7oBn0EZqSeaB1tgEUMyDV48vQfEwMQK2ZoSUKvtIIF3hITElFCAMAzH1YsU2cALUAAAAASUVORK5CYII=');
+		position: absolute;
+		top: 20px;
+		right: 0;
+	}
+		.reviewHeader .whiteButton.bigButtonIcon:after {background-position: top right;}
+		.reviewHeader .blueButton.bigButtonIcon:after {background-position: top left;}
+
+	.reviewHeader .bonusCode {
+		display: inline-block;
+		margin-left: 18px;
+		margin-top: 15px;
+		*float: right;
+	} .reviewHeader .bonusCode span {margin-bottom: 0}
+	.reviewHeader .reviewBonus {padding-bottom: 0}
+	
 	.review .commingPromos {
 		border-bottom: 1px solid #d8d6c7;
 		padding-bottom: 10px;
@@ -867,13 +940,8 @@ html {
 		margin: 0 5px 5px;
 	}
 	.review dl {color: #000}
-		.review dt {
-			float: left;
-			font-weight: bold;
-		}
-		.review dd {
-			margin-left: 160px;
-		}
+		.review dt {float: left; font-weight: bold;}
+		.review dd {margin-left: 160px;}
 	.review .freerolls {margin-bottom: 15px}
 	.review .freerolls li {
 		position: relative;
@@ -884,7 +952,7 @@ html {
 	.review .freerolls .title {margin-bottom: 5px}
 	.review .freerolls .timeLeft {
 		position: absolute;
-		top: 20px;
+		top: 28px;
 		right: 0;
 		color: #fff;
 		line-height: 20px;
@@ -892,19 +960,34 @@ html {
 		background: #a92712;
 		font-weight:  bold;
 	}
+	.review .rightInsert {
+		margin-top: -10px;
+		padding-top: 20px;
+	}
 	.review .rightInsert h2 {font-size: 16px}
 	.review .ratings {
 		width: 100%;
 		margin-bottom: 20px;
 		border-bottom: 1px solid #d8d6c7;
 	}
-	
 		.review .ratings td {line-height: 20px}
 		.review .ratings .ratingBarBackground {
-				height: 7px;
-				width: 260px;
-				margin-top: 5px;
-			}
-			.review .ratings .ratingBar {height: 7px;}
-			.review .ratings b {font-size: 16px}
-			.review .ratings tr:last-child td {padding: 15px 0 10px}
+			height: 7px;
+			width: 260px;
+			margin-top: 5px;
+		}
+		.review .ratings .ratingBar {height: 7px;}
+		.review .ratings b {font-size: 16px}
+		.review .ratings .overall td {padding: 15px 0 10px}
+	.reviewFooter {
+		border-top: 1px solid #d8d6c7;
+		margin: 25px -10px 0;
+		padding: 15px 10px 0;
+		text-align: center;
+	}
+		.reviewFooter .bigButton {margin-left: -35px}
+		.reviewFooter .bonusCode {
+			*float: left;
+			display: inline-block;
+			margin: 0 8px;
+		}
