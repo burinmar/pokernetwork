@@ -367,13 +367,13 @@ function deleteItem($ids)
 }
 function updateSortOrder($when)
 {
-	print $sql = 'UPDATE ' . $this->table('ArticlesCategories') . '
+	$sql = 'UPDATE ' . $this->table('ArticlesCategories') . '
 		SET sort_order =
 			CASE
 			' . $when . '
 			END
 		WHERE category_type = ' . $this->get_var('articlesType') . '
-	';exit;
+	';
 	$this->db->query($sql);
 }
 
