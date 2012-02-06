@@ -8,7 +8,7 @@ function onload()
 	$this->formFilter->names('name');
 
 	$this->formItem = &$this->form();
-	$this->formItem->names('id', 'name', 'description', 'is_hidden');
+	$this->formItem->names('id', 'name', 'description', 'uri', 'is_hidden');
 
 	$this->sqlWhere = ''; // set by filter
 	$this->sqlOrder = '';
@@ -137,6 +137,7 @@ function renderForm($vars)
 		'pageTitle' => $win->current_info('title'),
 		'formTitle' => htmlspecialchars($title),
 		'refresh' => $page->refresh_field(),
+		'uriPrefix' => $this->getMyUriPrefix()
 	) + $form->html_values();
 	$m['is_hidden'] = $form->checked('is_hidden', 1);
 	return $tpl->parse('main', $m);
@@ -174,6 +175,7 @@ function saveItem()
 	// Filtering
 	$data['id'] = intval($values['id']);
 	$data['name'] = strip_tags($values['name']);
+	$data['uri'] = str_replace('/', '', $values['uri']);
 	$data['description'] = $values['description'];
 	$data['is_hidden'] = (empty($values['is_hidden'])) ? 0 : 1;
 	$id = $data['id'];
@@ -182,16 +184,31 @@ function saveItem()
 	$errorMsg = 0;
 	if ($data['name'] == '') {
 		$errorMsg = 1;
+	} elseif ($data['uri'] == '') {
+		$errorMsg = 3;
 	} else {
 		//check for tag duplicates
 		$sql = 'SELECT count(*) as cnt
 			FROM ' . $this->table('Tags') . '
-			WHERE 	is_hidden < 2 AND
-				name = \'' . $this->db->escape($data['name']) . '\' AND
-				id <> ' . $id;
+			WHERE	is_hidden < 2 AND
+			     	name = \'' . $this->db->escape($data['name']) . '\' AND
+			     	id <> ' . $id;
 		$result = $this->db->single_query_assoc($sql);
 		if ($result['cnt'] != 0) {
 			$errorMsg = 2;
+		}
+	}
+
+	if (!$errorMsg) {
+		//check for uri duplicates
+		$sql = 'SELECT count(*) as cnt
+			FROM ' . $this->table('Tags') . '
+			WHERE	is_hidden < 2 AND
+			     	uri = \'' . $this->db->escape($data['uri']) . '\' AND
+			     	id <> ' . $id;
+		$result = $this->db->single_query_assoc($sql);
+		if ($result['cnt'] != 0) {
+			$errorMsg = 4;
 		}
 	}
 
@@ -205,7 +222,7 @@ function saveItem()
 		return $id;
 	}
 
-	$ins = $form->get_values('name', 'description', 'is_hidden');
+	$ins = $form->get_values('name', 'uri', 'description', 'is_hidden');
 
 	if ($id) {
 		$this->db->update($ins, $this->table('Tags'), array('id' => $id));
@@ -319,7 +336,7 @@ function getOrdering()
 	$page = &moon::page();
 	$sort = $page->get_global($this->my('fullname') . '.sort');
 	if (empty($sort)) {
-		$sort = 1;
+		$sort = 11;
 	}
 
 	$links = array();
@@ -339,6 +356,11 @@ function getOrdering()
 	$this->sqlOrder = 'ORDER BY ' . $ord->sql_order();
 	//gauna linkus orderby{nr}
 	return $links;
+}
+
+function getMyUriPrefix()
+{
+	return '/tags/';
 }
 
 }

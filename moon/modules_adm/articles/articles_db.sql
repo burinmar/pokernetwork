@@ -121,6 +121,7 @@ CREATE TABLE `articles_comments` (
 CREATE TABLE `articles_tags` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
   `name` VARCHAR(255) NOT NULL,
+  `uri` VARCHAR(128) NOT NULL,
   `description` TEXT NOT NULL,
   `is_hidden` TINYINT(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)

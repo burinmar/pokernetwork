@@ -6,6 +6,8 @@ addNew=Add tag
 error404=Item not found!
 error1=Tag name required
 error2=Please choose different name, this tag is already exists
+error3=Uri required
+error4=Please choose another uri, this one is in use
 
 <% main %>
 <% if {viewList} %>
@@ -79,6 +81,13 @@ error2=Please choose different name, this tag is already exists
 	<dl>
 		<dt><label for="i_name">Name</label></dt>
 		<dd><input type="text" name="name" id="i_name" value="{name}" size="78" maxlength="255" class="required" /></dd>
+
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd>
+			<i>{uriPrefix}</i>
+			<input type="text" name="uri" id="i_uri" value="{uri}" size="70" maxlength="60" class="required" onfocus="fillUri(this,'i_name')" />
+			/
+		</dd>
 		
 		<dt><label for="i_description">Description</label></dt>
 		<dd class="w100"><textarea rows="10" cols="75" name="description" id="i_description" >{description}</textarea></dd>

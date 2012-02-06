@@ -102,7 +102,7 @@ function init()
 		'tags' => 'b|i|u|h|quote|list|url|code|sub|sup|strike|table|timer|img|video|game|twitter',
 		'replace'=>array(), // 'h'=>'h2'
 		'smiles'=>false, //Ijungti smiles konvertavima
-		'cards'=>false, //Ijungti kortu simboliu atpazinima
+		'cards'=>true, //Ijungti kortu simboliu atpazinima
         //galimi intarpai su {id:}
 		'image'=>false, //Leisti imges prisegima
 		'video'=>false, //Leisti video prisegima
@@ -560,16 +560,6 @@ function _tag($tag,$param,$txt){
 		$patterns[] = "#.*?pokerreplay\.com/video/([0-9a-z]+).*#is"; //link
 		$replacements[] = $tpls['video_pokerreplay'];
 		
-		if (_SITE_ID_ == 'si') {
-			$patterns[] = "#.*?24ur\.com.*?embed.php/([^\"&\[]+).*#is";
-			$replacements[] = '<embed src="http://24ur.com/bin/player/embed.php/\1" type="application/x-shockwave-flash" width="420" height="376" allowfullscreen="true"></embed>';
-		}
-		
-		if (_SITE_ID_ == 'bg') {
-			$patterns[] = "#.*?vbox7\.com/(?:play:|.+vid=)([0-9a-z]+).*#is";
-			$replacements[] = '<object width="450" height="403"><param name="movie" value="http://i48.vbox7.com/player/ext.swf?vid=\1"></param><param name="wmode" value="transparent"></param><embed type="application/x-shockwave-flash" src="http://i48.vbox7.com/player/ext.swf?vid=\1" width="450" height="403" wmode="transparent"></embed></object>';
-		}
-		
 		foreach ($patterns as $k => $pattern) {
 			if (preg_match($pattern, $txt)) {
 				$txt = preg_replace($pattern, $replacements[$k], $txt);
@@ -599,13 +589,13 @@ function _tag($tag,$param,$txt){
 		if (!$from || !($from = strtotime($from))) {
 			$from = $now;
 		}
-        	$to = isset($a[1]) ? $a[1] : ($from + 86400);
+	$to = isset($a[1]) ? $a[1] : ($from + 86400);
 		if (!$to || !($to = strtotime($to))) {
 			$to = $now;
 		}
 		$to = isset($a[0]) && !isset($a[1]) ? 1893477600 : $to; // if no 'to' - set it to 2030
 		$id = uniqid('');
-        	$txt = '<!--timer:' . $id . '['. $from . '|' . $to . ']-->' . $txt . '<!--' . $id . ':timer-->';
+	$txt = '<!--timer:' . $id . '['. $from . '|' . $to . ']-->' . $txt . '<!--' . $id . ':timer-->';
 
 		break;
 	case 'url+':
