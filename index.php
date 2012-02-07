@@ -23,11 +23,7 @@ if (is_dev()) {
 	//DEMO SECURITY
 }*/
 moon_init('ini/moon.ini', 'engine');
-$e = & moon :: engine();
-$ini = & moon :: moon_ini();
-$e->ini_set('home_url', $ini->get('site', 'home_url'));
-$p = & moon :: page();
-$p->home_url = $e->ini('home_url');
+moon_reconfig();
 $all = moon_process();
 echo $all;
 if (strpos($all, '{!') !== FALSE) {

@@ -1,0 +1,23 @@
+<% info %>
+
+
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+</div>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="" />
+	<input type="hidden" name="event-saveorder" value="{goSort}" />
+	<table class="list sortable">
+		<%loop{items} %>
+		<tr id="row{id}">
+			<td></td>
+			<td style="font-size:1.2em; text-align:right">{roomNr}.</td>
+			<td>{roomTitle}</td>
+		</tr>
+		<%end%>
+	</table>
+	<div class="list-footer clrfix">&nbsp;</div>
+</form>
+
+

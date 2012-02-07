@@ -1,0 +1,131 @@
+<% info %>
+
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Statistics {roomTitle}</h1>
+	{submenu}
+	<% if {goBack} %><a href="{goBack}" class="goBack">Back to rooms list</a><% end %>
+</div>
+
+<% if {isStats} %>
+<table class="list">
+	<thead>
+		<tr>
+			<th style="width: 50px;"><span>Year</span></th>
+			<th style=""><span>Month</span></th>
+			<th class="tar" style="width: 110px;"><span>Url Count</span></th>
+			<th class="tar" style="width: 110px;"><span>Download count</span></th>
+		</tr>
+	</thead>
+	<tbody>
+	{listItems}
+	</tbody>
+</table>
+<% else {isStats} %>
+<p>No statistics for this room</p>
+<% end %>
+<% list_item %>
+<tr>
+	<td>{year}</td>
+	<td><a href="/adm/reviews-statistics/details/{year}.{month}.{roomId}htm">{monthName}</a></td>
+	<td class="tar">{uriCount}</td>
+	<td class="tar">{uriDownloadCount}</td>
+</tr>
+
+<% month %>
+<div class="tabzoneHeader clrfix" style="margin-bottom: 20px">
+	<% if {roomTitle} %>
+		<h1>{roomTitle}</h1>
+	<% else {roomTitle} %>
+		<h1>Statistics</h1>
+	<% end %> {submenu}
+	<a class="goBack" href="{goBack}">Go Back</a>
+</div>
+<h2 class="headline" style="margin: 0 auto 20px; width: 300px; display: block">
+	<% if {showPrev} %><a href="{goPrev}" style="font-size:8pt; text-decoration:none;">&laquo; {monthPrevName} {yearPrev}</a><% end %>
+	{monthName} {year}
+	<% if {showNext} %><a href="{goNext}" style="font-size:8pt; text-decoration:none;">{monthNextName} {yearNext} &raquo;</a> <% end %>
+</h2>
+<span class="clr"></span>
+
+
+<% if {isStats} %>
+
+<div style="width: 45%; float:right;">
+	<h3 class="headline">Sections:</h3>
+	<table class="list">
+		<thead>
+		<tr>
+			<th style="width: 30px;" class="tar"><span>Section</span></th>
+			<th style="width: 110px;" class="tar"><span>Url Count</span></th>
+			<th style="width: 110px;" class="tar"><span>Download Count</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		{monthListItems}
+		<tr style="background: #ffc;">
+			<td class="tar">Total:</td>
+			<td class="tar"><strong>{uriCountTotal}</strong></td>
+			<td class="tar"><strong>{uriDownloadCountTotal}</strong></td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<div style="float:left; width: 45%;">
+	<h3 class="headline">Campaigns:</h3>
+	<table class="list">
+		<thead>
+		<tr>
+			<th style="width: 30px;" class="tar"><span>Campaign</span></th>
+			<th style="width: 110px;" class="tar"><span>Url Count</span></th>
+			<th style="width: 110px;" class="tar"><span>Download Count</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		{monthCampaignItems}
+		<tr style="background: #ffc;">
+			<td class="tar">Total:</td>
+			<td class="tar"><strong>{uriCountTotal}</strong></td>
+			<td class="tar"><strong>{uriDownloadCountTotal}</strong></td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+<span class="clr"></span>
+<h3 class="headline">Rooms:</h3>
+<table class="list nomarginBottom">
+	<thead>
+		<tr>
+			<th></th>
+			<th style="width: 20px; background: #ffc; border: 1px solid #ccc" class="tar"><span>Total</span></th>
+			{daysHeader}
+		</tr>
+	</thead>
+	<tbody>
+		{roomItems}
+	</tbody>
+</table>
+
+<% else {isStats} %>
+<p>No statistics for this month</p>
+<% end %>
+
+<% month_list_item %>
+<tr>
+	<td style="color: #666666" class="tar">{pName}</td>
+	<td style="color: #666666" class="tar" >{uriCount}</td>
+	<td style="color: #666666" class="tar" >{uriDownloadCount}</td>
+</tr>
+
+<% month_room_item %>
+<tr>
+	<td style="font-size: 11px; white-space: nowrap;"><a href="/adm/reviews-statistics/{roomId}.htm">{roomName}</a></td>
+	<td class="tar" style="background: #ffc; border: 1px solid #ccc"><strong>{totalUriCount}</strong></td>
+	{days}
+</tr>
+
+<% month_room_th %>
+<th class="tac" style="padding-left: 0px; padding-right: 0px; border: 1px solid #ccc; width: 30px">{dayNr}</th>
+
+<% month_room_td %>
+<td style="color: #666666; padding-left: 0px; padding-right: 0px; border: 1px solid #e6e6e6; width: 30px" class="tac">{dayUriCnt}</td>

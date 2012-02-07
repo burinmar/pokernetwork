@@ -1,0 +1,193 @@
+<% info %>
+titleNew=New article
+titleEdit=Edit article
+titleLinkNew=New link
+titleLinkEdit=Edit link
+
+error404=Item not found!
+error1=Title required
+error2=Invalid date
+error3=Empty or dublicated uri!
+error9=System error!
+
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>{roomName}: {title}</h1>
+	{submenu}
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add article</a> <a href="{goNewLink}" class="button buttonAddNew">Add Link</a></div>
+</div>
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<input type="hidden" name="event-saveorder" value="{goSort}" />
+		<input type="hidden" name="room_id" value="{room_id}" />
+		<table class="list sortable" style="width: 100%">
+		<colgroup>
+			<col />
+			<col />
+			<col />
+			<col />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Title</span></th>
+			<th><span>Uri</span></th>
+			<th></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+			<% loop{items} %>
+				<tr class="{class}" id="row{id}">
+					<td><a href="{goEdit}">{title}</a></td>
+					<td><a href="{uri}<%if{is_link}%><%else{is_link}%>.htm<%end%>" class="explain" target="_blank">{uri}</a></td>
+					<td><%if{is_link}%><span class="link"></span><%end%></td>
+					<td><input type="checkbox" name="it[]" value="{id}" /></td>
+				</tr>
+			<% end{items} %>
+		</tbody>
+		</table>
+		<!--# delete items -->
+		<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+	</form>
+<% else {items} %>
+	<div class="explain">There are no items</div>
+<% end {if} %>
+
+
+<% cssForm %>
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>{roomName}: {pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+	{submenu}
+</div>
+
+<form action="{!action}" name="frm" method="post" class="aform" >
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<input type="hidden" name="room_id" value="{room_id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return"  /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<dl>
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100"><input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required"/></dd>
+
+		<dt><label for="i_uri">URI</label></dt>
+		<dd>
+			<i>/</i> <input type="text" name="uri" id="i_uri" value="{uri}" size="60" maxlength="60" class="required" onfocus="fillUri(this,'i_title')" /> .htm
+			<% if {id} %>
+			<div class="explain"><a href="/{uri}.htm" onclick="window.open(this.href);return false;" class="newwindow">View this article in new window</a></div>
+			<% end {id} %>
+		</dd>
+
+		<dt>
+			<label for="i_content">Content</label><br />
+			<label><input type="radio" name="is_html" value="{is-text}"  id="chooseTypeText"  class="contentType" /> Text</label>
+			<label><input type="radio" name="is_html" value="{is-html}"  id="chooseTypeHTML"  class="contentType" /> HTML</label>
+		</dt>
+
+		<dd class="w100">
+			<div style="<%if{is_html}%>display:none;<%end%>" id="radioTypeText">
+				{toolbar}
+				<textarea name="content" id="i_content" rows="25" cols="70">{content}</textarea>
+			</div>
+			<div style="<%if{is_html}%><%else{is_html}%>display:none;<%end%>" id="radioTypeHTML">
+				<textarea name="content_html" id="i_content_html" rows="25" cols="70">{content_html}</textarea>
+			</div>
+		<script type="text/javascript">
+		/*<![CDATA[*/
+		$(document).ready(function(){
+			$('input[name="is_html"]').click(function(){
+				if ($('.contentType:checked').val() == 1) {
+					$('#radioTypeText').hide();
+					$('#radioTypeHTML').show();
+				}
+				else {
+					$('#radioTypeText').show();
+					$('#radioTypeHTML').hide();
+				}
+			});
+		});
+		/*]]>*/
+		</script>
+
+			<!--#
+		{toolbar}<textarea rows="25" cols="70" name="content" id="i_content">{content}</textarea>
+		-->
+		</dd>
+
+		<dt><label for="i_meta_title">Meta title</label></dt>
+		<dd class="w100">
+			<input type="text" name="meta_title" id="i_meta_title" value="{meta_title}" size="80" maxlength="255" class="count_chars_59"/>
+		</dd>
+
+		<dt><label for="i_meta_description">Meta description</label></dt>
+		<dd class="w100">
+			<textarea rows="2" cols="60" name="meta_description" id="i_meta_description"  class="count_chars_156">{meta_description}</textarea>
+		</dd>
+
+		<dt><label for="i_meta_keywords">Meta keywords</label></dt>
+		<dd class="w100">
+			<input type="text" name="meta_keywords" id="i_meta_keywords" value="{meta_keywords}" size="80" maxlength="255" />
+		</dd>
+
+		<dt><label for="i_bonus_code">Custom bonus code</label></dt>
+		<dd>
+			<input type="text" name="bonus_code" id="i_bonus_code" value="{bonus_code}" size="30" maxlength="30" />
+		</dd>
+
+		<dt><label for="i_tracker">Custom tracker</label></dt>
+		<dd class="w100">
+			<input type="text" name="tracker_url" id="i_tracker_url" value="{tracker_url}" size="80" maxlength="200" />
+			<div class="explain">Must start with <i>http://</i></div>
+		</dd>
+
+		<dt></dt>
+		<dd><label><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> Hide this article</label></dd>
+	</dl>
+
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return"  /><input type="button"  value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+
+<% viewFormLink %>
+<div class="tabzoneHeader clrfix">
+	<h1>{roomName}: {pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" method="post" class="aform" >
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<input type="hidden" name="room_id" value="{room_id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100"><input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="required"/></dd>
+
+		<dt><label for="i_uri">URL</label></dt>
+		<dd class="w100">
+			<input type="text" name="uri" id="i_uri" value="{uri}" size="80" maxlength="128" class="required" />
+			<% if {id} %>
+			<div class="explain"><a href="{uri}" onclick="window.open(this.href);return false;" class="newwindow">View this link in new window</a></div>
+			<% end {id} %>
+		</dd>
+
+		<dt></dt>
+		<dd><label><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> Hide this link</label></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return"  /><input type="button"  value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>

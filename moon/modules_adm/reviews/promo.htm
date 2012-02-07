@@ -1,0 +1,113 @@
+<% info %>
+titleNew=New promotion
+titleEdit=Edit promotion
+
+404=Item not found!
+error1=Title required
+
+
+<% viewList %>
+
+<!--
+<h2>Added promotions</h2>
+<div class="clr"></div>
+-->
+
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<input type="hidden" name="event-saveorder" value="{goSort}" />
+		<input type="hidden" name="room_id" value="{room_id}" />
+		<table class="list sortable" style="width: 100%">
+		<colgroup>
+			<col />
+			<col />
+			<col />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Title</span></th>
+			<th><span>Date Range</span></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop{items} %>
+			<tr class="{class}" id="row{id}">
+				<td{styleTD}><a href="{goEdit}">{title}</a><div class="explain">{url}</div></td>
+				<td>{date}</td>
+				<td><input type="checkbox" name="it[]" value="{id}" /></td>
+			</tr>
+		<% end{items} %>
+		</tbody>
+		</table>
+
+		<!--# delete items -->
+		<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+	</form>
+<% end {if} %>
+
+
+
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>{roomName}: {pageTitle}</h1>
+	{submenu}
+	<%if{cancel}%>
+	<%else{cancel}%>
+	<div class="fr"><a href="{!action}" onclick="jQuery('#frm').toggle();jQuery('#btAdd').hide();return false" class="button buttonAddNew">Add item</a></div>
+	<%end%>
+</div>
+
+<div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform{class-hide}">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<input type="hidden" name="room_id" value="{room_id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<%if{master_id}%>
+		<dt></dt>
+		<dd class="w100">
+			<div class="explain">This promotion is synchronized with some www.pokerworks.com <a href="http://www.pokerworks.com/adm/reviews-promotions/edit/{master_id}.htm" onclick="window.open(this.href);return false;">promotion</a>. You must ensure that your translation will correspond to the original items.</div><br />
+			<%if{master_title}%>
+				<div style="border: 1px dotted;padding:3px">
+				<div><b>{master_title}</b></div>
+				<div style="margin-top: 10px;">{master_url}</div>
+				<%if{master_tags}%><div style="border-top: 1px dotted"><i>Tags: {master_tags}</i></div><%end%>
+				</div>
+			<%end%>
+		</dd>
+		<%end%>
+
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100"><input type="text" name="title" id="i_title" value="{title}" size="81" maxlength="255" class="required" /></dd>
+		<dt><label for="i_url">Uri</label></dt>
+		<dd><input type="text" name="url" id="i_url" value="{url}" size="80" maxlength="128" /></dd>
+		<dt></dt>
+		<dd><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> <label for="i_hide">Hide this promotion</label></dd>
+		<dt><label>Active</label></dt>
+		<dd>
+			From <input type="text" name="active_from" id="active_from" value="{active_from}" class="isDate" size="11" maxlength="10" style="margin-right: 10px" />
+			Till <input type="text" name="active_to"   id="active_to"   value="{active_to}"   class="isDate" size="11" maxlength="10" /><br /><br />
+			<div class="explain">By filling two fields above you order the promo to appear in specified time interval. <br/>Both fields are optional. Date format: <i>yyyy-mm-dd</i>. Current server date is {now} </div>
+		</dd>
+	</dl>
+
+	<div class="formButton"><input type="submit" value="Save" />
+		<%if{cancel}%>
+			<input type="button" value="Cancel" onclick="window.location.href='{goBack}'" />
+		<%else{cancel}%>
+			<input type="button" value="Cancel" onclick="jQuery('#frm').toggle();jQuery('#btAdd').show();" />
+		<%end%>
+	</div>
+</form>
+</div>

@@ -153,9 +153,9 @@ class rooms extends moon_com {
 				break;
 
 			case 'linux' :
-				$order = 'sort_1 ASC';
+				$order = 'sort_3 ASC';
 				$where = ' AND software_os & 4';
-				$byEditorRating = TRUE;
+				$byEditorRating = FALSE;
 				break;
 
 			/*case 'www' :
@@ -217,7 +217,7 @@ class rooms extends moon_com {
 		');
 	}
 
-   
+
 
 
 }

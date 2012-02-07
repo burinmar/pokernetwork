@@ -1,0 +1,130 @@
+<% info %>
+titleNew=Add room
+titleEdit=Edit room
+404=Item not found!
+error1=Room name required
+error_no_meta_title=Meta title required
+error_no_meta_keywords=Meta keywords required
+error_no_meta_description=Meta description required
+error9=System error!
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>Poker Rooms</h1>
+</div>
+
+<!--# Filtro forma -->
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Title: <input type="text" name="filter[text]" value="{text}" size="30" maxlength="30"/></label></td>
+		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show hidden rooms</label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filtras}%>
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="" />
+		<table class="list nomarginBottom">
+		<colgroup>
+			<col style="width: 20px" />
+			<col />
+			<col />
+			<col style="width: 85px" />
+			<col style="width: 85px" />
+			<col style="width: 85px" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th>&nbsp;</th>
+				<th><a href="{orderby1}">Room name</a></th>
+				<th><span>URL address</span></th>
+				<th class="tac"><span title="Room's Promotions">Promotions</span></th>
+				<th class="tar"><span title="Acting month visits">Visits</span></th>
+				<th class="tar"><span title="Acting month downloads">Downloads</span></th>
+			</tr>
+		</thead>
+		<tbody>
+		<% loop{items} %>
+		<tr class="{class}">
+			<td><%if{favicon}%><img src="{favicon}" alt="" style="width: 20px" /><%end%></td>
+			<td><a href="{goEdit}">{title}</a></td>
+			<td><%if{alias}%><a href="/{alias}/" onclick="window.open(this.href,'winroom');return false" class="explain">/{alias}/</a><%end%></td>
+			<td class="tac"><a href="{url.promo}" class="edit" title="Edit Promotions">Edit</a></td>
+			<td class="tar"><span class="explain">{visits}</span></td>
+			<td class="tar"><span class="explainGreen">{downloads}</span></td>
+		</tr>
+		<% end{items} %>
+		</tbody>
+		</table>
+	</form>
+	{puslapiai}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+
+
+
+
+<% cssForm %>
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+<h1>{name}: {pageTitle}</h1>
+{submenu}
+<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<dl>
+		<%if{logo}%>
+			<dt><label class="formHeadline">Logo</label></dt>
+			<dd><div class="fr"><a href="/{alias}/" onclick="window.open(this.href);return false" class="newwindow">Preview in new tab</a></div><img src="{logo}" alt="{name}" /></dd>
+		<%end{logo}%>
+		
+		<dt><label>Bonus</label></dt>
+		<dd><b>{bonus_int}, &nbsp; &nbsp; {bonus_percent}%</b></dd>
+
+		<dt><label for="i_bonus_text">Bonus text</label></dt>
+		<dd><textarea name="bonus_text" id="i_bonus_text" cols="70" rows="2">{bonus_text}</textarea><div class="explain">Short text describing the bonus.</div></dd>
+	</dl>
+
+		<div class="tabber" style="margin-bottom:2em;">
+		<%loop{tabs}%>
+		<div class="tabbertab">
+			<h3 style="margin-top:2em;">{tabTitle}<%if{notempty}%>*<%end%></h3>
+			<dl>
+				<dt><label for="i_review{page_id}">Review <i>({tabTitle})</i></label></dt>
+				<dd class="w100">{toolbar}<textarea rows="30" cols="70" name="review[{page_id}][content]" id="i_review{page_id}">{content}</textarea></dd>
+
+				<dt><label for="meta_t{page_id}">Meta title <i>({tabTitle})</i></label></dt>
+				<dd class="w100"><input type="text" name="review[{page_id}][meta_title]" id="meta_t{page_id}" value="{meta_title}" size="80" maxlength="255" class="count_chars_59" /></dd>
+				<dt><label for="meta_d{page_id}">Meta description <i>({tabTitle})</i></label></dt>
+				<dd class="w100" style="margin-bottom: 0"><textarea rows="2" cols="60" name="review[{page_id}][meta_description]" id="meta_d{page_id}" class="count_chars_156">{meta_description}</textarea></dd>
+			</dl>
+		</div>
+		<%end{loop}%>
+	</div>
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+<%reviewTabs%>
+1=Summary
+2=Bonus
+3=Installation
+4=Tournaments

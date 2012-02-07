@@ -12,6 +12,20 @@ News {ico=news, admin=content}
 	articles.authors = Authors
 	articles.tags = Tags
 
+Reviews {ico=reviews, admin=reviews, hide=0,sites=}
+	Reviews {link=reviews.reviews}
+		reviews.reviews = Room Profile {link=reviews.reviews#edit|*id*}
+		reviews.promo = Promotions {link=reviews.promo#|*id*}
+		reviews.pages = Additional Pages {link=reviews.pages#|*id*}
+		reviews.statisticsRoom = Statistics {link=reviews.statistics#|*id*}
+	reviews.promotions = Promotions
+	Sorting {link=reviews.sorting#, admin=chief-editor}
+		reviews.sorting = Sorting
+		reviews.sorting_linux = Sort Linux poker rooms
+		reviews.sorting_mac = Sort Mac poker rooms
+	reviews.deposits = Deposits
+	reviews.statistics = Statistics
+
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

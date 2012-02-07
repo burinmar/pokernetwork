@@ -46,18 +46,6 @@ class room_download extends moon_com {
 
 	function getRedirectUrl($roomId, $alias, $uri = 'ext') {
 		$isDownload = $uri == 'download' ? TRUE:FALSE;
-		if (_SITE_ID_ === 'fr' && 'fr' == geo_my_country()) {
-			//nelicenzijuoti saitai neturi veikti prancuzui
-			$is = $this->db->single_query('
-				SELECT us_friendly
-				FROM ' . $this->table('Rooms') . '
-				WHERE id = ' . intval($roomId) . '
-				');
-			if (empty ($is[0])) {
-				// neturi licenzijos
-				return array('/salles-poker-licence-france/', 0);
-			}
-		}
 		$field = ($uri == 'ext') ? 'uri':'uri_download';
 		$result = $this->db->single_query_assoc('
 			SELECT uri, uri_download, iframe, bonus_code

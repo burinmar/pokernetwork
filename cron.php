@@ -6,6 +6,7 @@ if (is_dev()) {
 	ini_set('error_reporting', E_ALL);
 }
 moon_init('ini/moon.ini', 'adm');
+moon_reconfig();
 $e = & moon :: engine();
 if (isset ($_SERVER['argc']) && $_SERVER['argc'] > 1) {
 	$e->ini_set('startup', 'sys.cron#background');
@@ -13,10 +14,6 @@ if (isset ($_SERVER['argc']) && $_SERVER['argc'] > 1) {
 else {
 	$e->ini_set('startup', 'sys.cron#jobs');
 }
-$ini = & moon :: moon_ini();
-$e->ini_set('home_url', $ini->get('site', 'home_url'));
-$p = & moon :: page();
-$p->home_url = $e->ini('home_url');
 moon_process();
 moon_close();
 ?>

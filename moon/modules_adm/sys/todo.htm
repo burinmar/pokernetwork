@@ -1,26 +1,27 @@
 <%todo_box%>
-<div class="n">
-	<b>You have:</b>
-	<ul>
-		<%if{hasTranslation}%><li class="translation"><a href="/adm/translator-tasks/"><%if{tasksInProgress}%><span>{tasksInProgress} new translation(s) tasks.</span><%end%><%if{tasksReturned}%>&nbsp;&nbsp;&nbsp;<span>{tasksReturned} translation(s) was returned.</span><%end%></a></li><%end%>
-		<%if{freerolls}%><li class="freerolls"><a href="/adm/tour-special/"><span>{freerolls}</span> freeroll(s) to check and update.</a></li><%end%>
-		<%if{games}%><li class="freerolls"><a href="/adm/games-freegames/"><span>{games}</span> freegame(s) to check and update.</a></li><%end%>
-		<%if{promotions}%><li class="promotions"><a href="/adm/reviews-promotions/"><span>{promotions}</span> promotion(s) to check and update.</a></li><%end%>
-		<%if{feedback}%><li class="faq"><a href="/adm/faq-feedback/"><span>{feedback}</span> FAQ support request(s) to respond.</a></li><%end%>
-		<%if{support}%><li class="support"><a href="{url.support}" onclick="window.open(this.href);return false"><span>{support}</span> support request(s) to respond.</a></li><%end%>
-		<%if{whatsnew}%><li class="whatsnew"><a href="/adm/whatsnew/edit/{wID}.htm">New cms feature: <span>{wTitle}</span></a></li><%end%>
-		{t}
-	</ul><span class="clear">&nbsp;</span>
+<div class="task {class}">
+	<span title="Tasks">You have <b>{count}</b> tasks</span>
+	<%if{undone}%>
+	<div class="popup">
+		<span></span>
+		<ul class="clrfix">
+			<%if{support}%><li class="support"><a href="{url.support}" onclick="window.open(this.href);return false"><b>{support}</b> support request(s) to respond.</a></li><%end%>
+			<%loop{tasks}%><li class="{class}"><a href="{url}">{msg}</a></li><%end%>
+		</ul>
+	</div>
+	<%end%>
 </div>
 
-<%message%>
-0=Profile of league <span>{title}</span> updated
-1=<span>{c}</span> News comment(s) marked as spam
-2=<span>{c}</span> Video comment(s) marked as spam
-3=<span>{c}</span> Casino reviews comment(s) marked as spam
-4=Synchronize updated leagues
-5=<span>{c}</span> Audition comment(s) marked as spam
-6=League page <span>{title}</span> updated
-
-<%item%>
-<li{a}><a href="{url}">{t}</a></li>
+<%messages%>
+translate0 = translation | <b>{c}</b> new translation(s) tasks.
+translate1 = translation | <b>{c}</b> translation(s) was returned.
+freerolls = freerolls | <b>{c}</b> freeroll(s) to check and update.
+promotions = promotions | <b>{c}</b> promotions(s) to check and update.
+challenges = challenges | <b>{c}</b> challenge(s) to check and update.
+shop = shop | <b>{c}</b> Club good(s) need to be verified
+promo0 = league | Promotion <b>{title}</b> profile page updated
+promo1 = league | Promotion custom page <b>{title}</b> updated
+promo2 = league | Promotion schedule page <b>{title}</b> updated
+comments0 = spam-news | <b>{c}</b> News comment(s) marked as spam
+comments1 = spam-video | <b>{c}</b> Video comment(s) marked as spam
+whatsnew = whatsnew | New cms feature: <b>{title}</b>

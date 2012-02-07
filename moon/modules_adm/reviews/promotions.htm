@@ -1,0 +1,138 @@
+<% info %>
+titleNew=New promotion
+titleEdit=Edit promotion
+
+404=Item not found!
+error1=Title required
+error2=Select poker room, please!
+
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# Filtro forma -->
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Title: <input type="text" name="filter[text]" value="{text}" size="20" maxlength="30"/></label></td>
+		<td><label>Room: <select name="filter[room_id]"><option value=""></option>{rooms}</select></label></td>
+		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show deleted</label></td>
+		<td><input type="submit" value="Filter" /></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filtras}%>
+
+
+<!--# sarasas -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<!--# <input type="hidden" name="event-clear" value="{goClear}" /> -->
+	<table class="list">
+	<colgroup>
+		<% if {site-slave} %><col style="width: 70px" /><%end%>
+		<col />
+		<col />
+		<col style="width: 100px" />
+		<col style="width: 20px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<% if {site-slave} %><th><a href="{orderby2}">Sync</a></th><%end%>
+		<th><span>Title</span></th>
+		<th><span>Room</span></th>
+		<th><a href="{orderby1}">Created</a></th>
+		<th class="checkall"></th>
+	</tr>
+	</thead>
+	<tbody>
+		<% loop{items} %>
+			<tr class="{class}">
+				<% if {site-slave} %><td{styleTD}></td><%end%>
+				<td>
+					<a href="{goEdit}">{title}</a>
+					<div class="explain">
+					<%if{timer}%>Active {timer}<%end%> <%if{expired}%><b style="color:red">Already expired</b><%end%>
+					<%if{url}%><div>URL: {url}</div><%end%>
+					</div>
+				</td>
+				<td><%if{room}%>{room}<%end%></td>
+				<td>{created}</td>
+				<td><input type="checkbox" name="it[]" value="{id}" /></td>
+			</tr>
+		<% end{items} %>
+	</tbody>
+	</table>
+	<% if {site-slave} %>
+	<p class="explain">
+		Some promotions are imported from the pokerworks.com. Such promotions are marked with special icons: <br/>
+		<span class="sync1" title="Status: up to date"></span> - the promotion is up to date, <br/>
+		<span class="sync2" title="Status: needs attention"></span> - the promotion was updated, so you have to check it and update.
+	</p>
+	<% end {site-slave} %>
+	<div class="list-footer clrfix">
+		<input type="button" class="button fr btDel" value="Delete selected" />
+	</div>
+</form>
+{puslapiai}
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+
+<% cssForm %>
+
+<% viewForm %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<dl>
+		<%if{master_id}%>
+		<dd class="w100">
+			<div>
+			<div class="explain">This promotion is synchronized with some pokerworks.com <a href="http://pokerworks.com/adm/reviews-promotions/edit/{master_id}.htm" onclick="window.open(this.href);return false;">promotion</a>. You must ensure that your translation will correspond to the original items.</div><br />
+			<%if{master_title}%>
+				<div style="border: 1px dotted; padding:3px">
+				<div><b>{master_title}</b></div>
+				<div style="margin-top: 10px;">{master_url}</div>
+				<%if{master_tags}%><div style="border-top: 1px dotted"><i>Tags: {master_tags}</i></div><%end%>
+				</div>
+			<%end%>
+			</div>
+		</dd>
+		<%end%>
+
+		<dt><label for="i_title">Title</label></dt>
+		<dd class="w100"><input type="text" name="title" id="i_title" value="{title}" size="81" maxlength="255" class="required" /></dd>
+		<dt><label for="i_url">Url</label></dt>
+		<dd><input type="text" name="url" id="i_url" value="{url}" size="80" maxlength="128" /></dd>
+		<dd><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> <label for="i_hide">Hide this promotion</label></dd>
+		<dt><label>Active</label></dt>
+		<dd>
+			From <input type="text" name="active_from" id="active_from" value="{active_from}" class="isDate" size="11" maxlength="10" style="margin-right: 10px" />
+			Till <input type="text" name="active_to"   id="active_to"   value="{active_to}"   class="isDate" size="11" maxlength="10" />
+			<div class="explain clrfix">By filling two fields above you order the promo to appear in specified time interval. <br/>Both fields are optional. Date format: <i>yyyy-mm-dd</i>. Current server date is {now} </div>
+		</dd>
+
+		<dt><label for="i_room">Poker Room</label></dt>
+		<dd><select name="room_id" id="i_room" class="required"><option value="0"></option>{rooms}</select></dd>
+	</dl>
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>

@@ -1,6 +1,21 @@
 <?php
 date_default_timezone_set('Australia/Melbourne');
 
+function moon_reconfig() {
+	$e = & moon :: engine();
+	$ini = & moon :: moon_ini();
+	$e->ini_set('home_url', $ini->get('site', 'home_url'));
+	$p = & moon :: page();
+	$p->home_url = $e->ini('home_url');
+ 	if (is_dev()) {
+		//$e->ini_set('error.file', 'tmp/error.log');
+		$e->ini_set('error.display', 1);
+		//$e->ini_set('dir.cache',$e->ini('dir.cache'));
+		moon::cache()->on(FALSE);
+	}
+
+}
+
 function is_dev() {
 	static $_isDev = NULL;
 	if (NULL === $_isDev) {

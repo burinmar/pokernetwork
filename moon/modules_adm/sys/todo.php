@@ -1,54 +1,118 @@
 <?php
+
 class todo extends moon_com {
+
 	function events($event) {
 		switch ($event) {
+
 			case 'support':
-			$ini = & moon :: moon_ini();
-			if ($ini->has('other', 'support.userHash')) {
-				$userHash = $ini->get('other', 'support.userHash');
-				$url = 'http://support.pokernews.com/client/index.php?hash=' . urlencode($userHash);
-			}
-			$p = &moon::page();
-			$p->redirect($url);
-			break;
+				$ini = & moon :: moon_ini();
+				if ($ini->has('other', 'support.userHash')) {
+					$userHash = $ini->get('other', 'support.userHash');
+					$url = 'http://support.pokernews.com/client/index.php?hash=' . urlencode($userHash);
+				}
+				$p = & moon :: page();
+				$p->redirect($url);
+				break;
 		}
 	}
 
 	function getNotifyingHeader() {
-		$c1 = in_array(_SITE_ID_, array('com','br','china','cz','dk','fi','fr','il','jp','kr','lt','no','ru','se','tr','tw','uk')); // articles
-		$c2 = in_array(_SITE_ID_, array('it','bg','es','fr'));
+		$this->tpl = & $this->load_template();
+		$this->messages = $this->tpl->parse_array('messages');
+		$this->tasks = '';
+		$this->count = 0;
 		$m = array();
-		$m['tasksReturned'] = $m['tasksInProgress'] = 0;
-		$m['hasTranslation'] = FALSE;
-		if (is_object($oT = & $this->object('translator.tasks'))) {
-			$countArr = $oT->getUnfinishedTaskCount();
-			if (isset ($countArr['progress'])) $m['tasksInProgress'] = $countArr['progress'];
-			if (isset ($countArr['returned'])) $m['tasksReturned'] = $countArr['returned'];
-			if ($m['tasksReturned'] || $m['tasksInProgress']) $m['hasTranslation'] = true;
+		$user = & moon :: user();
+
+
+		/* special freerols */
+		if (is_object($oF = & $this->object('tour.special'))) {
+			$this->task('freerolls', $oF->countFreerollsTODO(), 'tour.special#');
 		}
-		if (_SITE_ID_ !== 'com' && is_object($oF = & $this->object('tour.special'))) $m['freerolls'] = $oF->countFreerollsTODO();
-		if (_SITE_ID_ !== 'com' && is_object($oP = & $this->object('reviews.promotions'))) $m['promotions'] = $oP->countPromotionsTODO();
-		if (_SITE_ID_ !== 'com' && is_object($oG = & $this->object('games.freegames'))) $m['games'] = $oG->countGamesTODO();
-		$m['support'] = '';
-		//if ($m['support'] = $this->checkSupport()) $m['url.support'] = $this->urlSupport;
-		$m['t'] = '';
 
-		$u = &moon::user();
+		/* reviews promotions */
+		if (is_object($oP = & $this->object('reviews.promotions'))) {
+			$this->task('promotions', $oP->countPromotionsTODO(), 'reviews.promotions#');
+		}
 
-		$m['whatsnew'] = false;
-		if (!$u->i_admin('developer') && is_object($oW = & $this->object('sys.whatsnew'))) {
-			$d = $oW->getLastFeature();
-			if (!empty($d)) {
-				$m['whatsnew'] = true;
-				$m['wID'] = intval($d['id']);
-				$m['wTitle'] = htmlspecialchars($d['title']);
+
+		/*  leagues and promotions */
+		if ($user->i_admin('tournaments') && is_object($o = & $this->object('promo.promos'))) {
+			$updatesBatch = $o->updates();
+			if (0 != count($updatesBatch)) {
+				foreach ($updatesBatch as $updateType => $updates) {
+					foreach ($updates as $v) {
+						switch ($updateType) {
+
+							case 0:
+								$this->task('promo0', $v[1], 'promo.promos#edit|' . $v[0]);
+								break;
+
+							case 1:
+								$this->task('promo1', $v[2], 'promo.custom_pages|' . $v[0] . '.' . $v[1]);
+								break;
+
+							case 2:
+								$this->task('promo1', $v[2], 'promo.schedule#|' . $v[0] . '.' . $v[1]);
+								break;
+
+							default:
+						}
+					}
+				}
 			}
 		}
-		if ($m['hasTranslation'] || !empty ($m['freerolls']) || !empty ($m['promotions']) || !empty ($m['games']) || !empty ($m['feedback']) || $m['support'] || $m['t'] || $m['whatsnew']) {
-			$t = & $this->load_template();
-			return $t->parse('todo_box', $m);
+
+
+
+		/* comments spam */
+		/*if ($user->i_admin('content')) {
+			// articles
+			$r = $this->db->single_query('SELECT COUNT(*) FROM articles_comments WHERE spam != 0');
+			$this->task('comments0', (int) $r[0], 'articles.spam_comments#');
+
+			//video
+			$r = $this->db->single_query('SELECT COUNT(*) FROM videos_comments WHERE spam != 0');
+			$this->task('comments1', (int) $r[0], 'video.spam_comments#');
+		}*/
+		//what's new
+		$m['whatsnew'] = false;
+		if (!$user->i_admin('developer') && is_object($oW = & $this->object('sys.whatsnew'))) {
+			$d = $oW->getLastFeature();
+			if (!empty ($d)) {
+				$this->task('whatsnew', $d['title'], 'sys.whatsnew#edit|' . intval($d['id']));
+			}
 		}
-		return '';
+
+		/* output */
+		$m['class'] = '';
+		$m['count'] = 0;
+		if ($this->count) {
+			$m['class'] = 'undone';
+			$m['undone'] = true;
+			$m['tasks'] = $this->tasks;
+			$m['count'] = $this->count;
+		}
+		return $this->tpl->parse('todo_box', $m);
+	}
+
+	function task($name, $count, $url) {
+		if (!empty ($count)) {
+			$a = array();
+			list($a['class'], $a['msg']) = explode('|', $this->messages[$name], 2);
+			list($event, $par) = explode('|', $url . '|');
+			$a['url'] = $this->link($event, $par);
+			if (is_numeric($count)) {
+				$this->count += $count;
+				$a['c'] = $count;
+			}
+			else {
+				$this->count++;
+				$a['title'] = $count;
+			}
+			$this->tasks .= $this->tpl->parse('tasks', $a);
+		}
 	}
 
 	function checkSupport() {
@@ -57,15 +121,17 @@ class todo extends moon_com {
 			$userID = $ini->get('other', 'support.userID');
 			$userHash = $ini->get('other', 'support.userHash');
 		}
-		else return 0;
+		else
+			return 0;
 		//
 		$locale = & moon :: locale();
 		$now = $locale->now();
 		//
-		$p = &moon::page();
+		$p = & moon :: page();
 		$lastCheck = (int) $p->get_global('support.checkTime');
 		//$lastCheck=0;
-		if ($lastCheck && abs($now - $lastCheck) < 120) $count = intval($p->get_global('support.checkResult'));
+		if ($lastCheck && abs($now - $lastCheck) < 120)
+			$count = intval($p->get_global('support.checkResult'));
 		else {
 			$ch = curl_init('http://support.pokernews.com/msg.php');
 			curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -85,8 +151,11 @@ class todo extends moon_com {
 			$p->set_global('support.checkResult', $count);
 			$p->set_global('support.checkTime', $now);
 		}
-		if ($count) $this->urlSupport = 'http://support.pokernews.com/client/index.php?hash=' . urlencode($userHash);
+		if ($count)
+			$this->urlSupport = 'http://support.pokernews.com/client/index.php?hash=' . urlencode($userHash);
 		return $count;
 	}
+
 }
+
 ?>

@@ -110,9 +110,9 @@ class admoutput extends moon_com {
 				$m = array('header' => $head, 'content' => $body, 'alerts' => '', 'todoHeader' => '');
 				if ($outputType == '' || !$t->has_part($outputType)) {
 					$outputType = 'page';
-				   /*	$oTodo = $this->object('sys.todo');
+					$oTodo = $this->object('sys.todo');
 					$todoHeader = $oTodo->getNotifyingHeader();
-					$m['todoHeader'] = $todoHeader;*/
+					$m['todoHeader'] = $todoHeader;
 				}
 				$m['goSite'] = '/';
 				$m['goLogout'] = $this->linkas('login#logout');
