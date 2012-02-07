@@ -137,6 +137,42 @@ function url_logic($ev = false, $par = false) {
 			return array($found['control'], $found['par']);
 		}
 		else {
+			$sql = array();
+
+			//redirect
+			$eUri = $db->escape($uri);
+
+			//reviewso aptikimas
+			$d = explode('/', $uri);
+			$isReview = false;
+			//gal tai roomsas
+			if (count($d) >= 1 && !in_array($d[1], array('', 'djs', 'live-reporting', 'register', 'banners', 'video'))) {
+				//tikrinama, gal nuoroda yra reviews puslapis
+				if (substr($uri, - 4) == '.htm') {
+					$sql[] = "(SELECT 2 as w,room_id,id FROM rw2_pages WHERE uri='" . $db->escape(substr($uri, 1, - 4)) . "' AND hide=0 AND is_link=0 LIMIT 1)";
+				}
+				//tikrinama, gal nuoroda yra reviewsas
+				$sql[] = "(SELECT 3 as w,id,0 FROM rw2_rooms WHERE alias='" . $db->escape($d[1]) . "' ORDER BY is_hidden LIMIT 1)";
+			}
+
+			$sql = implode(' UNION ALL ', $sql) . (count($sql) > 1 ? ' ORDER BY w LIMIT 1' : '');
+			$is = $sql ? $db->single_query($sql) : FALSE;
+			if (isset ($is[0])) {
+				if ($is[0] == 1) {
+					if ($is[1] !== '') {
+						$p->redirect($is[1], 301);
+					}
+					else {
+						$p->page404();
+					}
+				}
+				else {
+					$GLOBALS['review.roomID'] = $is[1];
+					if ($is[2]) {
+						$GLOBALS['review.roomPageID'] = $is[2];
+					}
+				}
+			}
 		}
 
 		$uri = (isset ($_SERVER['REQUEST_URI'])) ? urldecode($_SERVER['REQUEST_URI']) : '';
@@ -221,45 +257,28 @@ function cronTask($event)
     $db->insert_query($ins,'sys_cron_log');
 }
 
-// diff functions
-function diff($old, $new){
-	$maxlen = 0;
-	foreach($old as $oindex => $ovalue){
-		$nkeys = array_keys($new, $ovalue);
-		foreach($nkeys as $nindex){
-			$matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1])
-				? $matrix[$oindex - 1][$nindex - 1] + 1
-				: 1;
-			if($matrix[$oindex][$nindex] > $maxlen){
-				$maxlen = $matrix[$oindex][$nindex];
-				$omax = $oindex + 1 - $maxlen;
-				$nmax = $nindex + 1 - $maxlen;
-			}
-		}
+function img($dir, $name, $arg3=null) {
+	$s = FALSE;
+	$com = is_dev() ? 'com' : 'com';
+	if (!empty($arg3)) {
+		$name = $name . '-' . $arg3;
 	}
-	if($maxlen == 0) {
-		return array(array('d'=>$old, 'i'=>$new));
-	}
-	return array_merge(
-			diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
-			array_slice($new, $nmax, $maxlen),
-			diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen)));
-}
+	switch ($dir) {
+		case 'player':
+		case 'avatar':
+		case 'rw' :
+		case 'rwc' :
+		case 'rw-gallery' :
+		case 'rwc-gallery' :
+		case 'game' :
+		case 'gamec' :
+		case 'deposit' :
 
-
-function htmlDiff($old, $new){
-	$diff = diff(explode(' ', $old), explode(' ', $new));
-	$ret = '';
-	foreach($diff as $k){
-		if(is_array($k)) {
-			$ret .= (!empty($k['d'])?'<span style="background-color:#FFD8D3; text-decoration: line-through;">'.implode(' ',$k['d'])."</span> ":'').
-					(!empty($k['i'])?'<span style="background-color:#CCFFCC;">'.implode(' ',$k['i'])."</span> ":'');
-		}
-		else {
-			$ret .= $k . ' ';
-		}
+			$s = 'http://i.pokernews.' . $com . '/' . $dir . '/' . $name;
+		break;
+		default:
 	}
-	return $ret;
+	return $s;
 }
 
 

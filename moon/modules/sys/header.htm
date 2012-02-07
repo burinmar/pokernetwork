@@ -1,6 +1,7 @@
 <% main %>
 <div id="header">
-	<h1><a href="#" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a></h1>
+	<%if{isHome}%><h1><a href="#" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a></h1>
+	<%else{isHome}%><a href="#" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a><%end%>
 	<ul id="menu">
 		<%loop {menu += menu.item} %><li {td:class}><a href="{url}">{title}</a><% insert{submenu} %><ul>{menu}</ul><%end%></li><%end%>
 	</ul>
@@ -12,6 +13,18 @@
 	</div>
 	{user_block}
 </div>
+<%if{breadcrumb}%>
+	<div class="widgetTitle path">
+			<a href="/">Home</a>
+			<%loop{breadcrumb}%>
+				<%if{url}%>
+				 &rsaquo; <a href="{url}"{class-current}>{title}</a>
+				<%else{url}%>
+				 &rsaquo; <span{class-current}>{title}</span>
+				<%end%>
+			<%end%>
+	</div>
+<%end%>
 
 
 <% user_block.nouser %>

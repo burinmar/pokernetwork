@@ -9,12 +9,21 @@ class header extends moon_com
 		$tplArgv= array(
 			'menu'  => '',
 			'user_block' => $this->partialRenderUserBlock($tpl),
+			'breadcrumb' => '',
 		);
 
 		$bCrumb   = $navi->breadcrumb();
 		/*$activeMainMenu = isset ($bCrumb[0]['id']) 
 			? $bCrumb[0]['id'] 
 			: 0;*/
+		// breadcrumb
+		$last = count($bCrumb)-1;
+		foreach ($bCrumb as $k=>$d) {
+			$d['class-current'] = $k == $last ? ' class="current"' : '';
+			$d['title'] = htmlspecialchars($d['title']);
+			$tplArgv['breadcrumb'] .= $tpl->parse('breadcrumb',$d);
+		}
+		$tplArgv['isHome'] = 'home' == $navi->on();
 
 		$mainMenu = $this->getMenuTree($navi->items);
 		$page->set_local('sys.footer:menu', $mainMenu);

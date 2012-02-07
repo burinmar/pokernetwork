@@ -1,0 +1,29 @@
+<% main %>
+<div class="widget widgetBestDeals">
+		{spotlight}
+
+		<table>
+			<caption>{!bonusDepositing}</caption>
+			<thead>
+				<tr>
+					<th class="review">{!roomReview}</th>
+
+					<th class="bonus">{!bonus}</th>
+					<th class="download"></th>
+				</tr>
+			</thead>
+			<tbody>
+			<% loop{items} %>
+				<tr>
+					<td class="review"><a href="{roomLink}"><img src="{logo}" alt="{roomName}" height="29" width="29" /> {roomName}</a></td>
+					<td class="bonus"><%if{free}%>{!free}&nbsp;<%end%>{bonus}</td>
+
+					<td class="download"><a href="{roomDownloadLink}">{!download}</a></td>
+				</tr>
+			<%end%>
+			</tbody>
+		</table>
+		<p class="widgetMoreLink"><a href="{url.rooms}">{!moreRooms}</a></p>
+	</div>
+
+

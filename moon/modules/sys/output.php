@@ -2,33 +2,6 @@
 
 class output extends moon_com {
 
-/* Startup */
-	function events($event, $par) {
-
-		switch ($event) {
-
-			case 'error404' :
-				//header("HTTP/1.0 404 Not Found", TRUE, 404);
-				$this->forget();
-				$this->use_page('page404');
-				return;
-				break;
-
-			default :
-			   	$this->use_page('Default');
-		}
-
-		if (is_dev()) {
-			$engine = & moon :: engine();
-			$engine->debugOn = TRUE;
-		}
-		$page=&moon::page();
-		//$page->css('/css/main.css');
-		$page->js('/js/jquery.js');
-
-	}
-
-
 	function main($vars) {
 		if (isset ($vars['layout']) && isset ($vars['parts'])) {
 			$t = & $this->load_template('_layouts');
