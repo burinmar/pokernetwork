@@ -13,9 +13,9 @@ class header extends moon_com
 		);
 
 		$bCrumb   = $navi->breadcrumb();
-		/*$activeMainMenu = isset ($bCrumb[0]['id']) 
+		$activeMainMenu = isset ($bCrumb[0]['id'])
 			? $bCrumb[0]['id'] 
-			: 0;*/
+			: 0;
 		// breadcrumb
 		$last = count($bCrumb)-1;
 		foreach ($bCrumb as $k=>$d) {
@@ -29,7 +29,7 @@ class header extends moon_com
 		$page->set_local('sys.footer:menu', $mainMenu);
 
 		foreach ($mainMenu as $item) {
-			$tplArgv['menu'] .= $this->partialRenderMenuItem($item, $tpl/*, $activeMainMenu*/);
+			$tplArgv['menu'] .= $this->partialRenderMenuItem($item, $tpl, $activeMainMenu);
 		}
 
 		return $tpl->parse('main', $tplArgv);
@@ -58,22 +58,22 @@ class header extends moon_com
 		}
 	}
 
-	private function partialRenderMenuItem($item, $tpl/*, $activeMainMenu*/)
+	private function partialRenderMenuItem($item, $tpl, $activeMainMenu)
 	{
 		$class = '';
 		if ($item['class']) {
 			$class = $item['class'];
 		}
-		/*if ($activeMainMenu && $activeMainMenu == $item['id']) {
+		if ($activeMainMenu && $activeMainMenu == $item['id']) {
 			$class = ltrim($class . ' on');
-		}*/
+		}
 		$tplArgv['url'] = $item['url'];
 		$tplArgv['title'] = htmlspecialchars($item['title']);
 		$tplArgv['td:class'] = $class ? ' class="' . $class . '"' : '';
 		$tplArgv['submenu'] = '';
 		if (0 != count($item['children'])) {
 			foreach ($item['children'] as $child) {
-				$tplArgv['submenu'] .= $this->partialRenderMenuItem($child, $tpl/*, $activeMainMenu*/);
+				$tplArgv['submenu'] .= $this->partialRenderMenuItem($child, $tpl, $activeMainMenu);
 			}
 			$tplArgv['submenu'] = $tpl->parse('submenu', array(
 				'menu' => $tplArgv['submenu']

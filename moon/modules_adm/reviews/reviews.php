@@ -86,7 +86,7 @@ function main($vars)
         //******* FORM **********
 		$err=(isset($vars['error'])) ? $vars['error']:0;
 		//$p->css($t->parse('cssForm'));
-		$p->css('/img/adm/tabber.css');
+		$p->css('/i/adm/tabber.css');
 		$p->js('/js/tabber.js');
 
 		$f = $this->form;
@@ -292,7 +292,6 @@ function getReviews($roomID)
 }
 
 function whoHasCustomPage() {
-	return array();
 	$a = $this->db->array_query('
         SELECT DISTINCT room_id,room_id FROM ' . $this->table('Pages') . '
 		WHERE hide<2

@@ -1,7 +1,8 @@
 <% main %>
 <div id="header">
-	<%if{isHome}%><h1><a href="#" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a></h1>
-	<%else{isHome}%><a href="#" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a><%end%>
+	<%if{isHome}%><h1><a href="/" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a></h1>
+	<%else{isHome}%><a href="/" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a>
+	<%end%>
 	<ul id="menu">
 		<%loop {menu += menu.item} %><li {td:class}><a href="{url}">{title}</a><% insert{submenu} %><ul>{menu}</ul><%end%></li><%end%>
 	</ul>

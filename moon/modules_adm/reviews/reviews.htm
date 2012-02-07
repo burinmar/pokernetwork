@@ -41,6 +41,7 @@ error9=System error!
 			<col style="width: 85px" />
 			<col style="width: 85px" />
 			<col style="width: 85px" />
+			<col style="width: 85px" />
 		</colgroup>
 		<thead>
 			<tr>
@@ -48,6 +49,7 @@ error9=System error!
 				<th><a href="{orderby1}">Room name</a></th>
 				<th><span>URL address</span></th>
 				<th class="tac"><span title="Room's Promotions">Promotions</span></th>
+				<th class="tac"><span title="Room's Aditional Pages">Sub pages</span></th>
 				<th class="tar"><span title="Acting month visits">Visits</span></th>
 				<th class="tar"><span title="Acting month downloads">Downloads</span></th>
 			</tr>
@@ -59,6 +61,7 @@ error9=System error!
 			<td><a href="{goEdit}">{title}</a></td>
 			<td><%if{alias}%><a href="/{alias}/" onclick="window.open(this.href,'winroom');return false" class="explain">/{alias}/</a><%end%></td>
 			<td class="tac"><a href="{url.promo}" class="edit" title="Edit Promotions">Edit</a></td>
+			<td class="tac"><%if{related}%><a href="{url.related}" class="edit" title="Edit Aditional Pages">Edit</a><%end%></td>
 			<td class="tar"><span class="explain">{visits}</span></td>
 			<td class="tar"><span class="explainGreen">{downloads}</span></td>
 		</tr>
