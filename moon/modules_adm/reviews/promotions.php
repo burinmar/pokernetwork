@@ -2,28 +2,23 @@
 
 class promotions extends moon_com {
 
-	function onload()
-	{
+	function onload() {
 		//form of item
 		$this->form = & $this->form();
-		$this->form->names('id', 'room_id', 'title', 'url', 'active_from', 'active_to', 'hide',  'master_id', 'master_updated', 'updated');
+		$this->form->names('id', 'room_id', 'title', 'url', 'active_from', 'active_to', 'hide', 'master_id', 'master_updated', 'updated');
 		$this->form->fill();
-
 		//form of filter
 		$this->formFilter = & $this->form('f2');
 		$this->formFilter->names('room_id', 'text', 'hidden', 'tag');
-
 		//main table
 		$this->myTable = $this->table('PromoList');
 	}
 
-
-	function events($event, $par)
-	{
+	function events($event, $par) {
 		switch ($event) {
 
-			case 'edit' :
-				$id = isset ($par[0]) ? intval($par[0]) : 0;
+			case 'edit':
+				$id = isset ($par[0]) ? intval($par[0]):0;
 				if ($id) {
 					if (count($values = $this->getItem($id))) {
 						$this->form->fill($values);
@@ -35,7 +30,7 @@ class promotions extends moon_com {
 				$this->set_var('view', 'form');
 				break;
 
-			case 'save' :
+			case 'save':
 				if ($id = $this->saveItem()) {
 					if (isset ($_POST['return'])) {
 						$this->redirect('#edit', $id);
@@ -49,19 +44,19 @@ class promotions extends moon_com {
 				}
 				break;
 
-			case 'delete' :
+			case 'delete':
 				if (isset ($_POST['it'])) {
 					$this->deleteItem($_POST['it']);
 				}
 				$this->redirect('#');
 				break;
 
-			case 'deleteall' :
+			case 'deleteall':
 				$this->set_var('deleteByFilter', TRUE);
 				break;
 
-			case 'filter' :
-				$filter = isset ($_POST['filter']) ? $_POST['filter'] : '';
+			case 'filter':
+				$filter = isset ($_POST['filter']) ? $_POST['filter']:'';
 				$this->set_var('filter', $filter);
 				$this->set_var('psl', 1);
 				//forget reikia kai nuimti filtra
@@ -72,11 +67,11 @@ class promotions extends moon_com {
 			case 'sync':
 				// Siurbia is master promotions
 				$s = $this->runSync();
-                $page = & moon :: page();
+				$page = & moon :: page();
 				$page->set_local('cron', $s);
 				break;
 
-			default :
+			default:
 				if (isset ($_GET['ord'])) {
 					$this->set_var('sort', (int) $_GET['ord']);
 					$this->set_var('psl', 1);
@@ -89,79 +84,61 @@ class promotions extends moon_com {
 		$this->use_page('Common');
 	}
 
-
-	function properties()
-	{
+	function properties() {
 		return array('psl' => 1, 'filter' => '', 'sort' => '', 'view' => 'list');
 	}
 
-	function main($vars)
-	{
+	function main($vars) {
 		$win = & moon :: shared('admin');
 		$win->active($this->my('fullname'));
 		$vars['pageTitle'] = $win->current_info('title');
 		$page = & moon :: page();
 		$page->title($vars['pageTitle']);
-
 		if ($vars['view'] == 'form') {
 			return $this->viewForm($vars);
 		}
 		else {
-        	return $this->viewList($vars);
+			return $this->viewList($vars);
 		}
 	}
 
 	function viewList($vars) {
 		$t = & $this->load_template();
-
 		//******* LIST **********
 		$m = array('items' => '');
 		$pn = & moon :: shared('paginate');
-
 		// rusiavimui
 		$ord = & $pn->ordering();
 		//laukai, ir ju defaultine kryptis
 		//antras parametras kuris lauko numeris defaultinis.
-		$ord->set_values(
-			array('created' => 0, 'sync'=>0), 2
-			//_SITE_ID_=='com' ? 1 : 2
+		$ord->set_values(array('created' => 0, 'sync' => 0), 2
+		//_SITE_ID_=='com' ? 1 : 2
 		);
 		//gauna linkus orderby{nr}
 		$m += $ord->get_links($this->linkas('#', '', array('ord' => '{pg}')), $vars['sort']);
-
-        //kategorijos
+		//kategorijos
 		$f = & $this->formFilter;
 		$f->fill($vars['filter']);
 		$rooms = $this->getRooms();
 		$selRooms = array();
 		foreach ($rooms as $v) {
-			$selRooms[$v['id']] = $v['name'] . ($v['is_hidden'] ? ' (hidden)' : '');
+			$selRooms[$v['id']] = $v['name'] . ($v['is_hidden'] ? ' (hidden)':'');
 		}
-
 		//Filtras
 		$f = & $this->formFilter;
 		$f->fill($vars['filter']);
 		$filter = $f->get_values();
-		$fm = array(
-			'text' => $f->html_values('text'),
-			'tag' => $f->html_values('tag'),
-			'rooms' => $f->options('room_id', $selRooms),
-			'hidden' => $f->checked('hidden', 1),
-			'goFilter' => $this->my('fullname') . '#filter',
-			'noFilter' => $this->linkas('#filter'),
-			'isOn' => ''
-		);
+		$fm = array('text' => $f->html_values('text'), 'tag' => $f->html_values('tag'), 'rooms' => $f->options('room_id', $selRooms), 'hidden' => $f->checked('hidden', 1), 'goFilter' => $this->my('fullname') . '#filter', 'noFilter' => $this->linkas('#filter'), 'isOn' => '');
 		foreach ($filter as $k => $v) {
 			if ($v) {
 				$fm['isOn'] = 1;
 				break;
 			}
 		}
-		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on' : '';
+		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on':'';
 		$m['filtras'] = $t->parse('filtras', $fm);
-		$win = &moon::shared('admin');
+		$win = & moon :: shared('admin');
 		$m['tabs'] = $win->subMenu();
-
 		//generuojam sarasa
 		if ($count = $this->getListCount()) {
 			//puslapiavimui
@@ -173,57 +150,57 @@ class promotions extends moon_com {
 			$m['puslapiai'] = $pn->show_nav();
 			$psl = $pn->get_info();
 			$dat = $this->getList($psl['sqllimit'], $ord->sql_order());
-
-
 			$goEdit = $this->linkas('#edit', '{id}');
 			$t->save_parsed('items', array('goEdit' => $goEdit));
 			$loc = & moon :: locale();
 			$now = $loc->now();
 			$today = $loc->to_days(gmdate('Y-m-d'));
 			foreach ($dat as $d) {
-				$d['site-slave'] = 1;//_SITE_ID_ == 'com' ? 0 : 1;
-				$d['class'] = $d['hide'] ? 'item-hidden' : '';
+				$d['site-slave'] = 1;
+				//_SITE_ID_ == 'com' ? 0 : 1;
+				$d['class'] = $d['hide'] ? 'item-hidden':'';
 				//$d['class'] = '';
 				$d['styleTD'] = '';
-				if (!empty($d['master_id'])) {
+				if (!empty ($d['master_id'])) {
 					//sync ikona
-					$sType = (int)$d['master_updated']<(int)$d['updated'] || $d['updated']==0 ? 1 : 2;
-					$d['styleTD'] = ' class="sync'.$sType.'"';
+					$sType = (int) $d['master_updated'] < (int) $d['updated'] || $d['updated'] == 0 ? 1:2;
+					$d['styleTD'] = ' class="sync' . $sType . '"';
 				}
-
 				//rooms
 				if ($d['room_id'] && isset ($rooms[$d['room_id']])) {
-					$d['room'] =  htmlspecialchars($rooms[$d['room_id']]['name']);
+					$d['room'] = htmlspecialchars($rooms[$d['room_id']]['name']);
 				}
 				else {
 					$d['room'] = '';
 				}
-
 				//kita
 				$d['title'] = htmlspecialchars($d['title']);
 				$d['url'] = htmlspecialchars($d['url']);
-				$d['created'] = $d['created'] ? $loc->datef($d['created'], 'Date') : '&nbsp;';
+				$d['created'] = $d['created'] ? $loc->datef($d['created'], 'Date'):'&nbsp;';
 				$d['timer'] = '';
 				if ($d['active_from'] && $d['active_from'] !== '0000-00-00') {
-						$d['timer'] .= ' from ' . $d['active_from'];
+					if ($loc->to_days($d['active_from']) > $today) {
+						$d['active_from'] = '<b style="color:red">' . $d['active_from'] . '</b>';
+					}
+					$d['timer'] .= ' from ' . $d['active_from'];
 				}
 				if ($d['active_to'] && $d['active_to'] !== '0000-00-00') {
-						$d['timer'] .= ' till ' . $d['active_to'];
-                        if ($loc->to_days($d['active_to']) < $today) {
-                        	$d['expired'] = 1;
-						}
+					$d['timer'] .= ' till ' . $d['active_to'];
+					if ($loc->to_days($d['active_to']) < $today) {
+						$d['expired'] = 1;
+					}
 				}
 				$m['items'] .= $t->parse('items', $d);
 			}
-
 		}
 		else {
 			//filtras nerodomas kai tuscias sarasas
 			if (!$fm['isOn']) {
-			//	$m['filtras'] = '';
+				//	$m['filtras'] = '';
 			}
 		}
-		$m['site-slave'] = 1;//_SITE_ID_ == 'com' ? 0 : 1;
+		$m['site-slave'] = 1;
+		//_SITE_ID_ == 'com' ? 0 : 1;
 		$m['goNew'] = $this->linkas('#edit');
 		$m['goDelete'] = $this->my('fullname') . '#delete';
 		$m['goClear'] = $this->my('fullname') . '#deleteall';
@@ -240,64 +217,50 @@ class promotions extends moon_com {
 		return $res;
 	}
 
-
 	function viewForm($vars) {
 		$t = & $this->load_template();
 		$info = $t->parse_array('info');
 		$page = & moon :: page();
-
 		//******* FORM **********
-		$err = (isset ($vars['error'])) ? $vars['error'] : 0;
+		$err = (isset ($vars['error'])) ? $vars['error']:0;
 		$page->css($t->parse('cssForm'));
 		$f = $this->form;
-		$title = $f->get('id') ? $info['titleEdit'] : $info['titleNew'];
+		$title = $f->get('id') ? $info['titleEdit']:$info['titleNew'];
 		$page->title($title);
-		$m = array(
-			'error' => $err ? $info['error' . $err] : '',
-			'event' => $this->my('fullname') . '#save',
-			'refresh' => $page->refresh_field(),
-			'id' => ($id = $f->get('id')),
-			'goBack' => $this->linkas('#'),
-			'pageTitle' => $vars['pageTitle'],
-			'formTitle' => htmlspecialchars($title),
-			'toolbar' => '',
-			'hide' => $f->checked('hide', 1)
-			) + $f->html_values();
-		if ($f->get('hide')>0) {
-			$f->fill(array('hide'=>1));
+		$m = array('error' => $err ? $info['error' . $err]:'', 'event' => $this->my('fullname') . '#save', 'refresh' => $page->refresh_field(), 'id' => ($id = $f->get('id')), 'goBack' => $this->linkas('#'), 'pageTitle' => $vars['pageTitle'], 'formTitle' => htmlspecialchars($title), 'toolbar' => '', 'hide' => $f->checked('hide', 1)) + $f->html_values();
+		if ($f->get('hide') > 0) {
+			$f->fill(array('hide' => 1));
 		}
 		$m['hide'] = $f->checked('hide', 1);
-
-        $rooms = $this->getRooms($m['room_id']);
+		$rooms = $this->getRooms($m['room_id']);
 		$selRooms = array();
 		foreach ($rooms as $v) {
 			$selRooms[$v['id']] = $v['name'];
 		}
+
 		/*if ($id && isset($rooms[$m['room_id']])) {
-			$uri = $rooms[$m['room_id']]['alias'];
-			$now = $locale->now;
-			if ($uri && !$f->get('hide') && $datetime > $now) {
-				$m['landingURL'] = '/' . $uri . '/freerolls/' . $id . '.htm';
-			}
+		$uri = $rooms[$m['room_id']]['alias'];
+		$now = $locale->now;
+		if ($uri && !$f->get('hide') && $datetime > $now) {
+		$m['landingURL'] = '/' . $uri . '/freerolls/' . $id . '.htm';
+		}
 		}*/
-
 		$m['rooms'] = $f->options('room_id', $selRooms);
-
 		//master info
 		if ($m['master_id']) {
-			$m['master_room'] = isset($rooms[$m['room_id']]) ? $rooms[$m['room_id']]['name'] : 'unknown';
-			$m['master_active'] = ($m['active_from'] ? 'from ' . $m['active_from'] : '') . ($m['active_to'] ? ' till ' . $m['active_to'] : '');
-			$m['class-sync'] = (int)$m['updated']>(int)$m['master_updated'] ? ' sync1' : ' sync2';
-			$a = (int)$m['updated']<0 ? 0 : $this->getMasterInfo($m['master_id']);
-			if (!empty($a)) {
-				$txt = moon::shared('text');
+			$m['master_room'] = isset ($rooms[$m['room_id']]) ? $rooms[$m['room_id']]['name']:'unknown';
+			$m['master_active'] = ($m['active_from'] ? 'from ' . $m['active_from']:'') . ($m['active_to'] ? ' till ' . $m['active_to']:'');
+			$m['class-sync'] = (int) $m['updated'] > (int) $m['master_updated'] ? ' sync1':' sync2';
+			$a = (int) $m['updated'] < 0 ? 0:$this->getMasterInfo($m['master_id']);
+			if (!empty ($a)) {
+				$txt = moon :: shared('text');
 				$m['master_title'] = nl2br(htmlspecialchars($a['title']));
 				$m['master_url'] = nl2br(htmlspecialchars($a['url']));
 				if ($a['prev_title']) {
-					$m['master_title'] =$txt->htmlDiff($a['prev_title'],$a['title']);
+					$m['master_title'] = $txt->htmlDiff($a['prev_title'], $a['title']);
 				}
 				if ($a['prev_url']) {
-					$m['master_url'] = $txt->htmlDiff($a['prev_url'],$a['url']);
+					$m['master_url'] = $txt->htmlDiff($a['prev_url'], $a['url']);
 				}
 			}
 		}
@@ -305,24 +268,19 @@ class promotions extends moon_com {
 		//resave vars for list
 		$save = array('psl' => $vars['psl'], 'sort' => $vars['sort'], 'filter' => $vars['filter']);
 		$this->save_vars($save);
-
 		return $res;
 	}
-
 
 	//***************************************
 	//           --- DB AND OTHER ---
 	//***************************************
-	function getListCount()
-	{
+	function getListCount() {
 		$sql = 'SELECT count(*) FROM ' . $this->myTable . $this->_where();
 		$m = $this->db->single_query($sql);
-		return (count($m) ? $m[0] : 0);
+		return (count($m) ? $m[0]:0);
 	}
 
-
-	function getList($limit = '', $order = '')
-	{
+	function getList($limit = '', $order = '') {
 		if ($order) {
 			$order = ' ORDER BY ' . $order;
 		}
@@ -330,9 +288,7 @@ class promotions extends moon_com {
 		return $this->db->array_query_assoc($sql);
 	}
 
-
-	function _where()
-	{
+	function _where() {
 		if (isset ($this->tmpWhere)) {
 			return $this->tmpWhere;
 		}
@@ -345,33 +301,31 @@ class promotions extends moon_com {
 		if ($a['room_id']) {
 			$w[] = "room_id=" . intval($a['room_id']);
 		}
-		elseif (/*_SITE_ID_ !== 'com' &&*/ !$a['hidden']) {
+		elseif (
+
+			/*_SITE_ID_ !== 'com' &&*/
+			!$a['hidden']) {
 			// rodom tik tuos turnyrus, kuriu rooms on
-			$sql = 'SELECT id, id FROM ' . $this->table('Rooms'). ' WHERE is_hidden=0';
+			$sql = 'SELECT id, id FROM ' . $this->table('Rooms') . ' WHERE is_hidden=0';
 			$ids = array_keys($this->db->array_query($sql, TRUE));
 			if (count($ids)) {
 				$w[] = 'room_id IN (' . implode(', ', $ids) . ')';
 			}
 		}
 		if (!$a['hidden']) {
-			$w[] = "hide<2" ;
+			$w[] = "hide<2";
 		}
-		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
+		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)):'';
 		return ($this->tmpWhere = $where);
 	}
 
-
-	function getItem($id)
-	{
+	function getItem($id) {
 		return $this->db->single_query_assoc('
 			SELECT * FROM ' . $this->myTable . ' WHERE
-			id = ' . intval($id)
-		);
+			id = ' . intval($id));
 	}
 
-
-	function saveItem()
-	{
+	function saveItem() {
 		$form = & $this->form;
 		$form->fill($_POST);
 		$d = $form->get_values();
@@ -379,7 +333,7 @@ class promotions extends moon_com {
 		$masterID = $d['master_id'];
 		if ($masterID && $id) {
 			//gautu duomenu apdorojimas
-			$d['hide'] = empty($d['hide']) ? 0 : 1;
+			$d['hide'] = empty ($d['hide']) ? 0:1;
 			$d = $form->get_values('title', 'url', 'hide') + $this->getItem($id);
 			//validacija
 			if ($d['title'] === '') {
@@ -388,7 +342,7 @@ class promotions extends moon_com {
 				return false;
 			}
 			//save to database
-			$ins=$form->get_values('title', 'url', 'hide');
+			$ins = $form->get_values('title', 'url', 'hide');
 			$ins['updated'] = time();
 			$this->db->update($ins, $this->myTable, array('id' => $id));
 			blame($this->my('fullname'), 'Updated', $id);
@@ -396,24 +350,20 @@ class promotions extends moon_com {
 			$this->db->query('UPDATE ' . $this->table('PromotionsMaster') . ' SET prev_title = title, prev_url=url  WHERE id=' . intval($masterID));
 			return $id;
 		}
-
 		//gautu duomenu apdorojimas
-		$d['hide'] = empty($d['hide']) ? 0 : 1;
+		$d['hide'] = empty ($d['hide']) ? 0:1;
 		$d['active_from'] = $this->makeTime($d['active_from']);
 		$d['active_to'] = $this->makeTime($d['active_to']);
-
 		//jei bus klaida
 		$form->fill($d, false);
-
 		//validacija
 		$err = 0;
 		if ($d['title'] === '') {
 			$err = 1;
 		}
-		elseif (empty($d['room_id'])) {
+		elseif (empty ($d['room_id'])) {
 			$err = 2;
 		}
-
 		if ($err) {
 			$d['active_from'] = $_POST['active_from'];
 			$d['active_to'] = $_POST['active_to'];
@@ -425,9 +375,8 @@ class promotions extends moon_com {
 		if ($wasRefresh = $form->was_refresh()) {
 			return $id;
 		}
-
 		//save to database
-		$ins=$form->get_values('title', 'url', 'active_from', 'active_to', 'room_id', 'hide');
+		$ins = $form->get_values('title', 'url', 'active_from', 'active_to', 'room_id', 'hide');
 		$ins['updated'] = time();
 		if ($id) {
 			$this->db->update($ins, $this->myTable, array('id' => $id));
@@ -442,7 +391,6 @@ class promotions extends moon_com {
 		return $id;
 	}
 
-
 	function makeTime($d) {
 		if ($d) {
 			if (count($a = explode('-', $d)) != 3 || !checkdate($a[1], $a[2], $a[0])) {
@@ -453,9 +401,7 @@ class promotions extends moon_com {
 		return NULL;
 	}
 
-
-	function deleteItem($ids)
-	{
+	function deleteItem($ids) {
 		if (!is_array($ids) || !count($ids)) {
 			return;
 		}
@@ -465,36 +411,30 @@ class promotions extends moon_com {
 		$this->db->query('
 			UPDATE ' . $this->myTable . ' SET hide=2 WHERE id IN (' . implode(',', $ids) . ')
 		');
-        // log this action
+		// log this action
 		blame($this->my('fullname'), 'Deleted', $ids);
 		return true;
 	}
 
-
-	function deleteByFilter($filter)
-	{
+	function deleteByFilter($filter) {
 		$this->formFilter->fill($filter);
 		$this->db->query('UPDATE ' . $this->myTable . ' SET hide=2 ' . $this->_where());
-        // log this action
+		// log this action
 		$this->updateRoomTable();
 	}
 
-
-	function getRooms($id = FALSE)
-	{
+	function getRooms($id = FALSE) {
 		$a = $this->formFilter->get_values();
-		if ($id === FALSE && !empty($a['room_id'])) {
+		if ($id === FALSE && !empty ($a['room_id'])) {
 			$id = (int) $a['room_id'];
 		}
-
 		$sql = 'SELECT id, name, is_hidden FROM ' . $this->table('Rooms');
-		if ($id !== FALSE || empty($a['hidden'])) {
-			$sql .= ' WHERE is_hidden=0' . ($id ? ' OR id=' . intval($id) : '');
+		if ($id !== FALSE || empty ($a['hidden'])) {
+			$sql .= ' WHERE is_hidden=0' . ($id ? ' OR id=' . intval($id):'');
 		}
 		else {
 			$a = $this->db->array_query('
-				SELECT DISTINCT room_id FROM ' . $this->myTable
-				);
+				SELECT DISTINCT room_id FROM ' . $this->myTable);
 			if (!count($a)) {
 				return array();
 			}
@@ -507,45 +447,39 @@ class promotions extends moon_com {
 		return $this->db->array_query_assoc($sql . ' ORDER BY name', 'id');
 	}
 
-
-    function getMasterInfo($id)
-	{
+	function getMasterInfo($id) {
 		return $this->db->single_query_assoc('
 			SELECT * FROM ' . $this->table('PromotionsMaster') . ' WHERE
-			id = ' . intval($id)
-		);
+			id = ' . intval($id));
 	}
 
 	function countPromotionsTODO() {
 		$now = ceil(time() / 100) * 100;
 		// rodom tik tuos turnyrus, kuriu rooms on
-		$sql = 'SELECT id, id FROM ' . $this->table('Rooms'). ' WHERE is_hidden=0';
+		$sql = 'SELECT id, id FROM ' . $this->table('Rooms') . ' WHERE is_hidden=0';
 		$ids = array_keys($this->db->array_query($sql, TRUE));
 		$rooms = '';
 		if (count($ids)) {
-				$rooms = ' AND room_id IN (' . implode(', ', $ids) . ')';
+			$rooms = ' AND room_id IN (' . implode(', ', $ids) . ')';
 		}
 		// kiek turnyru
 		$a = $this->db->single_query('
             SELECT count(*) FROM ' . $this->myTable . '
 			WHERE master_id>0 AND updated<>0 AND master_updated>updated AND hide<2' . $rooms . '
 			');
-		return empty($a[0]) ? 0 : $a[0];
+		return empty ($a[0]) ? 0:$a[0];
 	}
-
 
 	//***************************************
 	//           --- SYNC ---
 	//***************************************
-
-
 	function runSync() {
 		$this->findActiveRooms();
-		if (empty($this->roomID)) {
+		if (empty ($this->roomID)) {
 			return 'Error: there are no active rooms!';
 		}
 		$lastUpdate = $this->get_max_updated_timestamp();
-		if (callPnEvent('com', 'reviews.promotions#sync-export', array('timestamp' => $lastUpdate), $answer,FALSE)) {
+		if (callPnEvent('com', 'reviews.promotions#sync-export', array('timestamp' => $lastUpdate), $answer, FALSE)) {
 			//randam kokie master_id atejo
 			$ids = array();
 			foreach ($answer AS $v) {
@@ -558,8 +492,8 @@ class promotions extends moon_com {
 			foreach ($answer AS $v) {
 				if (empty ($masterExist[$v['id']])) {
 					if ($v['active_to'] && $v['active_to'] !== '0000-00-00') {
-                        if ($locale->to_days($v['active_to']) < $today) {
-                        	$expired++;
+						if ($locale->to_days($v['active_to']) < $today) {
+							$expired++;
 							continue;
 						}
 					}
@@ -569,29 +503,26 @@ class promotions extends moon_com {
 					$this->update_tournament($v, $masterExist[$v['id']]);
 				}
 			}
-			return ' Promotions imported: ' . count($answer) . ($expired ? ', ignored: ' . $expired : '');
+			return ' Promotions imported: ' . count($answer) . ($expired ? ', ignored: ' . $expired:'');
 		}
 		else {
 			return 'Error!';
 		}
-
 	}
 
 	//***********************
 	//         SYNC  DB     /
 	//**********************/
-
 	function get_max_updated_timestamp() {
 		$sql = 'SELECT MAX(ABS(master_updated)) FROM ' . $this->myTable;
 		$m = $this->db->single_query($sql);
-		return (empty ($m[0]) ? 0 : $m[0]);
+		return (empty ($m[0]) ? 0:$m[0]);
 	}
 
 	function findActiveRooms() {
-		$sql = 'SELECT id, id FROM ' . $this->table('Rooms'). ' WHERE is_hidden=0';
-		$this->roomID  = array_keys($this->db->array_query($sql, TRUE));
+		$sql = 'SELECT id, id FROM ' . $this->table('Rooms') . ' WHERE is_hidden=0';
+		$this->roomID = array_keys($this->db->array_query($sql, TRUE));
 	}
-
 
 	function check_master_exist($ids) {
 		if (empty ($ids)) {
@@ -602,22 +533,21 @@ class promotions extends moon_com {
 		return $m;
 	}
 
-
 	function update_tournament($tournament, $exist) {
-		$fields = array( 'active_from', 'active_to', 'room_id', 'hide', 'created');
+		$fields = array('active_from', 'active_to', 'room_id', 'hide', 'created');
 		$ins = array();
 		foreach ($fields as $v) {
 			$ins[$v] = $tournament[$v];
 		}
-		if (empty($exist['updated'])) {
+		if (empty ($exist['updated'])) {
 			//autopublish
-			$ins['hide'] = in_array($ins['room_id'], $this->roomID) ? $ins['hide'] : 2;
+			$ins['hide'] = in_array($ins['room_id'], $this->roomID) ? $ins['hide']:2;
 			$ins['updated'] = 0;
 			$ins['title'] = $tournament['title'];
 			$ins['url'] = $tournament['url'];
 		}
 		elseif (!$ins['hide']) {
-			unset($ins['hide']);
+			unset ($ins['hide']);
 			//pastaba, dabar hidden neateina vis tiek
 		}
 		$ins['master_id'] = $tournament['id'];
@@ -635,8 +565,8 @@ class promotions extends moon_com {
 		$ins['title'] = $tournament['title'];
 		$ins['url'] = $tournament['url'];
 		$tbMaster = $this->table('PromotionsMaster');
-		$is = $this->db->single_query('SELECT id FROM '. $tbMaster.' WHERE id=' .intval($tournament['id']));
-		if (empty($is[0])) {
+		$is = $this->db->single_query('SELECT id FROM ' . $tbMaster . ' WHERE id=' . intval($tournament['id']));
+		if (empty ($is[0])) {
 			$ins['id'] = $tournament['id'];
 			$this->db->replace($ins, $tbMaster);
 		}

@@ -22,24 +22,23 @@ error1=Title required
 		<input type="hidden" name="event-saveorder" value="{goSort}" />
 		<input type="hidden" name="room_id" value="{room_id}" />
 		<table class="list sortable" style="width: 100%">
-		<colgroup>
-			<col />
-			<col />
-			<col />
-			<col style="width: 20px" />
-		</colgroup>
 		<thead>
 		<tr>
 			<th><span>Title</span></th>
-			<th><span>Date Range</span></th>
+			<th><span>Created</span></th>
 			<th class="checkall"></th>
 		</tr>
 		</thead>
 		<tbody>
 		<% loop{items} %>
 			<tr class="{class}" id="row{id}">
-				<td{styleTD}><a href="{goEdit}">{title}</a><div class="explain">{url}</div></td>
-				<td>{date}</td>
+				<td{styleTD}><a href="{goEdit}">{title}</a>
+					<div class="explain">
+					<%if{timer}%>Active {timer}<%end%> <%if{expired}%><b style="color:red">Already expired</b><%end%>
+					<%if{url}%><div>URL: {url}</div><%end%>
+					</div>
+				</td>
+				<td>{created}</td>
 				<td><input type="checkbox" name="it[]" value="{id}" /></td>
 			</tr>
 		<% end{items} %>
@@ -69,22 +68,32 @@ error1=Title required
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<input type="hidden" name="id" value="{id}" />
 	<input type="hidden" name="room_id" value="{room_id}" />
+	<input type="hidden" name="master_id" value="{master_id}" />
 	<h2 class="formTitle">{formTitle}</h2>
 	<span class="clr"></span>
 	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
 
 	<dl>
 		<%if{master_id}%>
-		<dt></dt>
 		<dd class="w100">
-			<div class="explain">This promotion is synchronized with some www.pokerworks.com <a href="http://www.pokerworks.com/adm/reviews-promotions/edit/{master_id}.htm" onclick="window.open(this.href);return false;">promotion</a>. You must ensure that your translation will correspond to the original items.</div><br />
+			<div>
+			<div class="explain{class-sync}">This promotion is synchronized with some www.pokernews.com <a href="http://www.pokernews.com/adm/reviews-promotions/edit/{master_id}.htm" onclick="window.open(this.href);return false;">promotion</a>. The original item is:<br />&nbsp;</div>
 			<%if{master_title}%>
-				<div style="border: 1px dotted;padding:3px">
-				<div><b>{master_title}</b></div>
-				<div style="margin-top: 10px;">{master_url}</div>
-				<%if{master_tags}%><div style="border-top: 1px dotted"><i>Tags: {master_tags}</i></div><%end%>
+				<div class="forSlaveOriginalText">
+                <table>
+                	<tr>
+                		<td>Title:</td>
+                		<td>{master_title}</td>
+                	</tr>
+                	<tr>
+                		<td>Url:</td>
+                		<td>{master_url}</td>
+                	</tr>
+
+                </table>
 				</div>
 			<%end%>
+			</div>
 		</dd>
 		<%end%>
 
@@ -94,12 +103,18 @@ error1=Title required
 		<dd><input type="text" name="url" id="i_url" value="{url}" size="80" maxlength="128" /></dd>
 		<dt></dt>
 		<dd><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> <label for="i_hide">Hide this promotion</label></dd>
+		<%if{master_id}%>
+			<dt><label>Active</label></dt>
+			<dd>{master_active}</dd>
+		<%else{master_id}%>
 		<dt><label>Active</label></dt>
 		<dd>
 			From <input type="text" name="active_from" id="active_from" value="{active_from}" class="isDate" size="11" maxlength="10" style="margin-right: 10px" />
 			Till <input type="text" name="active_to"   id="active_to"   value="{active_to}"   class="isDate" size="11" maxlength="10" /><br /><br />
 			<div class="explain">By filling two fields above you order the promo to appear in specified time interval. <br/>Both fields are optional. Date format: <i>yyyy-mm-dd</i>. Current server date is {now} </div>
 		</dd>
+		<%end{master_id}%>
+
 	</dl>
 
 	<div class="formButton"><input type="submit" value="Save" />
