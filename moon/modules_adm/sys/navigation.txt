@@ -34,7 +34,7 @@ Users {ico=users, admin=users}
 System {ico=system, admin=developer}
 	sys.errors404=404 errors
 	#sys.permissions=Permissions {admin=}
-	#Cron Tasks {link=sys.cron, admin=developer}
-		#sys.cron=Tasks
-		#sys.cronlog=Cron Log
+	Cron Tasks {link=sys.cron, admin=developer}
+		sys.cron=Tasks
+		sys.cronlog=Cron Log
 	sys.blame=Blame {admin=}

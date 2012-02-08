@@ -72,7 +72,7 @@ error2=Select poker room, please!
 	</table>
 	<% if {site-slave} %>
 	<p class="explain">
-		Some promotions are imported from the pokerworks.com. Such promotions are marked with special icons: <br/>
+		Some promotions are imported from the www.pokernews.com. Such promotions are marked with special icons: <br/>
 		<span class="sync1" title="Status: up to date"></span> - the promotion is up to date, <br/>
 		<span class="sync2" title="Status: needs attention"></span> - the promotion was updated, so you have to check it and update.
 	</p>
@@ -99,6 +99,7 @@ error2=Select poker room, please!
 <form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<input type="hidden" name="id" value="{id}" />
+	<input type="hidden" name="master_id" value="{master_id}" />
 	<h2 class="formTitle">{formTitle}</h2>
 	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
 	<span class="clr"></span>
@@ -107,12 +108,20 @@ error2=Select poker room, please!
 		<%if{master_id}%>
 		<dd class="w100">
 			<div>
-			<div class="explain">This promotion is synchronized with some pokerworks.com <a href="http://pokerworks.com/adm/reviews-promotions/edit/{master_id}.htm" onclick="window.open(this.href);return false;">promotion</a>. You must ensure that your translation will correspond to the original items.</div><br />
+			<div class="explain{class-sync}">This promotion is synchronized with some www.pokernews.com <a href="http://www.pokernews.com/adm/reviews-promotions/edit/{master_id}.htm" onclick="window.open(this.href);return false;">promotion</a>. The original item is:<br />&nbsp;</div>
 			<%if{master_title}%>
-				<div style="border: 1px dotted; padding:3px">
-				<div><b>{master_title}</b></div>
-				<div style="margin-top: 10px;">{master_url}</div>
-				<%if{master_tags}%><div style="border-top: 1px dotted"><i>Tags: {master_tags}</i></div><%end%>
+				<div class="forSlaveOriginalText">
+                <table>
+                	<tr>
+                		<td>Title:</td>
+                		<td>{master_title}</td>
+                	</tr>
+                	<tr>
+                		<td>Url:</td>
+                		<td>{master_url}</td>
+                	</tr>
+                	
+                </table>
 				</div>
 			<%end%>
 			</div>
@@ -124,6 +133,13 @@ error2=Select poker room, please!
 		<dt><label for="i_url">Url</label></dt>
 		<dd><input type="text" name="url" id="i_url" value="{url}" size="80" maxlength="128" /></dd>
 		<dd><input type="checkbox" name="hide" id="i_hide" value="{hide}" /> <label for="i_hide">Hide this promotion</label></dd>
+		<%if{master_id}%>
+			<dt><label>Active</label></dt>
+			<dd>{master_active}</dd>
+
+			<dt><label>Poker Room</label></dt>
+			<dd>{master_room}</dd>
+		<%else{master_id}%>
 		<dt><label>Active</label></dt>
 		<dd>
 			From <input type="text" name="active_from" id="active_from" value="{active_from}" class="isDate" size="11" maxlength="10" style="margin-right: 10px" />
@@ -133,6 +149,7 @@ error2=Select poker room, please!
 
 		<dt><label for="i_room">Poker Room</label></dt>
 		<dd><select name="room_id" id="i_room" class="required"><option value="0"></option>{rooms}</select></dd>
+		<%end{master_id}%>
 	</dl>
 	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
 </form>

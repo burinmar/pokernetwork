@@ -68,20 +68,10 @@ class promotions extends moon_com {
 				$this->forget();
 				break;
 
-			case 'sync-init':
-				// paruoðia praneðimà, kad reikia visiems persiøsti atnaujinimà
-				$s = $this->syncInit();
-                $page = & moon :: page();
-				$page->set_local('cron', $s);
-				break;
-
 			case 'cron':
-			case 'sync-do':
+			case 'sync':
 				// Siurbia is master promotions
-				$s = 'Ignored...';
-				//if (_SITE_ID_ !== 'com') {
-					$s = $this->runSync();
-				//}
+				$s = $this->runSync();
                 $page = & moon :: page();
 				$page->set_local('cron', $s);
 				break;
@@ -197,7 +187,7 @@ class promotions extends moon_com {
 				$d['styleTD'] = '';
 				if (!empty($d['master_id'])) {
 					//sync ikona
-					$sType = (int)$d['master_updated']<(int)$d['updated'] ? 1 : 2;
+					$sType = (int)$d['master_updated']<(int)$d['updated'] || $d['updated']==0 ? 1 : 2;
 					$d['styleTD'] = ' class="sync'.$sType.'"';
 				}
 
@@ -295,11 +285,20 @@ class promotions extends moon_com {
 
 		//master info
 		if ($m['master_id']) {
-			$m['syncStatus'] = (int)$m['updated']>(int)$m['master_updated'] ? 1 : 2;
+			$m['master_room'] = isset($rooms[$m['room_id']]) ? $rooms[$m['room_id']]['name'] : 'unknown';
+			$m['master_active'] = ($m['active_from'] ? 'from ' . $m['active_from'] : '') . ($m['active_to'] ? ' till ' . $m['active_to'] : '');
+			$m['class-sync'] = (int)$m['updated']>(int)$m['master_updated'] ? ' sync1' : ' sync2';
 			$a = (int)$m['updated']<0 ? 0 : $this->getMasterInfo($m['master_id']);
 			if (!empty($a)) {
-				$m['master_title'] = htmlspecialchars($a['title']);
+				$txt = moon::shared('text');
+				$m['master_title'] = nl2br(htmlspecialchars($a['title']));
 				$m['master_url'] = nl2br(htmlspecialchars($a['url']));
+				if ($a['prev_title']) {
+					$m['master_title'] =$txt->htmlDiff($a['prev_title'],$a['title']);
+				}
+				if ($a['prev_url']) {
+					$m['master_url'] = $txt->htmlDiff($a['prev_url'],$a['url']);
+				}
 			}
 		}
 		$res = $t->parse('viewForm', $m);
@@ -377,6 +376,26 @@ class promotions extends moon_com {
 		$form->fill($_POST);
 		$d = $form->get_values();
 		$id = intval($d['id']);
+		$masterID = $d['master_id'];
+		if ($masterID && $id) {
+			//gautu duomenu apdorojimas
+			$d['hide'] = empty($d['hide']) ? 0 : 1;
+			$d = $form->get_values('title', 'url', 'hide') + $this->getItem($id);
+			//validacija
+			if ($d['title'] === '') {
+				$form->fill($d, false);
+				$this->set_var('error', 1);
+				return false;
+			}
+			//save to database
+			$ins=$form->get_values('title', 'url', 'hide');
+			$ins['updated'] = time();
+			$this->db->update($ins, $this->myTable, array('id' => $id));
+			blame($this->my('fullname'), 'Updated', $id);
+			//update master table
+			$this->db->query('UPDATE ' . $this->table('PromotionsMaster') . ' SET prev_title = title, prev_url=url  WHERE id=' . intval($masterID));
+			return $id;
+		}
 
 		//gautu duomenu apdorojimas
 		$d['hide'] = empty($d['hide']) ? 0 : 1;
@@ -410,22 +429,15 @@ class promotions extends moon_com {
 		//save to database
 		$ins=$form->get_values('title', 'url', 'active_from', 'active_to', 'room_id', 'hide');
 		$ins['updated'] = time();
-
-		$db = & $this->db();
 		if ($id) {
-			$db->update_query($ins, $this->myTable, array('id' => $id));
+			$this->db->update($ins, $this->myTable, array('id' => $id));
 			blame($this->my('fullname'), 'Updated', $id);
 		}
 		else {
 			$ins['created'] = $ins['updated'];
-			$id = $db->insert_query($ins, $this->myTable, 'id');
-            // log this action
+			$id = $this->db->insert($ins, $this->myTable, 'id');
+			// log this action
 			blame($this->my('fullname'), 'Created', $id);
-		}
-		$form->fill(array('id' => $id));
-
-		if (_SITE_ID_ === 'com') {
-			cronTask($this->my('fullname') . '#sync-init');
 		}
 		return $id;
 	}
@@ -516,7 +528,7 @@ class promotions extends moon_com {
 		// kiek turnyru
 		$a = $this->db->single_query('
             SELECT count(*) FROM ' . $this->myTable . '
-			WHERE master_id>0 AND master_updated>updated AND hide<2' . $rooms . '
+			WHERE master_id>0 AND updated<>0 AND master_updated>updated AND hide<2' . $rooms . '
 			');
 		return empty($a[0]) ? 0 : $a[0];
 	}
@@ -526,32 +538,14 @@ class promotions extends moon_com {
 	//           --- SYNC ---
 	//***************************************
 
-	function syncInit() {
-		return;
-		//siurbsim is pokernews
-		$sites = array('bg', 'de', 'ee', 'it', 'nl', 'no', 'se', 'si','china', 'dk', 'gr', 'il', 'es', 'asia', 'lt', 'cz', 'tr', 'fr','pt', 'pl', 'ru', 'uk', 'fi', 'hu', 'ro', 'br', 'kr', 'jp', 'lv', 'balkan', 'in');
-		$s = '';
-		if (_SITE_ID_ === 'com') {
-			foreach ($sites as $id) {
-	        	$ok = callPnEvent($id, 'reviews.promotions#sync-activate', FALSE, $answer,FALSE);
-				$s .= $id . ' : ' . ($ok ? 'ok' : '<span style="color:red">Error</span>') . "<br/>\n";
-			}
-		}
-        return $s;
-	}
-
 
 	function runSync() {
-		if (_SITE_ID_ == 'fr') {
-			return 'Disabled in FR';
-		}
 		$this->findActiveRooms();
 		if (empty($this->roomID)) {
 			return 'Error: there are no active rooms!';
 		}
 		$lastUpdate = $this->get_max_updated_timestamp();
-		$serverID = _SITE_ID_ == 'com' ? 'pn:com' : 'com';
-		if (callPwEvent($serverID, 'reviews.promotions#sync-export', array('timestamp' => $lastUpdate), $answer,FALSE)) {
+		if (callPnEvent('com', 'reviews.promotions#sync-export', array('timestamp' => $lastUpdate), $answer,FALSE)) {
 			//randam kokie master_id atejo
 			$ids = array();
 			foreach ($answer AS $v) {
@@ -616,11 +610,15 @@ class promotions extends moon_com {
 			$ins[$v] = $tournament[$v];
 		}
 		if (empty($exist['updated'])) {
-			//update body too
-			$ins['hide'] = in_array($ins['room_id'], $this->roomID) ? 1 : 2;
+			//autopublish
+			$ins['hide'] = in_array($ins['room_id'], $this->roomID) ? $ins['hide'] : 2;
 			$ins['updated'] = 0;
 			$ins['title'] = $tournament['title'];
 			$ins['url'] = $tournament['url'];
+		}
+		elseif (!$ins['hide']) {
+			unset($ins['hide']);
+			//pastaba, dabar hidden neateina vis tiek
 		}
 		$ins['master_id'] = $tournament['id'];
 		$ins['master_updated'] = $tournament['updated'];
@@ -636,7 +634,15 @@ class promotions extends moon_com {
 		$ins['id'] = $tournament['id'];
 		$ins['title'] = $tournament['title'];
 		$ins['url'] = $tournament['url'];
-		$this->db->replace($ins, $this->table('PromotionsMaster'));
+		$tbMaster = $this->table('PromotionsMaster');
+		$is = $this->db->single_query('SELECT id FROM '. $tbMaster.' WHERE id=' .intval($tournament['id']));
+		if (empty($is[0])) {
+			$ins['id'] = $tournament['id'];
+			$this->db->replace($ins, $tbMaster);
+		}
+		else {
+			$this->db->update($ins, $tbMaster, $tournament['id']);
+		}
 	}
 
 }

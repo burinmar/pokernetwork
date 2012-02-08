@@ -21,7 +21,7 @@ sub=<sub>{txt}</sub>
 sup=<sup>{txt}</sup>
 strike=<strike>{txt}</strike>
 quote=</p><blockquote class="forumQuoteNoName"><p>{txt}</p></blockquote><p>
-quote_named=</p><blockquote><p class="source"><b>{src}</b> wrote</p><div class="quoteContent"><p>{txt}</p></div></blockquote><p>
+quote_named=</p><blockquote><p class="source"><b>{src}</b> {!wrote}</p><div class="quoteContent"><p>{txt}</p></div></blockquote><p>
 code=</p><pre class="codetext">{txt}</pre><p>
 list=</p>\n<ul>{txt}\n</ul>\n<p>
 list-a=</p>\n<ol type="a">{txt}\n</ol>\n<p>
@@ -31,6 +31,8 @@ smile=<img src="/img/smilies/{0}.gif" alt="{1}" />
 file=<div style="margin: 10px 0;border:1px solid;padding: 10px;padding-left:42px;background: url(/img/fico/i32_{fico}.gif) no-repeat 5px 5px"><div><b>{fname}</b> ({fsize}) <a href="{url}">Download</a></div><div>{comment}&nbsp;</div></div>
 html = <div>{html}</div>
 video = <div class="video-object">{html}</div>
+game = </p><div class="game"><p>{txt}</p></div><p>
+twitter = </p><div class="twitter-quote">{txt}</div><p>
 
 <% fico %>
 fico_default=file

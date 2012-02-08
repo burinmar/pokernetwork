@@ -96,7 +96,7 @@ function init()
 		'noBadWords'=>false, // Ijungti keiksmazodziu filtra
 		'liveUrl'=>false, // Ijungti automatini urlu atpazinima
 		'allowScript'=>false,
-		'nofollow'=>false,//ar ant linku uzdeti noffollow
+		'nofollow'=>FALSE,//ar ant linku uzdeti noffollow
 
         //kokius tagus bandyti atpazinti
 		'tags' => 'b|i|u|h|quote|list|url|code|sub|sup|strike|table|timer|img|video|game|twitter',
@@ -281,15 +281,28 @@ function message($txt)
 	return $this->article($txt);
 }
 
-function article($txt,$partInfo=null) {
-	if (!is_null($partInfo)) {
-		$xy=explode(',',$partInfo);
-		$x=intval($xy[0]);
-		$y=(isset($xy[1])) ? intval($xy[1]):0;
-		$txt=substr($txt,$x,$y);
+function article($txt) {
+	if (strpos($txt, "\n---PageBreak---")) {
+		$s = '';
+		$d = explode("\n---PageBreak---", $txt);
+		$err = '';
+		foreach ($d as $k=>$v) {
+			if ('' != ($v = trim($v))) {
+				$title = $this->excerpt($this->strip_tags($v), 90);
+				$title = str_replace(array("\r", "\n", '-->'), array('', '', '--&#124;'), $title);
+				$s .= "\n\n<!--PageBreak:" . $title . "-->\n\n" . $this->article($v);
+				if ($this->parseError !== FALSE) {
+					$err .= $this->parseError . ' (page '.($k+1).')';
+				}
+			}
+		}
+		if ($err) {
+			$this->parseError = $err;
+		}
+		return $s;
 	}
 
-    $txt=str_replace("\r",'',$txt);
+	$txt=str_replace("\r",'',$txt);
 	$txt=preg_replace('/(\n){3,}/si',"\n\n",$txt);//pasalinti didelius tarpus
 	$txt=$this->_parse($txt);
 	$txt=$this->_addP($txt);
@@ -298,6 +311,21 @@ function article($txt,$partInfo=null) {
 	}
 	//$this->error();
 	return $txt;
+}
+
+function break_pages($html) {
+	$a = array();
+	if (strpos($html, '<!--PageBreak:') !== FALSE) {
+		$d = preg_split('/<!--PageBreak:([^>]*)-->/s', $html, NULL, PREG_SPLIT_DELIM_CAPTURE);
+		foreach ($d as $k=>$v) {
+			if ($k) {
+				$n = floor(($k + 1)/2);
+				$a[$n][($k + 1) % 2] = $v;
+				//echo '<hr>', $k, ': ', htmlspecialchars($v);
+			}
+		}
+	}
+	return $a;
 }
 
 function preview($txt,$size=200)
@@ -483,7 +511,7 @@ function _parse($txt)
 
 	}
 	for ($i=1;$i<=$level;$i++) $s[0].=(($i) ? $tgInfo[$i][2]:'').$s[$i];
-    $this->parseError = $parseError;
+	$this->parseError = $parseError;
 	return $s[0];
 }
 
@@ -687,13 +715,19 @@ function _tag($tag,$param,$txt){
 		$pos = strpos($param, ':') - 1;
 		$sId = substr($param, 1, $pos);
 		$id = substr($param, $pos + 2);
-		if ('com' === $sId) {if ($this->dev) $sId = ''; else $sId = 'www.';} else $sId .= '.';
-		$u = 'http://' . $sId . 'pokernews.' . ($this->dev ? 'dev' : 'com') . '/h/v.swf?random=' . $rand;
+		$p = &moon::page();
+		if (FALSE !== strpos($p->home_url(), 'beta.')) $u = 'http://beta.pokernews.dev.ntsg.lt/img/v.swf?random=' . $rand;
+		else {
+			if ('com' === $sId) {if ($this->dev) $sId = ''; else $sId = 'www.';} else $sId .= '.';
+			$u = 'http://' . $sId . 'pokernews.' . ($this->dev ? 'dev' : 'com') . '/img/v.swf?random=' . $rand;
+		}
 		if ('*' === $id[0]) {
 			$id = substr($id, 1);
-			$txt = '<b>' . $txt . '</b><br/><object width="620" height="450"><param name="movie" value="' . $u . '"/><param name="menu" value="false"/><param name="scale" value="noscale"/><param name="quality" value="high"/><param name="wmode" value="transparent"/><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="flashvars" value="listId=' . $id . '"><embed swLiveConnect="true" allowScriptAccess="always" type="application/x-shockwave-flash" width="620" height="450" src="' . $u . '" menu="false" scale="noscale" quality="high" wmode="transparent" allowFullScreen="true" allowScriptAccess="always" flashvars="listId=' . $id . '"/></object>';
+			if ('' !== $txt) $txt = '<b>' . $txt . '</b><br/>';
+			$txt .= '<object width="620" height="450"><param name="movie" value="' . $u . '"/><param name="menu" value="false"/><param name="scale" value="noscale"/><param name="quality" value="high"/><param name="wmode" value="window"/><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="flashvars" value="listId=' . $id . '"><embed swLiveConnect="true" allowScriptAccess="always" type="application/x-shockwave-flash" width="620" height="450" src="' . $u . '" menu="false" scale="noscale" quality="high" wmode="window" allowFullScreen="true" allowScriptAccess="always" flashvars="listId=' . $id . '"/></object>';
 		} else {
-			$txt = '<b>' . $txt . '</b><br/><object width="620" height="450"><param name="movie" value="' . $u . '"/><param name="menu" value="false"/><param name="scale" value="noscale"/><param name="quality" value="high"/><param name="wmode" value="transparent"/><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="flashvars" value="handId=' . $id . '"><embed swLiveConnect="true" allowScriptAccess="always" type="application/x-shockwave-flash" width="620" height="450" src="' . $u . '" menu="false" scale="noscale" quality="high" wmode="transparent" allowFullScreen="true" allowScriptAccess="always" flashvars="handId=' . $id . '"/></object>';
+			if ('' !== $txt) $txt = '<b>' . $txt . '</b><br/>';
+			$txt .= '<object width="620" height="450"><param name="movie" value="' . $u . '"/><param name="menu" value="false"/><param name="scale" value="noscale"/><param name="quality" value="high"/><param name="wmode" value="window"/><param name="allowFullScreen" value="true"/><param name="allowScriptAccess" value="always"/><param name="flashvars" value="handId=' . $id . '"><embed swLiveConnect="true" allowScriptAccess="always" type="application/x-shockwave-flash" width="620" height="450" src="' . $u . '" menu="false" scale="noscale" quality="high" wmode="window" allowFullScreen="true" allowScriptAccess="always" flashvars="handId=' . $id . '"/></object>';
 		}
 		break;
 	case 'twitter':
@@ -746,6 +780,7 @@ function _apdorok($txt,$insideTag=false)
 			$txt = $this->short_words($txt);
 		}
 		$txt = htmlspecialchars($txt);
+
 		$txt=str_replace(array('&amp;shy;',' -- '),array('&shy;',' — '),$txt);
 		if ($this->features['smiles']) $txt=$this->smiles($txt);
 		if ($this->features['cards']) $txt=$this->cards($txt);
@@ -891,6 +926,49 @@ function error($alert=TRUE) {
 		moon :: page()->alert(htmlspecialchars($err));
 	}
 	return $err;
+}
+
+// diff functions
+function _diff($old, $new){
+	$maxlen = 0;
+	foreach($old as $oindex => $ovalue){
+		$nkeys = array_keys($new, $ovalue);
+		foreach($nkeys as $nindex){
+			$matrix[$oindex][$nindex] = isset($matrix[$oindex - 1][$nindex - 1])
+				? $matrix[$oindex - 1][$nindex - 1] + 1
+				: 1;
+			if($matrix[$oindex][$nindex] > $maxlen){
+				$maxlen = $matrix[$oindex][$nindex];
+				$omax = $oindex + 1 - $maxlen;
+				$nmax = $nindex + 1 - $maxlen;
+			}
+		}
+	}
+	if($maxlen == 0) {
+		return array(array('d'=>$old, 'i'=>$new));
+	}
+	return array_merge(
+			$this->_diff(array_slice($old, 0, $omax), array_slice($new, 0, $nmax)),
+			array_slice($new, $nmax, $maxlen),
+			$this->_diff(array_slice($old, $omax + $maxlen), array_slice($new, $nmax + $maxlen)));
+}
+
+function htmlDiff($old, $new){
+	$old = str_replace("\n", " \n ", htmlspecialchars($old));
+	$new = str_replace("\n", " \n ", htmlspecialchars($new));
+	$diff = $this->_diff(explode(' ', $old), explode(' ', $new));
+	$ret = '';
+	foreach($diff as $k){
+		if(is_array($k)) {
+			$ret .= (!empty($k['d'])?'<span style="background-color:#FFD8D3; text-decoration: line-through;">'.str_replace("\n","&para;\n",implode(' ',$k['d']))."</span> ":'').
+					(!empty($k['i'])?'<span style="background-color:#CCFFCC;">'.str_replace("\n","&para;\n",implode(' ',$k['i']))."</span> ":'');
+		}
+		else {
+			$ret .= $k . ' ';
+		}
+	}
+	$ret = nl2br(str_replace(" \n ", "\n", $ret));
+	return $ret;
 }
 
 }

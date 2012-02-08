@@ -49,3 +49,17 @@
 var linksHeading = "Links";
 //-->
 </script>
+
+
+<% html:breadcrumb %>
+	<div class="widgetTitle path">
+			<a href="/">Home</a>
+			<%loop{breadcrumb}%>
+				<%if{url}%>
+				 &rsaquo; <a href="{url}"{class-current}>{title}</a>
+				<%else{url}%>
+				 &rsaquo; <span{class-current}>{title}</span>
+				<%end%>
+			<%end%>
+	</div>
+

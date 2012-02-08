@@ -224,52 +224,40 @@ function blame($component, $action, $ids) {
 	return TRUE;
 }
 
-/**
- * Inserts task into cron queue
- * @param string $event
- */
-function cronTask($event)
+//perduoda informacija kazkuriam pokernews saitui
+function callPnEvent($siteID,$event,$data,&$answer,$usePassword=TRUE)
 {
-    $db=& moon :: db();
-	$myTable = 'sys_cron_tasks';
-	$m=$db->single_query_assoc('
-		SELECT id,last_run,next_run,disabled FROM '.$myTable."
-		WHERE event='".$db->escape($event)."'"
-		);
-	$start = $now = time();
-	$id = 0;
-    if (count($m)) {
-    	$id = $m['id'];
-		if ($m['next_run']==-10) {
-			//taskas dabar vykdomas
-			$msg = 'Queue: the running task was found!.. Overwritten...';
-			//jei vyksta, duosim dar 10 min
-			$start += 600;
-		}
-        elseif ($m['next_run'] > 0 && $m['next_run'] < $now) {
-			//taskas jau uzstatytas
-            $msg = 'Queue: the task already is queued...';
-			$start=0;
-		}
-		else {
-			$msg = 'Queue: task updated';
-		}
-		if ($start) {
-        	$a=array('next_run'=>$start);
-			$db->update_query($a, $myTable, $m['id']);
-		}
+	$isLocal=is_dev();
+	$domain = 'pokernews.' . ($isLocal ? (strpos($_SERVER['HTTP_HOST'], '.dev-1') ? 'dev-1.ntsg.lt':'dev') : 'com') . '/';
+	$password = 'vemail';
+	switch ($siteID) {
+		case 'adm':
+			$url = 'http://adm.' . $domain . 'adm/';
+			$password = 'pokernews.db';
+			break;
+		default:
+			switch ($siteID) {
+				case 'com': $url = 'www.';	break;
+				default: $url = $siteID . '.';
+			}
+			$url = 'http://' . $url . $domain . '';
 	}
-	else {
-		//naujas taskas
-        $ins = array();
-		$ins['event'] = $event;
-		$ins['comment'] = 'Queued task.';
-		$ins['next_run'] = $start;
-		$id=$db->insert_query($ins,$myTable,'id');
-		$msg = 'Queue: task created';
+	include_class('transporter');
+	$t = new transporter();
+	if ($usePassword) $t->set_key($password);
+	$t->set_timeout(5);
+	$t->set_curl_option(CURLOPT_COOKIE,'voter2=Transporter-Pokernews');
+	$t->add_event($event, $data);
+	$t->send($url);
+	if(!$t->was_error()) {
+		$answer = $t->get_event_answer();
+		//print_r($t->trans_response());
+		return true;
+	} else {
+		$answer=$t->errno().': '.$t->errtext();
+		moon::error('callPnEvent() ' . $siteID . ':' . $event . ' error: ' . $answer);
+		return false;
 	}
-	$ins=array('task_id'=>$id,'start_time'=>$now,'end_time'=>$now,'message'=>$msg);
-    $db->insert_query($ins,'sys_cron_log');
 }
 
 function img($dir, $name, $arg3=null) {

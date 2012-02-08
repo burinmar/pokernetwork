@@ -7,6 +7,9 @@ class output extends moon_com {
 			$t = & $this->load_template('_layouts');
 			//jeigu veikiam kaip layout komponentas
 			if ($vars['layout'] !== '' && $t->has_part($vars['layout'])) {
+				if (isset($vars['parts']['center'])) {
+					$vars['parts']['center'] = $this->breadcrumb() . $vars['parts']['center'];
+				}
 				$body = $t->parse($vars['layout'], $vars['parts']);
 			}
 			else {
@@ -139,6 +142,22 @@ class output extends moon_com {
 			return '';
 		}
 		return @ filemtime(ltrim($file, '/'));
+	}
+
+	function breadcrumb() {
+		$tpl = & $this->load_template();
+		$m = array('breadcrumb'=>'');
+		$bCrumb = moon::shared('sitemap')->breadcrumb();
+		$last = count($bCrumb)-1;
+		if ($last<0) {
+			return '';
+		}
+		foreach ($bCrumb as $k=>$d) {
+			$d['class-current'] = $k == $last ? ' class="current"' : '';
+			$d['title'] = htmlspecialchars($d['title']);
+			$m['breadcrumb'] .= $tpl->parse('breadcrumb',$d);
+		}
+		return $tpl->parse('html:breadcrumb', $m);
 	}
 
 
