@@ -129,7 +129,7 @@ function renderList($vars)
 	$win = &moon::shared('admin');
 	$page = &moon::page();
 
-	$page->js('/js/jquery/tablednd_0_5.js');
+	$page->js('/js/tablednd_0_5.js');
 
 	$goEdit = $this->linkas('#edit','{id}');
 	$tpl->save_parsed('item',array('goEdit' => $goEdit));

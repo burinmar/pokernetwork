@@ -9,40 +9,40 @@ error2=URI required
 <div class="tabzoneHeader clrfix">
 	<h1>Deposits</h1>
 </div>
-<!--# items list -->
-<% if {items} %>
-<form action="{!action}" method="post" name="list-form">
-	<input type="hidden" name="event" value="{goHide}" />
-	<input type="hidden" name="event-saveorder" value="{goSort}" />
-	<table class="list">
-		<colgroup>
-			<col style="width: 300px" />
-			<col />
-			<col style="width: 20px" />
-		<colgroup>
-		<thead>
-		<tr>
-			<th><span>Title</span></th>
-			<th><span>Image</span></th>
-			<th class="checkall"></th>
-		</tr>
-		</thead>
-		<tbody>
-		<% loop {items} %>
-		<tr id="row{id}" class="{class}">
-			<td><a href="{goEdit}">{title}</a></td>
-			<td><%if{img}%><a href="{goEdit}"><img src="{img}" alt="logo" /></a><%end%></td>
-			<td><input type="checkbox" name="it[]" value="{id}" /></td>
-		</tr>
-		<% end {items} %>
-		</tbody>
-	</table>
-	<!--# delete items -->
-	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
-</form>
-<% else {items} %>
-	<p>There are no categories</p>
-<% end {items} %>
+	<!--# items list -->
+	<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goHide}" />
+		<input type="hidden" name="event-saveorder" value="{goSort}" />
+		<table class="list">
+			<colgroup>
+				<col style="width: 300px" />
+				<col />
+				<col style="width: 20px" />
+			<colgroup>
+			<thead>
+			<tr>
+				<th><span>Title</span></th>
+				<th><span>Image</span></th>
+				<th class="checkall"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<% loop {items} %>
+			<tr id="row{id}" class="{class}">
+				<td><a href="{goEdit}">{title}</a><%if{homepage_url}%><div class="explain">{homepage_url}</div><%end%></td>
+				<td><%if{img}%><a href="{goEdit}"><img src="{img}" alt="logo" /></a><%end%></td>
+				<td><input type="checkbox" name="it[]" value="{id}" /></td>
+			</tr>
+			<% end {items} %>
+			</tbody>
+		</table>
+		<!--# delete items -->
+		<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+	</form>
+	<% else {items} %>
+		<p>There are no categories</p>
+	<% end {items} %>
 
 
 

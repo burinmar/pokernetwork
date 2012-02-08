@@ -182,7 +182,7 @@ class deposits extends moon_com {
 		$sql = '
 			SELECT id,name,uri,hide,img,homepage_url,has_review
 			FROM ' . $this->myTable . '
-			WHERE hide<2 ORDER BY sort_order ASC' . $limit;
+			WHERE hide<2 ORDER BY sort_order ASC, name' . $limit;
 		return $this->db->array_query_assoc($sql);
 	}
 
