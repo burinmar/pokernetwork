@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <page>
-	<layout>col1</layout>
-	<com><part>column</part><name>none</name></com>
-	<com><part>center</part><name>sys.page404</name></com>
+	<layout>col1_darkright</layout>
+	<com><part>center</part><name>fake</name></com>
 	<com><part>header</part><name>sys.header</name></com>
 	<com><part>footer</part><name>sys.footer</name></com>
-
 </page>

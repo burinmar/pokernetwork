@@ -24,9 +24,9 @@ $cfg['reviews'] = array(
 	'tb.Sorting' => 'rw2_rooms_sorting',
 	'tb.Tournaments' => 'tournaments',
 	
-	'page.Index' => 'xml.main,fake',
-	'page.Main' => 'xml.articles,fake',
-	'page.RoomsList' => 'xml.main,fake',
+	'page.Index' => 'xml.col1,fake',
+	'page.Main' => 'xml.col1_darkright,fake',
+	'page.RoomsList' => 'xml.col1,fake',
 	//rtf
 	'comp.rtf' => 'MoonShared.rtf',
 

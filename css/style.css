@@ -491,13 +491,13 @@ html {
 				text-transform: uppercase;
 				color: #858585;
 				font-size: 11px;
+				position: relative;
+				z-index: 2;
 			}
 				.path a {color: #0050bd; display: inline-block; vertical-align: text-top}
 				.path .current {color: inherit}
 			.pageIntro {
-				border-bottom: 1px solid #d8d6c7;
-				margin: 0 -10px 15px;
-				padding: 0 10px 5px;
+				margin-bottom: 30px;
 			}
 				.pageTitle {
 					color: #000;
@@ -516,7 +516,7 @@ html {
 				.twoColsList > li.odd {clear: left}
 			
 .filterTabs {
-	margin-top: -15px;
+	margin-top: -10px;
 	margin-bottom: 20px;
 	line-height: 28px;
 	text-transform: uppercase;

@@ -9,9 +9,9 @@ $cfg['users'] = array(
 	'tb.Subscribers' => 'subscribers', 
 	'tb.Rooms' => 'rw2_rooms',
 
-    'page.Signup' => 'xml.main,fake',
-    'page.Profile' => 'xml.main,fake',
-    'page.Users' => 'xml.main,fake',
+    'page.Signup' => 'xml.col1,fake',
+    'page.Profile' => 'xml.col1,fake',
+    'page.Users' => 'xml.col1,fake',
 
 	'comp.login_object' => 'MoonShared.login_object',
 

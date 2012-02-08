@@ -348,13 +348,20 @@
 
 <% col1 %>
 {header}
-{center}
+<div id="body" class="clrfix wFull">{center}</div>
+{footer}
+
+<% col1_darkright %>
+{header}
+<div id="body" class="clrfix wCol">{center}</div>
 {footer}
 
 <% col2 %>
 {header}
-{center}
-{column}
+<div id="body" class="clrfix wCol">
+	<div class="left fl">{center}</div>
+	<div class="right fr">{column}</div>
+</div>
 {footer}
 
 <% tmp %>
