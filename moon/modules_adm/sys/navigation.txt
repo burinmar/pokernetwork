@@ -30,6 +30,11 @@ Spotlight & Banners {ico=banners, admin=content, hide=0, sites=}
 	other.spotlight=Spotlight
 	#banners.rotation=Active banners {admin=ads}
 
+Poker Players {ico=players, admin=content}
+	Twitter {link=other.twitter_players, admin=content,sites=}
+		other.twitter_players = Poker Twitters
+		other.twitter_messages = Twitter Messages
+
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

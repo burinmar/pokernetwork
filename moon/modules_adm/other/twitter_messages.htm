@@ -1,0 +1,103 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+
+404=Item not found!
+error1=Name required
+error2=Message required
+error9=System error!
+
+<% main %>
+
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+		<tr>
+			<td><label>Player title: <input type="text" name="filter[name]" size="25" value="{name}" /></label></td>
+			<td><label>Message: <input type="text" name="filter[message]" size="25" value="{message}" /></label></td>
+			<td><button type="submit" name="filtruok" >Filter</button></td>
+		</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 80px" />
+			<col style="width: 160px" />
+			<col />
+			<col style="width: 115px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby1}">Created</a></th>
+			<th><a href="{orderby2}">Player title</a></th>
+			<th><span>Message</span></th>
+			<th><span>Tweet of the Day</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr {classHidden}>
+			<td>{created}</td>
+			<td><a href="{goEdit}">{name}</a></td>
+			<td><div class="explain">{message} </div></td>
+			<% if {is_featured} %>
+			<td class="tac"><span class="star" style="display: inline-block"></span></td>
+			<% else {is_featured} %>
+			<td class="tac"><a href="{url.setFeatured}">Set</a></td>
+			<% end {is_featured} %>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+</form>
+
+{paging}
+
+<% else {items} %>
+	<p>There are no players yet</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="message_id" value="{message_id}" />
+	<input type="hidden" name="screen_name" value="{screen_name}" />
+	<input type="hidden" name="is_last_message" value="{is_last_message}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_name">Player title</label></dt>
+		<dd>
+			<input type="text" name="name" id="i_name" value="{name}" size="63" maxlength="255" class="required" /> 
+		</dd>
+
+		<dt><label for="i_message">Message</label></dt>
+		<dd class="w100"><textarea rows="4" cols="60" name="message" id="i_message" class="required">{message}</textarea></dd>
+
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide</label></dd>
+	</dl>
+
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+<% end {viewList} %>

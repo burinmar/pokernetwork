@@ -12,6 +12,12 @@ $cfg['other'] = array(
 
 	'tb.Spotlight' => 'spotlight',
 	'dir.imgDirSpotlight' => _W_DIR_ . 'spotlight/',
-	'var.imgSrcSpotlight' => '/w/spotlight/'
+	'var.imgSrcSpotlight' => '/w/spotlight/',
+
+	'tb.TwitterPlayers' => 'twitter_players',
+	'tb.TwitterMessages' => 'twitter_messages',
+	'var.twitterUsername' => 'pokernews_live',
+	'var.twitterPassword' => 'lynnpn9'
+	
 );
 ?>

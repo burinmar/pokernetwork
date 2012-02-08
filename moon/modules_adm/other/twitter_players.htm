@@ -1,0 +1,105 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+
+404=Item not found!
+error1=Twitter nickname required
+error2=Player title required
+error3=This twitter nickname is already in use
+error9=System error!
+
+<% main %>
+
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new Twitter</a></div>
+</div>		
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Player title: <input type="text" name="filter[title]" size="25" value="{title}" /></label></td>
+		<td><label>Twitter nick: <input type="text" name="filter[twitter_nick]" size="25" value="{twitter_nick}" /></label></td>
+		<td><button type="submit" name="filtruok" >Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+	
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 300px" />
+			<col />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th width="300"><a href="{orderby1}">Player title</a></th>
+			<th><a href="{orderby2}">Twitter nickname</a></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr {classHidden}>
+			<td><a href="{goEdit}">{title}</a> <%if{stars_pro}%><span class="fr"><img src="/img/logo_pokerstars_pro_small.png" alt="PokerStars Team Pro" /></span><%end%></td>
+			<td>{twitter_nick}</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+{paging}
+
+<% else {items} %>
+	<p>There are no players yet</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	
+	<dl>
+		<dt><label for="i_title">Player title</label></dt>
+		<dd>
+			<input type="text" name="title" id="i_title" value="{title}" size="70" maxlength="255" class="required" /> 
+		</dd>
+			
+		<dt><label for="i_twitter_nick">Twitter nickname</label></dt>
+		<dd>
+			<input type="text" name="twitter_nick" id="i_twitter_nick" value="{twitter_nick}" size="70" maxlength="45" class="required" /> 
+		</dd>
+		
+		
+		<dt></dt>
+		<dd>
+			<% if {enableStarsPro} %><label><input type="checkbox" name="stars_pro" id="i_stars_pro" value="{stars_pro}" />PokerStars Team Pro</label><br /><br /><% end %>
+			<label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide</label>
+		</dd>
+		
+		
+		
+	</dl>
+	
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+<% end {viewList} %>
