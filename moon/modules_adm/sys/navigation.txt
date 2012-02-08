@@ -26,6 +26,10 @@ Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 	reviews.deposits = Deposits
 	reviews.statistics = Statistics
 
+Spotlight & Banners {ico=banners.png, admin=content, hide=0, sites=}
+	other.spotlight=Spotlight
+	#banners.rotation=Active banners {admin=ads}
+
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

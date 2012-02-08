@@ -284,5 +284,70 @@ function img($dir, $name, $arg3=null) {
 	return $s;
 }
 
+function geo_my_country() {
+	static $id;//$id='us';
+	if (is_null($id)) {
+		$page = & moon :: page();
+		if ($id = $page->get_global('geo.id')) {
+			if ($page->history_step() % 10 == 0) {
+				$id = '';
+			}
+		}
+		if ($id === '') {
+			$user = & moon :: user();
+			$ip = $user->get_ip();
+			include_once (MOON_CLASSES . 'geoip/geoip.inc');
+			$gi = geoip_open(MOON_CLASSES . 'geoip/GeoIP.dat', GEOIP_STANDARD);
+			//$id=strtolower(geoip_country_code_by_addr($gi, "217.28.251.173"));
+			$id = strtolower(geoip_country_code_by_addr($gi, $ip));
+			geoip_close($gi);
+			$page->set_global('geo.id', $id);
+		}
+	}
+	return $id;
+}
+
+function geo_my_id(){
+	$code = geo_my_country();
+	switch ($code) {
+		case 'us':
+			return 1;
+		case 'gb':
+			return 2;
+		case 'au':
+		case 'tv':
+		case 'sb':
+		case 'pf':
+		case 'cc':
+		case 'wf':
+		case 'nu':
+		case 'nr':
+		case 'fj':
+		case 'to':
+		case 'pn':
+		case 'nz':
+		case 'cx':
+		case 'vu':
+		case 'tk':
+		case 'ki':
+		case 'ws':
+		case 'pg':
+		case 'nc':
+			return 3;
+		case 'ca':
+			return 4;
+		default:
+			return 0;
+	}
+}
+
+
+function geo_zones()
+{
+	$z = array(
+		'us' => 1, 'gb' => 2, 'aa' => 3, 'ca' => 4
+	);
+	return $z;
+}
 
 ?>

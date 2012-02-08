@@ -1,0 +1,160 @@
+<% info %>
+titleNew=New item
+titleEdit=Edit item
+
+error404=Item not found!
+error1=Title required
+error2=Uri required
+error5=Incorrect uri
+error3=Incorrect date
+error4=Incorrect time
+
+error9=System error!
+
+errorImage1=Image error: Incorrect extension!
+errorImage2=Image error: Techical error!
+errorImage3=Item will remain hidden until you upload picture!
+errorImage4=Image error: Incorrect image size! Must be exactly {imgDimensions} px
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label><input type="checkbox" name="filter[show_expired]" value="{show_expired}" /> Show expired</label></td>
+		<td><button type="submit" name="filtruok" >Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<input type="hidden" name="event-saveorder" value="{goSort}" />
+
+	<table class="list sortable" style="width: 100%">
+		<colgroup>
+			<col />
+			<col />
+			<col style="width: 300px" />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Title, Uri</span></th>
+			<th><span>Geo targets</span></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+		<tr id="row{id}" {classHidden}>
+			<td><a href="{goEdit}">{title}</a><div class="explain">{uri}</div>{date_ranges}</td>
+			<td class="explain">{geo_targets}</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {items} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_title">Title</label></dt>
+		<dd><input type="text" name="title" id="i_title" value="{title}" size="74" maxlength="255" class="required" /></dd>
+
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd><input type="text" name="uri" id="i_uri" value="{uri}" size="74" maxlength="128" class="required" /></dd>
+
+		<dt><label>Image</label></dt>
+		<dd>
+			<input type="file" name="img" size="35" class="required"/>
+			 Alt: <input type="text" name="img_alt" value="{img_alt}" size="" maxlength="128" />
+
+			<div class="explain">.jpg, .gif, .png images only. Recomended size - {imgDimensions} px (larger images will be resized)</div><br />
+			<script type="text/javascript">initMultiUpload('img',7);</script>
+			<% if {imgSrc} %>
+				<br /><img src="{imgSrc}" alt="" />
+				<!--<a href="{imgTool}" onclick="window.open(this.href,'im'+'{id}','width=670,height=560,toolbars=no');return false;"><img src="{imgSrc}" alt="" /></a>-->
+				<div><label><input type="checkbox" name="del_img" value="1" />Delete</label></div>
+			<% end {imgSrc} %>
+		</dd>
+
+		<dt><label>Date ranges</label></dt>
+		<dd>
+			<% if {date_ranges} %>
+				<% loop {date_ranges} %>
+				<div class="date-range-div">
+				from <input type="text" name="active_from[]" id="active-from-{no}" value="{active-from}" class="isDate" size="20" maxlength="20" />
+				till <input type="text" name="active_to[]"   id="active-to-{no}"   value="{active-to}"   class="isDate" size="20" maxlength="20" />
+
+				<% if {enableRemove} %>
+				<a href="#" class="interval-remove" style="color:#DD0000;text-decoration:none;">x</a>
+				<% end %>
+				</div>
+
+				<% end %>
+			<% else {date_ranges} %>
+				<div class="date-range-div fl">
+				from <input type="text" name="active_from[]" id="active-from-1" value="" class="isDate" size="20" maxlength="20" />
+				till <input type="text" name="active_to[]"   id="active-to-1"   value=""   class="isDate" size="20" maxlength="20" />
+				</div>
+				<a href="#" id="interval-add" style="margin: 3px 0 0 10px;">Add</a><span class="clr"></span>
+			<% end %>
+			<div class="explain" id="explain-date">Fill the fields above for item to appear in specified time interval. Both fields are optional. Date format: <i>yyyy-mm-dd</i>. Current server date is {now} </div>
+		</dd>
+
+		<dt><label>Geo target</label></dt>
+		<dd>
+			<% loop {geo_zones} %>
+			<label><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="geo_target[]" value="{value}"  /> {name}</label><br />
+			<% end %><br />
+			<div class="explain">Item will be shown for users in checked countries, if at leat one is checked.</div>
+		</dd>
+
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" />Hide</label></dd>
+	</dl>
+
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+<% end {viewList} %>
+
+<% active_from %>
+<span class="explain"><strong>from </strong>{active_from} 00:00 &nbsp; </span>
+
+<% active_to %>
+<span class="explain"><strong>till </strong>{active_to} 23:59 GMT</span>
+
+<% status %>
+<%if{scheduled}%><span style="color:#E0A13F;">&nbsp;(scheduled)</span><%end%>
+<%if{expired}%><span style="color:#AA5555;">&nbsp;(expired)</span><%end%>
