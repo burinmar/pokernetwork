@@ -11,4 +11,4 @@ articles.export# = news-export-xml/
 
 sys.tmp = temp
 
-
+sys.banners* = banners/

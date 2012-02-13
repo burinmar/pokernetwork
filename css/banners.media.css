@@ -1,0 +1,160 @@
+/* swf upload */
+.upload {margin: 10px 0 30px}
+div.fieldset {
+	border:  1px solid #CFCFCF;
+	margin: 10px 0;
+	padding: 20px 10px;
+}
+div.fieldset span.legend {
+	position: relative;
+	background-color: #FFF;
+	padding: 3px;
+	top: -30px;
+	font-size: 12px;
+	color: #666666;
+}
+span.legend {
+	width: 115px;
+}
+div.flash {
+	width: 475px;
+	margin: 10px 5px;
+	border-color: #CFCFCF;
+}
+.progressWrapper {
+	width: 357px;
+	overflow: hidden;
+}
+.progressContainer {
+	margin: 5px;
+	padding: 4px;
+	border: solid 1px #E8E8E8;
+	background-color: #F7F7F7;
+	overflow: hidden;
+}
+/* Message */
+.message {
+	margin: 1em 0;
+	padding: 10px 20px;
+	border: solid 1px #FFDD99;
+	background-color: #FFFFCC;
+	overflow: hidden;
+}
+/* Error */
+.red {
+	border: solid 1px #B50000;
+	background-color: #FFEBEB;
+}
+/* Current */
+.green {
+	border: solid 1px #DDF0DD;
+	background-color: #EBFFEB;
+}
+/* Complete */
+.blue {
+	border: solid 1px #CEE2F2;
+	background-color: #F0F5FF;
+}
+.progressName {
+	font-size: 8pt;
+	font-weight: 700;
+	color: #555;
+	width: 323px;
+	height: 14px;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+}
+.progressBarInProgress,
+.progressBarComplete,
+.progressBarError {
+	font-size: 0;
+	width: 0%;
+	height: 2px;
+	background-color: blue;
+	margin-top: 2px;
+}
+.progressBarComplete {
+	width: 100%;
+	background-color: green;
+	visibility: hidden;
+}
+.progressBarError {
+	width: 100%;
+	background-color: red;
+	visibility: hidden;
+}
+.progressBarStatus {
+	margin-top: 2px;
+	width: 337px;
+	font-size: 7pt;
+	font-family: Arial;
+	text-align: left;
+	white-space: nowrap;
+}
+a.progressCancel, .remove-item {
+	height: 16px;
+	width: 16px;
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAmtJREFUeNqMU0toE2EQ/naTqDSPkoc2pbSlWpAG9ODrkosoLfV1EEUwJ0GwpAQtSEpBvAlCCxIfmKsnb6KCj5ioCKJotVDRSsVqqTUmJtkNyea9u1n//7eJq+nBgW9nmfnm25llhtM0DXqLuq0O4k4R7CLYTmAgmFlBeCgppfV8Ti8QcVsvmixtE517vLBt6oWlrwccz0FaXEaBIP74OeR8YWo4KY23CDxwW686tg4EPCM+cOIS6rk06vkMy/FWJ3ibC1jfh/kbt5Ceng3vT0qjNGekj3sdtguubVsCHt8Qaq/uIHrzIwaP9f/pU8ojFoph8PgANh/ZTSX9pKZw8Gd+nL/bYevizW3n+g95UZp+hLcfTPDFU5iZN0OVVQb6zmJza1B6E8XGfTthtLcHWa2qwd+114vq3EsoVRnDD2Pso9TPfrEx6GNKTUXl/Qt0eneA1vIquAMWCyAXikRAQSp0ptk5LWgUU6M5ypGLZVjtRpDaw7yiwcOVMkRZYci/foLEVAD/Go3RXIOHXAKktp92UCun0pCp8grePf3UIkBjek5FFGkHIAJYKOarUCoyw1K5+6+29ePQXINXzlWJAL7REe5nJTRb0xd/PX+SQS/S4GUljY4QoSOEk4kiamWF/aDPEycYmXrhWYRBH2M/saLg+48iHSHMNjHstE/abcZg7wYD/seW0yqEnHLZL2THmqt8zWm/bjdz/m6nAWT9V7U6ocbFOoRCPRwQsqMtx3TF6Zg0Gbigy6yhfR2w1vg7TnYHuTKQKXGoKdql04J4dtVrpBZyOHqI8xMcJWgcxCLBbXrOY6K4oOf/EmAAfyhg+goYmG4AAAAASUVORK5CYII=') no-repeat;
+	float: right;
+}
+a.progressCancel:hover {
+	background-position: 0px 0px;
+}
+input#btnCancel1 {
+	border-width: 1px;
+	margin-bottom: 10px;
+	padding: 1px 1px;
+}
+.swfupload {
+	vertical-align: top;
+}
+/* swf upload end */
+
+
+/* media list */
+.div-media {margin-bottom: 15px;}
+.div-media .media-item:last-child {margin-bottom: 0}
+
+.media-dt {
+	padding: 5px 5px 5px 10px;
+	background-color: #f2f2f2;
+	margin-bottom: 10px;
+	text-transform: uppercase;
+	border-top: 1px solid #ccc;
+	font-weight: bold;
+}
+	.media-dt.item-hidden{background-color: #ffe6e6;}
+	.media-dt span {margin-right: 10px; text-transform: capitalize;}
+
+.media-item {
+	padding: 0 5px 5px;
+	margin-bottom: 15px;
+	position: relative;
+}
+.media-item object, .media-item img, .media-item iframe {margin-bottom: 10px; display: block}
+.media-item .hideBanner {
+	position: absolute;
+	top: -33px;
+	right: 40px;
+}
+
+dt.undefined {
+	padding: 5px 5px 5px 10px;
+	background-color: #fdfd78;
+}
+dd.undefined {margin-bottom: 0}
+
+#toggle-media-files {
+	margin: -30px 0px 0px 0px;
+	border-bottom: 1px dotted;
+	float: left;
+}
+.toggle-bn-media {
+	border-bottom: 1px dotted;
+	position: absolute;
+	top: -33px;
+	right: 115px;
+}
+.site-inactive {color: #888}
+div.options {display: none}

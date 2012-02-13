@@ -26,9 +26,18 @@ Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 	reviews.deposits = Deposits
 	reviews.statistics = Statistics
 
-Spotlight & Banners {ico=banners, admin=content, hide=0, sites=}
+Spotlight {ico=banners, admin=content, hide=0, sites=}
 	other.spotlight=Spotlight
-	#banners.rotation=Active banners {admin=ads}
+
+Banners {ico=banners, admin=ads,hide=0}
+	banners.banners = Banners
+	banners.campaigns = Campaigns
+	banners.rotation = Rotation
+	Statistics {link=banners.statistics}
+		banners.statistics#campaigns = Campaigns
+		banners.statistics#zones = Zones
+		banners.statistics#banners = Banners
+
 
 Poker Players {ico=players, admin=content}
 	Twitter {link=other.twitter_players, admin=content,sites=}

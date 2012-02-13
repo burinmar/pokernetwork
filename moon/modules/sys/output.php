@@ -132,10 +132,22 @@ class output extends moon_com {
 		}
 		$m = array('localeID' => $loc->current_locale(), 'common_header' => $head, 'foot.scripts' => $footScripts, 'content' => $body);
 
+		// banners
+		if (is_object($obj = $this->object('sys.banners')) && !$p->get_global('adminView') && !$p->get_local('nobanners')) {
+			$bannerRoomId = $p->get_local('banner.roomID');
+			$m += array(
+				'bannersOn' => 1,
+				'bnRoomId' => $bannerRoomId,
+				'bnGeoTarget' => 1<<geo_my_id(),
+				'bnDataUrl' => $p->home_url() . 'banners/getdata/',
+				'bnStatsUrl' => $p->home_url() . 'banners/trackviews/',
+				'uriList' => $obj->getUriList()
+			);
+		}
+
 		$res = $t->parse($output, $m);
 		return $res;
 	}
-
 
 	function getFileModTime($file) {
 		if (strpos($file, 'http://') !== FALSE || substr($file,-4) == '.php') {

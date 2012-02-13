@@ -1,0 +1,173 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+error404=Item not found!
+error1=More than one banner has the same site assigned
+error2=Banner has incorrect dimensions. Can't assign
+error3=Swf file required
+error4=CSV data file required
+error9=System error!
+
+error_swf_1=Swf upload error: Incorrect extension!
+error_swf_2=Swf upload error: Techical error!
+
+error_csv_1=Csv upload error: Incorrect extension! Must be .csv
+error_csv_2=Csv upload error: Incorrect data! Correct row example: fr;20;50$ free.. (site id;font size;banner texts)
+
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle} : {formTitle}</h1>
+	<% if {showNav} %>
+	<ul class="subMenu">
+		<li><a href="{url.settings}">Settings</a></li>
+		<li class="active"><a href="{url.media}">Media</a></li>
+	</ul>
+	<% end %>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+
+
+<% if {media} %>
+<!-- UPLOAD FORM -->
+<span class="clr"></span>
+<div class="upload">
+	<form id="form-upload" action="{!action}" method="post" enctype="multipart/form-data">
+		<input id="bannerId" type="hidden" name="banner_id" value="{id}" />
+		<input id="sessionId" type="hidden" value="{sessionId}" />
+		<div>
+			<div class="fieldset flash" id="fsUploadProgress1">
+				<span class="legend">Multiple files upload</span>
+			</div>
+			<div style="padding-left:5px;">
+				<span id="spanButtonPlaceholder1"></span>
+				<input id="btnUpload" type="submit" value="Start upload" disabled="disabled" /> 
+				<br />
+			</div>
+		</div>
+	</form>
+</div>
+<!-- UPLOAD FORM -->
+<% end %>
+
+<% if {showForm} %>
+<form action="{!action}" class="form-media" name="list-form" id="frm" method="post" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<input type="hidden" name="type" value="{type}" />
+	
+	<% if {flashXml} %>
+	<div>
+	&nbsp;
+		Upload SWF file: <input type="file" name="swf" size="25" class="required"/>
+	&nbsp;
+		Upload CSV file: <input type="file" name="csv" size="25" class="required"/>
+	</div>
+	<br /><br />
+	<% end %>
+
+	<%if{error}%><div class="alerts alert-f">Error: {error}</div><%end%>
+	
+	<div class="formButton fr"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	
+	<%if{enableHideMedia}%><a href="#" id="toggle-media-files">Show all banners</a><%end%>
+	
+	<div class="div-media">
+		<dl>
+		<% loop {itemsSites} %>
+			<dt class="<% if {is_hidden} %>item-hidden <% end %>media-dt"><% if {html} %><% else {html} %><a class="remove-item" href="{goRemove}"></a><% end %>{site_name}</dt>
+			<dd class="media-item">
+				<% if {image} %>
+				<div class="media-file" style="display:none;">
+					<img src="{path}" width="{media_width}" height="{media_height}" alt="{alternative}" />
+				</div>
+					<a href="#" class="toggle-bn-media">Show</a>
+					<label class="aform" style="margin-right: 30px">Url: <input type="text" name="url[{id}]" value="{url}" size="60" maxlength="255" /></label>
+					<label class="aform">Alt: <input type="text" name="alternative[{id}]" value="{alternative}" size="40" maxlength="255" /></label>
+					<label class="hideBanner"><input type="checkbox" name="is_hidden[{id}]" value="{is_hidden}" />  <% if {is_hidden} %>Unhide<%else {is_hidden}%>Hide<% end %></label>
+				<% end %>
+				
+				<% if {flash} %>
+					<div class="media-file" style="display:none;">
+						<object type="application/x-shockwave-flash" data="{path}" width="{media_width}" height="{media_height}">
+							<param name="allowScriptAccess" value="sameDomain" />
+							<param name="movie" value="{path}" />
+							<param name="quality" value="low" />
+							<param name="wmode" value="transparent" />
+							{alternative}
+						</object>
+					</div>
+					<a href="#" class="toggle-bn-media">Show</a>
+					<label class="aform">Url: <input type="text" name="url[{id}]" value="{url}" size="100" maxlength="255" /></label>
+					<label class="hideBanner"><input type="checkbox" name="is_hidden[{id}]" value="{is_hidden}" />  <% if {is_hidden} %>Unhide<%else {is_hidden}%>Hide<% end %></label>
+				<% end %>
+				
+				<% if {html} %>
+				<input type="hidden" name="sites[{site_id}]" value="{id}" />
+				<div class="aform w100"><textarea name="alternative[{site_id}]" cols="110" rows="5" >{alternative}</textarea></div>
+				<div class="explain">HTML content of the text ad. Use {url} instead of the real TextAd target url if you want to track clicks.</div>
+				<label class="hideBanner"><input type="checkbox" name="is_hidden[{site_id}]" value="{is_hidden}" />  <% if {is_hidden} %>Unhide<%else {is_hidden}%>Hide<% end %></label>
+				<% end %>
+				
+				<% if {flashXml} %>
+				<div class="media-file" style="display:none;">
+				<object type="application/x-shockwave-flash"  data="{path}?{params}" width="{media_width}" height="{media_height}" align="middle">
+					<param name="allowScriptAccess" value="sameDomain" />
+					<param name="movie" value="{path}?{params}" />
+					<param name="quality" value="low" />
+					<param name="wmode" value="transparent" />
+				</object>
+				</div>
+				
+				<a href="#" class="toggle-bn-media">Show</a>
+					<input type="hidden" name="sites[{site_id}]" value="{id}" />
+					<label class="aform clrfix w100" style="margin-bottom: 10px">Text: <span class="explain">&nbsp;(Separate frame texts by new line)</span><br /><textarea name="text[{site_id}]" cols="110" rows="3" >{text}</textarea></label>
+					<label class="aform fl"  style="margin-right: 20px">Url: <input type="text" name="url[{id}]" value="{url}" size="60" maxlength="255" /></label>
+					<label class="aform">Font size: <input type="text" name="font_size[{site_id}]" value="{fontSize}" /></label>
+					
+					<label class="hideBanner"><input type="checkbox" name="is_hidden[{site_id}]" value="{is_hidden}" /> <% if {is_hidden} %>Unhide<%else {is_hidden}%>Hide<% end %></label>
+				<% end %>
+			</dd>
+		<% end %>
+		
+		<% if {itemsUndefined} %>
+			<dt></dt>
+			<dd><h2 class="headline topSeperator">Undefined Banners</h2></dd>
+			
+			<% loop {itemsUndefined} %>
+				<dt class="media-dt undefined">
+					<a class="remove-item" href="{goDelete}"></a>
+					<span>Assign site:</span>
+					<select name="site_id[{id}]">
+						<option value=""></option>
+						{optSites}
+					</select>
+				</dt>
+				<dd class="media-item undefined">
+					<% if {image} %>
+					<input type="hidden" name="sizes[{id}]" value="{media_width}x{media_height}" />
+					<img src="{path}" width="{media_width}" height="{media_height}" alt="{alternative}" border="0" />
+					<% end %>
+					
+					<% if {flash} %>
+					<input type="hidden" name="sizes[{id}]" value="{media_width}x{media_height}" />
+					<object type="application/x-shockwave-flash" data="{path}" width="{media_width}" height="{media_height}">
+						<param name="allowScriptAccess" value="sameDomain" />
+						<param name="movie" value="{path}" />
+						<param name="quality" value="high" />
+						<param name="wmode" value="transparent" />
+						{alternative}
+					</object>
+					<% end %>
+				</dd>
+			<% end %>
+		<% end %>
+		</dl>
+	</div>
+	
+	<% if {itemsSites} %>
+	<div class="formButton clrfix" style="margin-left: 0"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	<% end %>
+</form>
+<% end %>

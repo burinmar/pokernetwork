@@ -30,6 +30,23 @@
 <div id="wrapper">
 {content}
 </div>
+<% if {bannersOn} %>
+<script type="text/javascript" src="{bnDataUrl}"></script>
+<script type="text/javascript">
+/*<![CDATA[*/
+jQuery(document).ready(function () {
+	if(typeof(banners)=='undefined') {
+		banners = new Banners();
+	};
+	banners.roomId = '{bnRoomId}';
+	banners.geoTarget = '{bnGeoTarget}';
+	banners.statsUrl = '{bnStatsUrl}';
+	banners.uriList = {uriList};
+	banners.process();
+});
+/*]]>*/
+</script>
+<% end {bannersOn} %>
 {foot.scripts}
 </body>
 </html>

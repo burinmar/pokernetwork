@@ -79,8 +79,8 @@ class startup extends moon_com {
 		}
 		//$page->css('/css/main.css');
 		$page->js('/js/jquery.js');
+		$page->js('/js/banners.js');
 		//$page->js('/js/casinogrinder.js');
-		//$page->js('/js/banners.js');/**/
 
 	}
 

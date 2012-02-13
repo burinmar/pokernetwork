@@ -1,0 +1,95 @@
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Site:<select name="filter[site_id]">{sites}</select></label></td>
+		<td><label>Zone: <select name="filter[zone]"><option value="">All</option>{zones}</select></label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<table class="list">
+			<thead>
+			<tr><th><a href="{orderby1}">Title</a></th></tr>
+			</thead>
+			<tbody>
+			<% loop {items} %>
+			<tr>
+				<td>
+					<a href="{goEdit}" class="title">{title}</a>
+					
+					<div class="explain" style="color: #000; margin-bottom: 10px">
+						ID:{id}
+						<% if {roomName} %> <span style="color: #bfbfbf">|</span> {roomName}<% end %> 
+						<span style="color: #bfbfbf">|</span> {type} 
+						<span style="color: #bfbfbf">|</span> {sizes} 
+						<span style="color: #bfbfbf">|</span> <strong>{zones}</strong>
+						<% if {geo_target} %> <span style="color: #bfbfbf">|</span> {geo_target}<% end %> 
+					</div>
+					<% if {imgInfo} %>
+					<div>
+						<%if{redirect_url}%>
+						<a href="{redirect_url}" rel="nofollow" title="{alternative}" target="_blank">
+							<img src="{mediaSrc}?{timestamp}" width="{media_width}" height="{media_height}" alt="{alternative}" border="0" />
+						</a>
+						<%else{redirect_url}%>
+							<img src="{mediaSrc}?{timestamp}" width="{media_width}" height="{media_height}" alt="{alternative}" border="0" />
+						<%end%>
+					</div>
+					<% end %>
+					<% if {flashInfo} %>
+					<div>
+						<object type="application/x-shockwave-flash" data="{mediaSrc}?clickTAG={redirect_url}" width="{media_width}" height="{media_height}">
+							<param name="allowScriptAccess" value="sameDomain" />
+							<param name="movie" value="{mediaSrc}?clickURI={redirect_url}&clickTAG={redirect_url}" />
+							<param name="quality" value="high" />
+							<param name="wmode" value="transparent" />
+							{alternative}
+						</object>
+					</div>
+					<% end %>
+					<% if {flashXmlInfo} %>
+					<div>
+						<object type="application/x-shockwave-flash"  data="{mediaSrc}?clickTAG={redirect_url}&{params}" width="{media_width}" height="{media_height}">
+							<param name="allowScriptAccess" value="sameDomain" />
+							<param name="movie" value="{mediaSrc}?clickURI={redirect_url}&clickTAG={redirect_url}&{params}" />
+							<param name="quality" value="high" />
+							<param name="wmode" value="transparent" />
+						</object>
+					</div>
+					<% end %>
+					<% if {htmlInfo} %>
+					<div>
+						{html}
+					</div>
+					<% end %>
+					
+					<%if{uri_target}%>
+					<div class="explain" style="color: #000; margin-bottom: 10px">
+					<strong>Uri target: </strong>{uri_target}
+					</div>
+					<%{end}%>
+				</td>
+			</tr>
+			<% end {items} %>
+			</tbody>
+		</table>
+	</form>
+	<br />
+	{paging}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+

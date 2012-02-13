@@ -1,0 +1,220 @@
+<% main %>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{action}" method="post" class="filterForm{classIsOn}">
+	<!--input type="hidden" name="event" value="{goFilter}" /-->
+	<input type="hidden" name="setFilter" value="1" />
+	<table>
+	<tr>
+		<td><label>Site: <select name="filter[site_id]"><option value="">All</option>{sites}</select></label></td>
+		<td><label>From: <input type="text" name="filter[from_date]" id="i_from_date" value="{from_date}" size="11" maxlength="10" class="isDate" /></label></td>
+		<td><label>To: <input type="text" name="filter[to_date]" id="i_to_date" value="{to_date}" size="11" maxlength="10" class="isDate" /></label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a onclick="var l=window.location;var sep=l.toString().indexOf('?')==-1?'?':'&';l=l.toString().indexOf('noFilter')==-1?l+sep+'noFilter':l;window.location=l;return false;" href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<h1>{pageTitle} <%if{modeTitle}%> - {modeTitle}<%end%></h1>
+<div class="clr">&nbsp;</div>
+
+<% if {viewList} %>
+<!--# items list -->
+<% if {items} %>
+	<table class="list">
+		<colgroup>
+			<col />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Title</span></th>
+			<th><a href="{orderby1}">Views</a></th>
+			<th><a href="{orderby2}">Clicks</a></th>
+			<th><a href="{orderby3}">CTR</a></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr>
+			<td>
+				<%if{goEdit}%>
+				<a class="title" href="{goEdit}">{title}</a>
+				<%else{goEdit}%>
+				{title}
+				<%end%>
+				<%if{sizes}%>&nbsp;<span class="explain">{sizes}</span><%end%>
+			</td>
+			<td>{views}</td>
+			<td>{clicks}</td>
+			<td>{percent}%</td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	{paging}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+
+	Views: {viewsTotal} ({clicksTotal} clicks ~ {percent}%)<br />
+	<%if{bannersMode}%>
+		<% if {imgInfo} %>
+		<img src="{mediaSrc}?{timestamp}" width="{media_width}" height="{media_height}" alt="{alternative}" border="0" />
+		<% end %>
+		<% if {flashInfo} %>
+		<object type="application/x-shockwave-flash" data="{mediaSrc}?clickTAG={redirect_url}" width="{media_width}" height="{media_height}">
+			<param name="allowScriptAccess" value="sameDomain" />
+			<param name="movie" value="{mediaSrc}?clickURI={redirect_url}&clickTAG={redirect_url}" />
+			<param name="quality" value="high" />
+			<param name="wmode" value="transparent" />
+			{alternative}
+		</object>
+		<% end %>
+		<% if {flashXmlInfo} %>
+		<object type="application/x-shockwave-flash"  data="{mediaSrc}?clickTAG={redirect_url}&{params}" width="{media_width}" height="{media_height}">
+			<param name="allowScriptAccess" value="sameDomain" />
+			<param name="movie" value="{mediaSrc}?clickURI={redirect_url}&clickTAG={redirect_url}&{params}" />
+			<param name="quality" value="high" />
+			<param name="wmode" value="transparent" />
+		</object>
+		<% end %>
+		<% if {htmlInfo} %>
+		{html}
+		<% end %>
+	<%end%>
+	
+	<% if {itemsCampaigns} %>
+	<br />
+	<table class="list">
+		<colgroup>
+			<col />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Campaigns</span></th>
+			<th><span>Views</span></th>
+			<th><span>Clicks</span></th>
+			<th><span>CTR</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {itemsCampaigns} %>
+		<tr>
+			<td><a href="{goItem}">{title}</a></td>
+			<td>{views}</td>
+			<td>{clicks}</td>
+			<td>{percent}%</td>
+		</tr>
+		<% end {itemsCampaigns} %>
+		</tbody>
+	</table>
+	<% end %>
+
+	<% if {itemsZones} %>
+	<br />
+	<table class="list">
+		<colgroup>
+			<col />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Zones</span></th>
+			<th><span>Views</span></th>
+			<th><span>Clicks</span></th>
+			<th><span>CTR</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {itemsZones} %>
+		<tr>
+			<td><a href="{goItem}">{title}</a></td>
+			<td>{views}</td>
+			<td>{clicks}</td>
+			<td>{percent}%</td>
+		</tr>
+		<% end {itemsZones} %>
+		</tbody>
+	</table>
+	<% end %>
+
+	<% if {itemsBanners} %>
+	<br />
+	<table class="list">
+		<colgroup>
+			<col />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+			<col style="width: 120px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Banners</span></th>
+			<th><span>Views</span></th>
+			<th><span>Clicks</span></th>
+			<th><span>CTR</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {itemsBanners} %>
+		<tr>
+			<td><a href="{goItem}">{title} <%if{sizes}%>&nbsp;<span class="explain">{sizes}</span><%end%></a></td>
+			<td>{views}</td>
+			<td>{clicks}</td>
+			<td>{percent}%</td>
+		</tr>
+		<% end {itemsBanners} %>
+		</tbody>
+	</table>
+	<% end %>
+	
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$('#showCharts').click(function(e){
+				e.preventDefault();
+				$('#charts').toggle();
+			});
+		});
+	</script>
+	<br />
+	<a id="showCharts" href="#" style="border-bottom: 1px dotted">Show charts</a>
+	<div id="charts" style="display:none;">
+		<br /><div class="clr">&nbsp;</div>
+		<div id="stats-chart-views"></div>
+		<br /><br />
+		<div id="stats-chart-clicks"></div>
+		<script type="text/javascript">
+		swfobject.embedSWF(
+			"/i/adm/open-flash-chart.swf", "stats-chart-views", "800", "300",
+			"9.0.0", "/i/adm/open-flash-chart.swf",
+			{"data-file":"{url.chart-data-views}"}
+		);
+		swfobject.embedSWF(
+			"/i/adm/open-flash-chart.swf", "stats-chart-clicks", "800", "300",
+			"9.0.0", "/i/adm/open-flash-chart.swf",
+			{"data-file":"{url.chart-data-clicks}"}
+		);
+		</script>
+	</div>
+<% end %>
+
+
+<%messages%>
+e_404=Item not found!
+step_day=Day
+step_week=Week
+step_month=Month
+label_views=Views
+label_clicks=Clicks

@@ -1,0 +1,172 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+error404=Item not found!
+error1=Title required
+error9=System error!
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+		<input type="hidden" name="event" value="{goFilter}" />
+		<table>
+		<tr>
+			<td><label>Title: <input type="text" name="filter[title]" size="25" value="{title}" /></label></td>
+			<td><label>Room: <select name="filter[room]"><option value="">All</option>{rooms}</select></label></td>
+			<td><label><input type="checkbox" name="filter[is_hidden]" value="{is_hidden}" /> Show hidden</label></td>
+			<td><button type="submit" name="filtruok">Filter</button></td>
+		</tr>
+		</table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<thead>
+		<tr>
+			<th style="width: 20px"></th>
+			<th><span>Ordered by: Date</span></th>
+			<th class="checkall" style="width: 40px"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr {classHidden}>
+			<td style="vertical-align: top">
+			<%if{notActive}%>
+				<span class="inActive"></span>
+			<%else{notActive}%>
+				<span class="active"></span>
+			<%end%>
+			</td>
+			<td>
+				<a href="{goEdit}" class="title">{title}</a>
+				
+				<div class="explain" style="color: #000; margin-bottom: 10px">
+					ID:{id}<% if {roomName} %> <span style="color: #bfbfbf">|</span> {roomName}<% end %> <span style="color: #bfbfbf">|</span> {type} <span style="color: #bfbfbf">|</span> {sizes} <span style="color: #bfbfbf">|</span> {sites}
+				</div>
+				<% if {imgInfo} %>
+				<div>
+					<a href="{goEdit}"><img src="{mediaSrc}" alt="{title}" title="{title}" /></a>
+				</div>
+				<% end %>
+				<% if {flashInfo} %>
+				<div>
+					<object type="application/x-shockwave-flash" data="{mediaSrc}" width="{media_width}" height="{media_height}">
+						<param name="allowScriptAccess" value="sameDomain" />
+						<param name="movie" value="{mediaSrc}" />
+						<param name="quality" value="low" />
+						<param name="play" value="false" />
+						<param name="wmode" value="transparent" />
+						{alternative}
+					</object>
+				</div>
+				<% end %>
+				<% if {flashXmlInfo} %>
+				<div>
+					<object type="application/x-shockwave-flash"  data="{mediaSrc}?{params}" width="{media_width}" height="{media_height}">
+						<param name="allowScriptAccess" value="sameDomain" />
+						<param name="movie" value="{mediaSrc}?{params}" />
+						<param name="quality" value="low" />
+						<param name="play" value="false" />
+						<param name="wmode" value="transparent" />
+					</object>
+				</div>
+				<% end %>
+				<% if {htmlInfo} %>
+				<div>
+					{html}
+				</div>
+				<% end %>
+			</td>
+			<td style="vertical-align: top"><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+{paging}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<!--# item form -->
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<% if {showNav} %>
+	<ul class="subMenu">
+		<li class="active"><a href="{url.settings}">Settings</a></li>
+		<li><a href="{url.media}">Media</a></li>
+	</ul>
+	<% end %>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+	
+	
+	
+	<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+		<input type="hidden" name="event" value="{event}" />{refresh}
+		<input type="hidden" name="id" value="{id}" />
+		<h2 class="formTitle">{formTitle}</h2>
+		<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+		<span class="clr"></span>
+		<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+		
+		<dl>
+			<dt><label for="i_title">Title</label></dt>
+			<dd><input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="required" /></dd>
+			
+			<dt><label>Type</label></dt>
+			<dd>
+				<label><input type="radio" name="type" value="{typeMedia}"  id="typeMedia" /> Media</label><br />
+				<label><input type="radio" name="type" value="{typeHtml}"  id="typeHtml" /> Html</label><br />
+				<label><input type="radio" name="type" value="{typeFlashXml}"  id="typeFlashXml" /> Flash xml</label>
+			</dd>
+			
+			<dt><label for="i_room_id">Room</label></dt>
+			<dd>
+				<select name="room_id" id="i_room_id">
+					<option value="0"></option>
+					{optRooms}
+				</select>
+			</dd>
+			
+			<dt><label for="i_url">Url</label></dt>
+			<dd class="dd100">
+				<input type="text" name="url" id="i_url" value="{url}" size="80" maxlength="255" /> &nbsp; &nbsp; &nbsp;
+				
+				<input type="checkbox" name="target_blank" id="i_target_blank" value="{target_blank}" />
+				<label for="i_target_blank">target=_blank</label>
+				
+				<div class="explain">This field is required only if the room above is not selected.
+				<br />If both room and url are provided, value of the url will be used for banner link.</div>
+			</dd>
+			
+			<dt><label for="i_img_alt">Image Alt:</label></dt>
+			<dd><input type="text" name="img_alt" id="i_img_alt" value="{img_alt}" size="80" maxlength="255" /></dd>
+			
+			<dt></dt>
+			<dd>
+				<label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide</label>
+			</dd>
+			
+		</dl>
+		
+		<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" class="btCancel" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	</form>
+
+<% end {viewList} %>

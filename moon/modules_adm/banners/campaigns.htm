@@ -1,0 +1,298 @@
+<% info %>
+titleNew=New
+titleEdit=Edit campaign settings
+error404=Item not found!
+error1=Title required
+error2=Invalid date
+error9=System error!
+errorBn1=No banners added
+errorBn2=Technical error
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Title: <input type="text" name="filter[title]" size="25" value="{title}" /></label></td>
+		<td><label><input type="checkbox" name="filter[is_hidden]" value="{is_hidden}" /> Show hidden</label></td>
+		<td><button type="submit" name="filtruok">Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<table class="list">
+			<colgroup>
+				<col style="width: 20px" />
+				<col />
+				<col style="width: 70px" />
+				<col style="width: 70px" />
+				<col style="width: 40px" />
+			</colgroup>
+			<thead>
+			<tr>
+				<th></th>
+				<th><a href="{orderby1}">Title</a></th>
+				<th><a href="{orderby2}">Geo</a></th>
+				<th><a href="{orderby3}">Url</a></th>
+				<th class="checkall"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<% loop {items} %>
+			<tr {classHidden}>
+				<td>{active}</td>
+				<td>
+					<a href="{goEdit}">{title}</a>
+					<% if {sites} %><div style="margin: 5px 0">{sites}</div><% end %>
+					<% if {date_ranges} %><div class="explain">{date_ranges}</div><% end %>
+				</td>
+				<td><% if {geo_target} %><span class="geo" title="{geo_target}"></span><% end %></td>
+				<td><% if {hasUrlTarget} %><span class="link"></span><% end %></td>
+				<td><input type="checkbox" name="it[]" value="{id}" /></td>
+			</tr>
+			<% end {items} %>
+			</tbody>
+		</table>
+		
+		<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+	</form>
+	{paging}
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><% if {id} %><input type="submit" value="Save" /> <% end %><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	
+	<dl>
+		<dt><label for="i_title">Title</label></dt>
+		<dd><input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="required" /></dd>
+		
+		<dt><label>Date ranges</label></dt>
+		<dd>
+			<% if {date_ranges} %>
+				<% loop {date_ranges} %>
+				<div class="date-range-div">
+				from <input type="text" name="active_from[]" id="active-from-{no}" value="{active-from}" class="isDate" size="20" maxlength="20" />
+				till <input type="text" name="active_to[]"   id="active-to-{no}"   value="{active-to}"   class="isDate" size="20" maxlength="20" />
+
+				<% if {enableRemove} %>
+				<a href="#" class="interval-remove" style="color:#DD0000;text-decoration:none;">x</a>
+				<% end %>
+				</div>
+
+				<% end %>
+			<% else {date_ranges} %>
+				<div class="date-range-div fl">
+				from <input type="text" name="active_from[]" id="active-from-1" value="" class="isDate" size="20" maxlength="20" />
+				till <input type="text" name="active_to[]"   id="active-to-1"   value=""   class="isDate" size="20" maxlength="20" />
+				</div>
+				<a href="#" id="interval-add" style="margin: 3px 0 0 10px;">Add</a><span class="clr"></span>
+			<% end %>
+			<div class="explain" id="explain-date">Fill the fields above for item to appear in specified time interval. Both fields are optional. Date format: <i>yyyy-mm-dd</i>. Current server date is {now} </div>
+		</dd>
+		
+		<dt><label>Geo target</label></dt>
+		<dd>
+			<% loop {geo_zones} %>
+			<label><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="geo_target[]" value="{value}"  /> {name}</label><br />
+			<% end %><br />
+			<div class="explain">Campaign will be shown for users of checked countries, if at leat one is checked.</div>
+		</dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide</label></dd>
+		
+	</dl>
+</form>
+		
+<% if {list.assigned_banners} %>
+<div class="tabzoneHeader clrfix" style="margin-top: 50px">
+	<h1>Assigned Banners</h1>
+</div>
+	<form action="{!action}" name="frm" id="frm" method="post" enctype="multipart/form-data">
+		<input type="hidden" name="event" value="{eventAssignedBanners}" />{refresh}
+		<input type="hidden" name="campaign_id" value="{id}" />
+		
+		<div class="div-media nomarginBottom">
+			<dl>
+				<% loop {list.assigned_banners} %>
+				<dt class="media-dt <% if {is_hidden} %>item-hidden<% end %>"><a class="remove-item" href="{goRemove}"></a>{title}<span class="explain">&nbsp;&nbsp;&nbsp;id: {banner_id}</span></dt>
+				<% if {assigned} %>
+				<dd class="media-item<%if{last}%> nomarginBottom<%end%>">
+					<% if {imgInfo} %>
+						<a href="{goBanner}"><img class="border" src="{mediaSrc}" alt="{title}" title="{title}" /></a>
+					<% end %>
+					<% if {flashInfo} %>
+						<object type="application/x-shockwave-flash" data="{mediaSrc}" width="{media_width}" height="{media_height}">
+							<param name="allowScriptAccess" value="sameDomain" />
+							<param name="movie" value="{mediaSrc}" />
+							<param name="quality" value="low" />
+							<param name="play" value="false" />
+							<param name="wmode" value="transparent" />
+							{alternative}
+						</object>
+					<% end %>
+					<% if {flashXmlInfo} %>
+						<object type="application/x-shockwave-flash"  data="{mediaSrc}?{params}" width="{media_width}" height="{media_height}" align="middle">
+							<param name="allowScriptAccess" value="sameDomain" />
+							<param name="movie" value="{mediaSrc}?{params}" />
+							<param name="quality" value="low" />
+							<param name="play" value="false" />
+							<param name="wmode" value="transparent" />
+						</object>
+					<% end %>
+					<% if {htmlInfo} %>
+						{html}
+					<% end %>
+					
+					<a class="settings toggle-bn-media" href="#" style="right: 35px"><span>Settings</span></a>
+					<div class="options aform">
+						<dl>
+							<dt><label>Zones:</label></dt>
+							<dd>
+								<% loop {zones} %>
+									<label style="float: left; width: 49%"><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="zones[{id}][]" value="{value}"  /> {name}</label>
+								<% end %>
+								<span class="clr"></span>
+							</dd>
+							<dt><label>Sites:</label></dt>
+							<dd><ul style="list-style: none">
+								<% loop {sites} %>
+									<li style="float: left; width: 12%"><label class="item-site"><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="sites[{id}][]" value="{value}" /> <span <%if{unavailable}%>class="site-inactive"<%end%>>{name}</span></label></li>
+								<% end %>
+								</ul><span class="clr"></span><br />
+								<a class="check-all-sites checkall2" href="#"> Check all</a>
+							</dd>
+							<dt><label>Url targeting</label></dt>
+							<dd>
+								<div class="fl">
+									<textarea id="uri_target_{id}" name="uri_target[{id}]" cols="40" rows="6">{uri_target}</textarea>
+									<div class="explain">Campaign banner will be shown only in specified urls. <br />Use * at the end to cover all sub-uris, eg.: /live-reporting/*</div>
+								</div>
+								<a href="#" class="goBack" style="float: left; margin: 59px 20px 0">&nbsp;</a>
+								<div class="fl">
+									<% loop {urlMenu} %>
+										<div><a class="addUrlTarget" href="#uri_target_{id}" title="[{value}]">{name}</a></div>
+										<% loop {urlSubMenu} %>
+										<div style="margin-left:20px;">
+											<div><a class="addUrlTarget" href="#uri_target_{id}" title="[{value}]">{name}</a></div>
+										</div>
+										<% end %>
+									<% end %>
+								</div><span class="clr"></span>
+							</dd>
+							<dt></dt>
+							<dd><label><input type="checkbox" name="is_hidden[{id}]" value="{is_hidden}" id="inactive-check" /> Hide</label></dd>
+						</dl>
+					</div>
+				</dd>
+				<% else {assigned} %>
+					<dd class="media-item">
+						No sites assigned to this banner. You can assign them <a href="{goBanner}">here</a>
+					</dd>
+				<% end %>
+				<% end %>
+			</dl>
+		</div>
+		<div class="clrfix formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	</form>
+<% end %>
+
+<% if {id} %>
+<div class="tabzoneHeader clrfix" style="margin-top: 50px">
+	<h1>Add banners</h1>
+	<div class="fr"><a id="add-banners" class="button buttonAddNew" href="#">Add banners</a></div>
+</div>
+<% end %>
+
+<form action="{!action}" name="frm" id="frm-add-banners" method="post" class="aform hide" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{eventAddBanner}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	
+	<dl>
+		<dt><label>Add Banners ID</label></dt>
+		<dd>
+			<input type="text" name="banners_ids" id="i_banners_ids" value="" size="20" maxlength="255" />
+			<div class="explain">Separate ids by comma</div>
+		</dd>
+	</dl>
+	<h2 class="headline">or select from the latest banners:</h2>
+	<dl>
+		<dt></dt>
+		<% if {list.latest_banners} %>
+			<% loop {list.latest_banners} %>
+				<dd>
+				<label style="display: block; margin-bottom: 10px"><input type="checkbox" name="latest_banners[]" value="{id}" /> {title} (id:{id})</label>
+				
+				
+				<% if {imgInfo} %>
+				<a href="{goBanner}"><img class="border" src="{mediaSrc}" alt="{title}" title="{title}" /></a>
+				<% end %>
+				
+				<% if {flashInfo} %>
+				<object type="application/x-shockwave-flash" data="{mediaSrc}" width="{media_width}" height="{media_height}">
+					<param name="allowScriptAccess" value="sameDomain" />
+					<param name="movie" value="{mediaSrc}" />
+					<param name="quality" value="low" />
+					<param name="play" value="false" />
+					<param name="wmode" value="transparent" />
+					{alternative}
+				</object>
+				<% end %>
+				<% if {flashXmlInfo} %>
+					<object type="application/x-shockwave-flash"  data="{mediaSrc}?{params}" width="{media_width}" height="{media_height}">
+						<param name="allowScriptAccess" value="sameDomain" />
+						<param name="movie" value="{mediaSrc}?{params}" />
+						<param name="quality" value="low" />
+						<param name="play" value="false" />
+						<param name="wmode" value="transparent" />
+					</object>
+				<% end %>
+				<% if {htmlInfo} %>
+					{html}
+				<% end %>
+			</dd>
+			<% end %>
+			
+		<% end %>
+	</dl>
+	
+	<div class="formButton"><input type="submit" value="Add" /></div>
+</form>
+	
+<% end {viewList} %>
+
+<% active_from %><span>from&nbsp;&nbsp;<span style="color: #000">{active_from} 00:00</span></span>&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;
+<% active_to %><span>till&nbsp;&nbsp;<span style="color: #000">{active_to} 23:59 GMT</span></span>
+
+<% active %>
+<% if {active} %><span class="active" title="Active"></span><% else {active} %><span class="inActive" title="Not active"></span><%end%>
+
+<% status %>
+<%if{scheduled}%><span style="color:#E0A13F;">&nbsp;(scheduled)</span><%end%>
+<%if{expired}%><span style="color:#AA5555;">&nbsp;(expired)</span><%end%>

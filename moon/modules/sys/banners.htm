@@ -1,0 +1,54 @@
+<% bannerType:html %>
+<div class="baneris js-adset-el">
+	{text}
+</div>
+
+<% bannerType:imagec %>
+<div class="baneris js-adset-el">
+<a href="{redirect_url}" rel="nofollow" title="{alternative}" target="{target}"><img src="{path}?{timestamp}" width="{width}" height="{height}" alt="{alternative}" border="0" /></a>
+</div>
+
+<% bannerType:imagenc %>
+<div class="baneris js-adset-el">
+<img src="{path}?{timestamp}" width="{width}" height="{height}" alt="{alternative}" border="0" />
+</div>
+
+<% bannerType:flash %>
+<div class="baneris js-adset-el">
+
+<!--[if IE]>
+<object type="application/x-shockwave-flash" width="{width}" height="{height}" align="middle">
+	<param name="movie" value="{path}?clickURI={redirect_url}&clickTAG={redirect_url}" />
+<![endif]-->
+<!--[if !IE]> -->
+<object type="application/x-shockwave-flash" data="{path}?clickTAG={redirect_url}" width="{width}" height="{height}" align="middle">
+<!-- <![endif]-->
+	<param name="allowScriptAccess" value="always" />
+	<param name="quality" value="high" />
+	<param name="wmode" value="transparent" />
+	{alternative}
+</object>
+</div>
+
+<% bannerType:flashXml %>
+<div class="baneris js-adset-el">
+<!--[if IE]>
+<object type="application/x-shockwave-flash" width="{width}" height="{height}" align="middle">
+	<param name="movie" value="{path}?clickURI={redirect_url}&clickTAG={redirect_url}&{params}" />
+<![endif]-->
+<!--[if !IE]> -->
+<object type="application/x-shockwave-flash"  data="{path}?clickTAG={redirect_url}&{params}" width="{width}" height="{height}" align="middle">
+<!-- <![endif]-->
+	<param name="allowScriptAccess" value="always" />
+	<param name="quality" value="high" />
+	<param name="wmode" value="transparent" />
+</object>
+</div>
+
+<% viewBanner:home-mid %>
+<div id="home_mid_1" class="js-adset bannerFull" style="display:none;"></div>
+<script type="text/javascript">
+/*<![CDATA[*/
+addBanner('home_mid_1', 'home:2col:1');
+/*]]>*/
+</script>
