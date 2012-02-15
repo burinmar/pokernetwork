@@ -106,6 +106,7 @@ class rooms extends moon_com {
 		$items = '';
 		//$srcLogo = $this->get_dir('srcLogo');
 		$m['showFriendly'] = FALSE;
+		$oReview = $this->object('review');
 
 		$os = array(1=>'Win', 2=>'Mac OS', 4=>'Linux', 8=>'Instant Play');
 		foreach ($rooms as $i => $d) {
@@ -126,7 +127,16 @@ class rooms extends moon_com {
 			//$d['intro_text'] = preg_replace('/[0-9]{2,}%/', '<strong>$0</strong>', $d['intro_text']);
 			$d['promo'] = isset($promo[$d['id']]) ? $promo[$d['id']][1] : '';
 			$d['roomID'] = $d['id'];
+			$ratings = $oReview->ratings($d['ratings']);
+			$d['ratings'] = '';
+			foreach ($ratings as $v) {
+				list($a['rate'], $a['name']) = $v;
+				$a['rate%'] = floor($a['rate'] * 10);
+				$d['ratings'] .= $t->parse('ratings', $a);
+			}
+			$d['editors_rating%'] = $d['editors_rating'];
 			$d['editors_rating'] = number_format($d['editors_rating'] / 10,1);
+
 			$d['roomDownloadLink'] = '/' . $d['alias'] . '/download/';
 
 
@@ -172,7 +182,7 @@ class rooms extends moon_com {
 		}
 
 		$sql = '
-			SELECT id, name, alias, logo, bonus_code, marketing_code, software_os,bonus_text,editors_rating
+			SELECT id, name, alias, logo, bonus_code, marketing_code, software_os,bonus_text,editors_rating,ratings
 			FROM ' . $this->table('Rooms') . '
 			WHERE is_hidden = 0' . $where . '
 			ORDER BY ' . $order;

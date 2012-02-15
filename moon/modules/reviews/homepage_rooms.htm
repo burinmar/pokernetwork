@@ -1,29 +1,87 @@
-<% main %>
-<div class="widget widgetBestDeals">
-		{spotlight}
-
-		<table>
-			<caption>{!bonusDepositing}</caption>
-			<thead>
-				<tr>
-					<th class="review">{!roomReview}</th>
-
-					<th class="bonus">{!bonus}</th>
-					<th class="download"></th>
-				</tr>
-			</thead>
-			<tbody>
+﻿<% main %>
+<div class="widget">
+	<h2 class="widgetTitle"><a href="#">Online poker room ratings and promotions</a></h2>
+	<div id="spotlightSlider">
+		<div class="slider"><a href="#"><img src="http://placekitten.com/517/175" alt="Avatar" width="517" height="175" /></a></div>
+		<div class="stepper">
+			<b class="fl">1/4</b>
+			<a href="#" class="prev" title="Previous">&lt;</a>
+			<a href="#" class="next" title="Next">&gt;</a>
+		</div>
+	</div>
+	<div id="roomsIndexBox" class="clrfix">
+		<table class="roomsNav fl" id="topRooms">
 			<% loop{items} %>
-				<tr>
-					<td class="review"><a href="{roomLink}"><img src="{logo}" alt="{roomName}" height="29" width="29" /> {roomName}</a></td>
-					<td class="bonus"><%if{free}%>{!free}&nbsp;<%end%>{bonus}</td>
-
-					<td class="download"><a href="{roomDownloadLink}">{!download}</a></td>
+				<tr id="room{id}">
+					<td class="tar">{editors_rating}</td>
+					<td><a href="{roomLink}"><img src="{img}"  alt="{roomName}" /></a></td>
+					<td><a href="{roomDownloadLink}">{roomName}</a></td>
 				</tr>
 			<%end%>
-			</tbody>
 		</table>
-		<p class="widgetMoreLink"><a href="{url.rooms}">{!moreRooms}</a></p>
+		<div class="roomsList wFull fl" id="roomIntro">
+			<%insert{intro}%>
+			<a href="{roomLink}"><img src="{logo}" alt="{roomName}" class="fl" /></a>
+			<div class="download fr"><a class="button" href="{roomDownloadLink}">Download</a></div>
+			<h2>Editor’s ratings</h2>
+			<table class="ratings">
+				<colgroup>
+					<col />
+					<col style="width: 120px" />
+					<col style="width: 20px" />
+				</colgroup>
+				<%loop{ratings}%>
+				<tr>
+					<td>{name}</td>
+					<td><span class="ratingBarBackground fl"><span style="width: {rate%}%;" class="ratingBar"></span></span></td>
+					<td><b>{rate}</b></td>
+				</tr>
+				<%end{loop-ratings}%>
+
+				<tr>
+					<td>Overall score</td>
+					<td><span class="ratingBarBackground fl"><span style="width: {editors_rating%}%;" class="ratingBar"></span></span></td>
+					<td><b>{editors_rating}</b></td>
+				</tr>
+			</table>
+			<% if{promo} %>
+			<h2>Bonuses and Promotions</h2>
+			<ul><%loop{promo}%><li>{0}</li><% end %></ul>
+			<% end{if-promo} %>
+
+			<a href="{roomLink}" class="more2">Read full review »</a>
+			<%end{intro}%>
+		</div>
 	</div>
 
+	<a href="{url.rooms}" class="more">More Reviews »</a>
+</div>
 
+
+<%javascript%>
+var homepageRooms = {
+{jsRooms}
+};
+{jsImages}
+homepageRooms.over = function (e)
+{
+	var clickedEl = e.srcElement ? e.srcElement : e.target;
+	var nameEl = '';
+	while (clickedEl && clickedEl.nodeName) {
+		nameEl = clickedEl.nodeName.toUpperCase();
+		switch (nameEl) {
+			case 'TR':
+				var id = clickedEl.id.substring(4);
+				if (homepageRooms[id]) {
+					jQuery('#roomIntro').html(homepageRooms[id]);
+				}
+				break;
+			default:
+		}
+		clickedEl = clickedEl.parentNode;
+	}
+	return;
+}
+$(document).ready(function (){
+ 	$('#topRooms').mouseover(homepageRooms.over);
+});

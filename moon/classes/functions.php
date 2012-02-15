@@ -45,6 +45,8 @@ function url_logic($ev = false, $par = false) {
 
 			case '/captcha.php':
 				return array('sys.captcha#','');
+			case '/homepage-rooms/js.php':
+				return array('reviews.homepage_rooms#js','');
 
 			case '/sys-google/':
 				return array('sys.google#','');

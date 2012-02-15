@@ -39,30 +39,17 @@ rooms-linux=Linux compatible
 						<col style="width: 120px" />
 						<col style="width: 20px" />
 					</colgroup>
+					<%loop{ratings}%>
 					<tr>
-						<td>Bonuses</td>
-						<td><span class="ratingBarBackground fl"><span style="width: 7%;" class="ratingBar"></span></span></td>
-						<td><b>3.0</b></td>
+						<td>{name}</td>
+						<td><span class="ratingBarBackground fl"><span style="width: {rate%}%;" class="ratingBar"></span></span></td>
+						<td><b>{rate}</b></td>
 					</tr>
-					<tr>
-						<td>Cash games</td>
-						<td><span class="ratingBarBackground fl"><span style="width: 27%;" class="ratingBar"></span></span></td>
-						<td><b>5.2</b></td>
-					</tr>
-					<tr>
-						<td>Tournaments</td>
-						<td><span class="ratingBarBackground fl"><span style="width: 37%;" class="ratingBar"></span></span></td>
-						<td><b>9.0</b></td>
-					</tr>
-					<tr>
-						<td>Customer support</td>
-						<td><span class="ratingBarBackground fl"><span style="width: 97%;" class="ratingBar"></span></span></td>
-						<td><b>7.2</b></td>
-					</tr>
+					<%end{loop-ratings}%>
 					<tr>
 						<td>Overall score</td>
-						<td><span class="ratingBarBackground fl"><span style="width: 99%;" class="ratingBar"></span></span></td>
-						<td><b>9.8</b></td>
+						<td><span class="ratingBarBackground fl"><span style="width:{editors_rating%}%;" class="ratingBar"></span></span></td>
+						<td><b>{editors_rating}</b></td>
 					</tr>
 				</table>
 				<div class="bonusCode">

@@ -7,7 +7,7 @@ function onload()
 {
 	//form of item
 	$this->form = &$this->form();
-	$this->form->names(	'id','name','alias', 'meta_title', 'meta_keywords', 'meta_description', 'logo','bonus_text','bonus_terms','intro_text','bonus_int','bonus_percent','currency', 'is_hidden', 'review_summary', 'review','review_type'	);
+	$this->form->names(	'id','name','alias', 'meta_title', 'meta_description', 'logo','bonus_text','bonus_terms','intro_text','bonus_int','bonus_percent','currency', 'is_hidden', 'review_summary', 'review','editors_rating','ratings');
 	$this->form->fill( array('date'=>date('Y-m-d'), 'hide'=>1) );
 
 	//form of filter
@@ -86,8 +86,8 @@ function main($vars)
         //******* FORM **********
 		$err=(isset($vars['error'])) ? $vars['error']:0;
 		//$p->css($t->parse('cssForm'));
-		$p->css('/i/adm/tabber.css');
-		$p->js('/js/tabber.js');
+		//$p->css('/i/adm/tabber.css');
+		//$p->js('/js/tabber.js');
 
 		$f = $this->form;
 		$title= $f->get('id') ? $info['titleEdit'].' :: '.$f->get('name') : $info['titleNew'];
@@ -129,27 +129,22 @@ function main($vars)
 		//$p->js('/js/jquery/autocomplete_1.0.2.js');
 		//$p->css('/css/jquery/autocomplete_1.0.2.css');
 
-		//review tabs
-		$rtf = $this->object('rtf');
-        $reviews = $this->getReviews($id);
-		$tabs = $t->parse_array('reviewTabs');
-		$d= array();
-		$m['tabs'] = '';
-		$rwForm = $this->form('meta_title', 'meta_description', 'content');
-		foreach ($tabs as $k=>$v) {
-			$rwForm->clear();
-			$rwForm->fill( isset($reviews[$k]) ? $reviews[$k] : array() );
-			$d = $rwForm->html_values();
-			$d['notempty'] = isset($reviews[$k]) ? TRUE : FALSE;
-			$d['page_id'] = (int)$k;
-			$d['tabTitle'] = htmlspecialchars($v);
-			$rtf->setInstance( $this->get_var('rtf').'~'.(int)$k.':'.(int)$k );
-			$d['toolbar'] = $rtf->toolbar('i_review'.(int)$k,(int)$id);
-			$m['tabs'] .= $t->parse('tabs', $d);
+		//pridedam attachmentus ir toolbara
+		if (is_object( $rtf = $this->object('rtf') )) {
+			$rtf->setInstance( $this->get_var('rtf') );
+			$m['toolbar'] = $rtf->toolbar('i_review',(int)$m['id']);
 		}
 
-		/*$rtf->setInstance('reviews-bonus-terms');
-		$m['btoolbar'] = $rtf->toolbar('i_bonus_terms',0);*/
+		/* rating */
+		//$this->set_random_rating();
+		$rating = $f->get('ratings');
+		for ($i=1;$i<=5;$i++) {
+			$r = substr($rating,-3);
+			$rating = substr($rating,0,-3);
+			$m['r' . $i] = number_format($r/10, 1);
+		}
+		$rating = (int) $f->get('editors_rating');
+		$m['r_total'] = number_format($rating/10, 1);
 		$res=$t->parse('viewForm',$m);
 
 		//resave vars for list
@@ -254,7 +249,6 @@ function main($vars)
 			);
 		foreach ($filter as $k=>$v) if ($v!=='') {$save['filter']=$filter; break;}
 		$this->save_vars($save);
-
 	}
 
 	$p->title($title);
@@ -264,6 +258,22 @@ function main($vars)
 //***************************************
 //           --- DB AND OTHER ---
 //***************************************
+
+function set_random_rating() {
+	$a = $this->db->array_query('SELECT id FROM '.$this->myTable);
+	foreach ($a as $v) {
+		$s = '';
+		$t = 0;
+		for ($i=0;$i<5;$i++) {
+			$j = mt_rand(0,100);
+			$t += $j;
+			$s .= str_pad($j,3,'0',STR_PAD_LEFT);
+		}
+		$t = round($t/5);
+		$this->db->update(array('editors_rating'=>$t, 'ratings'=>$s),$this->myTable, $v[0]);
+	}
+
+}
 
 function getListCount()
 {
@@ -326,6 +336,11 @@ function getItem($id)
 		SELECT * FROM ' . $this->myTable . ' WHERE
 			id = ' . intval($id)
 		);
+		$sql='
+		SELECT meta_title, meta_description, content as review
+		FROM '.$this->table('Reviews') . '
+		WHERE room_id=' . (int)$id . ' ORDER BY page_id LIMIT 1';
+	$m += $this->db->single_query_assoc($sql);
 	return $m;
 }
 
@@ -337,16 +352,25 @@ function saveItem()
 	$id=intval($d['id']);
 
 	//gautu duomenu apdorojimas
-
-	//if ($d['content']==='') $d['content']=null;
 	//$d['hide'] = isset($_POST['hide']) && $_POST['hide'] ? 1:0;
-    $form->fill($d,false); //jei bus klaida
+	$s = '';
+	$t = 0;
+	for ($i=1;$i<=5;$i++) {
+		$j = isset($_POST['r'.$i]) ? trim(str_replace(',', '.',$_POST['r'.$i])) : 0;
+		$j = min(intval(floatval($j) * 10), 100);
+		$t += $j;
+		$s = str_pad($j,3,'0',STR_PAD_LEFT) . $s;
+	}
+	$t = round($t/5);
+	$d['editors_rating'] = $t;
+	$d['ratings'] = $s;
+	$form->fill($d,false); //jei bus klaida
 
 	//validacija
 	$err=0;
-	if (FALSE /*$d['name']===''*/) $err=1;
-	//elseif ($badDate) $err=2;
-	elseif (!is_object($rtf = $this->object('rtf'))) $err=9;
+	if (!is_object($rtf = $this->object('rtf'))) {
+		$err=9;
+	}
 	//uri
 
     if ($err) {
@@ -358,7 +382,7 @@ function saveItem()
     if ($wasRefresh=$form->was_refresh()) return $id;
 
     //save to database
-	$ins=$form->get_values(/*'name',*/ 'bonus_text',/*'bonus_terms',*/'intro_text', 'review_summary'/*, 'review_type'*/);
+	$ins=$form->get_values(/*'name',*/ 'bonus_text',/*'bonus_terms',*/'intro_text', 'review_summary'/*, 'review_type'*/, 'editors_rating', 'ratings');
 	$ins['review_type'] = 1;
 	$ins['updated'] = time();
 	$db=&$this->db();
@@ -368,41 +392,17 @@ function saveItem()
     //Review
 	$ins = array(
 		'room_id' => $id,
-		//'summary' => $form->get('review_summary'),
+		'content' => $form->get('review'),
 		'content_html' => '',
 		'recompile' => 0,
 		'updated' => time()
 	);
-
-	$tpl = $this->load_template();
-	$tabs = $tpl->parse_array('reviewTabs');
-	$fields = array('meta_title', 'meta_description', 'content');
-	foreach ($tabs as $k=>$v) {
-		if (isset($_POST['review']) && isset($_POST['review'][$k])) {
-			$ins['page_id'] = $pID = (int)$k;
-			$a = $_POST['review'][$k];
-			$empty = TRUE;
-			foreach ($fields as $vv) {
-				$ins[$vv] = $a[$vv];
-				if ($a[$vv] != '') {
-					$empty = FALSE;
-				}
-			}
-            if ($empty) {
-            	$db->query('DELETE FROM ' . $this->table('Reviews') . ' WHERE room_id=' . $id . ' AND page_id=' . $pID);
-            }
-			else {
-				$rtf->setInstance( $this->get_var('rtf') . ':' . $pID );
-				list(,$ins['content_html']) = $rtf->parseText($id,$ins['content'], TRUE);
-				$db->replace($ins, $this->table('Reviews'));
-				$rtf->assignObjects($id);
-			}
-		}
-	}
-    if ($id) { //"prisegam" objektus
-		//$rtf->assignObjects($id);
-	}
-	$form->fill( array('id'=>$id) );
+	$ins += $form->get_values('meta_title', 'meta_description');
+	//
+	$rtf->setInstance( $this->get_var('rtf') );
+	list(,$ins['content_html']) = $rtf->parseText($id, $ins['content'], TRUE);
+	$db->replace($ins, $this->table('Reviews'));
+	$rtf->assignObjects($id);
 	return $id;
 }
 

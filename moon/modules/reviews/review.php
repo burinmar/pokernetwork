@@ -67,7 +67,7 @@ class review extends moon_com {
 		}
 	}
 
-	
+
 
 
 	//***************************************
@@ -115,6 +115,21 @@ class review extends moon_com {
 		return $s;
 	}
 
+	function ratings($ratings) {
+		$r = array();
+		$r[1] = array(0, 'Bonuses and Promotions');
+		$r[2] = array(0, 'Player Traffic');
+		$r[3] = array(0, 'Limits and Rake');
+		$r[4] = array(0, 'Software');
+		$r[5] = array(0, 'Customer Support');
+		for ($i=1;$i<=5;$i++) {
+			$rate = substr($ratings,-3);
+			$ratings = substr($ratings,0,-3);
+			$r[$i][0] = number_format($rate/10, 1);
+		}
+		return $r;
+	}
+
 
 	/*********************************************************************/
 
@@ -122,9 +137,9 @@ class review extends moon_com {
 	{
 		$tpl = & $this->load_template();
 
-		$reviewObj = & $this->object('review');
-		$roomId = $reviewObj->id();
-		$room = $reviewObj->getRoom();
+		$oReview = & $this->object('review');
+		$roomId = $oReview->id();
+		$room = $oReview->getRoom();
 
 		$page = &moon::page();
 		$page->css('/css/article.css');
@@ -207,26 +222,8 @@ class review extends moon_com {
 		$view = isset($vars['view']) ? $vars['view'] : '';
 		/* Tabs menu*/
 		$reviews = $this->getReviews($roomId);
-		$uris = array(1=>'','bonus','installation','tournaments');
-        $aTabs = $tpl->parse_array('tabItems');
-		$m['tabs'] = '';
-        $on = FALSE;
-		foreach ($aTabs as $k=>$v) {
-			$ur = $uris[$k] ? $uris[$k] . '.html' : '';
-			$c = $ur === $view ? ' class="current"' : '';
-            if ($c != '') {
-            	$on = $uris[$k];
-				$rwPage = $k;
-            }
-			elseif (!isset($reviews[$k])) {
-				continue;
-			}
-			$uri = $roomURI . $ur;
-            $m['tabs'] .= $tpl->parse('tabs', array($uri, $v, $c));
-		}
-		if ($on === FALSE) {
-			$page = $page->page404();
-		}
+		$on = '';
+        $rwPage = 0;
 
 		//review
 		$page->title($room['name']);
@@ -235,7 +232,7 @@ class review extends moon_com {
 			$article = $rw['content_html'];
 			$txt = & moon :: shared('text');
         	$article = $txt->check_timer($article);
-			$article = $reviewObj->insertCodes($article);
+			$article = $oReview->insertCodes($article);
 			$page->meta('description', $rw['meta_description']);
 			if ($rw['meta_title']) {
 				$page->title($rw['meta_title']);
@@ -245,79 +242,64 @@ class review extends moon_com {
 			$article = '';
 		}
 
-		$n = array('review'=>$article,'roomName'=>$m['roomName']);
-		switch ($on) {
-			case 'bonus':
-				/* dabar bonuses */
-				$bonuses = (int) $room['bonuses'];
-				$n['bonuses0'] = $n['bonuses1'] = '';
-				$bItems = $tpl->parse_array('bonuses_names');
-				$a = array();
-				$kiek = ceil(count($bItems) / 2);
-				$col = - 1;
-				foreach ($bItems as $k => $v) {
-					$k--;
-					$a['name'] = htmlspecialchars($v);
-					$a['class:even'] = $k % 2 ? ' class="even"' : '';
-					$bt = 1 << $k;
-					$a['yes'] = $bt & $bonuses ? 1 : 0;
-					if ($k % $kiek == 0) {
-						$col++;
-					}
-					$n['bonuses' . $col] .= $tpl->parse('bonuses', $a);
-				}
-				$m['tabContent'] = $tpl->parse('viewBonus', $n);
-				break;
-			case 'installation':
-				$m['tabContent'] = $tpl->parse('viewInstallation', $n);
-				break;
-			case 'tournaments':
-				$m['tabContent'] = $tpl->parse('viewTournaments', $n);
-				break;
-			default:
-				$n += array('promotions'=>'', 'deposits'=>'', 'screenshots'=>'', 'intro'=>'');
-                // atskiriam pirma skyreli
-				if (strlen($article)<800) {
-					$n['intro'] = $article;
-                    $n['review'] = '';
-				}
-				elseif ($pos = strpos($article, '</p>', 800)) {
-					if (($posU = strpos($article, '<ul')) && $posU<$pos) {
-						$n['intro'] = substr($article,0,$posU);
-                    	$n['review'] = substr($article,$posU);
-					}
-					else {
-						$n['intro'] = substr($article,0,$pos+4);
-                    	$n['review'] = substr($article,$pos+4);
-					}
-				}
-				elseif ($pos = strpos($article, '<h3', 800)) {
-					$n['intro'] = substr($article,0,$pos);
-                    $n['review'] = substr($article,$pos);
-				}
+		$m += array('promotions'=>'', 'deposits'=>'', 'screenshots'=>'', 'intro'=>'');
 
-				// promotions
-				$dat = $this->getPromotions($roomId);
-				foreach ($dat as $d) {
-					$d['url'] = htmlspecialchars($d['url']);
-					$d['title'] = htmlspecialchars($d['title']);
-					$n['promotions'] .= $tpl->parse('promotions', $d);
+		// atskiriam pirma skyreli
+		if (strlen($article)<800) {
+			$m['intro'] = $article;
+                  $m['review'] = '';
+		}
+		elseif ($pos = strpos($article, '<h2', 400)) {
+			$m['intro'] = substr($article,0,$pos);
+                  $m['review'] = substr($article,$pos);
+		}
+		elseif ($pos = strpos($article, '</p>', 800)) {
+			if (($posU = strpos($article, '<ul')) && $posU<$pos) {
+				$m['intro'] = substr($article,0,$posU);
+                  	$m['review'] = substr($article,$posU);
+			}
+			else {
+				$m['intro'] = substr($article,0,$pos+4);
+                  	$m['review'] = substr($article,$pos+4);
+			}
+		}
+
+		/* Ratings*/
+		$m['editors_rating'] = number_format($room['editors_rating'] / 10, 1);
+		$ratings = $this->ratings($room['ratings']);
+		$m['ratings'] = '';
+		foreach ($ratings as $v) {
+			list($a['rate'], $a['name']) = $v;
+			$a['rate%'] = floor($a['rate'] * 10);
+			$m['ratings'] .= $tpl->parse('ratings', $a);
+		}
+		$m['editors_rating%'] = $room['editors_rating'];
+
+		/* promotions */
+		$dat = $this->getPromotions($roomId);
+		foreach ($dat as $d) {
+			$d['url'] = htmlspecialchars($d['url']);
+			$d['title'] = htmlspecialchars($d['title']);
+			$m['promotions'] .= $tpl->parse('promotions', $d);
+		}
+
+		/* deposits */
+        $dat = $this->getDeposits($roomId);
+		//$navi = & moon :: shared('sitemap');
+		//$isDepositReviews = $navi->getLink('deposits');
+		$isDepositReviews = FALSE;
+		foreach ($dat as $d) {
+			if ($d['img']) {
+				$d['img'] = img('deposit',$d['id'],$d['img']);
+				if ($isDepositReviews && $d['has_review'] && $d['uri']) {
+					$d['url'] = $this->linkas('deposits#' . $d['uri']);
 				}
-				// deposits
-		        $dat = $this->getDeposits($roomId);
-				$navi = & moon :: shared('sitemap');
-				$isDepositReviews = $navi->getLink('deposits');
-				foreach ($dat as $d) {
-					if ($d['img']) {
-						$d['img'] = img('deposit',$d['id'],$d['img']);
-						if ($isDepositReviews && $d['has_review'] && $d['uri']) {
-							$d['url'] = $this->linkas('deposits#' . $d['uri']);
-						}
-						$d['name'] = htmlspecialchars($d['name']);
-						$n['deposits'] .= $tpl->parse('deposits', $d);
-					}
-				}
-				//screenshots
+				$d['name'] = htmlspecialchars($d['name']);
+				$m['deposits'] .= $tpl->parse('deposits', $d);
+			}
+		}
+
+		/*screenshots*/
 		        $dat = $this->getScreenshots($roomId);
 				if (count($dat)) {
 					$p = &moon::page();
@@ -330,12 +312,67 @@ class review extends moon_com {
 						$d['img'] = img('rw-gallery', $d['id'], $d['img']);
 						$a['img-items'] .= $tpl->parse('img-items', $d);
 					}
-					$n['screenshots'] = $tpl->parse('screenshots',$a);
+					$m['screenshots'] = $tpl->parse('screenshots',$a);
 				}
 
-				//
-				$m['tabContent'] = $tpl->parse('viewSummary', $n);
+
+		/*pages */
+		$m['pages']='';
+		$pages = $this->getRoomPages($roomId);
+		foreach ($pages as $d) {
+			if ($d['is_link']) {
+				$d['url'] = htmlspecialchars($d['alias']);
+			}
+			else {
+            	$d['url'] = '/' . htmlspecialchars($d['alias']) . '.htm';
+			}
+			$d['title'] = htmlspecialchars($d['title']);
+			$m['pages'] .= $tpl->parse('pages', $d);
 		}
+
+		// Special freerols
+		$m['freerolls'] = '';
+		$locale = & moon :: locale();
+		$user = & moon :: user();
+		list($tOffset, $gmt,, $tzName) = $locale->timezone( (int)$user->get_user('timezone') );
+		$rec = $this->getSpecialFreerolls($roomId);
+		$r = array();
+		$m['url.moreFreerolls'] = $this->linkas('tour.freerolls_special#');
+		foreach ($rec as $i=>$v) {
+			//$r['url.full'] = $this->linkas('#', $v['id']);
+			$r['name'] = htmlspecialchars($v['name']);
+			$r['url.full'] = '/' . $room['alias'] . '/freerolls/' .$v['id'] . '.htm';
+			$r['prizePool'] = $v['prizepool'] ? $this->currency($v['prizepool'], $room['currency']) : '';
+			if ($v['qualification_points'] < 0) {
+				$r['pointsReq'] = '-';
+			}
+			else {
+				$r['pointsReq'] = $v['qualification_points'];
+			}
+            $startTime = $v['date'] + $tOffset;
+			$r['tourDate'] = $locale->gmdatef($startTime, 'freerollTime');
+            $date = $v['qualification_from'];
+            if ($date !== '0000-00-00 00:00:00') {
+				$time = strtotime($v['qualification_from'] . ' +0000') + $tOffset;
+				$r['qualificationFrom'] = $locale->gmdatef($time, 'freerollTime');
+				if ($v['qualification_to'] !== '0000-00-00 00:00:00') {
+					$time = strtotime($v['qualification_to'] . ' +0000') + $tOffset;
+					$r['qualificationTo'] = $locale->gmdatef($time, 'freerollTime');
+				}
+				else {
+					$r['qualificationTo'] = $r['tourDate'];
+				}
+			}
+			else {
+				$r['qualificationTo'] = 'n/a ';
+				$r['qualificationFrom'] ='';
+			}
+
+
+			$m['freerolls'] .= $tpl->parse('freerolls', $r);
+		}
+
+
 		$res = $tpl->parse('main', $m);
 		return $res;
 
@@ -394,6 +431,48 @@ class review extends moon_com {
 				ON d.id = dr.deposit_id
 			WHERE dr.room_id = ' . $roomId . ' AND hide = 0
 			ORDER BY d.sort_order
+		');
+	}
+
+	function getSpecialFreerolls($roomId)
+	{
+		$locale = &moon::locale();
+		$now = ceil($locale->now() / 100) * 100;
+		$sql = "SELECT * FROM ".$this->table('SpecTournaments')."
+				WHERE hide = 0 AND room_id = ".$roomId." AND `date`> ".$now."
+				ORDER BY `date` ASC, prizepool DESC
+				LIMIT 3";
+		return $this->db->array_query_assoc($sql);
+	}
+
+	function currency($num, $currency)
+	{
+		$codes = array('USD' => '$', 'EUR' => '&euro;', 'GBP' => '&pound;');
+		if (isset ($codes[$currency])) {
+			return $codes[$currency] . '' . $num;
+		}
+		else {
+			return $num . ' ' . $currency;
+		}
+	}
+
+
+	function getReview($roomId)
+	{
+		$m = $this->db->single_query('
+			SELECT content_html FROM ' . $this->table('Reviews') . '
+			WHERE room_id = ' . intval($roomId)
+		);
+		return (empty($m[0]) ? '' : $m[0]);
+	}
+
+	function getRoomPages($roomId)
+	{
+		return $this->db->array_query_assoc('
+			SELECT id,title,uri as alias,is_link
+			FROM ' . $this->table('Pages') . '
+			WHERE 	room_id = ' . $roomId . ' AND hide = 0 AND is_link<2
+			ORDER BY sort ASC
 		');
 	}
 }

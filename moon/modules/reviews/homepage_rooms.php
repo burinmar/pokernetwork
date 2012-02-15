@@ -2,65 +2,155 @@
 
 class homepage_rooms extends moon_com {
 
+	function events($event) {
+		$page = & moon :: page();
+		$this->forget();
+		if ($event == 'js') {
+			$this->viewJavaScript();
+		}
+		$page->page404();
+	}
 
-	function main($vars)
-	{
-
+	function main($vars) {
 		$tpl = & $this->load_template();
 		$result = '';
-
+		$oReview = $this->object('review');
 		if (count($rooms = $this->getTopRooms())) {
-			$hasFree50 = in_array(_SITE_ID_, array('bg','china','tw','il','tr','ee','it','pt', 'es', 'lt', 'ro', 'hu')) ? FALSE : TRUE;
-			$partyID = 39;
-			$m = array('items' => '');
-			foreach ($rooms as $i=>$room) {
-				$room['nr'] = $i+1;
-				$room['logo'] = ($room['logo'] != '') ? img('rw', $room['id'],$room['logo'] . '') : '';
-				$room['roomLink'] = '/' . $room['alias'] . '/';
-				$room['roomName'] = $room['name'];
-				$room['roomDownloadLink'] = '/' . $room['alias'] . '/download/?BN=homepageRooms';
-				//$room['intro_text'] = htmlspecialchars($room['intro_text']);
-				$room['bonus'] = $this->currency($room['bonus_int'], $room['currency']);
-				if (($hasFree50 && $room['id'] == $partyID)) {
-					$room['free'] = 1;
+			$page = & moon :: page();
+			$page->js($page->home_url() . 'homepage-rooms/js.php');
+			$m = array('items' => '', 'intro' => '');
+
+			/*promotions*/
+			$aPromo = $this->getPromotions();
+			$promo = array();
+			foreach ($aPromo as $v) {
+				$rID = $v['room_id'];
+				if (!isset ($promo[$rID])) {
+					$promo[$rID] = array(0, '');
 				}
-				// PN-2101 7Win Poker
-				elseif ($room['id'] == 159) {
-					$room['bonus'] = '33%';
+				elseif ($promo[$rID][0] > 2) {
+					continue;
 				}
-				$m['items'] .= $tpl->parse('items', $room);
+				$promo[$rID][0]++;
+				$promo[$rID][1] .= $tpl->parse('promo', array($v['title']));
 			}
-            $nav = & moon :: shared('sitemap');
-			$url = $nav->getLink('rooms');
-			$m['url.rooms'] = $url;
+
+			/* top list */
+			foreach ($rooms as $i => $room) {
+				$room['img'] = ($room['favicon'] != '') ? img('rw', $room['id'], $room['favicon'] . ''):'';
+				$room['roomLink'] = '/' . $room['alias'] . '/';
+				$room['roomName'] = htmlspecialchars($room['name']);
+				$room['roomDownloadLink'] = '/' . $room['alias'] . '/download/?BN=homepageRooms';
+				$er = $room['editors_rating'];
+				$room['editors_rating'] = number_format($room['editors_rating'] / 10, 1);
+				$m['items'] .= $tpl->parse('items', $room);
+				if (!$i) {
+					$ratings = $oReview->ratings($room['ratings']);
+					$room['ratings'] = '';
+					foreach ($ratings as $v) {
+						list($a['rate'], $a['name']) = $v;
+						$a['rate%'] = floor($a['rate'] * 10);
+						$room['ratings'] .= $tpl->parse('ratings', $a);
+					}
+					$room['editors_rating%'] = $er;
+					$room['logo'] = ($room['logo'] != '') ? img('rw', $room['id'], $room['logo'] . '?2'):'';
+					$room['promo'] = isset ($promo[$room['id']]) ? $promo[$room['id']][1]:'';
+					$m['intro'] = $tpl->parse('intro', $room);
+				}
+			}
+			$m['url.rooms'] = moon :: shared('sitemap')->getLink('rooms');
 			$result = $tpl->parse('main', $m);
 		}
 		return $result;
 	}
 
+	function viewJavaScript() {
+		header('Content-type: text/javascript; charset=UTF-8');
+		if (!is_dev()) {
+			header('Expires: ' . gmdate('r', time() + 600), TRUE);
+			header('Cache-Control: max-age=' . 600, TRUE);
+			header('Pragma: public', TRUE);
+		}
+		$result = '';
+		$tpl = & $this->load_template();
+		$oReview = $this->object('review');
+		if (count($rooms = $this->getTopRooms())) {
+			$m = array('items' => '', 'intro' => '');
 
-	function getTopRooms()
-	{
-		$sql = 'SELECT `id`, `name`, `alias`, `favicon` as logo, bonus_int, currency
+			/*promotions*/
+			$aPromo = $this->getPromotions();
+			$promo = array();
+			foreach ($aPromo as $v) {
+				$rID = $v['room_id'];
+				if (!isset ($promo[$rID])) {
+					$promo[$rID] = array(0, '');
+				}
+				elseif ($promo[$rID][0] > 2) {
+					continue;
+				}
+				$promo[$rID][0]++;
+				$promo[$rID][1] .= $tpl->parse('promo', array($v['title']));
+			}
+
+			/* top list */
+			$m['jsRooms'] = $m['jsImages'] = array();
+			foreach ($rooms as $i => $room) {
+				$room['img'] = ($room['favicon'] != '') ? img('rw', $room['id'], $room['favicon'] . ''):'';
+				$room['roomLink'] = '/' . $room['alias'] . '/';
+				$room['roomName'] = htmlspecialchars($room['name']);
+				$room['roomDownloadLink'] = '/' . $room['alias'] . '/download/?BN=homepageRooms';
+				$er = $room['editors_rating'];
+				$room['editors_rating'] = number_format($room['editors_rating'] / 10, 1);
+				$ratings = $oReview->ratings($room['ratings']);
+				$room['ratings'] = '';
+				foreach ($ratings as $v) {
+					list($a['rate'], $a['name']) = $v;
+					$a['rate%'] = floor($a['rate'] * 10);
+					$room['ratings'] .= $tpl->parse('ratings', $a);
+				}
+				$room['editors_rating%'] = $er;
+				$room['logo'] = ($room['logo'] != '') ? img('rw', $room['id'], $room['logo'] . '?2'):'';
+				$room['promo'] = isset ($promo[$room['id']]) ? $promo[$room['id']][1]:'';
+				$html = $tpl->parse('intro', $room);
+				$html = preg_replace('~[\s\t\n\r]{2,}~', ' ', $html);
+				$m['jsRooms'][] = '"' . $room['id'] . '" : "' . $tpl->ready_js($html) . '"';
+				if ($room['logo']) {
+					$m['jsImages'][] = '(new Image()).src="' . $room['logo'] . '"';
+				}
+			}
+			$m['jsRooms'] = implode(",\n", $m['jsRooms']);
+			$m['jsImages'] = implode(",\n", $m['jsImages']);
+			$result = $tpl->parse('javascript', $m);
+		}
+		echo $result;
+		moon_close();
+		exit;
+	}
+
+	//***************************************
+	//           --- DB AND OTHER ---
+	//***************************************
+	function getTopRooms() {
+		$sql = 'SELECT `id`, `name`, `alias`, `favicon`, `logo`, `editors_rating`,`ratings`
 			FROM ' . $this->table('Rooms') . '
 			WHERE is_hidden = 0
-			ORDER BY sort_1 ASC
+			ORDER BY editors_rating DESC, sort_1 ASC
 			LIMIT 10
 			';
 		$result = $this->db->array_query_assoc($sql);
 		return $result;
 	}
 
-	function currency($num, $currency) {
-		$codes = array('USD' => '$', 'EUR' => '&euro;', 'GBP' => '&pound;');
-		if (isset ($codes[$currency])) {
-			return $codes[$currency] . '' . $num;
-		}
-		else {
-			return $num . '&nbsp;' . $currency;
-		}
+	function getPromotions() {
+		return $this->db->array_query_assoc('
+			SELECT room_id,title
+			FROM ' . $this->table('PromoList') . '
+			WHERE hide=0
+				AND (ISNULL(active_from) OR CURDATE()>= active_from)
+				AND (ISNULL(active_to) || CURDATE()<= active_to)
+			ORDER BY ord_no
+		');
 	}
-
 
 }
 

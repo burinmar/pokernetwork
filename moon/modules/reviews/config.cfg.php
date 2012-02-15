@@ -24,7 +24,7 @@ $cfg['reviews'] = array(
 	'tb.Sorting' => 'rw2_rooms_sorting',
 	'tb.Tournaments' => 'tournaments',
 	
-	'page.Index' => 'xml.col1,fake',
+	'page.Index' => 'xml.col1_darkright,fake',
 	'page.Main' => 'xml.col1_darkright,fake',
 	'page.RoomsList' => 'xml.col1,fake',
 	//rtf

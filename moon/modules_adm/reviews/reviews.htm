@@ -86,7 +86,103 @@ error9=System error!
 {submenu}
 <a href="{goBack}" class="goBack">Back to list</a>
 </div>
+<script language="JavaScript" type="text/javascript">
+/*<![CDATA[*/
+function rChange() {
 
+	var t = 0;
+	var j = jQuery('.r');
+	j.each(function (){t += jQuery(this).val() * 10})
+	t = t/j.size();
+	jQuery('#rtotal').html(Math.floor(t)/10)
+}
+
+//*******************
+function slider(id) {
+	this.id = id;
+	this.oC = $("#c"+id).get(0);
+	this.oI = $("#r"+id).get(0);
+	this.ctx = this.oC.getContext("2d");
+		var mouseListener = this.mouseEvent;
+		var canvasObject = this.oC;
+		mouseListener.slider = this;
+		jQuery(document).ready(function(){
+			jQuery(canvasObject).bind('mousedown mouseup mousemove', mouseListener);
+		});
+	this.bar(100);
+}
+
+slider.prototype.bar = function (v) {
+	var width = 200;
+	this.ctx.fillStyle = '#aaa';
+	this.ctx.fillRect(0, 16, width, 3);
+	if (v>9 && v<101) {
+		this.ctx.fillStyle = 'blue';
+		var w = Math.floor(width/89) * (v -9);
+		this.ctx.fillRect(0, 16, w, 3);
+	}
+}
+slider.prototype.mouseEvent = function(e) {
+	//alert(this.crossword.cellWidth);
+	//this section is from http://www.quirksmode.org/js/events_properties.html
+    var targ;
+    if (!e)
+        e = window.event;
+    if (e.target)
+        targ = e.target;
+    else if (e.srcElement)
+        targ = e.srcElement;
+    if (targ.nodeType == 3) // defeat Safari bug
+        targ = targ.parentNode;
+
+    // jQuery normalizes the pageX and pageY
+    // pageX,Y are the mouse positions relative to the document
+    // offset() returns the position of the element relative to the document
+    var x = parseInt(e.pageX - $(targ).offset().left, 10);
+    var y = parseInt(e.pageY - $(targ).offset().top, 10);
+    //console.log(e.type + ' ?| x: '+x + ', y: ' + y);
+	this.slider.bar(x);
+	return;
+
+	// dabar resolvinam koordinates
+	var cw = this.crossword;
+	var xx = Math.floor(x/(cw.cellWidth + 2)) + 1;
+	var yy = Math.floor(y/(cw.cellWidth + 2)) + 1;
+	var cellID = xx * 10000 + yy;
+ 	switch (e.type) {
+
+		case 'mouseover':
+		case 'mousemove':
+			if (cw.hoverC && cw.hoverC != cellID) {
+				//nuimam sena pazymeta
+				cw.cell(cw.hoverC).action('hout');
+				cw.hoverC = 0;
+			}
+			if (cw.cells[cellID]) {
+				cw.hoverC = cellID;
+				cw.cell(cellID).action('hover');
+			}
+			break;
+		case 'mouseout':
+			if (cw.hoverC) {
+				//nuimam sena pazymeta
+				cw.cell(cw.hoverC).action('hout');
+				cw.hoverC = 0;
+			}
+			break;
+		default:
+			//console.log(e.type + ' ?| x: '+x + ', xx: ' + xx);
+	}
+
+    //console.log('x: '+x + ', xx: ' + xx);
+    return {"x": x, "y": y};
+}
+$(document).ready(function() {
+	jQuery('.r').bind('change mouseup keyup', rChange);
+//var rc1 = new slider('1');
+});
+/*]]>*/
+</script>
 <form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<input type="hidden" name="id" value="{id}" />
@@ -105,24 +201,56 @@ error9=System error!
 
 		<dt><label for="i_bonus_text">Bonus text</label></dt>
 		<dd><textarea name="bonus_text" id="i_bonus_text" cols="70" rows="2">{bonus_text}</textarea><div class="explain">Short text describing the bonus.</div></dd>
+
+		<dt><label>Rating</label></dt>
+		<dd>
+			<table>
+				<tr>
+					<td>Bonuses and Promotions</td>
+					<td><input id="r1" name="r1" value="{r1}" maxlength="3" size="3" class="r" /></td>
+					<td><canvas id="c1" width="200" height="20"></canvas></td>
+				</tr>
+				<tr>
+					<td>Player Traffic</td>
+					<td><input id="r2" name="r2" value="{r2}" maxlength="3" size="3" class="r" /></td>
+					<td><canvas id="c2" width="200" height="20"></canvas></td>
+				</tr>
+				<tr>
+					<td>Limits and Rake</td>
+					<td><input id="r3" name="r3" value="{r3}" maxlength="3" size="3" class="r" /></td>
+					<td><canvas id="c3" width="200" height="20"></canvas></td>
+				</tr>
+				<tr>
+					<td>Software</td>
+					<td><input id="r4" name="r4" value="{r4}" maxlength="3" size="3" class="r" /></td>
+					<td><canvas id="c4" width="200" height="20"></canvas></td>
+				</tr>
+				<tr>
+					<td>Customer Support</td>
+					<td><input id="r5" name="r5" value="{r5}" maxlength="3" size="3" class="r" /></td>
+					<td><canvas id="c5" width="200" height="20"></canvas></td>
+				</tr>
+				<tr>
+					<td align="right"><i>Total score &nbsp;</i></td>
+					<td><b id="rtotal">{r_total}</b></td>
+					<td>&nbsp;</td>
+				</tr>
+			</table>
+			<div class="explain">Rate values must be between 0.0 and 10.0 (inclusive)</div>
+		</dd>
+
+		<dt><label for="i_review">Review</label></dt>
+	<dd class="dd100 w100">{toolbar}<textarea rows="30" cols="70" name="review" id="i_review">{review}</textarea></dd>
+
+	<dt><label for="i_meta_title">Meta title</label></dt>
+	<dd class="w100"><input type="text" name="meta_title" id="i_meta_title" value="{meta_title}" size="80" maxlength="255" class="count_chars_59" /></dd>
+
+	<dt><label for="i_meta_description">Meta description</label></dt>
+	<dd class="w100"><textarea rows="2" cols="60" name="meta_description" id="i_meta_description" class="count_chars_156">{meta_description}</textarea></dd>
+
 	</dl>
 
-		<div class="tabber" style="margin-bottom:2em;">
-		<%loop{tabs}%>
-		<div class="tabbertab">
-			<h3 style="margin-top:2em;">{tabTitle}<%if{notempty}%>*<%end%></h3>
-			<dl>
-				<dt><label for="i_review{page_id}">Review <i>({tabTitle})</i></label></dt>
-				<dd class="w100">{toolbar}<textarea rows="30" cols="70" name="review[{page_id}][content]" id="i_review{page_id}">{content}</textarea></dd>
 
-				<dt><label for="meta_t{page_id}">Meta title <i>({tabTitle})</i></label></dt>
-				<dd class="w100"><input type="text" name="review[{page_id}][meta_title]" id="meta_t{page_id}" value="{meta_title}" size="80" maxlength="255" class="count_chars_59" /></dd>
-				<dt><label for="meta_d{page_id}">Meta description <i>({tabTitle})</i></label></dt>
-				<dd class="w100" style="margin-bottom: 0"><textarea rows="2" cols="60" name="review[{page_id}][meta_description]" id="meta_d{page_id}" class="count_chars_156">{meta_description}</textarea></dd>
-			</dl>
-		</div>
-		<%end{loop}%>
-	</div>
 	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
 </form>
 

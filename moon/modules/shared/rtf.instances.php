@@ -59,5 +59,15 @@ switch ($instance) {
 		$cfg['attachments'] = 'image+, video, html';
 		break;
 
+	case 'reviews' :
+		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'));
+		$cfg['features'] = '-quote,-code,-smiles,-underline,-cards,-img,-video,-spoiler,-game,-twitter';
+		$cfg['tableObjects'] = 'rw2_attachments';
+		$cfg['fileDir'] = _W_DIR_ . 'rw-attachments/';
+		$cfg['fileSRC'] = '/w/rw-attachments/';
+		$cfg['attachments'] = 'image+, video, html';
+		$cfg['imgWH'] = '380x600';
+		break;
+
 }
 ?>
