@@ -1,8 +1,7 @@
 .below_body * {color: #fff !important}
 html {
 	margin: 0;
-	padding: 0
-	font: 12px/16px Arial, Helvetica, sans-serif;
+	padding: 0;
 	background: #8c7d70 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAAHnlligAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAbZJREFUeNpibK/MYWJkZGJlYfnPwAAQQIw9tQXfvv9g+v8fyGEACCAoj5GRkZODnQnI4uLkAHKADIAAYuyozGFhYQGqAan+9fsPkAJygPIsQAVA3T9//WZiYmQBsoBiQLO+f/8BEICl8TgCAIRhGJDA/uPSzCGKH6k+66eFqwLPXdLU8ikdWoyZqxmzXXnv4zRL6LGeL3HFS2WprZHGA9gWgAcyOgIQBmGoBaXnsC7gBk6stYIGOJsPvkh4oRz7xpEAIVbVNMK93Di+ApO53a9D9P5Mv0rMKhKO+EGVZQSmSPwygeO8WlJlsv8BXlODycINYcnZgQFiR0T0zIlL2TMLYzHLo9MnQJvkloQwCENRwEi6WzfgCtywY4HUE+LgY0z7kyEk53KTb9eLv+JjJ/FpxTUfZqRmRvUw43RBCR7uvUfb1kNSi2aY5xNKwYq3Ctr0PtJ3UF3rOf0L+UwggsFfiM+smQFpHgeoIcnFqtbTtM5pwBpj2zRPyHi8F0zpqiosTeSb1jS3gZ9bMn1mJnZGAXPYKFnQmakLVOQefpTCfUpjBfwIYwDPP6JTYhHswLa6t7aqiSfvYOJz8o3ZkgAAAABJRU5ErkJggg==');
 }
 
@@ -11,18 +10,18 @@ body {
 	margin: 0 auto;
 	padding: 0
 }
-#header * {margin: 0; padding: 0}
-#header a {text-decoration: none; outline: none; color: #0050bd}
-#header a:hover {color: #000}
-#header ul {list-style: none}
-#header .clrfix {display: block;}
-#header .clrfix:before, #header .clrfix:after {content: ""; display: block; clear: both;}
-#header .clr { display: block; overflow: hidden; clear: both; height: 1px; margin: -1px 0 0}
-#header .tac {text-align: center !important}
-#header .tar {text-align: right !important}
-#header .fl {float: left}
-#header .fr {float: right}
-#header .hide {display: none}
+#header *, #siteFooter * {margin: 0; padding: 0; font: 12px/16px Arial, Helvetica, sans-serif;}
+#header a, #siteFooter a {text-decoration: none; outline: none; color: #0050bd}
+#header a:hover, #siteFooter a:hover {color: #000}
+#header ul, #siteFooter ul {list-style: none}
+.clrfix {display: block;}
+.clrfix:before, .clrfix:after {content: ""; display: block; clear: both;}
+#header .clr, #siteFooter .clr { display: block; overflow: hidden; clear: both; height: 1px; margin: -1px 0 0}
+#header .tac, #siteFooter .tac {text-align: center !important}
+#header .tar, #siteFooter .tar {text-align: right !important}
+#header .fl, #siteFooter .fl {float: left}
+#header .fr, #siteFooter .fr {float: right}
+#header .hide, #siteFooter .hide {display: none}
 #header input[type="text"], #header input[type="password"] {
 	padding: 3px 7px;
 	border-radius: 4px;
@@ -181,7 +180,7 @@ body {
 				right: 8px;
 			}
 
-	#footer {
+	#siteFooter {
 		background: #2c2c29 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABHCAIAAAE+cYo5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHlJREFUeNpicndzYfr79y8Q/2H68weZhuB///4CBBCTm6sTmI0q/weq5h9QzT+AAGJyd3MG0v+Z/v3/x/T/3z8IG0TD+f8w5P+D2P9BYv/BNMP//wABxgRyD5jNABGDYAYEmwGi7v9/HPJY1TBgNRPOZ2CAqoeJgWkAEFazm5k4EgUAAAAASUVORK5CYII=') repeat-x top left;
 		border-right: 1px solid #252522;
 		border-left: 1px solid #3b3a37;
@@ -191,16 +190,16 @@ body {
 		box-shadow: 0 0 5px rgba(0,0,0,0.5);
 		color: #7d7b75;
 	}
-		#footer > div {
+		#siteFooter > div {
 			padding: 30px 20px 20px;
 			position: relative;
 		}
-		#footer a:hover {color: #fff !important}
-		#footer .fl {
+		#siteFooter a:hover {color: #fff !important}
+		#siteFooter .fl {
 			width: 228px;
 			font-size: 11px;
 		}
-			#footer .fl p {
+			#siteFooter .fl p {
 				background: url('/i/logo-footer.png') no-repeat 0 0;
 				line-height: 14px;
 				padding-top: 60px;
@@ -208,8 +207,8 @@ body {
 				margin-bottom: 18px;
 				color: #7d7b75;
 			}
-			#footer .fl b {text-transform: uppercase;}
-			#footer .socialIcons a {
+			#siteFooter .fl b {text-transform: uppercase;}
+			#siteFooter .socialIcons a {
 				background-image: url('/i/social-footer.png');
 				float: left;
 				width: 22px;
@@ -218,34 +217,34 @@ body {
 				overflow: hidden;
 				text-indent: -999px;
 			}
-			#footer .facebook {background-position: 0 0}
-			#footer .twitter {background-position: -22px 0}
-			#footer .rss {background-position: -44px 0}
-			#footer .youtube {background-position: -66px 0}
-			#footer .gplus {background-position: -88px 0}
-		#footer .fr {
+			#siteFooter .facebook {background-position: 0 0}
+			#siteFooter .twitter {background-position: -22px 0}
+			#siteFooter .rss {background-position: -44px 0}
+			#siteFooter .youtube {background-position: -66px 0}
+			#siteFooter .gplus {background-position: -88px 0}
+		#siteFooter .fr {
 			width: 690px;
 			background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAEMR9hLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpi0NPTAwgwBgd7OwAEwAFIQJmCdQAAAABJRU5ErkJggg==') repeat-y left;
 		}
-		#footer .fr table {
+		#siteFooter .fr table {
 			margin-bottom: 20px;
 			width: 100%;
 		}
-			#footer .fr td {
+			#siteFooter .fr td {
 				vertical-align: top;
 				padding-right: 10px;
 				width: 11%;
 			}
-		#footer .fr td a {
+		#siteFooter .fr td a {
 			color: #87857e;
 			font-size: 11px;
 			line-height: 10px;
 			display: block;
 			margin-bottom: 7px;
 		}
-		#footer .fr td b {font-size: 12px; white-space: nowrap; display: block; margin-bottom: 10px}
-		#footer .fr .copy p {float: right; color: #7d7b75;}
-		#footer .fr .copy a {
+		#siteFooter .fr td b {font-size: 12px; white-space: nowrap; display: block; margin-bottom: 10px}
+		#siteFooter .fr .copy p {float: right; color: #7d7b75;}
+		#siteFooter .fr .copy a {
 			margin-right: 17px;
 			color: #3c85ea;
 			font-weight: bold;

@@ -1,6 +1,6 @@
 <?xml version="1.0" ?>
 <page>
-	<layout>col1</layout>
+	<layout>tmp</layout>
 
 	<com><part>center</part><name>sys.tmp</name></com>
 	<com><part>header</part><name>sys.header</name></com>

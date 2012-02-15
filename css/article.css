@@ -1,4 +1,5 @@
 .article {color: #000}
+.article p a {text-decoration: underline}
 .article h1 {
 	font-size: 18px;
 	line-height: 20px;
