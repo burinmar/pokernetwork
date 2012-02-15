@@ -28,7 +28,7 @@
 				<colgroup>
 					<col />
 					<col style="width: 120px" />
-					<col style="width: 20px" />
+					<col style="width: 25px" />
 				</colgroup>
 				<%loop{ratings}%>
 				<tr>
@@ -46,7 +46,7 @@
 			</table>
 			<% if{promo} %>
 			<h2>Bonuses and Promotions</h2>
-			<ul><%loop{promo}%><li>{0}</li><% end %></ul>
+			<div class="overflow"><ul><%loop{promo}%><li>{0}</li><% end %></ul></div>
 			<% end{if-promo} %>
 
 			<a href="{roomLink}" class="more2">Read full review »</a>

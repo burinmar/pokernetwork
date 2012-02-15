@@ -740,7 +740,8 @@ html {
 		margin-right: -10px;
 		width: 297px;
 		padding: 10px;
-		min-height: 320px;
+		min-height: 324px;
+		position: relative;
 	}
 	#roomsIndexBox .roomsList img.fl {
 		max-width: 135px;
@@ -754,7 +755,16 @@ html {
 		margin-top: 0;
 		margin-bottom: 15px;
 	}
-	#roomsIndexBox .roomsList ul {font-size: 11px}
+	#roomsIndexBox .roomsList .overflow {
+		overflow: hidden;
+		height: 95px;
+	}
+	#roomsIndexBox .roomsList ul {font-size: 11px;}
+	#roomsIndexBox .roomsList .more2 {
+		position: absolute;
+		bottom: 10px;
+		left: 10px;
+	}
 
 /*News list +  News Article*/
 .newsList {}
