@@ -1,0 +1,217 @@
+<% info %>
+titleNew=New special tournament
+titleEdit=Edit special tournament
+
+404=Item not found!
+error1=Title required
+error2=Invalid date
+error3=Invalid qualification period (from)
+error4=Invalid qualification period (to)
+error5=Select poker room, please!
+error9=System error!
+
+
+<% viewList %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<!--# Filtro forma -->
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Title: <input type="text" name="filter[text]" value="{text}" size="20" maxlength="30"/></label></td>
+		<td><label>Room: <select name="filter[room_id]"><option value=""></option>{rooms}</select></label></td>
+		<td><label>Tag: <input type="text" name="filter[tag]" value="{tag}" size="20" maxlength="30"/></label></td>
+		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show deleted</label></td>
+		<td><input type="submit" value="Filter" /></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filtras}%>
+
+
+<!--# sarasas -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<!--# <input type="hidden" name="event-clear" value="{goClear}" /> -->
+		<table class="list">
+			<colgroup>
+				<col style="width: 100px" />
+				<col />
+				<col />
+				<col />
+				<col style="width: 20px" />
+			</colgroup>
+			<thead>
+			<tr>
+				<th><a href="{orderby1}">Date</a></th>
+				<th><span>Title</span></th>
+				<th><span>Room</span></th>
+				<th><a href="{orderby2}">Created</a></th>
+				<th class="checkall"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<% loop{items} %>
+				<tr class="{class}">
+					<td{styleTD}>{date} {gmt}</td>
+					<td class="title">
+						<a href="{goEdit}">{title}</a>
+						<div class="explain">
+						Qualification: {qualification_from} / {qualification_to} | {qualification_points}
+						<%if{prizepool}%>| Prize Pool: {prizepool} {currency}<%end%>
+						<%if{tags}%><div>Tags: {tags}</div><%end%>
+						<%if{team_id}%><div>Team freeroll!</div><%end%>
+						</div>
+					</td>
+					<td>
+						&nbsp;<%if{room}%>{room}<%end%>&nbsp;
+					</td>
+					<td>{created}</td>
+					<td><input type="checkbox" name="it[]" value="{id}" /></td>
+				</tr>
+			<% end{items} %>
+			</tbody>
+		</table>
+
+		<div class="list-footer clrfix">
+			<input type="button" class="button fr btDel" value="Delete selected" />
+		</div>
+	</form>
+	{puslapiai}<br />
+	<% if {site-slave} %>
+		<div class="explain">
+			Some special tournaments are imported from the www.pokerworks.com. Such tournaments are marked with special icons: <br/>
+			<span class="sync1" title="Status: up to date"></span> - the tournament is up to date, <br/>
+			<span class="sync2" title="Status: needs attention"></span> - the tournament was updated, so you have to check it and update.</div>
+	<% end {site-slave} %>
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+
+
+
+<% viewForm %>
+<script type="text/javascript">
+/*<![CDATA[*/
+var roomC = new Array();
+{jsCurrency}
+
+function setCurrency(sel) {
+	var s = sel.value;
+	if (typeof(roomC[s]) == "undefined") {
+		s = 'USD';
+	}
+	else {
+		s = roomC[s];
+	}
+	jQuery('#iCurrency').html(s);
+}
+/*]]>*/
+</script>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+	<dt><label for="i_name">Tournament name</label></dt>
+	<dd class="w100">
+		<input type="text" name="name" id="i_name" value="{name}" size="80" maxlength="255" class="required" />
+		<%if{landingURL}%><div><a href="{landingURL}" onclick="window.open(this.href);return false;" class="newwindow">View this tournament in new window</a></div><%end%>
+	</dd>
+	<dd>
+		<label><input type="checkbox" name="hide" id="i_hide" value="{hide}" />Hide this tournament </label>
+		<%if{isCOM}%><span style="margin-left:30px"></span><input type="checkbox" name="nosync" id="i_nosync" value="{nosync}" /> <label for="i_nosync">This tournament is for <i>www.pokerworks.com</i> only</label><%end%>
+	</dd>
+
+	<dt><label for="i_timezone">Time Zone</label></dt>
+	<dd>
+		<select name="timezone" id="i_timezone" class="required">{timezones}</select>
+	</dd>
+
+	<dt><label for="i_date">Tournament Begins</label></dt>
+	<dd>
+		<input type="text" name="date" id="i_date" value="{date}" size="10" maxlength="10" class="required isDate" /> <input type="text" name="dateTime" value="{dateTime}" size="5" maxlength="5" class="required" onfocus="this.select()" />
+		<div class="explain" style="margin: 0 0 10px 30px">yyyy-mm-dd <span style="display: inline-block; margin-left: 25px">hh:mm</span></div>
+	</dd>
+
+	<dt><label for="i_room">Poker Room</label></dt>
+	<dd>
+		<select name="room_id" id="i_room" class="required" onchange="setCurrency(this)"><option value="0"></option>{rooms}</select>
+	</dd>
+
+	<dt><label for="i_prizepool">Prize Poll</label></dt>
+	<dd>
+		<input type="text" name="prizepool" id="i_prizepool" value="{prizepool}" size="10" maxlength="10"/> <span id="iCurrency">{currency}</span><div class="explain">Currency depends on choosen Poker Room</div>
+	</dd>
+
+	<dt><label for="i_date">Qualification period</label></dt>
+	<dd>
+		<table>
+		<tr>
+			<td>From</td>
+			<td><input type="text" name="qualification_from" id="i_qfrom" value="{qualification_from}" size="10" maxlength="10" class="isDate" /> &nbsp; <input type="text" name="qFromTime" value="{qFromTime}" size="5" maxlength="5"  onfocus="this.select()" /></td>
+		</tr>
+		<tr>
+			<td>To</td>
+			<td><input type="text" name="qualification_to" id="i_qto" value="{qualification_to}" size="10" maxlength="10" class="isDate" /> &nbsp; <input type="text" name="qToTime" value="{qToTime}" size="5" maxlength="5" onfocus="this.select()" /></td>
+		</tr>
+		</table>
+	</dd>
+
+	<dt><label for="i_qpoints">Points requirement</label></dt>
+	<dd>
+		<input type="text" name="qualification_points" id="i_qpoints" value="{qualification_points}" size="10" maxlength="10" />
+	</dd>
+
+
+	<dt><label for="i_password">Password</label></dt>
+	<dd >
+		<input type="text" name="password" id="i_password" value="{password}" size="30" maxlength="30" />
+		&nbsp; From <input type="text" name="password_from" id="i_passfrom" value="{password_from}" size="10" maxlength="10" class="isDate" /> &nbsp; <input type="text" name="passFromTime" value="{passFromTime}" size="5" maxlength="5"  onfocus="this.select()" />
+	</dd>
+
+	<dt><label>Heading</label></dt>
+	<dd>
+		<input type="radio" name="exclusive" id="i_exclusive0" value="{exclusive0}" /><label for="i_exclusive0">A Special Offer from PokerWorks</label><br />
+		<input type="radio" name="exclusive" id="i_exclusive1" value="{exclusive1}" /><label for="i_exclusive1">Exclusive to Members of PokerWorks</label>
+	</dd>
+
+	<dt><label for="i_content">Description</label></dt>
+		<dd class="w100">
+			<%if{master_id}%>
+				<div>
+				<div class="explain">This tournament is synchronized with some www.pokernews.com <a href="http://www.pokernews.com/adm/tour-special/edit/{master_id}.htm" onclick="window.open(this.href);return false;">special tournament</a>. You must ensure that your translation will correspond to the original description.</div>
+				<%if{master_title}%><div class="forSlaveOriginalText">{master_body}</div><%end%>
+				</div>
+			<%end%>
+			{toolbar}
+			<textarea rows="20" cols="70" name="body" id="i_content">{body}</textarea>
+		</dd>
+
+		<dt><label for="i_tags">Tags</label></dt>
+		<dd class="w100">
+			
+			<%if{master_tags}%><div class="forSlaveOriginalText">Tags: {master_tags}</div><%end%>
+			<input type="text" name="tags" id="i_tags" value="{tags}" size="80" maxlength="255" />
+			<div class="explain">Separate multiple tags with comma.</div>
+		</dd>
+	</dl>
+
+	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>

@@ -12,6 +12,9 @@ News {ico=news, admin=content}
 	articles.authors = Authors
 	articles.tags = Tags
 
+Tournaments {ico=tournaments, admin=tournaments}
+	tour.special = Special Freerolls
+
 Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 	Reviews {link=reviews.reviews}
 		reviews.reviews = Room Profile {link=reviews.reviews#edit|*id*}
