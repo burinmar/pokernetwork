@@ -23,7 +23,7 @@ input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
 input[type="checkbox"] {vertical-align: middle}
 button, input[type="submit"] {cursor: pointer}
-#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert {zoom: 1;}
+#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li {zoom: 1;}
 
 /*Global*/
 .meta {
@@ -138,7 +138,37 @@ fieldset {
 	padding-right: 24px;
 	display: inline-block;
 	line-height: 16px;
+	position: absolute;
+	top: 10px;
+	right: 10px;
 }
+.right .categories {
+	text-transform: uppercase;
+	font-weight: bold;
+}
+	.right .categories li {margin-bottom: 3px;}
+.right .categories .on a {color: #515151}
+h3 {
+	color: #515151;
+	text-transform: uppercase;
+	font-size: 11px;
+	margin-bottom: 2px;
+}
+.socialIcons a {
+	background-image: url('/i/social-footer.png');
+	float: left;
+	width: 22px;
+	height: 22px;
+	margin: 3px 8px 0 0;
+	overflow: hidden;
+	text-indent: -999px;
+}
+.socialIcons .facebook {background-position: 0 0}
+.socialIcons .twitter {background-position: -22px 0}
+.socialIcons .rss {background-position: -44px 0}
+.socialIcons .youtube {background-position: -66px 0}
+.socialIcons .gplus {background-position: -88px 0}
+.socialIcons .gplus-container {float: left; position: relative; top: 4px}
 /*Forms*/
 input[type="text"], input[type="password"], input[type="file"] {
 	padding: 3px 7px;
@@ -256,6 +286,7 @@ html {
 	padding: 10px 10px 0;
 	color: #858585;
 	margin-bottom: 10px;
+	position: relative;
 }
 	.right .widget {color: #515151;}
 	.rightInsert {
@@ -353,17 +384,12 @@ html {
 	}
 	.filterTabs li:first-child a {border-radius: 0 0 0 5px; border-left: 1px solid #b1b0a8;}
 	.filterTabs li:last-child a {border-radius: 0 0 5px 0;}
-	.filterTabs .subscribe {
-		position: absolute;
-		top: 10px;
-		right: 10px;
-	}
+
 .overBreadcrumb {
-	position: relative;
-	top: -36px;
-	z-index: 10;
+	margin-top: -36px;
+	z-index: 2;
 }
-	.overBreadcrumb .widgetTitle {
+	.overBreadcrumb .widgetTitle:first-child {
 		border: 0 none;
 		line-height: 19px;
 		height: 22px;
@@ -581,20 +607,6 @@ html {
 			color: #7d7b75;
 		}
 		#siteFooter .fl b {text-transform: uppercase;}
-		#siteFooter .socialIcons a {
-			background-image: url('/i/social-footer.png');
-			float: left;
-			width: 22px;
-			height: 22px;
-			margin: 3px 8px 0 0;
-			overflow: hidden;
-			text-indent: -999px;
-		}
-		#siteFooter .facebook {background-position: 0 0}
-		#siteFooter .twitter {background-position: -22px 0}
-		#siteFooter .rss {background-position: -44px 0}
-		#siteFooter .youtube {background-position: -66px 0}
-		#siteFooter .gplus {background-position: -88px 0}
 	#siteFooter .fr {
 		width: 690px;
 		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAEMR9hLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJJREFUeNpi0NPTAwgwBgd7OwAEwAFIQJmCdQAAAABJRU5ErkJggg==') repeat-y left;
@@ -875,14 +887,13 @@ html {
 		margin: 0;
 	}
 
-	.yearList {color: #98978a; font-size: 11px;}
+	.yearList {color: #98978a; font-size: 11px}
 	.yearList a {
-		font-weight: bold;
-		text-transform: uppercase;
 		margin-right: 6px;
 		font-size: 12px;
+		text-transform: uppercase;
 	}
-	.yearList li {margin-bottom: 3px}
+	.yearList li {text-transform: lowercase}
 	.yearList > li > a {
 		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAAGXy9/eAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAF1JREFUeNpiYAjYWw4QQAxAggEggBiBxH8GBgZGgAAC85iArHcAAQQTAoFZAAEE4ggCGe9BPLA0EINklZigSiqA+B5AgCHr6QTpAwkygM1FSMAAyKxOFiijAqoaDgCyNxhT08uWtAAAAABJRU5ErkJggg==') no-repeat right 4px;
 		padding-right: 10px;
@@ -1107,3 +1118,47 @@ html {
 			display: inline-block;
 			margin: 0 8px;
 		}
+
+/*Videos*/
+.videoList {
+	margin: 0 -30px 0 -10px;
+	padding-left: 10px;
+}
+	.videoList li {
+		display: inline-block;
+		*display: inline;
+		vertical-align: top;
+		width: 122px;
+		margin: 0 28px 20px 0;
+	}
+	.videoList li .thumb {
+		position: relative;
+		border: 1px solid #0b57be;
+		display: block;
+		margin-bottom: 5px;
+	}
+	.videoList li .thumb span {
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		height: 14px;
+		line-height: 14px;
+		color: #fff;
+		background: #0b57be;
+		padding: 0 3px;
+		font-size: 11px;
+	}
+	.videoList li b {
+		display: block;
+		line-height: 14px;
+		margin-bottom: 5px
+	}
+.video .videoInfo {width: 260px;}
+.video .videoPlayer {width: 455px;}
+.video .tags {color: #515151;}
+.video .socialIcons {margin-bottom: 15px;}
+.video .videoList {
+	border-top: 1px solid #dddbce;
+	padding-top: 20px;
+	margin-top: 20px
+}
