@@ -396,19 +396,19 @@ html {
 		top: 14px;
 		width: 261px;
 	}
-	#menu {
+	.menu {
 		position: absolute;
 		bottom: 0;
 		left: 0;
 	}
-		#menu a {
+		.menu a {
 			display: block;
 			font-size: 13px;
 			font-weight: bold;
 			padding: 0 10px;
 		}
-		#menu > li {float: left; position: relative;}
-		#menu > li > a {
+		.menu > li {float: left; position: relative;}
+		.menu > li > a {
 			color: #d4e7ff;
 			line-height: 42px;
 			height: 42px;
@@ -416,12 +416,12 @@ html {
 			position: relative;
 			z-index: 1;
 		}
-		#menu > li.on > a {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAAEhL4UpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACRJREFUeNpiYGBgsAEIICBmcAAIIEYoiwUggMA8JhAJEGAoQgAfgwFBRpJ3IgAAAABJRU5ErkJggg==');}
-		#menu > li:hover > a {
+		.menu > li.on > a {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAAEhL4UpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACRJREFUeNpiYGBgsAEIICBmcAAIIEYoiwUggMA8JhAJEGAoQgAfgwFBRpJ3IgAAAABJRU5ErkJggg==');}
+		.menu > li:hover > a {
 			background: #fff;
 			color: #0050bd;
 		}
-		#menu ul {
+		.menu ul {
 			display: none;
 			position: absolute;
 			top: 42px;
@@ -432,12 +432,12 @@ html {
 			-moz-box-shadow: 0 0 7px #000;
 			-webkit-box-shadow: 0 0 7px #000;
 			box-shadow: 0 0 7px #000;
-		} #menu > li:hover ul {display: block}
-			#menu ul a {
+		} .menu > li:hover ul {display: block}
+			.menu ul a {
 				line-height: 21px;
 				white-space: nowrap;
 			}
-			#menu ul a:hover {
+			.menu ul a:hover {
 				background: #0050bd;
 				color: #fff;
 			}
@@ -509,7 +509,7 @@ html {
 		} #header .userControl .signIn:hover .loginForm {display: block}
 		
 		#header .userControl input {width: 183px}
-		#header .userControl input[type="text"] {margin-bottom: 7px}
+		#header .userControl .username {margin-bottom: 7px}
 		#header .userControl button {
 			background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB8AAAAbCAYAAAHzOGS5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAcxJREFUeNpi/P//PwMyYLp8+fISFAEgjgYzbHf/hwmAwb/DrowgGiCAGDHMYEADTFD9H4DYEqsWgABiuHTpkgtIEBdmASraAMQ8MKOA1HQgrgS6Am4HN5KB10CSyDYABBCmndhcST0FoPACYoImoDiKBU2SEV01QV8ABBDD8ePHpfGFJCHMws3NHQE0qBfDd2iegaYBrKEQh8NxxxiIACAD9HDIaUFDDIbNyIooIOiDhu4pbJIsuHQB/StArBcoAgABRDie8dl+4sQJGbI1KykpaZCrmYWLi0sfSO8hlHCwJR5QqBsSoxBXlOlg9Y/tbpDu3fgMBEWXMg6DdwHxT1jJgyuuefC4jA2IPwPxSUoSChtJyRQKfgGxGBB/JNVmTyBmx6URnDw/f/78n4eHh5GsFEZJxqBIM0CAMW7fvh0cVR4eHl8Y6AxYpKWlldjZ2UFhdpHeloOCTVdKSkqHYQAAKJ0aQMvbpQRdiqO0oKRgMCDFtcQYSorPSSpMoU0bfiBeD8RlQHyHXEeC4lwGikkFgUB8G1rHPgfiZLrmUyQgAcRzkCr8cHpa/gKIU6AJF4RXEhvn5IKtQFyAK86pbjk0EQlQs5AZMDCglgMA6siyaq2D6gYAAAAASUVORK5CYII=');
 			position: absolute;
@@ -519,6 +519,39 @@ html {
 			bottom: 9px;
 			right: 8px;
 		}
+
+#overlayHeader {
+	position: fixed;
+	top: 0;
+	left: 50%;
+	margin-left: -500px;
+	background: url('/i/overlay-bg.png') no-repeat top left;
+	width: 1000px;
+	z-index: 999;
+	min-height: 25px;
+	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.8);
+	-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.8);
+	box-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+	#overlayHeader .siteLogo {
+		background: none;
+		height: 25px;
+		left: 0;
+		overflow: hidden;
+		padding: 0;
+		text-indent: -999px;
+		top: 0;
+		width: 120px;
+	}
+	#overlayHeader .menu {right: 0; left: auto}
+	#overlayHeader .menu a {
+		height: 25px;
+		line-height: 25px;
+		font-size: 10px;
+	}
+	#overlayHeader .menu ul {top: 25px}
+	#overlayHeader .menu ul a {line-height: 16px; height: 16px;}
+
 #siteFooter {
 	background: #2c2c29 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABHCAIAAAE+cYo5AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAHlJREFUeNpicndzYfr79y8Q/2H68weZhuB///4CBBCTm6sTmI0q/weq5h9QzT+AAGJyd3MG0v+Z/v3/x/T/3z8IG0TD+f8w5P+D2P9BYv/BNMP//wABxgRyD5jNABGDYAYEmwGi7v9/HPJY1TBgNRPOZ2CAqoeJgWkAEFazm5k4EgUAAAAASUVORK5CYII=') repeat-x top left;
 	border-right: 1px solid #252522;
