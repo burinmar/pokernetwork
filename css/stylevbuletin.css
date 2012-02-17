@@ -10,8 +10,8 @@ body {
 	margin: 0 auto;
 	padding: 0
 }
-#header *, #siteFooter * {margin: 0; padding: 0; font: 12px/16px Arial, Helvetica, sans-serif;}
-#header a, #siteFooter a {text-decoration: none; outline: none; color: #0050bd}
+#header *, #siteFooter * {margin: 0; padding: 0; font-size: 12px; font-family: Arial, Helvetica, sans-serif; line-height: 18px;}
+#header a, #siteFooter a {text-decoration: none; outline: none}
 #header a:hover, #siteFooter a:hover {color: #000}
 #header ul, #siteFooter ul {list-style: none}
 .clrfix {display: block;}
@@ -56,50 +56,51 @@ body {
 			top: 14px;
 			width: 261px;
 		}
-		#menu {
+		.menu {
 			position: absolute;
 			bottom: 0;
 			left: 0;
 		}
-			#menu a {
+			.menu a {
 				display: block;
 				font-size: 13px;
 				font-weight: bold;
-				padding: 0 10px;
+				padding: 0 10px !important;
 			}
-			#menu > li {float: left; position: relative;}
-			#menu > li > a {
+			.menu > li {float: left; position: relative;}
+			.menu > li > a {
 				color: #d4e7ff;
-				line-height: 42px;
+				line-height: 42px !important;
 				height: 42px;
 				text-transform: uppercase;
 				position: relative;
 				z-index: 1;
 			}
-			#menu > li.on > a {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAAEhL4UpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACRJREFUeNpiYGBgsAEIICBmcAAIIEYoiwUggMA8JhAJEGAoQgAfgwFBRpJ3IgAAAABJRU5ErkJggg==');}
-			#menu > li:hover > a {
+			.menu > li.on > a {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAAEhL4UpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACRJREFUeNpiYGBgsAEIICBmcAAIIEYoiwUggMA8JhAJEGAoQgAfgwFBRpJ3IgAAAABJRU5ErkJggg==');}
+			.menu > li:hover > a {
 				background: #fff;
 				color: #0050bd;
 			}
-			#menu ul {
+			.menu ul {
 				display: none;
 				position: absolute;
 				top: 42px;
 				left: 0;
 				background: #fff;
-				padding: 5px 0;
+				padding: 5px 0 !important;
 				min-width: 150px;
 				-moz-box-shadow: 0 0 7px #000;
 				-webkit-box-shadow: 0 0 7px #000;
 				box-shadow: 0 0 7px #000;
-			} #menu > li:hover ul {display: block}
-				#menu ul a {
-					line-height: 21px;
+			} .menu > li:hover ul {display: block}
+				.menu ul a {
+					line-height: 21px !important;
 					white-space: nowrap;
+					color: #0050BD;
 				}
-				#menu ul a:hover {
+				.menu ul a:hover {
 					background: #0050bd;
-					color: #fff;
+					color: #fff !important;
 				}
 		#header .search {
 			position: absolute;
@@ -249,3 +250,35 @@ body {
 			color: #3c85ea;
 			font-weight: bold;
 		}
+#overlayHeader {
+	display: none;
+	position: fixed;
+	top: 0;
+	left: 50%;
+	margin-left: -500px;
+	background: url('/i/overlay-bg.png') no-repeat top left;
+	width: 1000px;
+	z-index: 999;
+	min-height: 25px;
+	-moz-box-shadow: 0 0 5px rgba(0,0,0,0.8);
+	-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.8);
+	box-shadow: 0 0 5px rgba(0,0,0,0.8);
+}
+	#overlayHeader .siteLogo {
+		background: none;
+		height: 25px;
+		left: 0;
+		overflow: hidden;
+		padding: 0;
+		text-indent: -999px;
+		top: 0;
+		width: 120px;
+	}
+	#overlayHeader .menu {right: 0; left: auto}
+	#overlayHeader .menu a {
+		height: 25px;
+		line-height: 25px;
+		font-size: 10px;
+	}
+	#overlayHeader .menu ul {top: 25px}
+	#overlayHeader .menu ul a {line-height: 16px; height: 16px;}
