@@ -1284,3 +1284,67 @@ html {
 		top: 4px;
 		right: 10px;
 	}
+.myAlertsList {
+	border-bottom: 1px solid #fff;
+	margin: 0 -10px 20px;
+	padding: 0 10px;
+}
+.myAlertsList li {
+	position: relative;
+	font-size: 11px;
+}
+	.myAlertsList .remove {
+		position: absolute;
+		top: 0;
+		right: 0;
+		font-size: 14px;
+	}
+	.myAlertsList p {margin: 0;}
+	.myAlertsList a {
+		display: block;
+		margin-bottom: 10px;
+		font-weight: bold;
+	}
+
+.roomsAlert {
+	margin-bottom: 15px;
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAIAAAFh5BHmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABNJREFUeNpiunHtOECAMX3+9BoAFJcFSqKVBzcAAAAASUVORK5CYII=') repeat-x bottom left;
+	padding-bottom: 15px;
+	position: relative;
+	z-index: 10;
+}
+	.roomsAlert .grayButton {
+		width: 182px;
+	}
+	.roomsAlert .grayButton:after {
+		content: '';
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAHCAYAAAGkd/eMAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAJFJREFUeNpiZAjYm8zAwDAHIIAYgYz/QIYqQACBGECaYTsQbwLi6QABBJMBAyYgZoSyGQECCKZ0AhDnMyCAMxDvY4JyCqA6KqH0PpAgQAChmIkEXiObDwO/gFgMZhw7kgQ7zEVwVci6AQIM5roKIG5nwA++A7EDEJ+CmdYBNWkZDg3RQMwF0oDsBKySQNCKzTAAEbkcEefq+TQAAAAASUVORK5CYII=');
+		width: 13px;
+		height: 7px;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+	}
+	.roomsAlert .popup {
+		display: none;
+		position: absolute;
+		top: 26px;
+		left: 0;
+		width: 202px;
+		background: #ececec;
+		border: 1px solid #a9a89f;
+		border-top: 0 none;
+		padding: 10px 10px 5px;
+	}
+	.roomsAlert .popup table {
+		width: 100%;
+		margin-bottom: 10px;
+	}
+	.roomsAlert .popup td {
+		padding-bottom: 5px;
+		font-size: 11px;
+		color: #000;
+		vertical-align: middle;
+	}
+	.roomsAlert:hover .grayButton {background: #ececec;}
+	.roomsAlert:hover .popup {display: block;}
