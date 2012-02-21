@@ -73,9 +73,9 @@ var linksHeading = "Links";
 			<a href="/">Home</a>
 			<%loop{breadcrumb}%>
 				<%if{url}%>
-				 &rsaquo; <a href="{url}"{class-current}>{title}</a>
+				 &rsaquo; <a href="{url}">{title}</a>
 				<%else{url}%>
-				 &rsaquo; <span{class-current}>{title}</span>
+				 &rsaquo; <span>{title}</span>
 				<%end%>
 			<%end%>
 	</div>

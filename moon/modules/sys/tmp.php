@@ -8,6 +8,7 @@ class tmp extends moon_com {
 		
 		$page = & moon :: page();
 		$page->css('/css/article.css');
+		$page->css('/css/landing.css');
 		//$page->set_local('nobanners', 1);
 		
 

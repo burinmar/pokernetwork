@@ -14,6 +14,7 @@ ul {list-style: none}
 .hide {display: none}
 table {border-collapse: collapse}
 td {vertical-align: top}
+.vab {vertical-align: bottom}
 th {text-align: left; font-weight: normal}
 p {margin-bottom: 10px; color: #000}
 .noMarginBottom {margin-bottom: 0 !important}
@@ -23,7 +24,7 @@ input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
 input[type="checkbox"] {vertical-align: middle}
 button, input[type="submit"] {cursor: pointer}
-#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li {zoom: 1;}
+#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li {zoom: 1;}
 
 /*Global*/
 .meta {
@@ -195,6 +196,13 @@ textarea {
 	resize: vertical;
 	overflow: auto;
 }
+select {
+	padding: 4px;
+	border: 1px solid #0037ab;
+	border-radius: 4px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+}
 .error {
 	color: red;
 	margin-bottom: 7px;
@@ -242,6 +250,19 @@ a.bigButton {
 		background-position: top left;
 		color: #0050bd;
 	} .whiteButton:before {background-position: top right}
+.grayButton {
+	display: inline-block;
+	line-height: 25px;
+	height: 25px;
+	padding: 0 20px;
+	border: 1px solid #a9a89f;
+	background: #003ba8 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAZCAIAAAEI9eO+AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAE9JREFUeNpi+vz5M9OfP3+Yvn79ygRkAwQQ08ePH5l+//4NogECiOnTp09M//79A+Nfv34x/fz5E4QBAgys7v///3AMkgfRf//+BZuFRgMAPgJJZYwkD/AAAAAASUVORK5CYII=') repeat-x top left;
+	color: #0050bd;
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: uppercase;
+	position: relative;
+} .grayButton:hover {color: #0050bd}
 /*Layout*/
 html {
 	font: 12px/16px Arial, Helvetica, sans-serif;
@@ -330,8 +351,8 @@ html {
 	z-index: 2;
 	font-weight: bold;
 }
-	.path a, .path span {color: #0050bd; display: inline-block; vertical-align: text-top}
-	.path .current {color: inherit}
+	.path a, .path span {display: inline-block; vertical-align: text-top}
+	.path a {color: #0050bd}
 .pageIntro {
 	margin-bottom: 30px;
 }
@@ -1162,3 +1183,104 @@ html {
 	padding-top: 20px;
 	margin-top: 20px
 }
+
+/*Tournaments*/
+.tournamentsFilter {margin-bottom: 25px}
+	.tournamentsFilter th, .tournamentsFilter td {padding-right: 20px;}
+	.tournamentsFilter th {
+		text-transform: uppercase;
+		font-weight: bold;
+	}
+	.tournamentsFilter select {
+		min-width: 160px;
+		border-color: #ccc;
+	}
+
+.tournaments .button {
+	padding: 0 34px 0 20px;
+	position: relative;
+	margin-right: 10px
+}
+	.tournaments .button:after {
+		content: '';
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAKCAYAAAH+wC8WAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAIdJREFUeNpi+P//fxcDkHgFEEAggoGJAQgAAgjE+gDE/wECiBEkBAIsQAxi/QXJC4AEAAIIrgYIPMDKkATOgwQAAggkIARiwDADVPYGTABkPMR8COiGqQABe5iWXmQzAAIMZgsIFwExG7IkujOQwXYg1sKnAASWArEcsoK3QJyMzQo5dEFkDACrQPcLrc9O1gAAAABJRU5ErkJggg==');
+		width: 8px;
+		height: 10px;
+		position: absolute;
+		top: 7px;
+		right: 20px;
+	}
+.tournaments .more2 {display: inline-block}
+
+.specFreerolls {}
+	.specFreerolls li {
+		border-bottom: 1px solid #d8d6c7;
+		margin-bottom: 15px;
+		padding-bottom: 15px;
+		position: relative;
+	}
+	.specFreerolls li .roomLogo {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+	.specFreerolls table {
+		margin-bottom: 20px;
+		width: 100%;
+		color: #000;
+	}
+	.specFreerolls .title {
+		font-size: 16px;
+		margin-bottom: 20px;
+	}
+	.specFreerolls .vab p {margin-bottom: 5px}
+	.specFreerolls .vab .grayButton {
+		width: 84px;
+		padding-left: 33px;
+	}
+	.specFreerolls .vab .grayButton:after {
+		content: '';
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAAEhcmxxAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAQpJREFUeNpiZAjYywAEfkwMELARIIAYgCLtIF4FQAAxAlmWQMYxID4LEECMUIVngNiEBUj8B2JDEA3TeR6I/wIEEEzZHyBmBmJbID4MxFtBqqKgggxQQRDwBkksA2JJBgR4CsSMAAEEM0oRiGcC8SMgTgEJgHTYA/E9IOYE4mSoa8ASB6BG/AI5GojfgfzEgmS2ExJbEaRjDQMmCAVJhALxemRBIL4JEGAwV4FAAhBPBmIeID4CxJVI/toBxHFA/JoF6ukbQKzCgBt4APErII4AWR2LRfELIL4ACn0o3gEVbwTZsA+LiSFQjA72MUFDUwyI7zPgB1kgDAu/10CsBGVLQ8MSFAN30F0AAGfnNZgGlT49AAAAAElFTkSuQmCC');
+		width: 12px;
+		height: 12px;
+		position: absolute;
+		top: 7px;
+		right: 25px;
+	}
+	.specFreerolls .grayButton.removeAlert {
+		color: #543333;
+		padding-left: 22px;
+		width: 95px;
+	}
+	.specFreerolls .grayButton.removeAlert:after {
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAAGXljaGAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALBJREFUeNpiDDE2ZgABJiAWBDEAAogBJALiMQAEECNU7j+IDRBAMI4gSGomECuBGLOAOA0ggEBSHUBGORALAfE7IFYGyXYyQMBMKH0PIIBAKkGWvIcKgO0BKU8D4jMgNgvILqidIFVCTFCZ91D3pTHBZKAqGQACDGQoyGm7gbgC6iYGqGqQ2FkgTmeCMlZDnQMy/y7UciWYJiaozgqoYgaoJIoYzP8wnSZQd8xCMlkJAMGNJe55ujEaAAAAAElFTkSuQmCC');
+		width: 9px;
+		height: 9px;
+		top: 7px;
+		right: 18px;
+	}
+	.specFreerolls .paddingTop td {
+		padding-top: 15px;
+	}
+	.specFreerolls .timeLeft {
+		color: #fff;
+		font-size: 11px;
+		line-height: 14px;
+		padding: 2px 5px;
+		background: #a92712;
+		font-weight:  bold;
+		margin-left: 10px;
+		text-transform: uppercase;
+	}
+	.specFreerolls .timeLeft.alreadyStarted {background: #119b07;}
+	.specFreerolls .nopromoPicture .grayButton {
+		line-height: 18px;
+		height: 18px;
+		margin-left: 15px;
+		padding: 0 30px 0 15px;
+		width: auto;
+	}
+	.specFreerolls .nopromoPicture .grayButton:after {
+		top: 4px;
+		right: 10px;
+	}
