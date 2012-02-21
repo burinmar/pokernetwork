@@ -24,7 +24,7 @@ input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
 input[type="checkbox"] {vertical-align: middle}
 button, input[type="submit"] {cursor: pointer}
-#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li {zoom: 1;}
+#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li, .myAlertsList li {zoom: 1;}
 
 /*Global*/
 .meta {
