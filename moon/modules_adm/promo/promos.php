@@ -464,7 +464,7 @@ class promos extends base_inplace_syncable
 
 	public function updates()
 	{
-		if ('com'==_SITE_ID_ ) {
+		if ('com'==base_inplace_syncable::_SITE_ID_) {
 			return array();
 		}
 		// index
