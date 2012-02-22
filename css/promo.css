@@ -146,36 +146,6 @@
 #promo .schedule, #promo .tournaments {margin-bottom: 30px;}
 
 
-.promoList ul {
-	list-style: none;
-	margin: 0 -10px 20px;
-}
-
-.promoList .activePromo li {
-	border-bottom: 1px dotted #BEC5C9;
-	margin-bottom: 20px;
-	padding: 0 20px 20px;
-}
-
-.promoList .activePromo li .promoTitle,
-.promoList .activePromo li em,
-.promoList .activePromo li p {padding-left: 135px;}
-
-.promoList .activePromo li .promoTitle {
-	font-size: 18px;
-	display: block;
-	margin-bottom: 10px
-}
-
-.promoList .activePromo em {
-	display: block;
-	font-size: 14px;
-	color: #5d5d5d;
-	margin-bottom: 20px;
-}
-
-.promoList .activePromo em span {color: #0098d9}
-
 #promo .leaders-column {width: 300px;}
 #promo .updated {
 	font-size: 11px;
@@ -211,3 +181,39 @@
 #promo .tournaments-column {width: 540px;}
 .event-room {display: none}
 #promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
+
+
+.promoList ul {
+	list-style: none;
+	margin: 0 -10px;
+}
+
+.promoList .activePromo li {
+	border-top: 1px dotted #BEC5C9;
+	margin-top: 20px;
+	padding: 20px;
+}
+.promoList .activePromo li:first-child {
+	border-top: 0 none;
+	margin-top: 0;
+	padding: 0 20px 0;
+}
+
+.promoList .activePromo li .promoTitle,
+.promoList .activePromo li em,
+.promoList .activePromo li p {padding-left: 135px;}
+
+.promoList .activePromo li .promoTitle {
+	font-size: 18px;
+	display: block;
+	margin-bottom: 10px
+}
+
+.promoList .activePromo em {
+	display: block;
+	font-size: 14px;
+	color: #5d5d5d;
+	margin-bottom: 20px;
+}
+
+.promoList .activePromo em span {color: #0098d9}
