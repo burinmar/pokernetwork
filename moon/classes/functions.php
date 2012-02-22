@@ -352,4 +352,19 @@ function geo_zones()
 	return $z;
 }
 
+function getInteger($i) {
+	if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
+		return intval($i);
+	} else {
+		return NULL;
+	}
+}
+
+function array_get_del(&$array, $key)
+{
+	$value = $array[$key];
+	unset($array[$key]);
+	return $value;	
+}
+
 ?>

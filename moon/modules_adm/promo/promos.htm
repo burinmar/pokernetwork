@@ -1,0 +1,283 @@
+<% messages %>
+e.entry_not_found=Entry not found
+e.invalid_id=Invalid id
+e.save_error=Save error
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.empty_title=Title is empty
+e.empty_alias=Uri is empty
+e.alias_duplicate=Duplicate uri
+e.bad_date_start=Bad start date
+e.bad_date_end=Bad end date
+
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add item</a></div>
+</div>
+
+<%if {show_sync} %><div class="n sync"><a href="javascript:;" id="sync_promos">Synchronize promotions</a></div><%end%>
+
+<%if {filter} %>{filter}<% end %>
+
+<table class="list">
+	<colgroup>
+		<col style="width: 20px" />
+		<col style="width: 75px" />
+		<col style="width: 75px" />
+		<col />
+		<col style="width: 120px" />
+		<col style="width: 40px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<th> </th>
+		<th><span>Start date</span></th>
+		<th><span>End date</span></th>
+		<th><span>Title</span></th>
+		<th><span>Room</span></th>
+		<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
+	</tr>
+	</thead>
+	<tbody>
+	{list.entries}
+	</tbody>
+</table>
+<br />
+{paging}
+<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
+
+
+<% if {synced_notice} %>
+	<div class="explain">Some entries are imported from an external source. Such entries are marked with special icons:<br/>
+	<span class="sync1" title="Status: up to date"></span> - the entry is up to date,<br/>
+	<span class="sync2" title="Status: needs attention"></span> - the entry was updated, so you have to check it and update.</div>
+<% end %>
+
+
+<script type="text/javascript">
+	var js_action_delete = '{event.delete}';
+</script>
+<form method="post" id="js-action-form" action="{!action}">
+	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
+	<input type="hidden" name="event" value="" id="js-action-form-event" />
+</form>
+
+<% list:entries.item %>
+<tr class="{class}">
+	<td><%if{synced}%><span class="sync{sync_state}"></span><%end%></td>
+	<td>{date_start}</td>
+	<td>{date_end}</td>
+	<td>
+		<a href="{url}" ><%if {name} %>{name}<%else{name}%>&mdash;<%end%></a>
+		<%if {page_previews} %><div class="explain">Page preview: <%loop {page_previews += list:entries.page_previews.item} %><a href="{url}" target="_blank">{title}</a>; <%end%></div><%end%>
+	</td>
+	<td>{room}</td>
+	<td><% if {deletable} %><input type="checkbox" class="row-mark" id="row:{id}" /><% end %></td>
+</tr>
+
+
+
+
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<h2 class="formTitle">Entry :: {title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	
+	<dl>
+		<dt><label>Title</label></dt>
+		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" />
+		<%if {url.preview} %><div class="explain"><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%></dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
+
+ 		<dt><label>Uri</label></dt>
+		<dd>/promos/ <input type="text" maxlength="{form.alias.maxlen}" size="50" class="required" name="alias" value="{entry.alias}" onfocus="fillUri(this,'entry-title')" /> /</dd>
+		<%if {url.view_promo} %><dd class="explain"><a href="{url.view_promo}" target="_blank">View this promo</a></dd><%end%>
+
+		<dt><label>Room</label></dt>
+		<dd><select name="room_id">
+				<% loop {form.rooms += entry:rooms.item} %>
+				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+				<% end %>
+			</select></dd>
+			
+ 		<dt><label>Start date</label></dt>
+		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="date_start" value="{form.date_start}" /></dd>
+ 		<dt><label>End date</label></dt>
+		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-end" name="date_end" value="{form.date_end}" /></dd>
+		<dt><label>Timezone</label></dt>
+		<dd><select name="timezone">
+				<% loop {form.timezones += entry:timezones.item} %>
+				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+				<% end %>
+			</select></dd>
+
+ 		<dt><label>Prize value</label></dt>
+		<dd><input type="text" maxlength="{form.prize.maxlen}" size="50" name="prize" value="{entry.prize}" /></dd>
+		<dt><label>Currency</label></dt>
+		<dd><select name="currency">
+				<% loop {form.currency += entry:currency.item} %>
+				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+				<% end %>
+			</select></dd>
+
+		<dt><label>Skin</label></dt>
+		<dd>/img/promo/<input type="text" maxlength="{form.skin_dir.maxlen}" size="40" name="skin_dir" value="{entry.skin_dir}" />/style.css</dd>
+
+		<%if {form.is_master} %><dt><label>Sites</label></dt>
+		<dd>
+			<fieldset style="border: 1px solid #ccc">
+				<legend><input type="checkbox" id="sites-all" value="1" onclick="checkAllLangs();"/> <label for="sites-all">Check all sites</label></legend>
+				<div id="sites-all-cnt">
+				<table style="width: 100%"><tr>
+					<td valign="top"><%loop {languages0 += entry:sites.item} %>
+						<input type="checkbox" id="site-{value}" name="sites[]" value="{value}" <%if {selected} %>checked="checked"<%end%> /><label for="site-{value}">{name}</label><br/>
+					<%end%></td>
+					<td valign="top">{languages1}</td>
+					<td valign="top">{languages2}</td>
+					<td valign="top">{languages3}</td>
+					</tr>
+				</table>
+			</div>
+			</fieldset>
+		</dd><%end%>
+
+		<dt><label>List description</label></dt>
+		<dd class="w100"><textarea name="descr_list" cols="105" rows="2" id="descr_list">{entry.descr_list}</textarea></dd>
+
+		<dt><label>Intro text</label></dt>
+		<dd class="w100"><textarea name="descr_intro" cols="105" rows="2" id="descr_intro">{entry.descr_intro}</textarea></dd>
+
+		<dt><label>Prize description</label></dt>
+		<dd class="w100"><textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea></dd>
+
+		<dt><label>Terms and conditions</label></dt>
+		<dd class="w100">{entry.terms_conditions.toolbar}<textarea name="terms_conditions" cols="105" rows="15" id="terms_conditions">{entry.terms_conditions}</textarea></dd>
+
+		<dt><label>Leaderboard description</label></dt>
+		<dd class="w100"><textarea name="lb_descr" cols="105" rows="3">{entry.lb_descr}</textarea></dd>
+
+		<dt><label>Leaderboard</label></dt>
+		<dd style="margin-bottom: 2px"><input type="checkbox" name="lb_auto" id="lb_auto" value="{form.lb_auto}" /> <label for="lb_auto">Calculate leaderboard automatically</label></dd>
+
+		<dt class="lb_auto_dep"><label>Leaderboard Results Columns</label></dt>
+		<dd class="lb_auto_dep w100"><input type="text" maxlength="form.lb_columns.maxlen}" size="50" class="width60" name="lb_columns" value="{entry.lb_columns}" />
+			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
+				"*" at the beginning of column name marks Player Name, "+" marks Player Points.
+			</div></dd>
+
+		<dt><label>Meta description</label></dt>
+		<dd class="w100"><input type="text" maxlength="{form.descr_meta.maxlen}" size="50" name="descr_meta" value="{entry.descr_meta}" /></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+<script type="text/javascript">
+function cToggleByCheckboxI(ctrl, dep) {
+	if (!$(ctrl)[0].checked) {
+		$(dep).show();
+	} else {
+		$(dep).hide();
+	}
+}
+$(document).ready(function(){
+	jQuery('#lb_auto').click(function(){
+		cToggleByCheckboxI('#lb_auto', '.lb_auto_dep');
+	});
+	cToggleByCheckboxI('#lb_auto', '.lb_auto_dep');
+});
+</script>
+
+
+<% entry:slaveMain %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="remote_id" value="{entry.remote_id}" />
+	<h2 class="formTitle">Entry :: {title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+
+	<p><span class="sync1"></span>This entry is synchronized. You must ensure that your translation will correspond to the original.</p>
+
+	<dl>
+		
+		<dt><label>Title</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_title}</div>
+			<input type="text" maxlength="60" size="50" class="width60 required" name="title" id="entry-title" value="{entry.title}" />
+			<%if {url.preview} %><div class="explain"><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%>
+		</dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item </label></dd>
+
+		<dt><label>List description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_descr_list}</div>
+			<textarea name="descr_list" cols="105" rows="2" id="descr_list">{entry.descr_list}</textarea>
+		</dd>
+
+		<dt><label>Intro text</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_descr_intro}</div>
+			<textarea name="descr_intro" cols="105" rows="2" id="descr_intro">{entry.descr_intro}</textarea>
+		</dd>
+
+		<dt><label>Prize description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_descr_prize}</div>
+			<textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea>
+		</dd>
+
+		<dt><label>Terms and conditions</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_terms_conditions}</div>
+			{entry.terms_conditions.toolbar}<textarea name="terms_conditions" cols="105" rows="15" id="terms_conditions">{entry.terms_conditions}</textarea>
+		</dd>
+
+		<dt><label>Meta description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_descr_meta}</div>
+			<input type="text" maxlength="{form.descr_meta.maxlen}" size="50" name="descr_meta" value="{entry.descr_meta}" />
+		</dd>
+
+		<dt><label>Leaderboard description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_lb_descr}</div>
+			<textarea name="lb_descr" cols="105" rows="3">{entry.lb_descr}</textarea>
+		</dd>
+
+		<%if {form.not_lb_auto} %>
+		<dt><label>Leaderboard Results Columns</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_lb_columns}</div>
+			<input type="text" maxlength="50" size="50" class="width60" name="lb_columns" value="{entry.lb_columns}" />
+			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
+				"*" at the beginning of column name marks Player Name, "+" marks Player Points.
+			</div></dd>
+		<%else {form.not_lb_auto} %>
+		<input type="hidden" name="lb_columns" value="{entry.lb_columns}" />
+		<%end%>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>

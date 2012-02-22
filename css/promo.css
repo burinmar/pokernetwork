@@ -1,0 +1,221 @@
+#promo {
+	background: #000;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	margin-top: 20px;
+	color: #fff;
+	padding-bottom: 40px;
+	width: 960px;
+	margin-left: 10px
+}
+#promo a {text-decoration: underline}
+#promo table {
+	border-collapse: collapse;
+	width: 100%;
+}
+#promo .head {
+	margin-bottom: 40px;
+	min-height: 240px;
+	padding-left: 40px;
+	width: 540px;
+	padding-top: 60px;
+}
+#promo .head h1 {
+	font-size: 42px;
+	line-height: 48px;
+	margin-bottom: 12px;
+}
+#promo .head p {
+	font-size: 24px;
+	line-height: 24px;
+}
+#promo .menu {
+	list-style: none;
+	background: #fff;
+	margin-bottom: 40px;
+	display: block;
+	clear: both;
+	height: 43px;
+}
+#promo .menu li {
+	display: block;
+	float: left;
+	height: 43px;
+}
+#promo .menu a {
+	display: block;
+	font-size: 18px;
+	color: #000;
+	line-height: 43px;
+	text-decoration: none;
+	display: inline-block;
+	padding: 0 20px;
+}
+#promo .prize {
+	padding: 0 40px 40px;
+	border-bottom: 1px dotted #fff;
+	margin:0 -40px 40px;
+}
+#promo .prize img {margin: 0 25px 10px 0}
+#promo .prize p,
+#promo .content p {margin-bottom: 10px}
+#promo .content {padding: 0 40px;}
+#promo .content h2 {
+	font-size: 24px;
+	margin-bottom: 20px;
+}
+#promo .content ul,
+#promo .content ol {
+	margin-bottom: 20px;
+	margin-left: 40px;
+}
+#promo .nowrap {white-space: nowrap}
+#promo .timezone {
+	font-size: 10px;
+	opacity: 0.5;
+}
+/*Tournament Column*/
+#promo th.tar {text-align: right !important}
+#promo table th {
+	padding: 0px 15px;
+	line-height: 40px;
+	font-weight: normal;
+	text-align: left;
+	font-size: 14px
+	white-space: nowrap
+}
+#promo table td {
+	padding: 10px 15px;
+	vertical-align: top;
+}
+
+#promo table tr:last-child td {border: 0px none;}
+#promo table .password {
+	background: #fff9c4;
+	padding: 1px 5px;
+	color: #000;
+}
+#promo .content .paging {margin-bottom: 40px}
+#promo .content .paging a {color: #000; text-decoration: none !important}
+#promo .content .paging a:hover {color: #fff}
+#promo .paging .page, #promo .paging .prev, #promo .paging .next {background-image: url('/img/promo/paging.png') !important}
+#promo input[type="submit"] {
+	background: #fff;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	border: 0px none;
+	padding: 3px 10px;
+	margin-left: 15px;
+}
+#promo input[type="text"] {
+	background: #fff;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	border: 0px none;
+	border-top: 1px solid #3a3a3a;
+	border-left: 1px solid #828282;
+	padding: 3px 10px;
+}
+#promo .search-form {width: 440px}
+#promo form {background: url('/img/promo/form-sep.png') no-repeat center right; width: 440px}
+#rr-hidden {color: #fff; font-size: 10px; background-color: #F62A33; padding: 2px 5px; position: relative; top: 38px; display: inline; z-index:2; left: 10px}
+#promo .usertable {margin-bottom: 20px}
+#promo .usertable td {padding: 10px}
+#promo .archive {
+	border-top: 1px dotted;
+	margin: 10px -40px 0;
+	padding: 30px 40px 0;
+}
+#promo .noborder {
+	border-top: 0px !important;
+	margin: 0 !important;
+	padding: 0 !important;
+}
+#promo #show-archive {
+	text-decoration: none;
+	border-bottom: 1px dashed;
+}
+#promo .month {
+	font-size: 23px;
+	line-height: 24px;
+	margin-bottom: 10px;
+}
+
+#promo .justArchive .month {font-size: 16px}
+#promo .schedule, #promo .tournaments {margin-bottom: 30px;}
+
+
+.promoList ul {
+	list-style: none;
+	margin: 20px -20px;
+}
+
+.promoList .widgetTitle {margin-bottom: 10px}
+
+.promoList .activePromo li {
+	border-bottom: 1px dotted #BEC5C9;
+	padding: 20px;
+	margin: 0 11px;
+}
+
+.promoList .activePromo li .promoTitle,
+.promoList .activePromo li em,
+.promoList .activePromo li p {padding-left: 135px;}
+
+.promoList .activePromo li .promoTitle {
+	font-size: 18px;
+	display: block;
+	margin-bottom: 10px
+}
+
+.promoList .activePromo em {
+	display: block;
+	font-size: 14px;
+	color: #5d5d5d;
+	margin-bottom: 20px;
+}
+
+.promoList .activePromo em span {color: #0098d9}
+
+.overPromo {margin-bottom: 0px !important;}
+
+.overPromo li {padding:0 0 5px 20px;}
+
+#promo .leaders-column {width: 300px;}
+#promo .updated {
+	font-size: 11px;
+	color: #ccc;
+	line-height: 11px;
+}
+#promo .switcher {
+	margin-bottom: 1px;
+}
+#promo .switcher em {
+	padding: 0 10px;
+	color: #93a19b;
+}
+#promo .switcher a {
+	display: inline-block;
+	background: #fff;
+	padding: 6px 11px;
+	margin-right: 1px;
+	text-decoration: none;
+	color: #000 !important;
+}
+#promo .leaders {margin-bottom: 5px;}
+#promo .leaders td {
+	padding: 5px 15px 5px 0;
+	vertical-align: top;
+}
+#promo .leaders .nr {
+	padding-left: 15px;
+	width: 10px;
+}
+#promo .more {padding-left: 15px;}
+
+#promo .tournaments-column {width: 540px;}
+.event-room {display: none}
+#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}

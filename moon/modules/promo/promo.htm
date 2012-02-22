@@ -1,0 +1,172 @@
+<% all:menuTitles %>
+index={!home}
+schedule={!schedule}
+results={!results}
+terms-and-conditions={!terms}
+
+
+<% all:main %>
+<div id="promo">
+<div class="background">
+	<div class="head">
+		<h1>{title}</h1>
+		{intro}
+	</div>
+	<ul class="menu"><%loop {menu += all:menu.item} %>
+		<li<%if{active}%> class="active"<%end%>><a href="{url}">{title}</a></li><%end%>
+	</ul>
+	<div class="content{class}">
+		{content}
+	</div>
+</div>
+</div>
+
+
+<% content:index %>
+<div class="prize">{description}</div>
+<div class="tournaments-column fl">{schedule}</div>
+<div class="leaders-column fr">{leaderboard}</div>
+<br style="clear:both" />
+
+
+<% index:leaderboard %>
+<div class="leaders-column fr">
+	<h2>{!leaders}<%if{updated}%> <em class="updated">{!updated} {updated}</em><%end%></h2>
+	<%if{period}%><div class="switcher"><em>{!period}</em> <%insert{period}%><a <%if{id}%> id="b{id}"<%end%>href=""<%if{active}%> class="active"<%end%>>{nr}</a><%end%></div><%end%>
+	<table class="leaders">
+	<%loop{rows += index:leaderboard.row}%>
+		<tr>
+			<td class="nr">{place}.</td>
+			<td>{nick}</td>
+			<td class="tar nowrap">{points} {!pts}</td>
+		</tr>
+	<%end%>
+	</table>
+	<p><a href="{url.results}" class="more">{!all}</a></p>
+</div>
+<span class="clr"></span>
+
+
+<% index:schedule %>
+<h2>{!tour}</h2>
+<table class="tournaments schedule">
+	<colgroup>
+		<col width="100"/>
+		<col/>
+		<%if{pwdCol}%><col/><%end%>
+		<col/>
+	</colgroup>
+	<tr>
+		<th><em class="timezone">{tzName}</em></th>
+		<th>{!events}<%if {events_left} %><span class="left-events">{events_left}</span><%end%></th>
+		<%if{pwdCol}%><th>{!password}</th><%end%>
+		<th class="tar nowrap">{!buyin}</th>
+	</tr>
+	<%loop {events += index:month.event} %>
+	<tr<%if{live}%> class="live"<%end%>>
+		<td>{date}, {time}
+			<%if{live}%> <em>{!live}</em><%end%>
+		</td>
+		<td class="event-title">
+			<%if{url}%><a href="{url}" name="{id}">{title}</a><%else{url}%><a name="{id}"></a>{title}<%end%>
+			<%if{room.ico}%><img src="{room.ico}" alt="{room.title}" class="event-room"/><%end%></td>
+		<%if{pwdCol}%><td><%if{pwd}%><span class="password">{pwd}</span><%end%></td><%end%>
+		<td class="tar nowrap buyin">{entryFee}+{fee} {currency}</td>
+	</tr>
+	<%end%>
+</table>
+
+
+<% content:results %>
+<div>{description}</div>
+<br />
+<table class="tournaments results">
+	<tr><%loop {result.headers += results:header} %><th<%if {class} %> class="{class}"<%end%>>{name}</th><%end%></tr>
+	<%loop {result.data.rows += results:data.row} %>
+	<tr>
+		<%loop {result.data += results:data} %><td<%if {class} %> class="{class}"<%end%>>{value}</td><%end%>
+	</tr>
+	<%end%>
+</table>
+{paging}
+<table class="search" style="display:none">
+	<tr><th>{!3}</th></tr>
+	<tr>
+		<td class="search-form">
+			<form action="{!action}" method="get" id="searchForm">
+				<input type="text" name="name" value=""/>
+				<input type="submit" value="{!submit}"/>
+			</form>
+		</td>
+	</tr>
+</table>
+
+<% results:player_not_found %>
+{!err}
+
+
+<% content:schedule %>
+<div <%if {instant_archive} %>class="archive justArchive noborder"<%end%>>
+<%if {instant_archive} %><h2>{!archive}</h2><%end%>
+<%if {list} %><%loop {list += schedule.month} %>
+<h3 class="month">{date}</h3>
+<table class="tournaments schedule">
+	<colgroup>
+		<col width="130"/>
+		<col/>
+		<%if{pwdCol}%><col width="150"/><%end%>
+		<col width="100"/>
+	</colgroup>
+	<tr>
+		<th><em class="timezone">{tzName}</em></th>
+		<th>{!events}</th>
+		<%if{pwdCol}%><th>{!password}</th><%end%>
+		<th class="tar nowrap">{!buyin}</th>
+	</tr>
+	<%loop {events += schedule:month.event} %>
+	<tr<%if{live}%> class="live"<%end%>>
+		<td>{date}, {time}
+			<%if{live}%> <em>{!live}</em><%end%>
+		</td>
+		<td class="event-title">
+			<%if{url}%><a href="{url}" name="{id}">{title}</a><%else{url}%><a name="{id}"></a>{title}<%end%>
+			<%if{room.ico}%><img src="{room.ico}" alt="{room.title}" class="event-room"/><%end%></td>
+		<%if{pwdCol}%><td><%if{pwd}%><span class="password">{pwd}</span><%end%></td><%end%>
+		<td class="tar nowrap buyin">{entryFee}+{fee} {currency}</td>
+	</tr>
+	<%end%>
+</table>
+<%end%><%end%></div>
+<%if {archive} %>
+<div class="archive"><a href="javascript:;" id="show-archive">{!show-archive}</a>
+	<script type="text/javascript">
+		$('#show-archive').click(function(){
+			if (!$('#archive-content').hasClass('loaded')) {
+				$('#archive-content').html('...').addClass('loaded').load('{url.archive}')
+			}
+			$('#archive-content').toggle();
+		});
+	</script>
+	<div id="archive-content" style="display:none; padding-top: 20px;"></div>
+</div>
+<%end%>
+
+
+<% schedule:pwd_pending %>
+{!passReleasedon}
+
+
+<% schedule:no_scheduled_events %>
+All events are over
+
+
+<% content:schedule.results %>
+<table class="tournaments results events">
+	<tr><%loop {result.headers += schedule.results:header} %><th<%if {class} %> class="{class}"<%end%>>{name}</th><%end%></tr>
+	<%loop {result.data.rows += schedule.results:data.row} %>
+	<tr class="event">
+		<%loop {result.data += schedule.results:data} %><td<%if {class} %> class="{class}"<%end%>>{value}</td><%end%>
+	</tr>
+	<%end%>
+</table>
+<a href="{url.schedule}">{!backSchedule}</a>

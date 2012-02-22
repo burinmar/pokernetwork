@@ -47,6 +47,14 @@ Poker Players {ico=players, admin=content}
 		other.twitter_players = Poker Twitters
 		other.twitter_messages = Twitter Messages
 
+Promotions {ico=promotions, admin=tournaments, hide=0, sites=}
+	promo.promos_=Promos {link=promo.promos}
+		promo.promos = Profile {link=promo.promos#edit|*id*}
+		promo.leaderboard = Leaderboard {link=promo.leaderboard#|*id*}
+		promo.schedule = Schedule {link=promo.schedule#|*id*}
+		promo.custom_pages = Custom pages {link=promo.custom_pages#|*id*}
+	promo.rooms=Custom Rooms
+	
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

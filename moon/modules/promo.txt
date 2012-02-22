@@ -1,0 +1,35 @@
+﻿[en]
+
+home=Home
+schedule=Schedule
+results=Results
+terms=Terms & conditions
+general=General
+event=Event
+all=View all
+nodata=There are no data at the moment
+nodata2=There are no tournaments at the moment
+player=Player
+players=Players
+points=Points
+excol=Expand / Collapse
+events=Events
+value=Prize package value:
+archive=Archive
+leagues=Leagues
+sponsored=Sponsored by:
+password=Password
+buyin=Buy-in
+live=Live
+show-archive=Show archive
+tour=Tournaments
+events-left=Events left
+leaders=Leaders
+updated=updated:
+period=Period:
+pts=Pts.
+passReleasedon=Password will be released on {date}
+backSchedule=Back to schedule
+3=Search for player
+submit=Check
+err=Player not found

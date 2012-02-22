@@ -129,7 +129,7 @@ class shared_admin {
 	}
 
 
-	function subMenu($replace = FALSE) {
+	function subMenu($replace = FALSE, $skip = null) {
 		if (is_string($replace)) {
 			$r = $replace;
 		}
@@ -145,6 +145,9 @@ class shared_admin {
 			}
 			$d = array();
 			foreach ($a as $k => $v) {
+				if (is_array($skip) && in_array($v['id'], $skip)) {
+					continue;
+				}
 				$d['isOn'] = ($k == $active) ? ' class="active"' : '';
 				if (is_array($replace)) {
 					foreach ($replace as $kk => $vv) {

@@ -1,0 +1,159 @@
+<% messages %>
+e.entry_not_found=Entry not found
+e.invalid_id=Invalid id
+e.save_error=Save error
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.empty_title=Title is empty
+e.empty_alias=Uri is empty
+e.empty_description=Content is empty
+e.dupe_alias=Uri is already used
+e.alias_duplicate=Duplicate uri
+e.bad_date_start=Bad start date
+e.bad_date_end=Bad end date
+
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<%if {url.add_entry} %><div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add item</a></div><%end%>
+</div>
+<%if {filter} %>{filter}<% end %>
+
+<table class="list">
+	<colgroup>
+		<col style="width: 20px" />
+		<col />
+		<col style="width: 30px" />
+		<col style="width: 40px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<th></th>
+		<th><span>Title</span></th>
+		<th class="tar"><span>Position</span></th>
+		<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
+	</tr>
+	</thead>
+	<tbody>
+	{list.entries}
+	</tbody>
+</table>
+<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
+{paging}
+
+
+<% if {synced_notice} %>
+	<div class="explain">Some entries are imported from an external source. Such entries are marked with special icons: <br/>
+	<span class="sync1" title="Status: up to date"></span> - the entry is up to date, <br/>
+	<span class="sync2" title="Status: needs attention"></span> - the entry was updated, so you have to check it and update.</div>
+<% end %>
+
+
+<%if {event.delete} %>
+<script type="text/javascript">
+	var js_action_delete = '{event.delete}';
+</script>
+<form method="post" id="js-action-form" action="{!action}">
+	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
+	<input type="hidden" name="event" value="" id="js-action-form-event" />
+</form>
+<%end%>
+
+<% list:entries.item %>
+<tr class="{class}">
+	<td><%if{synced}%><span class="sync{sync_state}"></span><%end%></td>
+	<td><a href="{url}" ><%if {name} %>{name}<%else{name}%>&mdash;<%end%></a></td>
+	<td class="tar">{pos}</td>
+	<td><% if {deletable} %><input type="checkbox" class="row-mark" id="row:{id}" /><% end %></td>
+</tr>
+
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="promo_id" value="{entry.promo_id}" />
+	<h2 class="formTitle">Entry :: {title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+
+	<dl>
+		<dt><label>Title</label></dt>
+		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" /></dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item </label></dd>
+
+ 		<dt><label>Uri</label></dt>
+		<dd>/promos/{promo_uri}/ <input type="text" maxlength="{form.alias.maxlen}" size="50" class="required" name="alias" value="{entry.alias}" onfocus="fillUri(this,'entry-title')" /> /</dd>
+
+		<dt><label>Content</label></dt>
+		<dd class="w100">{entry.description.toolbar}<textarea name="description" cols="105" rows="9" class="required" id="description">{entry.description}</textarea></dd>
+
+		<dt><label>Position</label></dt>
+		<dd><input type="text" maxlength="3" size="1" name="position" value="{entry.position}" /></dd>
+
+		<dt><label>Meta keywords</label></dt>
+		<dd class="w100"><input type="text" maxlength="{form.meta_kwd.maxlen}" size="50" name="meta_kwd" value="{entry.meta_kwd}" /></dd>
+
+		<dt><label>Meta description</label></dt>
+		<dd class="w100"><input type="text" maxlength="{form.meta_descr.maxlen}" size="50" name="meta_descr" value="{entry.meta_descr}" /></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+
+<% entry:slaveMain %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="remote_id" value="{entry.remote_id}" />
+	<h2 class="formTitle">Entry :: {title}</h2>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+
+	<p><span class="sync1"></span>This entry is synchronized. You must ensure that your translation will correspond to the original.</p>
+
+	<dl>
+		<dt><label>Title</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_title}</div>
+			<input type="text" maxlength="60" size="50" class="width60 required" name="title" id="entry-title" value="{entry.title}" />
+		</dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
+
+		<dt><label>Description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_description}</div>
+			{entry.description.toolbar}
+			<textarea name="description" cols="105" rows="8" id="description">{entry.description}</textarea>
+		</dd>
+
+		<dt><label>Meta keywords</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_meta_kwd}</div>
+			<input type="text" maxlength="{form.meta_kwd.maxlen}" size="50" name="meta_kwd" value="{entry.meta_kwd}" />
+		</dd>
+
+		<dt><label>Meta description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_meta_descr}</div>
+			<input type="text" maxlength="{form.meta_descr.maxlen}" size="50" name="meta_descr" value="{entry.meta_descr}" />
+		</dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>

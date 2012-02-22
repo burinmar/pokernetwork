@@ -1,0 +1,186 @@
+<% messages %>
+e.entry_not_found=Entry not found
+e.invalid_id=Invalid id
+e.save_error=Save error
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.empty_title=Title is empty
+e.empty_start_date=Start date is empty
+e.bad_date_start=Bad start date
+
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<%if {url.add_entry} %><div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add item</a></div><%end%>
+</div>
+
+<%if {filter} %>{filter}<% end %>
+
+<table class="list">
+	<colgroup>
+		<col style="width: 20px" />
+		<col style="width: 130px" />
+		<col />
+		<col style="width: 110px" />
+		<col style="width: 40px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<th></th>
+		<th><span>Start date</span></th>
+		<th><span>Title</span></th>
+		<th><span>Buy-in</span></th>
+		<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
+	</tr>
+	</thead>
+	<tbody>
+	{list.entries}
+	</tbody>
+</table>
+<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
+{paging}
+
+
+
+<% if {synced_notice} %>
+	<div class="explain">Some entries are imported from an external source. Such entries are marked with special icons: <br/>
+	<span class="sync1" title="Status: up to date"></span> - the entry is up to date, <br/>
+	<span class="sync2" title="Status: needs attention"></span> - the entry was updated, so you have to check it and update.</div>
+<% end %>
+
+
+<%if {event.delete} %>
+<script type="text/javascript">
+	var js_action_delete = '{event.delete}';
+</script>
+<form method="post" id="js-action-form" action="{!action}">
+	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
+	<input type="hidden" name="event" value="" id="js-action-form-event" />
+</form>
+<%end%>
+
+<% list:entries.item %>
+<tr class="{class}">
+	<td><%if{synced}%><span class="sync{sync_state}"></span><%end%></td>
+	<td>{start_date}</td>
+	<td>
+		<a href="{url}" ><%if {name} %>{name}<%else{name}%>&mdash;<%end%></a>
+	</td>
+	<td>{entry_fee} / {fee}</td>
+	<td><% if {deletable} %><input type="checkbox" class="row-mark" id="row:{id}" /><% end %></td>
+</tr>
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="promo_id" value="{entry.promo_id}" />
+	<h2 class="formTitle">Entry :: {title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+
+	<dl>
+		<dt><label>Title</label></dt>
+		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" /></dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
+
+		<dt><label>Room</label></dt>
+		<dd><select name="room_id">
+				<% loop {form.rooms += entry:rooms.item} %>
+				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+				<% end %>
+			</select></dd>
+
+		<dt><label>Start date</label></dt>
+		<dd>Date: <input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="start_date_date" value="{form.start_date_date}" />
+			Time: <input type="text" maxlength="5" size="5" name="start_date_time" value="{form.start_date_time}" /> GMT
+		</dd>
+
+		<dt><label>Buy-in</label></dt>
+		<dd><input type="text" maxlength="8" size="8" name="entry_fee" value="{entry.entry_fee}" /> / <input type="text" maxlength="8" size="8" name="fee" value="{entry.fee}" /> {form.currency}</dd>
+
+		<dt><label>Password</label></dt>
+		<dd><input type="text" maxlength="{form.pwd.maxlen}" size="60" name="pwd" value="{entry.pwd}" /></dd>
+
+		<dt><label>Password release date</label></dt>
+		<dd>Date: <input type="text" maxlength="10" size="14" class="isDate" id="date-pwd" name="pwd_date_date" value="{form.pwd_date_date}" />
+			Time: <input type="text" maxlength="5" size="5" name="pwd_date_time" value="{form.pwd_date_time}" /> GMT
+		</dd>
+		
+		<dt><label>Results Columns</label></dt>
+		<dd><input type="text" maxlength="{form.results_columns.maxlen}" size="60" name="results_columns" value="{entry.results_columns}" />
+			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
+				"*" at the beginning of column name marks Player Name, "+" marks Player Points.
+			</div></dd>
+
+		<dt><label>Results</label></dt>
+		<dd class="w100"><textarea name="results" cols="105" rows="4">{entry.results}</textarea>
+			<div class="explain">Select &amp; Post data into the text area. Values must be tab separated.</div><br /><br />
+			<div class="explain">Or import from Microsoft Excel Spreadsheet (.xls file)</div>
+			<input type="file" name="results_file" />
+			
+		</dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+<%if {results.show} %>
+<h2 class="headline topSeperator">Results</h2>
+<table class="list">
+	<thead>
+	<tr><%loop {result.headers += entry:result.header} %><th><span>{name}</span></th><%end%></tr>
+	</thead>
+	<tbody>
+	<%loop {result.data.rows += entry:result.data.row} %>
+	<tr class="class">
+		<%loop {result.data += entry:result.data} %><td>{value}</td><%end%>
+	</tr>
+	<%end%>
+	</tbody>
+</table>
+<%end%>
+
+<% entry:slaveMain %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="remote_id" value="{entry.remote_id}" />
+	<h2 class="formTitle">Entry :: {title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<p><span class="sync"></span>This entry is synchronized. You must ensure that your translation will correspond to the original.</p>
+
+	<dl>
+		<dt><label>Title</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_title}</div>
+			<input type="text" maxlength="60" size="50" class="width60 required" name="title" id="entry-title" value="{entry.title}" />
+		</dd>
+
+		<dt><label>Leaderboard Results Columns</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_results_columns}</div>
+			<input type="text" maxlength="50" size="50" class="width60" name="results_columns" value="{entry.results_columns}" />
+			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
+				"*" at the beginning of column name marks Player Name, "+" marks Player Points.
+			</div>
+		</dd>
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
