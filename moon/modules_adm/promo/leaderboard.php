@@ -86,7 +86,7 @@ class leaderboard extends moon_com
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
-			SELECT id, title, lb_auto, lb_columns, lb_data' . (base_inplace_syncable::_SITE_ID_ != 'com'
+			SELECT id, title, lb_auto, lb_columns, lb_data' . (_SITE_ID_ != 'com'
 				? ', remote_id'
 				: '') . '
 			FROM promos

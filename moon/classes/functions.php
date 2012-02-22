@@ -1,5 +1,6 @@
 <?php
 date_default_timezone_set('Australia/Melbourne');
+define('_SITE_ID_', 'pnw:com');
 
 function moon_reconfig() {
 	$e = & moon :: engine();

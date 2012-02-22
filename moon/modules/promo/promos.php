@@ -2,7 +2,6 @@
 
 class promos extends moon_com
 {
-	const _SITE_ID_ = 'pnw:com';
 	function events($event, $argv)
 	{
 		if (isset($_GET['promo_id_redirect'])) {
@@ -66,7 +65,7 @@ class promos extends moon_com
 			FROM promos
 			WHERE is_hidden = 0 
 			  AND date_end>"' . gmdate('Y-m-d', $time/* - 86400*/) . '"
-			  AND FIND_IN_SET("' . promos::_SITE_ID_ . '", sites) 
+			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) 
 			ORDER BY date_start DESC
 		') as $row) {
 			$logoFn = rawurlencode($row['skin_dir']) . '/logo-list.png';
@@ -84,7 +83,7 @@ class promos extends moon_com
 		foreach ($this->db->array_query_assoc('
 			SELECT title, alias
 			FROM promos
-			WHERE is_hidden=0 AND date_end<="' . gmdate('Y-m-d', $time) . '" AND FIND_IN_SET("' . promos::_SITE_ID_ . '", sites) ORDER BY date_start DESC
+			WHERE is_hidden=0 AND date_end<="' . gmdate('Y-m-d', $time) . '" AND FIND_IN_SET("' . _SITE_ID_ . '", sites) ORDER BY date_start DESC
 		') as $row) {
 			$mainArgv['list.inactive'] .= $tpl->parse('index:inactive.item', array(
 				'url' => $this->linkas('#' . $row['alias']),

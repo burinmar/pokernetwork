@@ -27,7 +27,7 @@ class promos extends base_inplace_syncable
 	protected function getEntriesAdditionalFields()
 	{
 		$return = array('date_start', 'date_end', 'room_id', 'sites', 'timezone');
-		if (base_inplace_syncable::_SITE_ID_ != 'com') {
+		if (_SITE_ID_ != 'com') {
 			$return[] = 'remote_id';
 		}
 		return $return;
@@ -93,7 +93,7 @@ class promos extends base_inplace_syncable
 		// if (!$row['is_hidden'] && strtotime($row['date_end'] . ' GMT') + $tz[0] + 3600*24 > time()) {
 			$sites = explode(',', $row['sites']);
 			if ($this->isSlaveHost()) {
-				$sites = array_intersect($sites, array('com', base_inplace_syncable::_SITE_ID_));
+				$sites = array_intersect($sites, array('com', _SITE_ID_));
 			} else {
 				if (end($sites) == '') {
 					array_pop($sites);
@@ -104,7 +104,7 @@ class promos extends base_inplace_syncable
 				case 'com':
 					$domain = 'pokernews';
 					break;
-				case 'pnw:com':
+				case _SITE_ID_:
 					$domain = 'pokernetwork';
 					break;
 				}
@@ -200,7 +200,7 @@ class promos extends base_inplace_syncable
 		}
 
 		$checkedSites = explode(',', $entryData['sites']);
-		$sites = array(base_inplace_syncable::_SITE_ID_);
+		$sites = array(_SITE_ID_);
 		$siteChunks = array_chunk($sites, ceil(count($sites) / 4), TRUE);
 		foreach ($siteChunks as $k => $chunk) {
 			$siteChunkResult = '';
@@ -287,7 +287,7 @@ class promos extends base_inplace_syncable
 			$saveData['room_id'] = null;
 		}
 		if ($this->isSlaveHost()) {
-			$saveData['sites'] = base_inplace_syncable::_SITE_ID_;
+			$saveData['sites'] = _SITE_ID_;
 		}
 	}
 
@@ -406,7 +406,7 @@ class promos extends base_inplace_syncable
 	
 	private function sync()
 	{
-		$sites = array(base_inplace_syncable::_SITE_ID_);
+		$sites = array(_SITE_ID_);
 		$sendSites = array();
 		unset($sites['com']);
 
@@ -464,7 +464,7 @@ class promos extends base_inplace_syncable
 
 	public function updates()
 	{
-		if ('com'==base_inplace_syncable::_SITE_ID_) {
+		if ('com'==_SITE_ID_) {
 			return array();
 		}
 		// index
