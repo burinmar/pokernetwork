@@ -375,15 +375,6 @@ class review extends moon_com {
 
 		$res = $tpl->parse('main', $m);
 		return $res;
-
-		// jira: PN-2755
-		if (($roomId == '53' || $roomId == '147') && !in_array(geo_my_country(), array('us'))) {
-			$bgURL = $m['downloadURL'];
-			$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
-			$page->css('<style type="text/css">/*<![CDATA*/ body {background: #2a0c01} #bg {background: url(\'/i/100billion_wallpaper.jpg\') no-repeat fixed top} html {cursor: pointer} #bodyBlock {cursor: default} /*]>*/</style>');
-		}
-
-		
 	}
 
 

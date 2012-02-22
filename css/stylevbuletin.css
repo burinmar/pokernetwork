@@ -39,12 +39,12 @@ body {
 		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.8);
 		box-shadow: 0 0 5px rgba(0,0,0,0.8);
 		position: relative;
-		background: #013097 url('/i/header.jpg');
+		background: #013097 url('/img/header.jpg');
 		height: 116px;
 		z-index: 20;
 	}
 		#header a.siteLogo {
-			background: url('/i/logo.png') no-repeat 0 0;
+			background: url('/img/logo.png') no-repeat 0 0;
 			color: #d4e7ff;
 			font-size: 12px;
 			font-weight: bold;
@@ -201,7 +201,7 @@ body {
 			font-size: 11px;
 		}
 			#siteFooter .fl p {
-				background: url('/i/logo-footer.png') no-repeat 0 0;
+				background: url('/img/logo-footer.png') no-repeat 0 0;
 				line-height: 14px;
 				padding-top: 60px;
 				margin-top: -20px;
@@ -210,7 +210,7 @@ body {
 			}
 			#siteFooter .fl b {text-transform: uppercase;}
 			#siteFooter .socialIcons a {
-				background-image: url('/i/social-footer.png');
+				background-image: url('/img/social-footer.png');
 				float: left;
 				width: 22px;
 				height: 22px;
@@ -256,7 +256,7 @@ body {
 	top: 0;
 	left: 50%;
 	margin-left: -500px;
-	background: url('/i/overlay-bg.png') no-repeat top left;
+	background: url('/img/overlay-bg.png') no-repeat top left;
 	width: 1000px;
 	z-index: 999;
 	min-height: 25px;

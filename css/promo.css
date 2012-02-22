@@ -1,13 +1,7 @@
 #promo {
 	background: #000;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	margin-top: 20px;
 	color: #fff;
 	padding-bottom: 40px;
-	width: 960px;
-	margin-left: 10px
 }
 #promo a {text-decoration: underline}
 #promo table {

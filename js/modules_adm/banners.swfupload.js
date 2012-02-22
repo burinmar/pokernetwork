@@ -4,7 +4,7 @@ $(document).ready(function () {
 	//alert(phpSessionId);
 	var settings_object = {
 		upload_url : 'media.php', // flash session cookie fix
-		flash_url : '/i/adm/swfupload.swf',
+		flash_url : '/img/adm/swfupload.swf',
 		post_params: {'files-upload':1,'banner_id':bannerId,'SI':phpSessionId},
 		
 		// File Upload Settings
@@ -26,7 +26,7 @@ $(document).ready(function () {
 		upload_complete_handler : uploadCompleteHandler,
 		
 		// Button Settings
-		button_image_url : "/i/adm/button_browse.png",
+		button_image_url : "/img/adm/button_browse.png",
 		button_placeholder_id : "spanButtonPlaceholder1",
 		button_width: 61,
 		button_height: 22,

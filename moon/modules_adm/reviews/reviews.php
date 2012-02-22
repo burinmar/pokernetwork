@@ -86,7 +86,7 @@ function main($vars)
         //******* FORM **********
 		$err=(isset($vars['error'])) ? $vars['error']:0;
 		//$p->css($t->parse('cssForm'));
-		//$p->css('/i/adm/tabber.css');
+		//$p->css('/img/adm/tabber.css');
 		//$p->js('/js/tabber.js');
 
 		$f = $this->form;

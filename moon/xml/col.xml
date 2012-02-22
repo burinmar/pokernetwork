@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<page>
+	<layout>col</layout>
+	<com><part>center</part><name>fake</name></com>
+	<com><part>header</part><name>sys.header</name></com>
+	<com><part>footer</part><name>sys.footer</name></com>
+</page>

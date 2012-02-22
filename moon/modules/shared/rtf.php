@@ -174,7 +174,7 @@ function main($vars=array())
 {
 	$p=&moon::page();
 	$p->set_local('output', 'modal');
-	$p->js('/i/rtf/rtf.js');
+	$p->js('/img/rtf/rtf.js');
 
 
 	$t=&$this->load_template();
@@ -633,8 +633,8 @@ function toolbar($textAreaName,$parentID)
 	$p=&moon::page();
 	//$p->css('/css/article.css');
 	$p->js('/js/modal.window.js');
-	$p->js('/i/rtf/rtf.js');
-	$p->css('/i/rtf/rtf.css');
+	$p->js('/img/rtf/rtf.js');
+	$p->css('/img/rtf/rtf.css');
 
 
 	$a = array();

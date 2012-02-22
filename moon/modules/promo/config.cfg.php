@@ -17,7 +17,7 @@ $cfg['promo'] = array(
 
 	'vocabulary'=>'{dir.multilang}{module}.txt',
 	'page.Main' =>'xml.col1_darkright,fake',
-	'page.Main{promo}' =>'xml.col1,fake',
+	'page.Main{promo}' =>'xml.col,fake',
 	'comp.rtf'=>'MoonShared.rtf',
 	'var.rtf' => 'promos',
 );

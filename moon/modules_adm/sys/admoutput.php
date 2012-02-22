@@ -137,7 +137,7 @@ class admoutput extends moon_com {
 				$res = $t->parse($outputType, $m);
 				break;
 		}
-		$res = str_replace('{!_AIMG_}', '/i/adm/', $res);
+		$res = str_replace('{!_AIMG_}', '/img/adm/', $res);
 		return $res;
 	}
 

@@ -64,7 +64,7 @@ function main($vars)
 		$main['title'] = htmlspecialchars($pageData['title']);
 	}
 	$main['content_html'] = $pageData['content_html'];
-	$page->css('/i/article.css');
+	$page->css('/css/article.css');
 	if ($pageData['html']) {
 		$tplName = 'main_html';
 	}

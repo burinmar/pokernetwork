@@ -23,7 +23,7 @@ function rtfObject(config)
 	this.config = config;
 	this.textarea = null;
 	if (this.imgPath == null) {
-		this.imgPath='/i/rtf/';
+		this.imgPath='/img/rtf/';
 	}
 
 	if(typeof(rtfObject.instances)=="undefined") {

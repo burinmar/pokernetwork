@@ -23,7 +23,7 @@ function modalWindow(width,height)
 	this.ie6=false;
 	this.opener=window;
 	//this.imgPath= document.location.host.indexOf('my.pokernews')==0 ? '/i/' : '/i/adm/';
-	this.imgPath= '/i/adm/';
+	this.imgPath= '/img/adm/';
 
     var _self=this;
 	jQuery(document).ready(  function (){_self.init();} );

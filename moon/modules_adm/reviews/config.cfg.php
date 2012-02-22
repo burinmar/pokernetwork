@@ -20,9 +20,9 @@ $cfg['reviews'] = array(
 
 	'dir.charts' => _W_DIR_ . 'charts/',
 
-	'var.avatar200' => '/i/avatar200x200.gif',
-	'var.avatar100' => '/i/avatar100x100.gif',
-	'var.avatar50' => '/i/avatar50x50.gif',
+	'var.avatar200' => '/img/avatar200x200.gif',
+	'var.avatar100' => '/img/avatar100x100.gif',
+	'var.avatar50' => '/img/avatar50x50.gif',
 'dir.dirGallery' => _W_DIR_ . 'rw-screenshots/',
 	'dir.dirDeposit' => _W_DIR_ . 'rw-deposits/',
 	'var.dirAvatar' => 'members/',
