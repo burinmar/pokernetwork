@@ -221,6 +221,13 @@ class schedule extends base_inplace_syncable
 		return array('title', 'start_date');
 	}
 
+	protected function eventSavePreSaveOrigin(&$saveData)
+	{
+		if ('' === $saveData['room_id']) {
+			$saveData['room_id'] = null;
+		}
+	}
+
 	protected function eventSavePostSaveOrigin($saveData)
 	{
 		$this->object('promos')->eventUpdatedPlayerPoints($saveData['promo_id']);

@@ -96,6 +96,7 @@ e.bad_date_start=Bad start date
 
 		<dt><label>Room</label></dt>
 		<dd><select name="room_id">
+				<option value="">-</option>
 				<% loop {form.rooms += entry:rooms.item} %>
 				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
 				<% end %>

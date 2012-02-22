@@ -3,7 +3,6 @@
 class base_inplace_syncable extends moon_com
 {
 	protected $dataNoSave = array();
-	const _SITE_ID_ = 'pnw:com';
 
 	function onload()
 	{
@@ -913,6 +912,6 @@ class base_inplace_syncable extends moon_com
 
 	protected function isSlaveHost()
 	{
-		return base_inplace_syncable::_SITE_ID_ != 'com';
+		return _SITE_ID_ != 'com';
 	}
 }

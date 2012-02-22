@@ -99,7 +99,7 @@ e.bad_date_end=Bad end date
 	<dl>
 		<dt><label>Title</label></dt>
 		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" />
-		<%if {url.preview} %><div class="explain"><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%></dd>
+		<%if {url.preview} %><div><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%></dd>
 		
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
@@ -110,6 +110,7 @@ e.bad_date_end=Bad end date
 
 		<dt><label>Room</label></dt>
 		<dd><select name="room_id">
+				<option value="">-</option>
 				<% loop {form.rooms += entry:rooms.item} %>
 				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
 				<% end %>
@@ -174,11 +175,15 @@ e.bad_date_end=Bad end date
 		<dt><label>Leaderboard</label></dt>
 		<dd style="margin-bottom: 2px"><input type="checkbox" name="lb_auto" id="lb_auto" value="{form.lb_auto}" /> <label for="lb_auto">Calculate leaderboard automatically</label></dd>
 
-		<dt class="lb_auto_dep"><label>Leaderboard Results Columns</label></dt>
-		<dd class="lb_auto_dep w100"><input type="text" maxlength="form.lb_columns.maxlen}" size="50" class="width60" name="lb_columns" value="{entry.lb_columns}" />
-			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
-				"*" at the beginning of column name marks Player Name, "+" marks Player Points.
-			</div></dd>
+		<dt><label>Leaderboard Results Columns</label></dt>
+		<dd class="w100"><input type="text" maxlength="form.lb_columns.maxlen}" size="50" class="width60" name="lb_columns" value="{entry.lb_columns}" />
+		    <div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
+		        "*" at the beginning of column name marks Player Name, "+" marks Player Points.
+		    </div>
+		    <div class="explain lb_auto_dep_i">
+		    	For automatic leaderboard, you should have a localised counterpart of &quot;*Player; +Points&quot; as value of this field (key point: only 2 fields).
+		    </div>
+		</dd>
 
 		<dt><label>Meta description</label></dt>
 		<dd class="w100"><input type="text" maxlength="{form.descr_meta.maxlen}" size="50" name="descr_meta" value="{entry.descr_meta}" /></dd>
@@ -186,18 +191,20 @@ e.bad_date_end=Bad end date
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
 </form>
 <script type="text/javascript">
-function cToggleByCheckboxI(ctrl, dep) {
+function cToggleByCheckboxI(ctrl, dep, idep) {
 	if (!$(ctrl)[0].checked) {
 		$(dep).show();
+		$(idep).hide();
 	} else {
 		$(dep).hide();
+		$(idep).show();
 	}
 }
 $(document).ready(function(){
 	jQuery('#lb_auto').click(function(){
-		cToggleByCheckboxI('#lb_auto', '.lb_auto_dep');
+		cToggleByCheckboxI('#lb_auto', '.lb_auto_dep', '.lb_auto_dep_i');
 	});
-	cToggleByCheckboxI('#lb_auto', '.lb_auto_dep');
+	cToggleByCheckboxI('#lb_auto', '.lb_auto_dep', '.lb_auto_dep_i');
 });
 </script>
 
@@ -225,7 +232,7 @@ $(document).ready(function(){
 		<dd class="w100">
 			<div class="forSlaveOriginalText">{form.origin_title}</div>
 			<input type="text" maxlength="60" size="50" class="width60 required" name="title" id="entry-title" value="{entry.title}" />
-			<%if {url.preview} %><div class="explain"><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%>
+			<%if {url.preview} %><div><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%>
 		</dd>
 		
 		<dt></dt>

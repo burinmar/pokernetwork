@@ -283,6 +283,9 @@ class promos extends base_inplace_syncable
 
 	protected function eventSavePreSaveOrigin(&$saveData)
 	{
+		if ('' === $saveData['room_id']) {
+			$saveData['room_id'] = null;
+		}
 		if ($this->isSlaveHost()) {
 			$saveData['sites'] = base_inplace_syncable::_SITE_ID_;
 		}
@@ -298,7 +301,7 @@ class promos extends base_inplace_syncable
 	public function eventUpdatedPlayerPoints($promoId)
 	{
 		$auto = $this->db->single_query_assoc('
-			SELECT id, lb_auto FROM promos
+			SELECT id, lb_auto, lb_columns FROM promos
 			WHERE id=' . intval($promoId) . '
 		');
 		if (0 == count($auto) || empty($auto['lb_auto'])) {
@@ -325,10 +328,20 @@ class promos extends base_inplace_syncable
 			}
 		}
 		arsort($results);
-		foreach ($results as $k => $row) {
-			$results[$k] = $k . "\t" . $row;
+
+		if (NULL == ($resultChunks = $this->parseResults('', $auto['lb_columns']))) {
+			$results = '';
+		} else {
+			$results_ = array();
+			foreach ($results as $uname => $points) {
+				if ($resultChunks['idx.points'] == 0) {
+					$results_[] = trim($points) . "\t" . trim($uname);
+				} else {
+					$results_[] = trim($uname) . "\t" . trim($points);
+				}
+			}
+			$results = implode("\n", $results_);
 		}
-		$results = implode("\n", $results);
 
 		$this->dbUpdate(array(
 			'lb_data' => $results,
@@ -449,282 +462,9 @@ class promos extends base_inplace_syncable
 			);
 	}
 
-	private function importData()
-	{
-	
-		$this->db->query('truncate table promos');
-		$this->db->query('truncate table promos_pages');
-		$this->db->query('truncate table promos_events');
-		$this->db->query('truncate table promos_rooms');
-		if (base_inplace_syncable::_SITE_ID_ != 'com') {
-			$this->db->query('truncate table promos_push');
-			$this->db->query('truncate table promos_pages_push');
-			$this->db->query('truncate table promos_events_push');
-		}
-
-		$this->importLeagues();
-		$this->importRakerace();
-
-		$this->db->update(array(
-			'page_id' => 'promotions',
-			'css' => '/css/promo.css',
-			'control' => 'promo.promos*'
-		), 'pages', array(
-			'page_id' => 'leagues'
-		));
-		$this->db->update(array(
-			'is_deleted' => 1,
-		), 'pages', array(
-			'page_id' => "promo"
-		));
-
-		$geoId = geo_my_id();
-		include_class('moon_memcache');
-		$mcdKey = moon_memcache::getRecommendedPrefix() . 'sitemap_allpages.' . (string)$geoId;
-		$mcd = moon_memcache::getInstance();
-		$mcd->delete($mcdKey);
-	}
-
-	private function importLeagues()
-	{
-		$slaveColumnsOrig = base_inplace_syncable::_SITE_ID_ != 'com'
-			? 'master_id, '
-			: '';
-		$slaveColumnsNew = base_inplace_syncable::_SITE_ID_ != 'com'
-			? 'remote_id, '
-			: '';
-		$excludeWhere = array();
-		$excludeWhere[] = (base_inplace_syncable::_SITE_ID_ != 'com') 
-			? 'master_id NOT IN(10, 11, 12, 15, 18, 19, 20, 7, 8, 9)'
-			: 'id NOT IN(10, 11, 12, 15, 18, 19, 20, 7, 8, 9)';
-		switch (base_inplace_syncable::_SITE_ID_) {
-		case 'de':
-			$excludeWhere[] = 'id NOT IN(7)';
-			break;
-		case 'hu':
-			$excludeWhere[] = 'id NOT IN(4)';
-			break;
-		case 'it':
-			$excludeWhere[] = 'id NOT IN(7)';
-			break;
-		case 'pt':
-			$excludeWhere[] = 'id NOT IN(4,5,6)';
-			break;
-		}
-
-		$this->db->query("
-			INSERT INTO promos (
-				id, " . $slaveColumnsNew .  "title, alias, room_id, date_start, date_end, currency, timezone, is_hidden, skin_dir, descr_intro, descr_meta, descr_list, descr_prize, prize, terms_conditions, sites, updated_on 
-			) SELECT
-				id, " . $slaveColumnsOrig . "title, alias, room_id, start_date, end_date, FIELD(currency, 0, 1), IFNULL(tz, 0), IFNULL(hide, 0), IFNULL(skin, ''), IFNULL(description, ''), IFNULL(md, ''), IFNULL(list_description, ''), IFNULL(prize_description, ''), IFNULL(prize_value, ''), IFNULL(terms_conditions, ''), IFNULL(sites, ''), FROM_UNIXTIME(updated_on)
-			FROM leagues
-			WHERE " . implode(' AND ', $excludeWhere) . "
-		 ");
-		// if (base_inplace_syncable::_SITE_ID_ != 'com') {
-		// 	$this->db->query('UPDATE promos SET master_updated=' . time() . ' WHERE master_id!=0');
-		// }
-		$this->db->query("
-			UPDATE promos
-			SET skin_dir=LEFT(skin_dir, LOCATE('/', skin_dir)-1)
-			WHERE skin_dir!=''
-		");
-
-		$promos = $this->db->array_query_assoc('
-			SELECT id, LEFT(skin, LOCATE("/", skin)-1) skin_dir, logo
-			FROM leagues
-			WHERE ' . implode(' AND ', $excludeWhere) . '
-		');
-		// logos copy files
-		// foreach ($promos as $logo) {
-		// 	if (empty($logo['logo'])) {
-		// 		continue;
-		// 	}
-		// 	$srcFile = _W_DIR_ . 'leagues/' . $logo['logo'];
-		// 	if (is_file($srcFile)) {
-		// 		$dstFile = (is_dev() ? getenv("CMS_PATH") . 'img/' : 'img/') . 'promo/' . rawurlencode($logo['skin_dir']) . '/logo-list.png';
-		// 		copy($srcFile, $dstFile);
-		// 	}
-		// }
-		// leaderboards
-		foreach ($promos as $promo) {
-			$lb = $this->db->array_query_assoc('
-				SELECT room_nick, points
-				FROM leagues_results
-				WHERE league_id=' . intval($promo['id']) . '
-				ORDER BY points DESC
-			');
-			$lbCsv = array();
-			foreach ($lb as $row) {
-				$lbCsv[] = $row['room_nick'] . "\t" . $row['points'];
-			}
-			$lbCsv = implode("\n", $lbCsv);
-			$this->db->query('
-				UPDATE promos
-				SET lb_columns="*Player; +Points", lb_data="' . $this->db->escape($lbCsv) . '", lb_auto=0
-				WHERE id=' . intval($promo['id']) . '
-			');
-		}
-		$this->db->query('
-			UPDATE promos SET updated_on=CURRENT_TIMESTAMP
-		');
-
-		
-		$this->db->query('
-			INSERT INTO promos_pages (
-				id, ' . $slaveColumnsNew .  'promo_id,  title, alias, description, position, is_hidden, meta_kwd, meta_descr, updated_on 
-			) SELECT
-				id, ' . $slaveColumnsOrig . 'league_id, title, uri,   content,     position, hide,      mk, md, FROM_UNIXTIME(updated_on)
-			FROM leagues_pages
-		 ');
-
-
-		
-		$this->db->query('
-			INSERT INTO promos_events (
-				id, ' . $slaveColumnsNew .  'promo_id,  title, room_id, start_date, entry_fee, fee, pwd,      pwd_date,                                results_columns, results, is_hidden, updated_on 
-			) SELECT
-				id, ' . $slaveColumnsOrig . 'league_id, title, room_id, start_date, entry_fee, fee, password, IFNULL(pwd_date, "0000-00-00 00:00:00"), "*Player; +Points", plain_csv, hide,      FROM_UNIXTIME(updated_on)
-			FROM leagues_events
-		 ');
-
-		
-		$this->db->query('
-			INSERT INTO promos_rooms (
-				id, name, url, favicon
-			) SELECT
-				id, name, url, favicon
-			FROM leagues_rooms
-		 ');		
-	}
-
-
-	private function importRakerace()
-	{
-		$slaveColumnsOrig80 = base_inplace_syncable::_SITE_ID_ != 'com'
-			? 'master_id+80 master_id, '
-			: '';
-		$slaveColumnsOrig400 = base_inplace_syncable::_SITE_ID_ != 'com'
-			? 'master_id+400 master_id, '
-			: '';
-		$slaveColumnsOrig1000 = base_inplace_syncable::_SITE_ID_ != 'com'
-			? 'master_id+1000 master_id, '
-			: '';
-		$slaveColumnsNew = base_inplace_syncable::_SITE_ID_ != 'com'
-			? 'remote_id, '
-			: '';
-		$excludeWhere = array();
-		$excludeWhere[] = (base_inplace_syncable::_SITE_ID_ != 'com') 
-			? 'master_id NOT IN(6, 5, 4, 2, 1, 12, 13, 14, 16)'
-			: 'id NOT IN(6, 5, 4, 2, 1, 12, 13, 14, 16)';
-		switch (base_inplace_syncable::_SITE_ID_) {
-		case 'si':
-			$excludeWhere[] = 'id NOT IN(9)';
-			break;
-		}
-		$this->db->query("
-			INSERT INTO promos (
-				id, " . $slaveColumnsNew .  "title, alias, room_id, date_start, date_end, currency, timezone, is_hidden, skin_dir, descr_intro, descr_meta, descr_list, descr_prize, prize, terms_conditions, sites, lb_columns, updated_on 
-			) SELECT
-				id+80, " . $slaveColumnsOrig80 . "title, alias, NULL room_id, start_date, end_date, FIELD(currency, 0, 1), IFNULL(tz, 0), IFNULL(hide, 0), IFNULL(skin, ''), IFNULL(intro, '') intro, IFNULL(md, ''), '' list_description, IFNULL(description, '') prize_description, '' prize_value, '' terms_conditions, IFNULL(sites, ''), lb_columns, FROM_UNIXTIME(updated_on)
-			FROM rakerace
-			WHERE " . implode(' AND ', $excludeWhere) . "
-		 ");
-		$this->db->query("
-			UPDATE promos
-			SET skin_dir=LEFT(skin_dir, LOCATE('/', skin_dir)-1)
-			WHERE skin_dir!='' AND id>80
-		");
-		foreach($this->db->array_query_assoc('
-			SELECT pid+80 id, GROUP_CONCAT(DISTINCT room_id SEPARATOR ";") room_id
-			FROM rakerace_events WHERE pid IN (17,15,16,14,13,12,5,6,4,1,2) AND room_id <> 0 GROUP BY id 
-		') as $promoRake) {
-			$this->db->update(array(
-				'room_id' => $promoRake['room_id']
-			), 'promos', array(
-				'id' => $promoRake['id']
-			));
-		}
-		foreach($this->db->array_query_assoc('
-			SELECT id,descr_prize,descr_intro,lb_columns FROM promos
-			WHERE id>80
-		') as $promoRake) {
-			$rtf = $this->object('rtf');
-			$rtf->setInstance($this->get_var('rtf'));
-			list(, $promoRake['descr_prize']) = $rtf->parseText('', $promoRake['descr_prize']);
-			$promoRake['descr_intro'] = preg_replace('~<h1>.*?</h1>~', '', $promoRake['descr_intro']);
-			$promoRake['lb_columns'] = explode(';', $promoRake['lb_columns']);
-			if (!isset($promoRake['lb_columns'][1])) {
-				$promoRake['lb_columns'][0] = '*Player';
-				$promoRake['lb_columns'][1] = '+Points';
-			} else {
-				$promoRake['lb_columns'][0] = '*' . trim($promoRake['lb_columns'][0]);
-				$promoRake['lb_columns'][1] = '+' . trim($promoRake['lb_columns'][1]);
-			}
-			$promoRake['lb_columns'] = implode('; ', $promoRake['lb_columns']);
-			// $promoRake['descr_intro'] = preg_replace('~<a.*?</a>~',   '', $promoRake['descr_intro']);
-			$this->db->update(array(
-				'descr_intro' => $promoRake['descr_intro'],
-				'descr_prize' => $promoRake['descr_prize'],
-				'lb_columns' => $promoRake['lb_columns'],
-			), 'promos', array(
-				'id' => $promoRake['id']
-			));
-		}
-
-		// !! custom page: terms
-
-		$promos = $this->db->array_query_assoc('
-			SELECT id
-			FROM promos
-			WHERE id>80
-		');
-		foreach ($promos as $promo) {
-			$lb = array();
-			foreach ($this->db->array_query_assoc('
-				SELECT l.nr, v.col, v.val
-				FROM rakerace_lb l
-				INNER JOIN rakerace_lbv v
-					ON v.pid=l.id
-				WHERE l.pid=' . ($promo['id']-80) . '
-				ORDER BY l.nr, v.col
-			') as $v) {
-				$lb[$v['nr']][$v['col']] = $v['val'];
-			}
-			foreach ($lb as $key => $value) {
-				$lb[$key] = implode("\t", $value);
-			}
-			$lbCsv = implode("\n", $lb);
-			$this->db->query('
-				UPDATE promos
-				SET lb_data="' . $this->db->escape($lbCsv) . '", lb_auto=0
-				WHERE id=' . intval($promo['id']) . '
-			');
-		}
-		$this->db->query('
-			UPDATE promos SET updated_on=CURRENT_TIMESTAMP
-		');
-
-		$this->db->query('
-			INSERT INTO promos_pages (
-				id,     ' . $slaveColumnsNew .  'promo_id, title, alias, description, position, is_hidden, meta_kwd, meta_descr, updated_on 
-			) SELECT
-				id+400, ' . $slaveColumnsOrig400 . 'pid+80,   title, uri,   content,     position, hide,      mk, md, FROM_UNIXTIME(updated_on)
-			FROM rakerace_pages
-		 ');
-
-
-		$this->db->query('
-			INSERT INTO promos_events (
-				id,     ' . $slaveColumnsNew .  'promo_id, title, room_id, start_date, entry_fee, fee, pwd,      pwd_date,                                results_columns, results, is_hidden, updated_on 
-			) SELECT
-				id+1000, ' . $slaveColumnsOrig1000 . 'pid+80,   title, room_id, start_date, entry_fee, fee, password, IFNULL(pwd_date, "0000-00-00 00:00:00"), results_columns, results_csv, hide,      FROM_UNIXTIME(updated_on)
-			FROM rakerace_events
-		 ');
-	}
-
 	public function updates()
 	{
-		if ('com'==base_inplace_syncable::_SITE_ID_ ) {
+		if ('com'==_SITE_ID_ ) {
 			return array();
 		}
 		// index
