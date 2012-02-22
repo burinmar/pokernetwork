@@ -1,36 +1,34 @@
 <% index:main %>
-<div class="widget promoList">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{title}</h1>
-		<div class="article">{description}</div>
-		<div class="cb"></div>
-
-		<%if {list.active} %>
-		<ul class="activePromo">
-			<%loop{list.active += index:active.item}%>
-			<li>
-				<%if{logo}%><a href="{url}"><img src="{logo}" width="110" height="110" alt="Promo logo" class="fl" /></a><%end%>
-				<a href="{url}" class="promoTitle">{title}</a>
-				<%if{prize}%><em>{!value} <span>{prize}</span></em><%end%>
-				<%if{description}%><p>{description}</p><%end%>
-				<div class="cb"></div>
-			</li>
+<div id="body" class="clrfix wColNarrow">
+	<div class="left fl">
+		<div class="widget promoList">
+			<h1 class="pageTitle">{title}</h1>
+			<div class="pageIntro">{description}</div>
+			<%if {list.active} %>
+			<ul class="activePromo">
+				<%loop{list.active += index:active.item}%>
+				<li>
+					<%if{logo}%><a href="{url}"><img src="{logo}" width="110" height="110" alt="Promo logo" class="fl" /></a><%end%>
+					<a href="{url}" class="promoTitle">{title}</a>
+					<%if{prize}%><em>{!value} <span>{prize}</span></em><%end%>
+					<%if{description}%><p>{description}</p><%end%>
+					<span class="clr"></span>
+				</li>
+				<%end%>
+			</ul>
 			<%end%>
-		</ul>
-		<%end%>
-
-		<%if {list.inactive} %>
-		<h2>{!archive}</h2>
-		<ul class="overPromo">
-			<%loop{list.inactive += index:inactive.item}%>
-			<li><a href="{url}">{title}</a></li>
+		</div>
+	</div>
+	<div class="right fr">
+		<div class="widget overBreadcrumb myAlerts">
+			<h2 class="widgetTitle">{!archive}</h2>
+			<%if {list.inactive} %>
+			<ul class="categories">
+				<%loop{list.inactive += index:inactive.item}%>
+				<li><a href="{url}">{title}</a></li>
+				<%end%>
+			</ul>
 			<%end%>
-		</ul>
-		<%end%>
+		</div>
 	</div>
 </div>
-

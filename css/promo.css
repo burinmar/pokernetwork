@@ -2,8 +2,12 @@
 	background: #000;
 	color: #fff;
 	padding-bottom: 40px;
+	position: relative;
+	margin-bottom: 20px;
 }
+#promo h1, #promo h2, #promo h3 {font-weight: normal}
 #promo a {text-decoration: underline}
+#promo p {color: #fff}
 #promo table {
 	border-collapse: collapse;
 	width: 100%;
@@ -144,15 +148,13 @@
 
 .promoList ul {
 	list-style: none;
-	margin: 20px -20px;
+	margin: 0 -10px 20px;
 }
-
-.promoList .widgetTitle {margin-bottom: 10px}
 
 .promoList .activePromo li {
 	border-bottom: 1px dotted #BEC5C9;
-	padding: 20px;
-	margin: 0 11px;
+	margin-bottom: 20px;
+	padding: 0 20px 20px;
 }
 
 .promoList .activePromo li .promoTitle,
@@ -173,10 +175,6 @@
 }
 
 .promoList .activePromo em span {color: #0098d9}
-
-.overPromo {margin-bottom: 0px !important;}
-
-.overPromo li {padding:0 0 5px 20px;}
 
 #promo .leaders-column {width: 300px;}
 #promo .updated {

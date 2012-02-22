@@ -1,7 +1,7 @@
 <% main %>
 <div id="overlayHeader">
 	<a href="/" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a>
-	<ul class="menu">
+	<ul class="siteMenu">
 		{menu}
 	</ul>
 </div>
@@ -10,7 +10,7 @@
 	<%if{isHome}%><h1><a href="/" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a></h1>
 	<%else{isHome}%><a href="/" class="siteLogo" title="Australia’s Poker Resource">Australia’s Poker Resource</a>
 	<%end%>
-	<ul class="menu">
+	<ul class="siteMenu">
 		<%loop {menu += menu.item} %><li {td:class}><a href="{url}">{title}</a><% insert{submenu} %><ul>{menu}</ul><%end%></li><%end%>
 	</ul>
 	<div class="search">
