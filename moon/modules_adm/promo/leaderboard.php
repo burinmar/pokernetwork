@@ -1,6 +1,5 @@
 <?php
 
-require_once 'base_inplace_syncable.php';
 class leaderboard extends moon_com
 {
 	function events($event, $argv)
