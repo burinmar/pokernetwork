@@ -55,6 +55,11 @@ Promotions {ico=promotions, admin=tournaments, hide=0, sites=}
 		promo.custom_pages = Custom pages {link=promo.custom_pages#|*id*}
 	promo.rooms=Custom Rooms
 	
+Live Reporting {ico=reporting, hide=0,admin=content, sites=}
+	livereporting.tour_list = Live reporting
+	livereporting.tours = Reporting Tours
+	livereporting.tour_import = Import
+
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

@@ -1,0 +1,121 @@
+﻿<% messages %>
+e.invalid_id=Invalid id
+e.entry_not_found=Entry not found
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.entry_not_found=Entry not found
+
+e.empty_winner=Winner is empty
+e.empty_runner_up=Runner up is empty
+e.empty_winning_hand=Winning hand is empty
+e.empty_losing_hand=Losing hand is empty
+e.empty_prize=Prize are empty
+e.image1=Image error: Incorrect extension!
+e.image2=Image error: Techical error!
+
+<% entry:main %>
+
+<div class="tabzoneHeader clrfix">
+	<h1>Schedule: Winners</h1>
+	<a href="{url.back}" class="goBack">Back to schedule list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="tournament_id" value="{entry.tournament_id}" />
+	<input type="hidden" name="event_id" value="{entry.event_id}" />
+	<h2 class="formTitle">{tourname} :: {evname} :: <b>{title}</b></h2><span class="clr"></span>
+	<dl>
+		<dt><label>Winner</label></dt>
+		<dd><input type="text" maxlength="100" size="40" name="winner" value="{entry.winner}" />
+			<%if {suggested_winner} %><a href="javascript:;" id="suggested_winner_ctrl">&larr;</a> <span id="suggested_winner">{suggested_winner}</span><%end%>
+		</dd>
+		
+		<dt><label for="i_winning_hand">Winning hand</label></dt>
+		<dd><input id="i_winning_hand" type="text" maxlength="50" size="40" name="winning_hand" value="{entry.winning_hand}" />
+			<img class="cards-button btn" title="Cards" src="/img/rtf/cards.png"/>
+			<div id="i_cards1" style="display:none;"></div> 
+		</dd>
+
+		<dt><label>Runner-up</label></dt>
+		<dd><input type="text" maxlength="100" size="40" name="runner_up" value="{entry.runner_up}" />
+			<%if {suggested_runnerup} %><a href="javascript:;" id="suggested_runnerup_ctrl">&larr;</a> <span id="suggested_runnerup">{suggested_runnerup}</span><%end%>
+		</dd>
+		
+		<dt><label for="i_losing_hand">Losing hand</label></dt>
+		<dd><input id="i_losing_hand" type="text" maxlength="50" size="40" name="losing_hand" value="{entry.losing_hand}" />
+			<img class="cards-button btn" title="Cards" src="/img/rtf/cards.png"/>
+			<div id="i_cards2" style="display:none;"></div> 
+		</dd>
+		</dt>
+
+		<dt><label>1st place prize</label></dt>
+		<dd><input type="text" maxlength="11" size="11" name="prize" value="{entry.prize}" /> {tourcurr}
+			<%if {suggested_prize} %><a href="javascript:;" id="suggested_prize_ctrl">&larr;</a> <span id="suggested_prize">{suggested_prize}</span><%end%>
+			</dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" class="btReturn" /><input type="button" class="btCancel" value="Cancel" onclick="window.location.href='{url.back}'" /></div>	
+</form>
+<script type="text/javascript">
+$('#suggested_winner_ctrl').click(function(){
+	$('input[name=winner]').val($('#suggested_winner').html());
+});
+$('#suggested_runnerup_ctrl').click(function(){
+	$('input[name=runner_up]').val($('#suggested_runnerup').html());
+});
+$('#suggested_prize_ctrl').click(function(){
+	$('input[name=prize]').val($('#suggested_prize').html());
+});
+function cards(objId) {
+	var res = '';
+	
+	c1 = new Array(2, 3, 4, 5, 6, 7, 8, 9, 10, 'j', 'q', 'k', 'a');
+	c2 = new Array('&clubs;', '&spades;', '&hearts;', '&diams;');
+	c3 = new Array('c', 's', 'h', 'd', 'x');
+	
+	for(var i=0; i<c3.length; i++) {
+		var cards_row = '';
+		for(var j=0; j<c1.length; j++) {
+			var img = c1[j] + c3[i];
+			var code = c1[j] + c3[i] + ' ';
+			var title = c1[j] + c2[i];
+			cards_row +=
+				'<td><a href="#" ' +
+				 'onclick="addCard(\'' + objId + '\', \'' + code + '\'); return false;" ' +
+				 'title="' + title + '">' +
+				 '<img src="/img/cards/' + img + '.gif" alt="" width="25" height="15" style="border:none;" />' +
+				'</a></td>';
+		}
+		res += '<tr>' + cards_row + '</tr>';
+	}
+	
+	res = '<table>' + res + '</table>';
+	return '<div style="position:absolute;background-color:#FFF;" class="wysiwyg_cards">' + res + '</div>';
+}
+function addCard(objId, code) {
+	var obj = $('#' + objId);
+	var v = obj.val();
+	obj.val(v + code);
+}
+$('.cards-button').click(function(){
+	var self = $(this);
+	
+	var c = self.next();
+	if (self.hasClass('btn_pressed')) {
+		self.removeClass('btn_pressed');
+		c.hide();
+	} else {
+		self.addClass('btn_pressed');
+		c.show()
+	}
+	
+	
+	// hide second cards tab
+	var thisTabId = c.attr('id');
+	var secondTabId = (thisTabId == 'i_cards1') ? 'i_cards2' : 'i_cards1';
+	$('#' + secondTabId).hide().prev().removeClass('btn_pressed');
+});
+$('#i_cards1').html(cards('i_winning_hand'));
+$('#i_cards2').html(cards('i_losing_hand'));
+</script>

@@ -1,0 +1,330 @@
+<% messages %>
+e.invalid_id=Invalid id
+e.entry_not_found=Entry not found
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.entry_not_found=Entry not found
+e.parent_not_found=Category not found or no categories exist
+e.empty_alias=Uri is empty
+e.empty_place=Place is empty
+e.empty_name=Name is empty
+e.empty_duration=Duration is empty
+e.empty_address=Address is empty
+e.empty_contacts=Contacts are empty
+e.empty_from_date=Start date is empty
+e.empty_to_date=End date is empty
+e.uri_duplicate=Uri is already used
+e.nocomm=Subforum already has topics in it - could not use for news comments
+e.ncommdupe=There is already subforum assigned to display news comments
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Tournaments</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add new Tournament</a></div>
+</div>
+
+<%if {filter} %>{filter}<% end %>
+
+
+<div id="entries-list">
+	<table class="list">
+		<colgroup>
+			<col width="90" />
+			<col />
+			<col style="width: 100px" />
+			<col style="width: 140px" />
+			<col style="width: 60px" />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Start date</span></th>
+			<th><span>Name</span></th>
+			<th></th>
+			<th class="tac"><span>State</span></th>
+			<th><span>Events</span></th>
+			<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
+		</tr>
+		</thead>
+		<tbody>
+		{list.entries}
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
+</div>
+
+
+<script type="text/javascript">
+	var js_action_delete = '{event.delete}';
+</script>
+<form method="post" id="js-action-form" action="{!action}">
+	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
+	<input type="hidden" name="event" value="" id="js-action-form-event" />
+</form>
+
+<% list:entries.item %>
+<tr class="<%if {is_hidden}%>inactive<%end%>">
+	<td>{start_date}</td>
+	<td><a href="{url}">{name}</a></td>
+	<td><a href="{urlevents}">Schedule</a></td>
+	<td class="tac">{status}</td>
+	<td>{events} <%if {misswinners} %>(<span style="color:red" title="Missing winners details">{misswinners}</span>)<%end%></td>
+	<td><input type="checkbox" class="row-mark" id="row:{id}" /></td>
+</tr>
+
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Tournaments</h1>
+	<%if{url.schedule}%><ul class="subMenu">
+		<li class="active"><a>Settings</a></li>
+		<li><a href="{url.schedule}">Schedule</a></li>
+	</ul><%end%>
+	<a href="{url.back}" class="goBack">Back to tournament list</a>
+</div>
+
+<%if {submenu} %>{submenu}<% end %>
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<h2 class="formTitle">{title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<dl>
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_live" id="isLiveTournament" value="1" <%if {entry.is_live} %>checked="checked"<%end%> /> Is visible</label></dd>
+
+		<dt><label>Title</label></dt>
+		<dd><input type="text" id="entry-title" maxlength="255" size="70" class="width60 required" name="name" value="{entry.name}" /></dd>
+
+		<dt class="is_live_dep"><label>Reporting URI</label></dt>
+		<dd class="is_live_dep">
+			<input type="text" maxlength="50" size="50" class="width40 required" onfocus="fillUri(this,'entry-title')" name="alias" value="{entry.alias}" />
+			<%if {url.preview} %><div class="explain">View this tournament in <a href="{url.preview}" target="_blank">new window</a></div><%end%>
+		</dd>
+
+		<dt><label>Start date</label></dt>
+		<dd><input type="text" name="from_date" id="from-date" value="{entry.from_date}" class="isDate required" size="12" maxlength="20" /></dd>
+
+		<dt><label>Duration (in words)</label></dt>
+		<dd><input type="text" name="duration" value="{entry.duration}" class="width60 required" size="60" maxlength="100" /></dd>
+
+		<dt><label>Time zone</label></dt>
+		<dd>
+				<select name="timezone">
+				{list.timezones}
+				</select>
+		</dd>
+
+		<dt class="is_live_dep"><label>Place</label></dt>
+		<dd class="is_live_dep w100"><input type="text" maxlength="255" size="50" class="width60 required" name="place" value="{entry.place}" /></dd>
+
+		<dt class="is_live_dep"><label>Address</label> <span style="color: gray; font-size: smaller">(only the actual address)</span></dt>
+		<dd class="is_live_dep w100"><input type="text" maxlength="255" size="50" class="width60" name="address" id="geoAddress" value="{entry.address}" /></dd>
+
+		<dt class="is_live_dep"><label>Coordinates</label></dt>
+		<dd class="is_live_dep">
+			<input type="text" maxlength="50" size="50" class="width60" name="geolocation" id="geoLocation" value="{entry.geolocation}" />
+			<div id="geoLocationHint" style="display: none;">Loading...</div>
+			<div id="geoLocationMap" style="width:500px;height:400px;border: 3px double gray; margin-top: 10px"></div>
+		</dd>
+
+		<dt><label>Intro</label></dt>
+		<dd class="w100">
+			{entry.intro.toolbar}
+			<textarea name="intro" id="entryintro" class="textarea" cols="50" rows="4">{entry.intro}</textarea>
+		</dd>
+
+		<dt><label>Currency</label></dt>
+		<dd>
+			<select name="currency">
+			{list.currencies}
+			</select>
+		</dd>
+
+		<dt><label>Tour (series):</label></dt>
+		<dd>
+			<select name="tour">
+			<option value="">-</option>
+			{list.tours}
+			</select>
+		</dd>
+
+		<dt></dt>
+		<dd><label><input type="checkbox" id="i-priority" name="priority" style="height:12pt;" value="1" <%if {entry.priority} %>checked="checked"<%end%> /> High priority (sorting)</label></dd>
+
+
+		<dt><label>Synchronization</label></dt>
+		<dd><input type="text" maxlength="20" size="15" name="sync_id" value="{entry.sync_id}" />
+			<label>
+				<input type="checkbox" name="is_syncable" value="1" class="checkbox ml2em" <%if {entry.is_syncable} %>checked="checked"<%end%> />
+				<span class="checkbox">Sync enabled</span>
+			</label>
+			<label>
+				<input type="checkbox" name="autopublish" value="1" class="checkbox ml2em" <%if {entry.autopublish} %>checked="checked"<%end%> />
+				<span class="checkbox">Autopublish</span>
+			</label>
+		</dd>
+
+		<dt class="is_live_dep"><label>Rooms</label></dt>
+		<dd class="is_live_dep">
+			<select name="ad_rooms[]">
+			<option>-</option>
+			{list.rooms}
+			</select>
+		</dd>
+	</dl>
+	<div class="is_live_dep tabzoneHeader clrfix" style="margin-top: 40px">
+		<h1>Tournament Skin Settings</h1>
+	</div>
+	<dl>
+		<dt class="is_live_dep"><label>Live background color:</label></dt>
+		<dd class="is_live_dep"><input type="text" name="logo_bgcolor" value="{entry.logo_bgcolor}" /></dd>
+
+		<dt class="is_live_dep"></dt>
+		<dd class="is_live_dep"><label><input type="checkbox" id="logo_is_dark" name="logo_is_dark" value="1" <%if{entry.logo_is_dark}%>checked="checked"<%end%> /> Post dark background</label>
+		</dd>
+
+		<dt class="is_live_dep"><label>Live background image:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_big_bg" />
+			<%if {entry.logo_big_bg} %><br /><label><input type="checkbox" name="delete_logo_big_bg" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_big_bg}" alt="" /><%end%>
+			<div class="explain">w: 700px<br />h: 140px and more</div>
+		</dd>
+
+		<dt class="is_live_dep"><label>Tournament image:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_mid" />
+			<%if {entry.logo_mid} %><br /><label><input type="checkbox" name="delete_logo_mid" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_mid}" alt="" /><%end%>
+			<div class="explain">w: 700px<br />h: 126px</div>
+		</dd>
+
+		<dt class="is_live_dep"><label>Archive list image:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_small" />
+			<%if {entry.logo_small} %><br /><label><input type="checkbox" name="delete_logo_small" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_small}" alt="" /><%end%>
+			<div class="explain">w: 260px<br />h: 106px</div>
+		</dd>
+
+		<dt class="is_live_dep"><label>Index page image:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_idx" />
+			<%if {entry.logo_idx} %><br /><input type="checkbox" name="delete_logo_idx" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span><br />
+			<img src="{entry.logo_idx}" alt="" /><%end%>
+			<div class="explain">w: 440px<br />h: 106px</div>
+		</dd>
+
+		<dt class="is_live_dep"><label>Default skin</label></dt>
+		<dd class="is_live_dep">
+			<select name="skin" id="entry-skin">
+			{list.skins}
+			</select>
+			<div id="entry-skin-preview" style="width:100px; height:50px; display:none; margin-top: 10px"></div>
+		</dd>
+
+		
+	</dl>
+
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+
+</form>
+
+<% timezones.data %>
+-12=GMT -12
+-11=GMT -11
+-10=GMT -10
+-9=GMT -9
+-8=GMT -8
+-7=GMT -7
+-6=GMT -6
+-5=GMT -5
+-4=GMT -4
+-3=GMT -3
+-2=GMT -2
+-1=GMT -1
+GMT=GMT 0
+1=GMT +1
+2=GMT +2
+3=GMT +3
+4=GMT +4
+5=GMT +5
+6=GMT +6
+7=GMT +7
+8=GMT +8
+9=GMT +9
+10=GMT +10
+11=GMT +11
+12=GMT +12
+13=GMT +13
+EST=EST (GMT -5)
+PST=PST
+
+<% timezones.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+
+
+<% rooms.item %>
+<option value="{value}" <%if {selected} %> selected="selected"<%end%>>{name}</option>
+
+<% currencies.data %>
+AUD=AUD
+BRL=BRL
+CAD=CAD
+CHF=CHF
+DKK=DKK
+EEK=EEK
+EUR=EUR
+GBP=GBP
+HKD=HKD
+HUF=HUF
+INR=INR
+KRW=KRW
+LTL=LTL
+LVL=LVL
+NZD=NZD
+PHP=PHP
+PLN=PLN
+PPT=PPT
+USD=USD
+
+<% currencies.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+
+
+<% tours.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+
+
+<% states.data %>
+0=Scheduled
+1=Started
+2=Concluded
+
+<% states.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+
+
+<% skins.data %>
+1=Sky Blue
+2=Green
+3=Marine Blue
+4=Intense blue
+5=Tour logo (archive)
+
+
+<% skins.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+
+
+
+<% restrictions.data %>
+0=Default
+1=Only admins create topics
+8=Topics created from news
+
+<% restrictions.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>

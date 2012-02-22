@@ -1,0 +1,93 @@
+<% messages %>
+e.invalid_id=Invalid id
+e.entry_not_found=Entry not found
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Tournament import</h1>
+	<%if {submenu} %>{submenu}<% end %>
+</div>
+
+<%if {filter} %>{filter}<% end %>
+
+
+<div id="entries-list">
+	<table class="list">
+		<colgroup>
+			<col style="width: 90px" />
+			<col />
+			<col style="width: 120px" />
+			<col style="width: 50px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Start date</span></th>
+			<th><span>Name</span></th>
+			<th class="tac"><span>State</span></th>
+			<th class="tar"><span>Events</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		{list.entries}
+		</tbody>
+	</table>
+</div>
+
+
+
+<% list:entries.item %>
+<tr class="<%if {is_hidden}%>inactive<%end%>">
+	<td>{start_date}</td>
+	<td><a href="{url}">{name}</a></td>
+	<td class="tac">{status}</td>
+	<td class="tar">{events}</td>
+</tr>
+
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Tournaments</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to tournament list</a>
+</div>
+
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<h2 class="formTitle">{title}</h2><span class="clr"></span>
+	<dl>
+		<dt><label>Title</label></dt>
+		<dd><b>{entry.name}</b></dd>
+
+		<dt><label>Duration (in words)</label></dt>
+		<dd><b>{entry.duration}</b></dd>
+
+		<dt><label>Events</label></dt>
+		<dd>
+			<p><label>Sync all<input type="radio" style="vertical-align: middle" name="events" value="events_all" <%if {events_all} %> checked="checked"<%end%> /></label></p>
+			<div><label>Sync selected<input type="radio" style="vertical-align: middle" name="events" value="events_selected" <%if {events_selected} %> checked="checked"<%end%> /></label></div>
+		</dd>
+		
+		<dt class="events_selected_dep"><label>Events (selected)</label></dt>
+		<dd class="events_selected_dep">
+			<div <%if {events_all} %>style="display:none;"<%end%>>
+			{list.events}
+			</div>
+		</dd>
+	</dl>
+
+	<div class="formButton clrfix"><input type="submit" name="save" value="Pull" /><input type="button" class="btCancel" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+<script type="text/javascript">
+	$('input[name=events]').click(function(){
+		if ($(this).val() == 'events_all') {
+			$('.events_selected_dep').hide();
+		} else {
+			$('.events_selected_dep').show();
+		}
+	});
+</script>
+
+<% entry:events.item %>
+<label><input type="checkbox" name="event_ids[]" value="{id}" <%if{sync}%>checked="checked"<%end%> /> {name}</label><br />

@@ -410,4 +410,14 @@ function htmlDiff($old, $new){
 	return $ret;
 }
 
+/**
+ * Poker tours
+ * id => data fields [array]
+ */
+function poker_tours()
+{
+	require_once 'poker_tours.php';
+	return poker_tours_backend();
+}
+
 ?>

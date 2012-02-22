@@ -1,0 +1,82 @@
+<% info %>
+titleEdit=Edit
+
+error404=Item not found!
+error9=System error!
+
+<% main %>
+
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="fList">
+	<input type="hidden" name="event" value="" />
+	<table class="list nomarginBottom">
+		<colgroup>
+			<col />
+			<col style="width: 20px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><span>Title</span></th>
+			<th></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+		<tr id="item_{id}" {classHidden}>
+			<td><a href="{goEdit}">{title}</a></td>
+			<td>{status}</td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+</form>
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {items} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />
+	<input type="hidden" name="title" value="{title}" />
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2><span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_meta_title">Meta title</label></dt>
+		<dd><input type="text" name="meta_title" id="i_meta_title" value="{meta_title}" size="50" maxlength="255" /></dd>
+
+		<dt><label for="i_meta_keywords">Meta keywords</label></dt>
+		<dd><input type="text" name="meta_keywords" id="i_meta_keywords" value="{meta_keywords}" size="50" maxlength="255" /></dd>
+
+		<dt><label for="i_meta_description">Meta description</label></dt>
+		<dd class="w100"><textarea rows="2" cols="60" name="meta_description" id="i_meta_description">{meta_description}</textarea></dd>
+
+		<dt><label for="i_news_tag">News tag</label></dt>
+		<dd><input type="text" name="news_tag" id="i_news_tag" value="{news_tag}" size="50" maxlength="100" /></dd>
+
+		<dt><label for="i_about">About</label></dt>
+		<dd class="w100">{toolbar}<textarea rows="17" cols="60" name="about" id="i_about" >{about}</textarea></dd>
+		
+		<dt><label for="i_playlist_id">Video playlist id</label></dt>
+		<dd><input type="text" name="playlist_id" id="i_playlist_id" value="{playlist_id}" size="20" maxlength="20" /></dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide</label></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="return" value="Save &amp; return" class="btReturn" /><input type="button" class="btCancel" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+
+
+<% end {viewList} %>

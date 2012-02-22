@@ -1,0 +1,261 @@
+﻿<% messages %>
+e.invalid_id=Invalid id
+e.entry_not_found=Entry not found
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.entry_not_found=Entry not found
+e.parent_not_found=Category not found or no categories exist
+e.empty_alias=Uri is empty
+e.empty_place=Place is empty
+e.empty_name=Name is empty
+e.empty_address=Address is empty
+e.empty_contacts=Contacts are empty
+e.empty_from_date=Start date is empty
+e.uri_duplicate=Uri is already used
+e.bluff_duplicate=Bluff id is already used
+e.stars_duplicate=Stars id is already used
+e.nocomm=Subforum already has topics in it - could not use for news comments
+e.ncommdupe=There is already subforum assigned to display news comments
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Schedule</h1>
+	<ul class="subMenu">
+		<li><a href="{url.tedit}">Settings</a></li>
+		<li class="active"><a>Schedule</a></li>
+	</ul>
+	<div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add new Event</a></div>
+</div>
+<h2 class="formTitle">{tname}</h2>
+
+<%if {filter} %>{filter}<% end %>
+
+<table class="list">
+	<colgroup>
+		<col style="width: 90px" />
+		<col />
+		<col style="width: 120px" />
+		<col style="width: 120px" />
+		<col style="width: 50px" />
+		<col style="width: 40px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<th><span>Start date</span></th>
+		<th><span>Name</span></th>
+		<th><span>Winner</span></th>
+		<th class="tac"><span>Status</span></th>
+		<th><span>Days</span></th>
+		<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
+	</tr>
+	</thead>
+	<tbody>
+	{list.entries}
+	</tbody>
+</table>
+<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
+
+
+
+<script type="text/javascript">
+	var js_action_delete = '{event.delete}';
+</script>
+<form method="post" id="js-action-form" action="{!action}">
+	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
+	<input type="hidden" name="tournament_id" value="{tournament_id}" />
+	<input type="hidden" name="event" value="" id="js-action-form-event" />
+</form>
+
+<% list:entries.item %>
+<tr class="<%if {is_hidden}%>inactive<%end%>">
+	<td>{start_date}</td>
+	<td><a href="{url}" <%if {is_main} %>style="font-weight:bold;"<%end%>>{name}</a></td>
+	<td><a href="{urlwinner}"><%if{winner}%>{winner}<%else{winner}%><span style="color: red">+ Add winner</span><%end%></a></td>
+	<td class="tac">{status}</td>
+	<td>{days}</td>
+	<td><input type="checkbox" class="row-mark" id="row:{id}" /></td>
+</tr>
+
+<% list:entries.subitem %>
+<tr class="<%if {is_hidden}%>inactive<%end%>">
+	<td>{start_date}</td>
+	<td>» Day {name}</td>
+	<td></td>
+	<td class="tac">{status}</td>
+	<td></td>
+	<td><input type="checkbox" class="row-mark" id="row:{id}" /></td>
+</tr>
+
+
+<% list:entries.subitem.add %>
+<tr class="<%if {is_hidden}%> inactive<%end%>">
+	<td></td>
+	<td>+ <a href="{url}">New day</a></td>
+	<td></td>
+	<td></td>
+	<td></td>
+	<td><input type="checkbox" style="visibility:hidden;" /></td>
+</tr>
+
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Schedule</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to event list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<input type="hidden" name="tournament_id" value="{entry.tournament_id}" />
+	<h2 class="formTitle">{tourname} :: {title}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<dl>
+		<dt></dt>
+		<dd>
+			<label><input type="checkbox" name="is_live" id="isLiveTournament" value="1" <%if {entry.is_live} %>checked="checked"<%end%> /> Is visible</label><br />
+			<label><input type="checkbox" name="is_main" style="position: relative; top: 3px;" value="1" <%if {entry.is_main} %>checked="checked"<%end%> /> Is main event <span class="explain">(one event per tournament)</span></label>
+		</dd>
+
+		<dt><label>Title</label></dt>
+		<dd><input type="text" maxlength="255" size="50" class="width60 required" id="entry-title" name="name" value="{entry.name}" />
+			<%if {url.preview} %><div class="explain">View this event in <a href="{url.preview}" target="_blank">new window</a></div><%end%>
+		</dd>
+
+		<dt class="is_live_dep"><label>Event URI</label></dt>
+		<dd class="is_live_dep">{toururi}/<input type="text" maxlength="50" size="50" class="width40 required" name="alias" onfocus="fillUri(this,'entry-title')" value="{entry.alias}" />/</dd>
+
+		<dt><label>Start date</label></dt>
+		<dd>
+		<input type="text" name="from_date" id="from-date" value="{entry.from_date}" class="isDate required" size="12" maxlength="10" />
+		<input type="hidden" name="from_time" id="from-time" value="{entry.from_time}" class="isTime required" size="7" maxlength="5" />
+		<!-- {tz} -->
+		</dd>
+
+		<dt><label>End date</label></dt>
+		<dd>
+		<input type="text" name="to_date" id="to-date" value="{entry.to_date}" class="isDate" size="12" maxlength="10" />
+		<input type="hidden" name="to_time" id="to-time" value="{entry.to_time}" class="isTime" size="7" maxlength="5" />
+		<!-- {tz} -->
+		</dd>
+
+
+		<%if {is_tsyncable} %>
+		<dt><label>Sync</label></dd>
+		<dd><label><input type="checkbox" name="is_syncable" value="1" class="checkbox" style="position:relative;top:1px;" <%if {entry.is_syncable} %>checked="checked"<%end%> />
+			<span class="checkbox">Sync enabled</span></label></dd>
+		<%else {is_tsyncable} %>
+		<dt style="display:none"></dt>
+		<dd style="display:none"><input type="hidden" name="is_syncable" value="{entry.is_syncable}" /></dd>
+		<%end%>
+
+		<dt class="is_live_dep"></dt>
+		<dd class="is_live_dep">
+			<table>
+				<colgroup>
+					<col style="width: 80px" />
+					<col style="width: 120px" />
+					<col style="width: 80px" />
+					<col style="width: 120px" />
+				</colgroup>
+				<tr>
+					<td><label>Prize Pool</label></td>
+					<td><input type="text" maxlength="12" size="8" name="prizepool" value="{entry.prizepool}" /></td>
+					<td><label>Players Total</label></td>
+					<td><input type="text" maxlength="10" size="8" name="players_total" value="{entry.players_total}" /></td>
+				</tr>
+				<tr>
+					<td><label>Chips Total</label></td>
+					<td><input type="text" maxlength="12" size="8" name="chipspool" value="{entry.chipspool}" /></td>
+					<td><label>Players Left</label></td>
+					<td><input type="text" maxlength="10" size="8" name="players_left" value="{entry.players_left}" /></td>
+				</tr>
+			</table>
+		</dd>
+
+		<dt></dt>
+		<dd>
+			<table>
+				<colgroup>
+					<col style="width: 80px" />
+					<col style="width: 120px" />
+					<col style="width: 80px" />
+					<col style="width: 120px" />
+				</colgroup>
+				<tr>
+					<td><label>Buy-in</label></td>
+					<td><input type="text" maxlength="12" size="8" name="buyin" value="{entry.buyin}" /> <span class="explain">{tourcurr}</span></td>
+					<td><label>Fee</label></td>
+					<td><input type="text" maxlength="12" size="8" name="fee" value="{entry.fee}" /> <span class="explain">{tourcurr}</span></td>
+				</tr>
+				<tr>
+					<td><label>Rebuys</label></td>
+					<td><input type="text" maxlength="12" size="8" name="rebuy" value="{entry.rebuy}" /> <span class="explain">{tourcurr}</span></td>
+					<td><label>Addons</label></td>
+					<td><input type="text" maxlength="12" size="8" name="addon" value="{entry.addon}" /> <span class="explain">{tourcurr}</span></td>
+				</tr>
+			</table>
+		</dd>
+
+		<%if {is_bluffable} %>
+		<dt class="is_live_dep"><label>Bluff id</label></dt>
+		<dd class="is_live_dep"><input type="text" maxlength="12" size="10" name="bluff_id" value="{entry.bluff_id}" /></dd>
+		<% end %>
+		<%if {is_starsable} %>
+		<dt class="is_live_dep"><label>Stars id</label></dt>
+		<dd class="is_live_dep"><input type="text" maxlength="12" size="10" name="stars_id" value="{entry.stars_id}" /></dd>
+		<% end %>
+
+		<dt><label>Event days</label></dt>
+		<dd>
+		<script type="text/javascript">
+		<!--
+		var emptyDayControl = {emptyDayControl};
+		<%if {entry.id} %>
+		var isNewEvt = false;
+		<%else {entry.id} %>
+		var isNewEvt = true;
+		<%end%>
+		//-->
+		</script>
+		<table id="event_days">
+		<tr>
+			<td>Title (day no.)</td>
+			<td>Date</td>
+		</tr>
+		{days}
+		</table>
+		</dd>
+
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+
+
+<% entry:day.item %>
+<tr>
+	<td>
+		<input type="hidden" name="dayid[{nr}]" value="{id}" />
+		<input type="text" name="dayname[{nr}]" id="dayname{nr}" value="{value}" maxlength="6" size="10" class="evDName" />
+	</td>
+	<td>
+		<input type="text" name="dayfrom_date[{nr}]" id="fromdate{nr}" value="{from_date}" class="isDate" size="12" maxlength="10" />
+		<input type="text" name="dayfrom_time[{nr}]" id="fromtime{nr}" value="{from_time}" class="isTime" size="7" maxlength="5" />
+	</td>
+</tr>
+
+
+<% states.data %>
+0=Scheduled
+1=Started
+2=Concluded
+
+<% restrictions.data %>
+0=Default
+1=Only admins create topics
+8=Topics created from news
+
+<% restrictions.item %>
+<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
