@@ -112,9 +112,9 @@ class promos extends base_inplace_syncable
 					? '.dev'
 					: '.com';
 				$redirect = '';
-				if ('com' == $site && !empty($row['remote_id'])) {
+				if ('com' == $site && !empty($row['remote_id'])) { // from slave synced promo to master
 					$redirect = '?promo_id_redirect=' . $row['remote_id'];
-				} else {
+				} else { // from slave or master original promo to self
 					$redirect = '?promo_id_redirect=' . $row['id'];
 				}
 				$argv['page_previews'] .= $tpl->parse('list:entries.page_previews.item', array(
