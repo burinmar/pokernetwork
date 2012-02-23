@@ -1,22 +1,87 @@
 ﻿<% toolbar %>
-{!sharedIt}
-<ul class="shareButtons">
-	<li class="facebook"><a title="Share this on Facebook" href="http://www.facebook.com/share.php?u={jsURL}">Facebook</a></li>
-	<li class="twitter"><a onclick="if (this.href.indexOf('go_twitter') != -1) this.href +='=1'" title="Tweet this" rel="nofollow" href="{twitterURL}">Twitter</a></li>
-	<li class="gplus">
-		<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
-		<div class="g-plusone" data-size="standard" data-count="false"></div>
-	</li>
-</ul><span class="clr"></span>
+<% if {showTitle} %><h2>{!share}</h2><% end %>
+<ul class="articleSocialLinks">
+	{socialNetwork1}
+	{socialNetwork2}
+	{socialNetwork3}
+</ul>{b}
+
+<% socialTracker %>
+<script type="text/javascript">st()</script>
+
+<% toolbar:socialNetwork1 %>
+{facebook}
+<% toolbar:socialNetwork2 %>
+{twitter}
+<% toolbar:socialNetwork2:bg %>
+{gplus}
+<% toolbar:socialNetwork3 %>
+{gplus}
+<% toolbar:socialNetwork3:bg %>
+{svejo}
+<% toolbar:socialNetwork3:ru %>
+{vkontakte}
+
+<% social:facebook %>
+<li class="facebook"><a href="http://www.facebook.com/share.php?u={jsURL}" target="_blank" title="{!shareFacebook}">Facebook</a></li>
+<% social:twitter %>
+<li class="twitter"><a href="{twitterURL}" rel="nofollow" title="{!tweet}" onclick="if (this.href.indexOf('go_twitter') != -1) this.href +='=1'" target="_blank">Twitter</a></li>
+<% social:gplus %>
+<li class="gplus">
+	<script type="text/javascript" src="https://apis.google.com/js/plusone.js">{lang: '{lang}'}</script>
+	<div class="gplus-container"><div class="g-plusone" data-size="standard" data-count="false"></div></div> Google +1
+</li>
+<% social:vkontakte %>
+<li class="vkontakte"><a href="http://vkontakte.ru/share.php?url={jsURL}" target="_blank">В Контакте</a></li>
+<% social:svejo %>
+<li class="svejo"><a href="http://svejo.net/story/submit_by_url?url={jsURL}" target="_blank">Свежо</a></li>
+
+
+
+<% toolbar_reporting %>
+<span class="articleSocialLinks">
+	{socialNetwork1}
+	{socialNetwork2}
+	<%if{socialNetwork3}%>{socialNetwork3}<%end%>
+</span><script type="text/javascript">st()</script>
+
+<% toolbar_reporting:socialNetwork1 %>
+{facebook}
+<% toolbar_reporting:socialNetwork2 %>
+{twitter}
+<% toolbar_reporting:socialNetwork3 %>
+{gplus}
+
+<% social_reporting:facebook %>
+<a href="http://www.facebook.com/share.php?u={jsURL}" target="_blank" title="{!shareFacebook}"><img src="/img/socialnets/facebook23.png" width="20" height="20" alt="" /></a>
+<% social_reporting:twitter %>
+<a href="{twitterURL}" rel="nofollow" title="{!tweet}" target="_blank" onclick="if (this.href.indexOf('go_twitter') != -1) this.href +='=1'"><img src="/img/socialnets/twitter23.png" width="20" height="20" alt="" /></a>
+<% social_reporting:gplus %>
+<%if {firstuse} %><script type="text/javascript">
+$(function(){
+	var gp = document.createElement('script'); gp.type = 'text/javascript'; gp.async = true;
+	var lng = document.createTextNode("{lang: '{lang}'}"); gp.appendChild(lng);
+	gp.src = "http://apis.google.com/js/plusone.js";
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gp, s);
+});
+</script><%end%>
+<a class="gplus"><div class="g-plusone" data-size="small" data-count="false"></div></a>
+<% social_reporting:vkontakte %>
+<% social_reporting:svejo %>
+
 
 <% facebook_like %>
-<div class="facebookLike">
-	<iframe id="bfLikeButton" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:250px; height:30px; display:none;" allowTransparency="true"></iframe>
-	<script type="text/javascript">
-	/*<![CDATA[*/
-		$(document).ready(function(){
-			$('#bfLikeButton').attr('src', 'http://www.facebook.com/plugins/like.php?href={jsURL}&layout=standard&show_faces=false&width=200&action=like&font=arial&colorscheme=light&height=35').show();
-		});
-	/*]]>*/
-	</script>
-</div>
+<iframe class="bfLikeButton" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:255px; height:35px; display:none;" allowTransparency="true"></iframe>
+<script type="text/javascript">
+/*<![CDATA[*/
+$(document).ready(function(){
+	$('.bfLikeButton').attr('src', 'http://www.facebook.com/plugins/like.php?href={jsURL}&layout=standard&show_faces=false&width=255&action=like&font=arial&colorscheme=light&height=35').show();
+});
+/*]]>*/
+</script>
+
+<%xfbml%>
+<script type="text/javascript">ft('{fl}')</script>
+
+<%fblike%>
+<fb:like{p}></fb:like>

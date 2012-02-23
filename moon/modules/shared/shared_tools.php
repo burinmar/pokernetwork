@@ -1,7 +1,5 @@
 <?php
-
 class shared_tools {
-
 
 	function shared_tools($path) {
 		$moon = & moon :: engine();
@@ -16,94 +14,135 @@ class shared_tools {
 	function init() {
 	}
 
-
 	function toolbar($opt = FALSE) {
 		if (isset ($_GET['print'])) {
 			return '';
 		}
-		$page = & moon :: page();
-
+		$page = moon :: page();
+		$postTitle = '';
 		if (isset($_GET['go_twitter'])) {
 			$thisUrl = $page->home_url() . ltrim($page->uri_segments(0),'/');
 			if (empty($_GET['go_twitter'])) {
 				$page->head_link($thisUrl, 'canonical');
-			}
-			else {
+			} else {
 				$postUrl = ($shortUrl = short_url($thisUrl)) ? $shortUrl : $thisUrl;
-				$postTitle = $page->title();
-				if (strlen($postTitle . $postUrl) > 139) {
-					$twitterMsg = substr($postTitle, 0, 140 - strlen($postUrl) - 4) . '... ' . $postUrl;
-				} else {
-					$twitterMsg = $postTitle . ' ' . $postUrl;
+				$twitterMsg = $page->title();
+				if (isset($opt['title'])) {
+					$twitterMsg = $opt['title'];
 				}
-				$twitterUrl = 'http://twitter.com/home?status=' . urlencode($twitterMsg);
+				if (strlen($twitterMsg) > 139) {
+					$twitterMsg = substr($twitterMsg, 0, 140);
+				}
+				$twitterUrl = 'http://twitter.com/intent/tweet?text=' . urlencode($twitterMsg).'&original_referer='.urlencode(short_url($postUrl)).'&url='.urlencode(short_url($postUrl)).'&source=tweetbutton';
+
+				if (!empty($opt['twitterTags'])) $twitterUrl .= '&hashtags='.urlencode($opt['twitterTags']);
+				if (_SITE_ID_ == 'com') $twitterUrl .= '&via=PokerNews';
+
+				/* url example
+				http://twitter.com/intent/tweet?
+				original_referer=http%3A%2F%2Fwww.guardian.co.uk%2Fculture%2F2011%2Fjun%2F08%2Fshakespeare-real-ophelia-link
+				&related=GuardianCulture
+				&source=tweetbutton
+				&text=The+real+Ophelia%3F+1569+coroner%27s+report+suggests+Shakespeare+link
+				&url=http%3A%2F%2Fgu.com%2Fp%2F2pj3v%2Ftw
+				*/
 				$page->redirect($twitterUrl, 301);
 			}
 		}
 
-		
-		//Sitaip idejus problemos su IE6
-		//$page->js('http://s7.addthis.com/js/200/addthis_widget.js');
-		//$page->js('http://w.sharethis.com/widget/?publisher=c95353dc-1195-45db-93ec-802f1dc91ab8&amp;type=website');
 		if (!is_array($opt)) {
 			$opt = array();
 		}
-		//$opt += array('email' => TRUE, 'print' => TRUE);
 
 		$m = array();
-		//email mygtukas
-		if (!empty ($opt['email'])) {
-			$m['email'] = 1;
+		if (!empty ($opt['rss'])) { //rss mygtukas
+			$page->head_link($opt['rss'], 'rss','RSS xml feed');
 		}
-		//print mygtukas
-		if (!empty ($opt['print'])) {
-			if ($opt['print'] === TRUE) {
-				$m['print'] = $page->uri_segments(0);
-				$m['print'] .= strpos($m['print'], '?') ? '&print' : '?print';
-				$m['print'] = htmlspecialchars($m['print']);
+		if (empty ($opt['notitle'])) { //ar rodyt 'Share this' antraste
+			$m['showTitle'] = 1;
+		}
+
+		$thisUrl = $page->home_url() . ltrim($page->uri_segments(0),'/');
+		if (isset($opt['url'])) {
+			$thisUrl = $page->home_url() . ltrim($opt['url'],'/');
+		}
+
+		$twitterUrl = $thisUrl.'?go_twitter';
+
+		$tplSuffix = !empty($opt['variant'])
+			? '_' . $opt['variant']
+			: '';
+
+		$socialArgv = array(
+			'twitterURL' => $twitterUrl,
+			'jsURL' => urlencode($thisUrl),
+			'lang' => moon::locale()->language()
+		);
+		$socialArgv = array(
+			'facebook' => $this->tpl->parse('social' . $tplSuffix . ':facebook', array(
+				'jsURL' => $socialArgv['jsURL']
+			)),
+			'twitter' => $this->tpl->parse('social' . $tplSuffix . ':twitter', array(
+				'twitterURL' => $socialArgv['twitterURL']
+			)),
+			'gplus' => $this->tpl->parse('social' . $tplSuffix . ':gplus', array(
+				'lang' => $socialArgv['lang'],
+				'firstuse' => isset($opt['firstuse'])
+					? $opt['firstuse']
+					: true
+			)),
+			'vkontakte' => $this->tpl->parse('social' . $tplSuffix . ':vkontakte', array(
+				'jsURL' => $socialArgv['jsURL']
+			)),
+			'svejo' => $this->tpl->parse('social' . $tplSuffix . ':svejo', array(
+				'jsURL' => $socialArgv['jsURL']
+			))
+		);
+		$nrButtons = isset($opt['nrbuttons'])
+			? $opt['nrbuttons']
+			: 3;
+		for ($i = 1; $i <= $nrButtons; $i++) {
+			$tplName = $this->tpl->has_part('toolbar' . $tplSuffix . ':socialNetwork' . $i . ':' . _SITE_ID_)
+				? 'toolbar' . $tplSuffix . ':socialNetwork' . $i . ':' . _SITE_ID_
+				: 'toolbar' . $tplSuffix . ':socialNetwork' . $i;
+			$m['socialNetwork' . $i] = $this->tpl->parse($tplName, $socialArgv);
+		}
+		
+		if (empty($opt['variant'])) {
+			if (!empty($opt['socialTracker'])) {
+				$m['b'] = $this->tpl->parse('socialTracker');
+			} else {
+				$m['b'] = '';
 			}
 		}
-		//rss mygtukas
-		if (!empty ($opt['rss'])) {
-			$page->head_link($opt['rss'], 'rss','RSS xml feed');
-			$m['rss'] = $opt['rss'];
-		}
-		//skirtukas ar reikalingas
-		if (!empty ($m['rss']) || !empty ($m['print'])) {
-			$m['separator'] = 1;
-		}
-		
-		$thisUrl = $page->home_url() . ltrim($page->uri_segments(0),'/');
-		$twitterMsg = $page->title() . ' ' . $thisUrl;
-		$twitterUrl = 'http://twitter.com/home?status=' . urlencode($twitterMsg);
-		if (strlen($twitterMsg) > 140) {
-			$twitterUrl = $thisUrl . '?go_twitter';
-		}
-		$m['jsTitle'] = urlencode($page->title());
-		$m['twitterURL'] = $twitterUrl;
-		$m['jsURL'] = urlencode($thisUrl);
 
-		$tplName = 'toolbar';
-		if (!empty($opt['variant'])) {
-			$tplName .= '_' . $opt['variant'];
-		}
-		
-		return $this->tpl->parse($tplName, $m);
+		return $this->tpl->parse('toolbar' . $tplSuffix, $m);
 	}
-	
-	function facebookLike()
-	{
+
+	function facebookLike() {
 		if (isset ($_GET['print'])) {
 			return '';
 		}
 		$page = & moon :: page();
 		$thisUrl = $page->home_url() . ltrim($page->uri_segments(0),'/');
-		$m = array(
+		return $this->tpl->parse('facebook_like', array(
 			'jsURL' => urlencode($thisUrl)
-		);
-		return $this->tpl->parse('facebook_like', $m);
+		));
+	}
+
+	function socialTrackerWxfbml() {
+		$p = &moon::page();
+		$p->set_local('html.class', ' xmlns:fb="http://www.facebook.com/2008/fbml"');
+		$locale = moon::locale();
+		return $this->tpl->parse('xfbml', array('fl' => $locale->get('fb')));
 	}
 	
-}
+	function fbLike($w255 = FALSE) {
+		return $this->tpl->parse('fblike', array('p' => TRUE === $w255 ? ' width="255"' : ''));
+	}
 
+	function fbLikeWst() {
+		return $this->tpl->parse('fblike', array('p' => '')) . $this->socialTrackerWxfbml();
+	}
+}
 ?>

@@ -1,0 +1,13 @@
+﻿[en]
+
+1=Please, enter message
+2=Message too long (it must be up to {max_limit} characters).
+4=Your message added successfully
+5=Message deleted successfully
+6=Your shout text
+7=Shoutbox
+8=Do you really want delete this item?
+9=delete
+10=Shout!
+hist=Shoutbox History
+noshouts=No shouts yet

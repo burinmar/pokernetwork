@@ -420,4 +420,10 @@ function poker_tours()
 	return poker_tours_backend();
 }
 
+function make_uri($s) {
+	$txt = & moon :: shared('text');
+	return $txt->make_uri($s);
+}
+
+
 ?>

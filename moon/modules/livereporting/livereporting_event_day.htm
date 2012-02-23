@@ -1,0 +1,55 @@
+<% logEntry:day %>
+<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="day-{id}">
+	<h3 class="articleTitle" id="no{id}">
+		<%if {is_started} %>{day_name} {!started}<%end%>
+		<%if {is_completed} %>{day_name} {!completed}<%end%>
+	</h3>
+	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
+		<%if {show_controls} %> | <a href="{url.edit}">edit</a><%end%>
+	</p>
+	<div class="changedBets">
+		<%if {is_started} %>{event_name}<br /> {day_name} {!started}<%end%>
+		<%if {is_completed} %>{event_name}<br /> {day_name} {!completed}<%end%>
+	</div>
+	<span class="clr"> </span>
+</div>
+
+
+
+<% entry:day %>
+<%if {control} %>
+<div id="rq-entry-control">
+	{control}
+</div>
+<%end%>
+<div class="article">
+	<h3 class="articleTitle" id="no{id}">{day_name}</h3>
+	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by}</p>
+	<p>
+		<%if {is_started} %>Started<%end%>
+		<%if {is_completed} %>Completed<%end%>
+	</p>
+	<span class="clr"> </span>
+	<p><a href="{url.up}">Back to list</a></p>
+</div>
+
+
+
+
+
+<% controls:day %>
+<div id="rq-wd" style="<%if {cd.unhide} %><%else {cd.unhide} %>display:none;<%end%>">
+<form method="post" class="control" action="{!action}">
+	<input type="hidden" name="event"   value="{cd.save_event}" />
+	<input type="hidden" name="id" value="{cd.id}" />
+	<fieldset>
+		<legend>Day</legend>
+		<p><label>Date:</label>
+			{cd.custom_datetime} {cd.custom_tz}
+		</p>
+		<p><label>&nbsp;</label>
+			<input type="submit" value="Save" name="update_day_data" style="width:100px;"/>
+		</p>
+	</fieldset>
+</form>
+</div>

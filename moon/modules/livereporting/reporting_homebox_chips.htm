@@ -1,0 +1,30 @@
+<% main %>
+<div class="lrhome-chipstable">
+	<h3><a href="http://www.pokernews.com/live-reporting/2011-world-series-of-poker/event-58-no-limit-hold-em-championship/chips.htm">WSOP 2011 Main Event ChipCounts</a></h3>
+	<table>
+		<colgroup>
+			<col width="30" />
+			<col />
+			<col />
+			<col />
+			<col />
+		</colgroup>
+		<tr>
+			<th></th>
+			<th>Player</th>
+			<th>Sponsor</th>
+			<th class="tar">Chips</th>
+			<th class="tar progress">Progress</th>
+		</tr>
+		<%loop{chips}%>
+		<tr>
+			<td class="nr">{nr}</td>
+			<td class="player">{uname}</td>
+			<td><%if{sponsor}%><img src="http://www.pokernews.com/img/live_poker/wsop/pokerstars_2.png" alt="PokerStars" /><%end%></td>
+			<td class="tar">{chips}</td>
+			<td class="tar progress"><%if{chipsc}%>{chipsc} <img width="7" height="8" alt="pos" src="/img/live_poker/delta_{imgc}.png"><%end%></td>
+		</tr>
+		<%end%>
+	</table>
+	<div class="footer"><a href="http://www.pokernews.com/wsop-winners/">View WSOP Winners</a></div>
+</div>

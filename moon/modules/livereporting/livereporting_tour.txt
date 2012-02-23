@@ -1,0 +1,15 @@
+[en]
+
+live_reporting=Live Reporting
+event=Event
+scheduled_events=Event
+winner=Winner
+winning_hand=Winning Hand
+prize=Prize
+runner_up=Runner Up
+date=Date
+losing_hand=Losing Hand
+live_coverage=Live Coverage
+upcoming=Upcoming
+tournaments=Tournaments
+respevs=Results of the past events

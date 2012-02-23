@@ -1,0 +1,115 @@
+<% tour:t9n %>
+live_reporting={!live_reporting}
+
+<% tour:main %>
+<div class="widget livePokerPage livePokerTourIntro">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle">{title}</h1>
+		<h2 class="tourLogo">
+			<img src="{img2}" alt="{title}" /><br />
+			{title}
+		</h2>
+		<% if {about_html} %>
+			<div class="article">{about_html}</div>
+		<% end %>
+		<% if {url.moreNews} %><p><a href="{url.moreNews}">{!more_news} {title}</a></p><% end %>
+
+		<h3>{title}</h3>
+
+		<%if{scheduled_tournaments}%>
+		<table class="tourSchedule tal" summary="{title} schedule">
+			<thead>
+				<tr>
+					<th>{!scheduled_tourn}</th>
+					<th>{!date}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% loop {scheduled_tournaments += tour:scheduled_tournaments.item} %>
+				<tr class="{class} <%if{isLive}%>liveCoverage<%end{isLive}%>">
+					<td><a href="{url.tournament}" class="eventTitle">{title}</a><br /><span class="eventVenue">{venue}</span></td>
+					<td>
+						<%if{isLive}%>
+						<span class="eventIsLive">{!live_coverage}</span>
+						<%else{isLive}%>
+						<span class="eventUpcoming">{!upcoming}</span>
+						<%end%>
+						<br /><span class="eventDates">{date}</span>
+					</td>
+				</tr>
+				<% end {scheduled_tournaments}%>
+			</tbody>
+		</table>
+		<%end{scheduled_tournaments}%>
+
+		<%if{finished_tournaments}%>
+		<table class="tourWinners tal" summary="{!respastevs}">
+			<col class="tourTitle" />
+			<col class="tourWinner" />
+			<col class="tourWinningHand" />
+			<col class="tourPrize" />
+			<col class="tourRunnerUp" />
+			<col class="tourLosingHand" />
+			<thead>
+				<tr>
+					<th>{!tournament}</th>
+					<th>{!winner}</th>
+					<th>{!winning_hand}</th>
+					<th>{!prize}</th>
+					<th>{!runner_up}</th>
+					<th>{!losing_hand}</th>
+				</tr>
+			</thead>
+			<tbody>
+				<% loop {finished_tournaments += tour:finished_tournaments.item} %>
+				<tr class="{class}">
+					<td><a href="{url.tournament}" class="eventTitle">{title}</a><br /><span class="eventDates">{date}</span></td>
+					<td>
+							<%if{url.winner}%>
+								<%if{winnerImg}%><a href="{url.winner}"><img src="{winnerImg}" width="48" height="48" alt="{winner}" /></a><%end{winnerImg}%> <a href="{url.winner}" class="winnerTitle">{winner}</a>
+							<%else{url.winner}%>
+								{winner}
+							<%end%>
+					</td>
+					<td>{winningHand}</td>
+					<td>{winnerPrize}</td>
+					<td>
+						<%if{url.runnerup}%>
+							<a href="{url.runnerup}">{runnerUp}</a>
+						<%else{url.runnerup}%>
+							{runnerUp}
+						<%end%>
+					</td>
+					<td>{losingHand}</td>
+				</tr>
+				<% end {finished_tournaments} %>
+			</tbody>
+		</table>
+		<%end{finished_tournaments}%>
+		<% if {tours} %>
+		<div class="livePokerBlock livePokerBlockTourGallery">
+			<p class="head2">{!tournaments}</p>
+			<ul class="tourGallery">
+				{tours}
+			</ul>
+			<span class="clr"> </span>
+		</div>
+		<% end %>
+	</div>
+</div>
+
+<% tour:cards.item %>
+<span class="card card{color}" title="{value}-{suit}"><img src="/img/suits/suit-{isuit}.png" width="13" height="13" alt="{valueRaw}" /><span class="cardValue">{value}</span></span>
+
+
+<% partial:tours.item %>
+<li>
+	<dl>
+		<dt><a href="{url}">&nbsp;<img src="{logo}" alt="{name}" /><%if {is_live} %><span class="sash sashLive"><span>{!live_coverage}</span></span><%end%></a></dt>
+		<dd><a href="{url}">{name}</a></dd>
+	</dl>
+</li>

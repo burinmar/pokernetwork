@@ -1,0 +1,9 @@
+<?xml version="1.0" ?>
+<page>
+	<layout>col2</layout>
+
+	<com><part>center</part><name>fake</name></com>
+	<com><part>column</part><name>livereporting.livereporting</name><var name="widget">2</var></com>
+	<com><part>header</part><name>sys.header</name><var name="active">live</var></com>
+	<com><part>footer</part><name>sys.footer</name></com>
+</page>

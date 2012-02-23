@@ -1,0 +1,434 @@
+<% log:t9n %>
+live_reporting={!live_reporting}
+day.named = {!day_named}
+day.all   = {!day_all}
+filter.none  = {!filter_none}
+filter.post  = {!filter_post}
+filter.chips = {!filter_chips}
+filter.day   = {!filter_day}
+filter.round = {!filter_rounds}
+filter.audio = {!filter_audio}
+filter.video = {!filter_video}
+filter.photos= {!filter_photos}
+
+
+<% log:tabs %>
+log     =         | {!live_reporting}
+chips   = chips   | {!chipcounts}
+gallery = gallery | {!photo_gallery}
+payouts = payouts | {!payouts}
+
+
+<% log:events.pop.item.active %>
+<li class="pg pg{page}"><a href="{url}">{name}</a></li>
+
+<% log:events.pop.item.current %>
+<li class="pg pg{page}">{name}</li>
+
+<% log:events.pop.pager.active %>
+<a class="minipager pgg pgg{page}" id="switch-{page}" rel="#tab-{page}" href="#" title="Page {pageTitle}">•</a>
+
+<% log:events.pop.pager.current %>
+<a class="minipager current pgg pgg{page} pgga" id="switch-{page}" rel="#tab-{page}" href="#" title="Page {pageTitle}">•</a>
+
+
+<% log:main %>
+<div class="widget livePokerPage livePokerEventPage" id="{mainContainerId}">
+	<div class="widgetInner" id="widgetInnerMain">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle">{tournament_name}</h1>
+		<div class="w640 fl20">
+			<h2>{event_name}</h2>
+			<%if {list.days} %>
+			<div class="dayListing">
+				<span class="dayListingTitle">{!days} </span>
+				<ul>
+					{list.days}
+				</ul>
+			</div>
+			<%end%>
+			<ul class="tabs">
+				{list.tabs}
+			</ul>
+			{paginator}
+
+			<%if {launch_live_count} %>
+			<script type="text/javascript">
+			/*<![CDATA[*/
+				var miscAjaxUrl = '{misc_ajax_url}';
+				var launchLiveCount = {
+					day : {launch_live_day_id},
+					evt : {launch_live_event_id},
+					since : {launch_live_since}
+				};
+			/*]]>*/
+			</script>
+			<%end%>
+			<%if {showControls} %><div id="rq-log-controls"> {controls} </div><% end %>
+			{list.entries}
+			{paginator}
+		</div>
+		<div class="w300 fl">
+			<p class="eventListTournamentListButtons">
+				<%if {eventlist.singleevent} %>
+					<a class="eventListButton empty"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
+				<%else {eventlist.singleevent} %>
+					<a href="{url_events}" class="eventListButton" id="widgetELShow" onclick="return false;"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
+				<%end%>
+
+				<a href="{url_events}" class="tournamentListButton"><span class="linkText">{!tournament}<span class="cbr"></span></span></a>
+			</p>
+			<div class="widget widgetWithMiniPager widgetPopup widgetEventsList" id="widgetEL">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<h3 class="widgetTitle">{!events_list}</h3>
+					<ul <%if {eventlist.paged} %>style="min-height: 220px;"<%end%>>
+					{eventlist.list.events}
+					</ul>
+					<a href="" class="widgetHideLink" title="Close" id="widgetELHide"><span class="a11y">Close</span></a>
+					<div class="widgetMiniPager">
+						<a href="#" class="previous" title="Previous" id="widgetELPrev">‹ Previous</a>
+						<span>
+							{eventlist.list.events.pager}
+						</span>
+						<a href="#" class="next" title="Next" id="widgetELNext">Next ›</a>
+					</div>
+				</div>
+			</div>
+			<%if {showControls} %>
+			<div class="widget widgetChipsCount">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<h3 class="widgetTitle">Controls</h3>
+					{sidebar_controls}
+				</div>
+			</div>
+			<%end%>
+			<%if {widget.winner} %>
+			<div class="widget widgetEventWinner">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<dl>
+						<dt class="tar">{!winner}</dt>
+						<dd><%if {winner.winnerurl} %>
+							<a href="{winner.winnerurl}"><%if {winner.winnerimg} %><img width="48" height="48" alt="" src="{winner.winnerimg}" class="fl10" /><%end%>{winner.winner}</a>
+							<%else {winner.winnerurl} %>
+							{winner.winner}
+							<%end%>
+						</dd>
+					</dl>
+					<%if {winner.cards} %>
+					<dl>
+						<dt class="tar">{!winning_hand}</dt>
+						<dd>{winner.cards}</dd>
+					</dl>
+					<%end%>
+					<%if {winner.prize} %>
+					<dl>
+						<dt class="tar">{!prize}</dt>
+						<dd>{winner.prize}</dd>
+					</dl>
+					<%end%>
+				</div>
+			</div>
+			<%end%>
+			<%if {widget.latest_updates} %>
+			<div class="widget widgetLatestUpdates">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<dl>
+						<%if {round.round_block} %>
+						<dt>{!level_info}</dt>
+						<dd>
+							<dl>
+								<dt>{!round}</dt>
+								<dd>{round.round}</dd>
+							</dl>
+							<%if {round.limit_not_blind} %>
+							<dl>
+								<dt>Limits</dt>
+								<dd>{round.smallblind} / {round.bigblind}</dd>
+							</dl>
+							<%else {round.limit_not_blind} %>
+							<dl>
+								<dt>{!blinds}</dt>
+								<dd>{round.smallblind} / {round.bigblind}</dd>
+							</dl>
+							<%end%>
+							<dl>
+								<dt>{!ante}</dt>
+								<dd>{round.ante}</dd>
+							</dl>
+						</dd>
+						<%end%>
+						<%if {pl.players_block} %>
+						<dt>{!players_info}</dt>
+						<dd>
+							<%if {pl.ptotal} %>
+							<dl>
+								<dt>{!players_left}</dt>
+								<dd>{pl.pleft}</dd>
+							</dl>
+							<dl>
+								<dt>{!entries}</dt>
+								<dd>{pl.ptotal}</dd>
+							</dl>
+							<%end%>
+							<%if {pl.chips_avg} %>
+							<dl>
+								<dt>{!average_chip_stack}</dt>
+								<dd>{pl.chips_avg}</dd>
+							</dl>
+							<dl>
+								<dt>{!chips_total}</dt>
+								<dd>{pl.chips_total}</dd>
+							</dl>
+							<%end%>
+							<%if {pl.prizepool} %>
+							<dl>
+								<dt>{!prize_pool}</dt>
+								<dd>{pl.prizepool}</dd>
+							</dl>
+							<%end%>
+						</dd>
+						<%end%>
+						<%if {npj.npj_block} %>
+						<dt>{!next_pay_jump}</dt>
+						<dd>{!place} {npj.place}, {npj.sum}</dd>
+						<%end%>
+					</dl>
+				</div>
+			</div>
+			<%end%>
+			<% if {widget.top_chip_counts} %>
+			<div class="widget widgetChipsCount">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<h3 class="widgetTitle">{!top_chip_counts}</h3>
+					<table class="chipsCount tal" summary="{!chip_statistics}">
+						<col class="position" />
+						<col class="player" />
+						<col class="sponsor" />
+						<col class="chipsTotal" />
+						<col class="chipsDelta" />
+						<tbody>
+							{chips.top_chip_counts}
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<% end %>
+			{right_video}
+			<div id="lrep_right_1" class="js-adset bannerFull" style="display:none;"></div>
+			<script type="text/javascript">
+			/*<![CDATA[*/
+			addBanner('lrep_right_1', 'lrep:right:1');
+			/*]]>*/
+			</script>
+			{right_twitter_stars_pro}
+			{right_twitter}
+			<div id="lrep_right_2" class="js-adset bannerFull" style="display:none;"></div>
+			<script type="text/javascript">
+			/*<![CDATA[*/
+			addBanner('lrep_right_2', 'lrep:right:2');
+			/*]]>*/
+			</script>
+			{right_shoutbox}
+			<% if {list.event_photos} %>
+			<div class="widget widgetWithMoreLink widgetPhotos">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<h3 class="widgetTitle">{!photos}</h3>
+					<ul class="gallery lightbox-gallery">
+						{list.event_photos}
+					</ul>
+					<p class="more tar"><a href="{url.more_photos}">{!view_more_photos}</a></p>
+				</div>
+			</div>
+			<% end %>
+			<% if {com_social} %>
+			<div class="widget widgetTwitterLinks">
+				<div class="widgetInner">
+					<ul><li class="twitterLink1"><a href="http://twitter.com/PokerNews_Live">Live Reporting<br />on Twitter</a></li><li class="twitterLink2"><a href="http://twitter.com/pokernews/">PokerNews<br />on Twitter</a></li></ul>
+				</div>
+			</div>
+			<%end%>
+			<%if {nl_social} %>
+			<div class="widget followUs">
+				<div class="widgetInner">
+					<span class="ctl"></span>
+					<span class="ctr"></span>
+					<span class="cbl"></span>
+					<span class="cbr"></span>
+					<h3 class="widgetTitle">Volg Ons</h3>
+					<ul>
+						<li class="twitter"><a href="http://twitter.com/pokernewsnl">Twitter</a></li>
+						<li class="facebook"><a href="http://www.facebook.com/PokerNewsNL">Facebook</a></li>
+						<li class="youtube"><a href="http://www.youtube.com/user/pokernewsnl">YouTube</a></li>
+						<li class="hyves"><a href="http://pokernews.hyves.nl/">Hyves</a></li>
+					</ul>
+				</div>
+			</div>
+			<%end%>
+		</div>
+		<div class="cb"></div>
+	</div>
+</div>
+
+<% log:days.active %>
+<li class="<%if {nextDay}%>nextDay <%end%>current"><span>{name}</span></li>
+
+
+<% log:days.inactive %>
+<li <%if {nextDay}%>class="nextDay"<%end%>><a href="{url}">{name}</a></li>
+
+
+<% log:tab.part.liveupdate %>
+<sup id="lrAjaxLiveUpdate"></sup>
+
+
+<% log:tab.active %>
+<li class="current"><a href="{url}">{name}<span class="edge"></span></a></li>
+
+
+<% log:tab.inactive %>
+<li><a href="{url}">{name}<span class="edge"></span></a></li>
+
+
+<% log:tab.inactive_empty %>
+<li class="empty"><a>{name}<span class="edge"></span></a></li>
+
+
+<% log:top_chip_counts.item %>
+<tr class="{evenodd} <%if{is_busted}%> busted<%end%>">
+	<td>{place}</td>
+	<td>
+		<%if {playerurl} %><a href="{playerurl}">{player}</a>
+		<%else {playerurl} %>{player}<%end%>
+	</td>
+	<td><%if {player_sponsorimg} %><img src="{player_sponsorimg}" alt="" class="splogo" /><%end%></td>
+	<td class="numeric"><%if {is_busted} %>{!busted}<%else {is_busted} %>{chips}<%end%></td>
+</tr>
+
+<% log:top_chip_counts.item_ %>
+	<td class="numeric"><%if {is_busted} %><%else {is_busted} %>
+		<%if {chips_change_direction} %><img src="/img/live-poker/delta-{chips_change_direction2}.png" width="7" height="8" alt="{chips_change_direction}" /><%end%>
+	<%end%></td>
+
+<% log:event_photos.item %>
+<li><dl><dt><a href="{src_big}" rel="lightbox" title="{alt} | {event_name} | {tournament_name}"><img src="{src}" width="89" alt="{alt}" /></a></dt><dd>{alt}</dd></dl></li>
+
+<% entry:t9n %>
+live_reporting={!live_reporting}
+day.named= {!day_named}
+day.all=   {!day_all}
+
+<% sidebar:main %>
+<div id="rq-sidebar">
+	<%if {show_write_controls} %>
+		<strong>Actions for this day</strong>
+		<ul class="rq-side{active} rq-sidembx">
+			<li><a href="{url.write-post}" id="rq-wp-start" class="rq-qn-startable">Write post</a>
+				<%if {show_full_controls} %>(<a href="{url.write-chips}" id="rq-wc-start" class="rq-qn-startable">+chips</a>)<%end%>
+				<%if {url.write-tweet} %>	(<a href="{url.write-tweet}" id="rq-wt-start" class="rq-qn-startable">*tweet</a>)<%end%>
+			</li>
+			<li><a href="{url.write-photos}"     id="rq-wx-start" class="rq-qn-startable">Photos selection</a></li>
+			<li><a href="{url.upload-photos}"    id="rq-wp-upload">Upload</a>
+				or <a href="{url.review-photos}" id="rq-wp-review">Review</a> photos</li>
+			<%if {show_full_controls} %>
+			<li><a href="{url.write-round}"      id="rq-wr-start" class="rq-qn-startable">Manage betting structure</a></li>
+			<li><a href="javascript:;"           id="rq-wd-toggle-actions">Post day state</a>
+				<ul id="rq-wd-actions">
+				<%if {url.dprogress} %><li><a href="{url.dprogress}" class="rq-confirm-change-day">{dprogress}</a></li><%end%>
+				<%if {url.dregress} %><li><a  href="{url.dregress}"  class="rq-confirm-change-day">{dregress}</a></li><%end%>
+				</ul>
+			</li>
+			<%end%>
+		</ul>
+		<hr size="1" />
+	<%end%>
+	<%if {show_event_controls} %><%if {show_full_controls} %>
+		<strong>Actions for this event</strong>
+		<ul class="rq-side{active} rq-sidembx">
+			<li><a href="{ce.url.sect-prizepool}" id="rq-wepp-start" class="rq-qn-startable">Prizepool and payouts</a></li>
+			<li><a href="{ce.url.sect-winners}"   id="rq-wew-start"  class="rq-qn-startable">Winners order finetune</a></li>
+			<%if {show_write_controls} %>
+			<li><a href="{ce.url.sect-list}"      id="rq-wep-start"  class="rq-qn-startable">Players info</a></li>
+			<%end%>
+			<li><a href="{url.write-evmisc}"      id="rq-wm-start"   class="rq-qn-startable">Miscellaneous</a></li>
+			<%if {show_event_progress_change} %>
+			<li><a href="javascript:;" id="rq-we-toggle-actions">Event state</a>
+				<ul id="rq-we-actions">
+				<%if {url.eprogress} %><li><a href="{url.eprogress}" class="rq-confirm-change-evt">{eprogress}</a></li><%end%>
+				<%if {url.eregress} %><li><a href="{url.eregress}" class="rq-confirm-change-evt">{eregress}</a></li><%end%>
+				</ul>
+			</li>
+			<%end%>
+		</ul>
+		<hr size="1" />
+	<%end%><%end%>
+	<strong>Event</strong> <span class="small gray">({evtstate})</span> <br />
+	<strong>Event days</strong>
+	<ul>
+		<% loop {days+=sidebar:day} %>
+		<li><a href="{url}">{name}</a>
+		<%if {is_started} %><span class="small gray">(started)</span><%end%>
+		<%if {is_completed} %><span class="small gray">(completed)</span><%end%>
+		</li>
+		<% end {days} %>
+	</ul>
+	<%if {show_event_controls} %>
+	<hr size="1" />
+	<strong>Players left</strong>
+	<ul>
+		<li><input type="text" id="rSbPleft" value="{pl.pleft}" size="3" /> of
+			<input type="text" id="rSbPTotal" value="{pl.ptotal}" size="3" />
+			<input type="hidden" id="rSbPEvent" value="{pl.event}" size="3" />
+			<a href="javascript:;" id="rSbPSave"><img src="/img/adm/_edit.gif" alt="" /></a>
+			<script type="text/javascript">
+			var write_sbplayers_url = '{write_sbplayers_url}';
+			</script>
+		</li>
+	</ul>
+	<%end%>
+</div>
+
+<% sidebar:t9n %>
+day.named={!day_named}
+day.all={!day_all}
+day.start=Start day
+day.complete=Complete day
+day.undo_started=Stop day
+day.undo_completed=Resume day
+day.not_started=Not started
+day.started=Started
+day.completed=Completed
+evt.started=Started
+evt.completed=Completed
+evt.complete=Complete event
+evt.resume=Resume event
+evt.scheduled=Scheduled
+
+<% tour:cards.item %>
+<span class="card card{color}" title="{value}-{suit}"><img src="/img/suits/suit-{isuit}.png" width="13" height="13" alt="{valueRaw}" /><span class="cardValue">{value}</span></span>

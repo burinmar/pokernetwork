@@ -1,0 +1,122 @@
+<% info %>
+error1={!1}
+error2={!2}
+error3=Please login.
+default_content={!6}
+
+<% viewBox %>
+<div class="widget widgetBlack widgetWithMoreLink widgetShoutbox">
+	<div class="widgetInner">
+		<span class="ctl"></span>
+		<span class="ctr"></span>
+		<span class="cbl"></span>
+		<span class="cbr"></span>
+		<h3 class="widgetTitle">{!7}</h3>
+		<div class="shouts" id="shoutbox">
+			<div id="shoutbox-ajax-content">
+			<%insert{ajax-content}%>
+				<%if{items}%>
+				<%loop{items}%>
+				<dl class="shout">
+					<dt class="shoutAuthor"><a href="{author_url}">{author_nick}</a><% if {canDel} %><a href="{goDel}" onclick="return confirm('{!8}');" class="fr sm10">[{!9}]</a>	<% end %></dt>
+					<dd class="shoutDate">{date}</dd>
+					<dd class="shoutContent">{content}</dd>
+				</dl>
+				<%end%>
+				<%else{items}%>
+				<dl class="shout">
+					<dd class="shoutContent">{!noshouts}</dd>
+				</dl>
+				<%end%>
+			<%end{ajax-content}%>
+			</div>
+		</div>
+		<%if{not_expired}%>
+		<%insert{form}%>
+			<div class="shoutbox-form">
+				<% if {error} %><span class="shoutboxerror">{error}</span><% end %>
+				<form action="{!action}" method="post"  onsubmit="return (this.content.value.length>0 ? true:false)">
+					<input type="hidden" name="event" value="{event}" />
+					{refresh}
+					<textarea name="content" id="iShoutbox" rows="5" cols="30">{content}</textarea>
+					<label class="button"><button type="submit">{!10}</button></label>
+					<span id="counter" class="symbolCounter"></span>
+				</form>
+			</div>
+		<%end%>
+		<%end%>
+		<p class="more tar"><a href="{goArchive}" class="shoutContent">{!hist}</a></p>
+	</div>
+</div>
+			
+<%if{not_expired}%>
+<script type="text/javascript">
+/*<![CDATA[*/
+var launchShoutBox = {
+	evt : {ajaxEvent}
+};
+var shoutBoxDefMsg = '{defaultMsg}';
+var shoutBoxMaxLim = {maxlimit};
+/*]]>*/
+</script>
+<%end%>
+
+
+
+<%viewArchive%>
+<div class="shoutboxHistory">
+	<h3 class="shoutboxHistoryTitle">{!7}</h3>
+	<%if{arch-items}%>
+		<%if{iAdmin}%>
+		<form action="{!action}" method="post"  onsubmit="return confirm('{!8}');" id="deleteForm">
+		<input type="hidden" name="event" value="{event}" />
+		<%end{iAdmin}%>
+		<%loop{arch-items}%>
+			<dl class="shout">
+				<dt class="shoutAuthor"><%if{iAdmin}%><input type="checkbox" name="it[]" value="{id}" /> <%end%><a href="{goUser}">{nick}</a></dt>
+				<dd class="shoutDate"><%if{iAdmin}%>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<%end%>{date}</dd>
+				<dd class="shoutContent">{msg}</dd>
+			</dl>
+		<%end{loop}%>
+		{paginate}
+	
+		<%if{iAdmin}%>
+		<div style="margin-top: 20px;">
+		<script type="text/javascript">var checkAll=false;</script>
+		<input type="button" name="checkall" value="Select all" onclick="jQuery('#deleteForm dl input').attr('checked', checkAll=!checkAll)" /> <input type="submit" value="Delete selected" />
+		</div>
+		</form>
+		<%end{iAdmin}%>
+	<%end%>
+</div>
+
+<% chirps %>
+
+<div class="widget chirp">
+	<div class="widgetInner">
+		<span class="ctl"></span>
+		<span class="ctr"></span>
+		<span class="cbl"></span>
+		<span class="cbr"></span>
+		<h3 class="widgetTitle">ChipChirp</h3>
+		<script src="http://chipchirp.com/assets/common.js"></script>
+		<script src="http://chipchirp.com/assets/desktop.js"></script>
+		<div class="chipchirp-widget-container"></div>
+		<script>
+		(function() {
+		var allChirps, widgetView;
+		allChirps = new Chirps;
+		allChirps.url = "http://chipchirp.com/chirps?callback=?";
+		allChirps.fetch({
+		  success: function(collection) {
+			widgetView = new WidgetView({
+			  collection: collection
+			});
+			$('.chipchirp-widget-container').html(widgetView.render().el);
+		  }
+		});
+		$('.chipchirp-widget-container').text('Loading...');
+		})();
+		</script>
+	</div>
+</div>

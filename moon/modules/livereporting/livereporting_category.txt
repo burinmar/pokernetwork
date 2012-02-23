@@ -1,0 +1,16 @@
+[en]
+
+live_reporting=Live Reporting
+tournaments=Tournaments
+tournament=Tournament
+more_news=More News from
+scheduled_tourn=Scheduled Tournament
+date=Date
+live_coverage=Live Coverage
+upcoming=Upcoming
+winner=Winner
+winning_hand=Winning Hand
+prize=Prize
+runner_up=Runner-up
+losing_hand=Losing Hand
+respastevs=Results of the past events

@@ -1,0 +1,42 @@
+<% logEntry:tweet %>
+<div class="article <%if{is_hidden}%>article-hidden<%end%> tweet" id="tweet-{id}">
+	<h3 class="articleTitle">PokerNews_Live Tweet</h3>
+	<p class="tweetAuthor">
+		<%if {author_name} %><a href="http://twitter.com/pokernews_live"><img height="48" width="48" alt="PokerNews_Live" src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" class="fl10 tweetAuthorPhoto"> @PokerNews_live</a><%end%>
+	</p>
+	<p class="tweetContent">{body}</p>
+	<p class="tweetDate">
+		{!posted} <span class="date">{created_on}</span> 
+		<%if {show_controls} %><%if {url.edit} %> | <a href="{url.edit}">edit</a><%end%> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
+	</p>
+</div>
+
+
+<% entry:tweet %>
+<%if {control} %>
+<div id="rq-entry-control">
+	{control}
+</div>
+{body}
+<span class="clr"> </span>
+<p><a href="{url.up}">{!back}</a></p>
+<%end%>
+
+
+<% controls:tweet %>
+<div id="rq-wt" style="<%if {ct.unhide} %><%else {ct.unhide} %>display:none;<%end%>">
+<form method="post" class="control" action="{!action}">
+	<input type="hidden" name="event"   value="{ct.save_event}" />
+	<input type="hidden" name="day_id"  value="{ct.day_id}" />
+	<input type="hidden" name="tweet_id" value="{ct.id}" />
+	<fieldset>
+		<legend>Twitter post</legend>
+		<p><textarea name="body" id="rq-wt-body" cols="55" rows="7">{ct.body}</textarea></p>
+		<p><span><span id="tweet-limit">0</span> / 115</span></p>
+		<p><label>&nbsp;</label>
+			<input type="submit" value="Save"/>
+		</p>
+	</fieldset>
+</form>
+</div>
+

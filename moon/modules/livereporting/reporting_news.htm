@@ -1,0 +1,25 @@
+<% main %>
+<span class="clr"></span>
+<div id="reportingSlider">
+	<div class="eChoise">{!editorChoise}</div>
+	<% if {list.entries} %>
+	<div id="slides">
+		<a href="#prev" class="prev">»</a>
+		<a href="#next" class="next">«</a>
+		<div class="hidden">
+			<ul>
+				{list.entries}
+			</ul>
+		</div>
+	</div>
+	<!--#
+<span class="live">&nbsp;</span>
+-->
+	<% end %>
+</div>
+
+<% entries.event %>
+<li class="event"><a href="{url}" style="background-image: url('{image}')">{title}</a></li>
+
+<% entries.story %>
+<li class="story"><a href="{url}" style="background-image: url('{image}')"><span>{title}</span></a></li>

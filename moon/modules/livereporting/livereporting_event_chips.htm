@@ -1,0 +1,250 @@
+<% logEntry:chips %>
+<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="chips-{id}">
+	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}<%if {is_full} %> ({!full})<%end%></a></h3>
+	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%> {sociallinks}
+		<%if {show_controls} %> | <a href="{url.edit}">edit</a> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
+	</div>
+	<% if {image} %><div class="fl10">
+		<div><img src="{image_src}" alt="{image_description}" /></div>
+		<% if {image_description} %><div class="caption" style="width:{image_width}px;">{image_description}</div><%end%>
+	</div><% end %>
+	{body}
+
+	<table class="chipsCount tal chipstable" summary="{!chip_statistics}">
+	<col class="position" />
+	<col class="player" />
+	<col class="sponsor" />
+	<col class="chipsTotal" />
+	<col class="chipsDelta" />
+	<thead>
+		<tr>
+			<th colspan="5">{!chipcounts}</th>
+		</tr>
+	</thead>
+	<tbody>
+	{entries}
+	</tbody>
+	</table>
+	<%if {is_preview} %>
+		<p><a href="{url.view}">{!read_full}</a></p>
+	<%end%>
+	<%if {tags} %><p class="postTags">{!tags}:
+		<% loop {tags += logEntry:tag} %>
+		<a href="{url}">{tag}</a>{comma}
+		<%end%>.</p>
+	<%end%>
+	<span class="clr"> </span>
+</div>
+
+
+<% logEntry:chips.chips.item %>
+<tr class="{evenodd}<%if {is_busted} %> busted<%end%>">
+	<td><%if {place} %>{place}<%end%></td>
+	<td><%if {player_url} %><a href="{player_url}">{player}</a>
+		<%else {player_url} %>{player}<%end%>
+	</td>
+	<td class="sponsor">
+		<span><%if {player_sponsorimg} %><img src="{player_sponsorimg}" alt="" class="splogo" /><%end%> <%if {player_is_pnews} %><img src="/img/pn-player.png" alt="PN" class="splogo" /><%end%> {player_sponsor}</span>
+	</td>
+	<td class="numeric"><%if {is_busted} %>{!busted}<%else {is_busted} %>{chips}<%end%></td>
+	<td class="numeric"><%if {is_busted} %><%else {is_busted} %>{chips_change} <%if {chips_change_direction} %><img src="/img/live_poker/delta_{chips_change_direction}.png" width="7" height="8" alt="{chips_change_direction}" /><%end%><%end%></td>
+</tr>
+
+
+
+
+
+
+<% entry:chips %>
+<%if {control} %>
+<div id="rq-entry-control">
+	{control}
+</div>
+<%end%>
+<div class="article">
+	<h3 class="articleTitle" id="no{id}">{title}<%if {is_full} %> ({!full})<%end%></h3>
+	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}</div>
+	<% if {image} %><div class="fl10">
+		<div><img src="{image_src}" alt="{image_description}" /></div>
+		<% if {image_description} %><div class="caption" style="width:{image_width}px;">{image_description}</div><%end%>
+	</div><% end %>
+	{body}
+	<%if {tags} %><p class="postTags">{!tags}:
+		<% loop {tags += entry:tag} %>
+		<a href="{url}">{tag}</a>{comma}
+		<%end%>.</p>
+	<%end%>
+	<table class="chipsCount tal chipstable" summary="{!chip_statistics}">
+	<col class="position" />
+	<col class="player" />
+	<col class="sponsor" />
+	<col class="chipsTotal" />
+	<col class="chipsDelta" />
+	<thead>
+		<tr>
+			<th colspan="5">{!chipcounts}</th>
+		</tr>
+	</thead>
+	<tbody>
+	{entries}
+	</tbody>
+	</table>
+	<p><a href="{url.up}" id="urlup">{!back}</a></p>
+	<span class="clr"> </span>
+</div>
+
+
+<% entry:chips.chips.item %>
+<tr class="{evenodd}<%if {is_busted} %> busted<%end%>">
+	<td><%if {place} %>{place}<%end%></td>
+	<td><%if {player_url} %><a href="{player_url}">{player}</a>
+		<%else {player_url} %>{player}<%end%>
+	</td>
+	<td class="sponsor">
+		<%if {player_sponsorurl} %>
+			<a href="{player_sponsorurl}"><img src="{player_sponsorimg}" alt="{player_sponsor}" title="{player_sponsor}" class="splogo" /></a>
+			<%if {player_is_pnews} %><a href="http://strategy.pokernews.com/" target="_blank"><img src="/img/pn-player.png" alt="PN" class="splogo" /></a><%end%>
+			<a href="{player_sponsorurl}">{player_status}</a>
+		<%else {player_sponsorurl} %>
+			<%if {player_sponsorimg} %><img src="{player_sponsorimg}" alt="{player_sponsor}" title="{player_sponsor}" class="splogo" /><%end%>
+			<%if {player_is_pnews} %><a href="http://strategy.pokernews.com/" target="_blank"><img src="/img/pn-player.png" alt="PN" class="splogo" /></a><%end%>
+			<%if {player_status} %><span>{player_status}</span><%end%>
+		<%end%>
+	</td>
+	<td class="numeric"><%if {is_busted} %>{!busted}<%else {is_busted} %>{chips}<%end%></td>
+	<td class="numeric"><%if {is_busted} %><%else {is_busted} %>{chips_change} <%if {chips_change_direction} %><img src="/img/live_poker/delta_{chips_change_direction}.png" width="7" height="8" alt="{chips_change_direction}" /><%end%><%end%></td>
+</tr>
+
+
+
+
+
+<% controls:chips %>
+<%if {cc.bundled_control} %><p><a href="#" id="rq-wc-start-bun">Edit</a></p><%end%>
+<div id="rq-wc" style="<%if {cc.unhide} %><%else {cc.unhide} %>display:none;<%end%>">
+<form method="post" class="control" action="{!action}" enctype="multipart/form-data">
+	<input type="hidden" name="event"    value="{cc.save_event}" />
+	<input type="hidden" name="day_id"   value="{cc.day_id}" />
+	<input type="hidden" name="import_id" value="{cc.import_id}" />
+	<% if {cc.master} %><input type="hidden" name="master" value="{cc.master}" /><%end%>
+	<fieldset>
+		<legend>Chip Counts</legend>
+		<%if {cc.show_full_controls} %>
+		<%else {cc.show_full_controls} %>
+		<div style="display:none">
+		<%end%>
+		<p>Import Records From Excel File</p>
+		<p><label style="width:100px">Date:</label>
+			<select name="datetime_options" id="rq-wc-datetime-options">{cc.datetime_options}</select>
+			<span class="input-padright" id="rq-wc-datetime-custom" style="display:none;">{cc.custom_datetime} {cc.custom_tz}</span>
+		</p>
+		<p><label style="width:100px">Column order: </label>
+			<select name="column_order">
+				<option value="1.2" selected="selected">player, amount</option>
+				<option value="2.1">amount, player</option>
+				<option value="10.11.2">last name, first n., amount</option>
+			</select>
+		</p>
+		<p>This is a full players listing: &nbsp;
+			<%if {cc.fullist_change_disabled} %>
+				<input type="checkbox" class="checkbox" <%if {cc.fulllist} %> checked="checked" <%end%> disabled="disabled" />
+				<%if {cc.fulllist} %><input type="hidden" name="is_full_listing" value="1" /><%end%>
+			<%else {cc.fullist_change_disabled} %>
+				<input type="checkbox" name="is_full_listing" class="checkbox" <%if {cc.fulllist} %> checked="checked" <%end%> value="1" />
+			<%end%>
+			<span class="small gray">&ndash; Autobust players not in the list, fill the winners list if prizepool is already known. <!-- <br />Advice: Review your list not to include busted players from the previous &quot;full&quot; import. This will eliminate possible problems with winner list order in case prizepool is already known. --></span>
+		</p>
+		<p class="blocky">Select &amp; Post data into the text area:</p>
+		<p><textarea name="import_textarea" cols="40" rows="5">{cc.chips}</textarea></p>
+		<p>or upload .xls file:</p>
+		<p><input type="file" name="import_upload" /></p>
+		<!-- -->
+		<p class="blocky"><input type="button" value="Preview data" id="rq-wc-sect-batch-preview" />
+			<%if {cc.wsopimport} %>
+				or <input type="button" value="Import WSOP EOD" id="rq-wc-sect-batch-import" />
+				   <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" id="action_import_new_chips_loading" alt="" />
+				   <input type="hidden" name="import" value="0" id="rq-wc-sect-batch-import-hid" />
+			<%end%>
+		</p>
+		<p id="rq-wc-sect-batch-previewarea" class="blocky"></p>
+		<!-- -->
+		<%if {cc.show_full_controls} %>
+		<p class="blocky" style="padding-top:3px">
+		<%else {cc.show_full_controls} %>
+		</div>
+		<p>
+		<%end%>
+			<label>Title:</label>
+			<input type="text" name="title" value="{cc.title}" class="full-width" />
+		</p>
+		<p>
+			{cc.toolbar}
+			Intro:
+			<textarea name="intro" id="rq-wc-body" rows="6" cols="40">{cc.intro}</textarea>
+		</p>
+		<p><label>Tags:</label> <input type="text" name="tags" maxlength="255" class="full-width" value="{cc.tags}" /></p>
+		<p>
+			<input type="hidden" name="ipnimageid"    value="{cc.ipnimageid}" />
+			<input type="hidden" name="ipnimagemisc"  value="{cc.ipnimagemisc}" />
+			<input type="hidden" name="ipnimagesrc"   value="{cc.ipnimagesrc}" />
+			<!-- <input type="hidden" name="round_id"   value="{cc.round_id}" /> -->
+			<input type="hidden" id="ipncbase"   value="{cc.url.ipn}" />
+			<label>Image:</label> <br />
+			<a href="{cc.url.ipnpreview}" id="rq-wc-ipnattach">Select</a> or
+			<a href="{cc.url.ipnupload}" id="rq-wc-ipnupload">Upload</a>
+			<span id="rq-wc-ipndelete2" <%if {cc.ipnimageid} %><%else {cc.ipnimageid} %>style="display:none"<%end%>>or</span>
+			<a href="javascript:;" id="rq-wc-ipndelete" <%if {cc.ipnimageid} %><%else {cc.ipnimageid} %>style="display:none"<%end%>>Delete</a> image <br />
+			<span style="display:block;padding-bottom:0.5em;<%if {cc.ipnimageid} %><%else {cc.ipnimageid} %>display:none<%end%>" id="rq-wc-ipnpreview">
+				<a href="{cc.url.ipnpreview}" id="rq-wc-ipnattach2"><img src="<%if {cc.ipnimageid} %>{cc.url.ipn}{cc.ipnimagesrc}<%else {cc.ipnimageid} %>/img/spc.gif<%end%>" width="100" style="float:left; padding-right:.5em;" alt="" /></a>
+				Image title:<br />
+				<textarea name="ipnimagetitle" style="width:320px;height:45px;" rows="3" cols="40">{cc.ipnimagetitle}</textarea>
+				<br style="clear: both" />
+			</span>
+		</p>
+		<p><label>Published:</label> <input type="checkbox" name="published" value="1" class="checkbox" <%if {cc.published} %> checked="checked" <%end%> /></p>
+		<p><label>Exportable:</label> <input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cc.is_exportable} %> checked="checked"<%end%> /><span class="small gray"> &nbsp; (WSOP xml)</span></p>
+		<%if {cc.skip_must_preview} %>
+		<p class="blocky" id="rq-wc-sect-batch-submitarea"><input type="submit" name="save" value="Save" /></p>
+		<%else {cc.skip_must_preview} %>
+		<p class="blocky" id="rq-wc-sect-batch-submitarea"><input type="submit" name="save" disabled="disabled" value="Save" /></p>
+		<p style="font-size:smaller;" id="rq-wc-sect-batch-submitarea-notice">(you must preview chipcount before saving)</p>
+		<%end%>
+	</fieldset>
+</form>
+</div>
+
+
+<% controls:chips.save_preview %>
+<script type="text/javascript">
+document.domain = document.domain.match(/([a-z1-9]+.[a-z1-9]+)$/)[1];
+</script>
+<table class="chipstable" style="width:100%;">
+<tr>
+	<th style="width:20px">Id</th>
+	<th>Name</th>
+	<th style="width:100px">Chips</th>
+	<th style="width:100px">Chips&nbsp;change</th>
+</tr>
+<%loop {cc.chips += controls:chips.save_preview.item} %>
+<tr class="<%if {is_busted} %>red<%end%><%if {is_new_player} %>green<%end%>" style="border:1px solid gray">
+	<%if {url} %>
+	<td><a href="{url}">{id}</a></td>
+	<td><a href="{url}">{name}</a></td>
+	<%else {url} %>
+	<td>{id}</td>
+	<td>{name}</td>
+	<%end%>
+	<td><%if {place} %>Takes place #{place}<%if {amount} %>, {amount}<%end%><%end%>{chips}</td>
+	<td>{chips_change}</td>
+</tr>
+<%end%>
+</table>
+Legend:<br />
+<span class="green">New player</span>
+<span class="red">Busted player</span><br />
+
+
+<% controls:chips.datetime_options.items %>
+old_dt=Leave as is
+now_dt=Now
+sct_dt=Set custom

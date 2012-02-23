@@ -1,0 +1,52 @@
+[en]
+
+day_named=Day {name}
+day_all=All days
+days=Days:
+live_reporting=Live Reporting
+chipcounts=Chip Counts
+photo_gallery=Photo Gallery
+payouts=Payouts
+events_list=Events List
+tournament=Tournament
+players_left=Players Left
+average_chip_stack=Average Chip Stack
+chips_total=Total Chips
+next_pay_jump=Next Pay Out
+top_chip_counts=Top Chip Counts
+last_chip_counts=Latest Chip Counts
+photos=Photos
+view_more_photos=View more photos
+level_info=Level Info
+players_info=Players Info
+
+posted_by=by <a href="{author_url}" class="author">{author_name}</a>
+back=Back to list
+read_full=Read full
+posted=Posted
+tags=Tags
+
+started=started
+completed=completed
+
+round=Level
+rounds=Levels
+blinds=Blinds
+ante=Ante
+winning_hand=Winning Hand
+
+nophotos=No photos for this day
+
+place=Place
+winner=Winner
+sponsor=Sponsor
+prize=Prize
+nopaystats=No payouts stats available
+
+busted=Busted
+chip_statistics=Chip Stats
+fullist=Full list
+nochipstats=No chips stats available
+full=full
+entries=Entries
+prize_pool=Prize Pool

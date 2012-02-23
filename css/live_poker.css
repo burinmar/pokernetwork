@@ -1,0 +1,1258 @@
+/*
+ * Live Poker module
+ */
+
+/* Inputs in Admin mode */
+.isAdmBox .widget input[type="text"],
+.isAdmBox .widget input[type="password"] {
+	background: transparent;
+	border: 1px solid #aaaaaa;
+	padding: 1px 0;
+	width: auto;	
+}
+.isAdmBox .widget input[type="text"]:focus,
+.isAdmBox .widget input[type="password"]:focus {
+	border-color: #0098c1;
+}
+
+
+/* Widget title */
+.livePokerPage .widgetTitle {
+	margin-bottom: 10px;
+}
+.livePokerHomePage .widgetTitle {
+	margin-bottom: -1px;
+}
+.livePokerPage .w300 {
+	position: relative;
+}
+
+/* Card */
+.card {
+	border: 0;
+	display: inline-block;
+	font: 14px "Times New Roman", Times, serif;
+	text-align: center;
+	margin-right: 3px;
+	max-width: 15px;
+}
+.cardRed {
+	color: #d2001b;
+}
+.card img {
+	display: block;
+}
+
+/* Live Poker block */
+.livePokerBlock {
+	background: url('/img/live_poker/tour_bg.png') repeat-x left top;
+	border-top: 1px solid #bdc3c7;
+	margin-left: -9px;
+	margin-right: -9px;
+	padding: 15px;
+}
+.livePokerPage h2 {
+	background-position: left top;
+	border-radius: 6px;
+	-khtml-border-radius: 6px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	color: #000000;
+	display: block;
+	font-size: 18px;
+}
+	.livePokerPage h2.imageHead {
+		height: 137px;
+	}
+	.livePokerTourIntro h2.imageHead,
+	.upcoming-tournament h2.imageHead {
+		height: 126px;
+		margin-bottom: 20px;
+		} .livePokerTourIntro h2.imageHead {
+		margin: 15px 5px 20px 5px;
+	}
+.livePokerPage h2.imageHead a,
+.livePokerPage h2.imageHead span.a {
+	font: 24px/130% Arial, Helvetica, sans-serif;
+	color: #fff;
+	display: table-cell;
+	text-align: center;
+	vertical-align: middle;
+	height: 137px;
+	text-decoration: none;
+	width: 700px;
+	*display: block; /* IE7 */
+	*height: 97px; /* IE7 */
+	*padding-top: 40px; /* IE7 */
+}
+.livePokerPage .tourLogo {
+	margin-top: 30px;
+	text-align: center;
+}
+.livePokerTourIntro h2 {
+	line-height: 500%;
+}
+.livePokerTourIntro h3 {
+	margin-top: 30px;
+}
+.livePokerEventPage h2 {
+	font-size: 26px;
+	line-height: normal;
+}
+
+/* Shoutbox History page */
+.shoutboxHistory .shoutboxHistoryTitle {
+	border-bottom: 1px dotted #bec5c9;
+	font-size: 18px;
+	line-height: normal;
+	margin-top: 20px;
+	padding-bottom: 10px;
+}
+.shoutboxHistory .shout {
+	border-bottom: 1px dotted #bec5c9;
+	display: block;
+	margin-top: 15px;
+	padding-bottom: 15px;
+}
+.shoutboxHistory .shoutDate {
+	color: #5d5d5d;
+	font-size: 11px;
+}
+
+/* Tournament background */
+.livePokerFeature {
+	background-position: left top;
+	background-repeat: no-repeat;
+	border-radius: 7px;
+	-khtml-border-radius: 7px;
+	-moz-border-radius: 7px;
+	-webkit-border-radius: 7px;
+	border-top: 0;
+	padding: 0 20px 1px 20px;
+	position: relative;
+	*zoom: 1; /* IE7 */
+}
+.livePokerFeature h2 {
+	margin-left: -20px;
+	margin-right: -20px;
+}
+
+/* Live Coverage sash */
+.livePokerBlock .liveCoverage {
+	background: url('/img/live_poker/sash_horizontal.png') no-repeat left bottom;
+	border-top-right-radius: 5px;
+	-khtml-border-radius-topright: 5px;
+	-moz-border-radius-topright: 5px;
+	-webkit-border-top-right-radius: 5px;
+	color: #ffffff;
+	font-family: "Myriad Pro", Arial, Helvetica, sans-serif;
+	font-size: 18px;
+	font-style: italic;
+	height: 33px;
+	line-height: 33px;
+	padding-left: 25px;
+	padding-right: 15px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+/* Articles */
+#livePokerLiveReporting .livePokerBlock .article {
+	border-bottom: 1px dotted #bec5c9;
+	margin-bottom: 30px;
+}
+.livePokerFeature .article {
+	background: rgba(255,255,255,0.2);
+	color: #ffffff;
+	margin: 20px 0;
+	padding: 15px 20px 10px 20px;
+	position: relative;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#33ffffff, endColorstr=#33ffffff); /* IE8 */
+	*zoom: 1; /* IE7 */
+}
+.livePokerFeature .darkBackground {
+	background: rgba(0,0,0,0.4) !important;
+}
+.livePokerEventPage .article {
+	border-bottom: 1px dotted #bec5c9;
+}
+.livePokerFeature .eventDay {
+	color: #c0c0c0;
+	margin-bottom: 4px;
+}
+.livePokerFeature .eventMeta {
+	position: absolute;
+	right: 0;
+	top: 15px;
+	width: 200px;
+}
+.livePokerFeature .article .eventTitle {
+	padding-right: 200px;
+}
+.livePokerFeature .article .eventTitle,
+.livePokerFeature .article .eventTitle a {
+	color: #ffffff;
+	font-size: 14px;
+}
+.livePokerPage .articleTitle {
+	color: #034ea2;
+	font-size: 18px;
+	line-height: normal;
+	margin-top: 20px;
+}
+.livePokerFeature .articleTitle{
+	color: #fff9c4;
+	font-size: 14px;
+	margin-bottom: 5px;
+	margin-top: 25px;
+}
+.livePokerFeature .articleTitle a, .livePokerFeature .article p a {
+	color: #fff9c4;
+}
+.livePokerBlock .articleMeta {
+	color: #5d5d5d;
+	font-style: italic;
+	margin-bottom: 10px;
+}
+.livePokerBlock .articleMeta .date {
+	color: #000000;
+	display: inline;
+	font-size: inherit;
+	margin: 0;
+}
+.livePokerBlock .articleMeta .author {
+	background: none;
+	color: #034ea2;
+	display: inline;
+	font-size: inherit;
+	padding: 0;
+}
+.livePokerBlock .postTags, .livePoker .postTags a {
+	color: #5d5d5d;
+}
+.livePokerFeature .articleMeta {
+	color: #ffffff;
+	font-size: 11px;
+}
+.fl10 .caption {
+	color: #5d5d5d;
+	font-size: 11px;
+	margin-bottom: 10px;
+	line-height: 14px;
+}
+.livePokerFeature .articleMeta .date {
+	color: #ffec00;
+}
+/* PokerNews_Live Tweets */
+#livePokerLiveReporting .article.tweet {
+	background: url('/img/live_poker/tweet_bg.png') no-repeat left top;
+	height: 170px;
+	margin-top: 20px;
+	padding: 0 20px 20px 20px;
+}
+#livePokerLiveReporting .article.tweet .articleTitle {
+	color: #000000;
+	line-height: 45px;
+	margin-top: 0;
+}
+#livePokerLiveReporting .article.tweet .tweetAuthor {
+	display: block;
+	margin-bottom: 0;
+	margin-top: 20px;
+}
+#livePokerLiveReporting .article.tweet .tweetAuthor a {
+	color: #00b6ed;
+}
+#livePokerLiveReporting .article.tweet .tweetAuthor .tweetAuthorPhoto {
+	margin-top: 3px;
+}
+#livePokerLiveReporting .article.tweet .tweetContent {
+	margin-bottom: 10px;
+}
+#livePokerLiveReporting .article.tweet .tweetDate {
+	clear: both;
+	color: #5d5d5d;
+	font-size: 11px;
+	margin-bottom: 0;
+	margin-left: 58px;
+}
+/* Headings */
+.head1 {
+	background: url('/img/live_poker/subhead_bg.png') repeat-x center top;
+	border-top: 1px solid #e5e5e5;
+	color: #000000;
+	font-size: 16px;
+	height: 36px;
+	line-height: 36px;
+	margin: 10px -9px 0 -9px;
+	text-align: center;
+}
+.head2 {
+	color: #000000;
+	font-size: 14px;
+	margin: 0;
+}
+
+/* Social network buttons */
+div.articleMeta {margin-bottom: 1.5em}
+.livePokerPage .articleSocialLinks .gplus {position: relative; top: 4px; left: 5px; display: inline-block}
+.livePokerPage .articleSocialLinks img {vertical-align: middle; margin-left: 5px}
+/* Tournament Archive button */
+.livePokerArchiveButton,
+.livePokerArchiveButton:visited {
+	background: url('/img/forms/buttons_flat.png') no-repeat left top;
+	color: #0069d0;
+	display: inline-block;
+	font-size: 14px;
+	height: 31px;
+	line-height: 31px;
+	margin-right: 5px;
+	padding-left: 10px;
+	position: relative;
+	text-decoration: none;
+}
+.livePokerArchiveButton:hover {
+	color: #0081ff;
+	text-decoration: none;
+}
+.livePokerArchiveButton .cbr {
+	background: url('/img/forms/buttons_flat.png') no-repeat right top;
+	display: block;
+	height: 31px;
+	position: absolute;
+	right: -5px;
+	top: 0;
+	width: 5px;
+}
+.livePokerArchiveButton .linkText {
+	background: url('/img/live_poker/arrows_archive.png') no-repeat right top;
+	display: inline-block;
+	line-height: 31px;
+	margin-right: 1px;
+	padding-right: 25px;
+}
+.livePokerArchiveButton:hover .linkText {
+	background-position: right -31px;
+}
+
+/* Upcoming Events table */
+.livePokerBlock .upcomingEvents {
+	border-collapse: collapse;
+	border-spacing: 0;
+	margin: 20px 0;
+	width: 100%;
+}
+.livePokerFeature .upcomingEvents {
+	border-collapse: separate;
+	color: #ffffff;
+	*border-collapse: collapse; /* IE7 */
+}
+.livePokerFeature .upcomingEvents thead th {
+	background: rgba(255,255,255,0.1);
+	font-size: 14px;
+	font-weight: normal;
+	height: 30px;
+	line-height: 30px;
+	text-align: center;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#19ffffff, endColorstr=#19ffffff); /* IE8 */
+}
+.livePokerBlock .upcomingEvents td {
+	border: 1px solid #eaeaea;
+	height: 30px;
+	line-height: 30px;
+	padding: 0 15px;
+}
+.livePokerBlock .upcomingEvents .eventTitle {
+	border-right: 0;
+}
+.livePokerBlock .upcomingEvents .eventDate {
+	border-left: 0;
+	color: #5d5d5d;
+	font-size: 11px;
+	font-style: italic;
+}
+.livePokerFeature .upcomingEvents .eventDate {
+	color: #ffffff;
+}
+.livePokerFeature .upcomingEvents .odd td {
+	background: rgba(255,255,255,0.2);
+	border: 0;
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=#33ffffff, endColorstr=#33ffffff); /* IE8 */
+}
+.livePokerFeature .upcomingEvents .even .eventTitle {
+	border-bottom: 1px solid #444444;
+	border-left: 1px solid #444444;
+	border-right: 0;
+	border-top: 0;
+	border-color: rgba(255,255,255,0.2);
+}
+.livePokerFeature .upcomingEvents .even .eventDate {
+	border-bottom: 1px solid #444444;
+	border-left: 0;
+	border-right: 1px solid #444444;
+	border-top: 0;
+	border-color: rgba(255,255,255,0.2);
+}
+
+/* Tournamens gallery (bottom) */
+.livePokerBlock.livePokerBlockTourGallery {
+	background: url("/img/live_poker/tour_gallery_bg.png") repeat-x scroll center 1px transparent;
+	padding-bottom: 0;
+}
+.tourGallery {
+	display: block;
+	font-family: Arial, Helvetica, sans-serif;
+	list-style: none;
+	margin-right: -10px;
+}
+.tourGallery li {
+	background: #f2f2f2;
+	display: inline-block;
+	float: left;
+	height: 166px;
+	margin: 10px 10px 0 0;
+	position: relative;
+	text-align: center;
+	vertical-align: top;
+	width: 166px;
+}
+.tourGallery .sashLive {
+	background: url('/img/live_poker/sash_live_small.png') no-repeat;
+	display: block;
+	height: 43px;
+	padding: 0;
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 43px;
+}
+.tourGallery .sashLive span {
+	display: none;
+}
+.tourGallery dl {
+	display: inline-block;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+.tourGallery dt {
+	display: block;
+	height: 121px;
+	line-height: 121px;
+	text-align: center;
+}
+.tourGallery dt img {
+	vertical-align: middle;
+}
+.tourGallery dd {
+	display: block;
+	height: 45px;
+	line-height: 18px;
+	text-align: center;
+	padding: 0 20px;
+}
+.tourGallery a {
+	color: #000000;
+	text-decoration: none;
+}
+
+/* Event day listing */
+.dayListing {
+	color: #5d5d5d;
+	display: block;
+	height: 24px;
+	line-height: 22px;
+	list-style: none;
+	margin: 5px 0;
+}
+.dayListing .dayListingTitle {
+	border-top: 1px solid transparent;
+	display: block;
+	float: left;
+	margin-right: 5px;
+}
+.dayListing ul {
+	display: inline;
+}
+.dayListing li {
+	border: 1px solid #c9c9c9;
+	border-left: 0;
+	display: block;
+	float: left;
+	height: 22px;
+	text-align: center;
+	width: 22px;
+}
+.dayListing li.nextDay {
+	border-left: 1px solid #c9c9c9;
+	margin-left: 5px;
+}
+.dayListing li.current {
+	background: url('/img/live_poker/daylisting_bg.png') repeat-x left -25px;
+	border-color: #000000;
+	color: #ffffff;
+}
+.dayListing li a {
+	background: url('/img/live_poker/daylisting_bg.png') repeat-x left top;
+	color: #000000;
+	display: block;
+	text-decoration: none;
+}
+.dayListing li a:hover {
+	background-position: left -50px;
+}
+
+/* Tournament Archive */
+.tourArchive {
+	list-style: none;
+	margin-bottom: 10px;
+	margin-left: -9px;
+	margin-right: -9px;
+}
+.tourArchive li {
+	border-bottom:1px dotted #CFCFCF;
+	margin-bottom:10px;
+	padding: 0 10px 10px 10px;
+}
+.tourArchive ul {
+	list-style: none;
+	margin-top: 10px;
+}
+.tourArchive li li {
+	border-bottom: 0;
+	margin-bottom: 5px;
+	padding: 0;
+}
+.tourArchive li li a:link {
+	color: #000000;
+}
+.tourArchive li li a:hover {
+	color: #0069d0;
+}
+.tourArchive li img {
+}
+.tourArchive .fr {
+	width: 428px;
+}
+.tourArchive li p {
+	margin-bottom:0;
+}
+.tourArchive h2 {
+	font-size: 18px;
+}
+.tourArchive .skin-picture {
+	display: inline-block;
+	width: 220px;
+	height: 51px;
+	color: #fff;
+	font-size: 14px;
+	padding: 35px 20px 20px;
+	text-decoration: none;
+	text-align: center;
+}
+
+/*
+ * TABLES
+ */
+/* Tournament Schedule and Tournament Leaderboard */
+.tourSchedule,
+.tourWinners {
+	border-collapse: separate;
+	border-spacing: 1px;
+	margin-bottom: 20px;
+	width: 100%;
+}
+.tourSchedule th,
+.tourWinners th {
+	color: #4d4d4d;
+	font-weight: normal;
+	font-size: 11px;
+	line-height: 13px;
+}
+.tourSchedule tbody tr {
+	height: 52px;
+	*height: 36px; /* IE7 */
+}
+.tourWinners tbody tr {
+	height: 68px;
+	*height: 52px; /* IE7 */
+}
+.tourSchedule td,
+.tourWinners td {
+	background: #f5f5f5;
+	padding: 8px 10px;
+	vertical-align: top;
+}
+.tourWinners td {
+	padding: 5px;
+}
+.tourSchedule tr.odd td,
+.tourWinners tr.odd td {
+	background: #eaeaea;
+}
+.tourSchedule td a.eventTitle,
+.tourWinners td a.eventTitle {
+	color: #000000;
+}
+.tourSchedule .eventVenue,
+.tourWinners .eventVenue {
+	color: #4d4d4d;
+	font-style: italic;
+}
+.tourSchedule .eventDates {
+	font-style: italic;
+}
+.tourSchedule .eventUpcoming,
+.tourWinners .eventDates {
+	color: #4d4d4d;
+}
+.tourWinners .eventDates {
+	font-size: 11px;
+}
+.tourSchedule tr.liveCoverage td {
+	background: #cb0000 url('/img/live_poker/live_row_bg.png') repeat-x left center;
+	color: #ffffff;
+}
+.tourSchedule tr.liveCoverage a {
+	color: #ffffff;
+}
+.tourSchedule tr.liveCoverage .eventVenue {
+	color: #e5b5b5;
+}
+.tourSchedule tr.liveCoverage .eventIsLive {
+	font-size: 14px;
+	font-weight: bold;
+}
+.tourWinners .tourTitle {
+	width: 163px;
+}
+.tourWinners .tourWinner,
+.tourWinners .tourRunnerUp {
+	width: 120px;
+}
+.tourWinners .tourWinningHand,
+.tourWinners .tourLosingHand {
+	white-space: nowrap;
+	padding-right: 0px !important;
+	width: 50px;
+}
+.tourWinners .tourPrize {
+	width: 70px;
+}
+.winnerTitle {
+	display: block;
+	margin-top: 3px;
+	line-height: 15px;
+}
+
+/* Chips count */
+.chipsCount {
+	border-collapse: collapse;
+	margin-bottom: 10px;
+	margin-top: 10px;
+	width: 100%;
+}
+.chipsCount th {
+	color: #4d4d4d;
+	font-weight: normal;
+}
+.chipsCount .numeric {
+	text-align: right;
+}
+	/* columns */
+.chipsCount .position {
+	width: 20px;
+}
+.chipsCount .player {
+	width: 200px;
+}
+.chipsCount .sponsor a, .chipsCount .sponsor span {
+	color: #4d4d4d;
+	text-decoration: none;
+	font-size: 11px;
+}
+.chipsCount .sponsor img {
+	vertical-align: middle;
+}
+.chipsCount tr.odd {
+	background: #f2f2f2;
+}
+.rightSide .chipsCount tr.odd {
+	background: transparent;
+}
+.chipsCount .busted .numeric {
+	color: #4d4d4d;
+}
+.chipsCount td {
+	padding: 0 5px;
+	line-height: 28px;
+	vertical-align: middle;
+}
+
+/* Payouts */
+.payouts {
+	border-collapse: collapse;
+	margin-bottom: 10px;
+	margin-top: 30px;
+	width: 100%;
+}
+.payouts th {
+	color: #4d4d4d;
+	font-weight: normal;
+	padding: 0 10px;
+}
+.payouts th.position {
+	padding: 0;
+}
+.payouts .numeric {
+	text-align: right;
+}
+.payouts tr.odd {
+	background: #f2f2f2;
+}
+	/* columns */
+.payouts .position {
+	width: 20px;
+}
+.payouts .prize {
+	width: 100px;
+}
+.payouts .player {
+	width: 180px;
+}
+.payouts .sponsor {
+	width: 220px;
+	font-size: 11px;
+}
+.payouts .sponsor a {
+	color: #4d4d4d;
+	text-decoration: none;
+}
+.payouts .sponsor img {
+	vertical-align: middle;
+}
+.payouts td {
+	padding: 5px 10px;
+	vertical-align: top;
+}
+
+/* Changed bets */
+.changedBets {
+	background: #007ed9 url('/img/live_poker/changed_bets_bg.png') repeat-x top;
+	color: #ffffff;
+	display: block;
+	font: 18px Arial, Helvetica, sans-serif;
+	line-height: 28px;
+	margin-bottom: 10px;
+	min-height: 28px;
+	padding: 10px;
+	text-align: center;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	border-radius: 5px;
+}
+.changedBets dl {
+	display: inline;
+	margin: 0 10px;
+}
+.changedBets dt {
+	color: #a7cbef;
+	display: inline;
+}
+.changedBets dd {
+	display: inline;
+}
+
+/*
+ * RIGHT COLUMN
+ */
+/* Event List and Tournament List buttons */
+.eventListTournamentListButtons {
+	height: 38px;
+	margin-bottom: 20px;
+	margin-right: -5px;
+}
+.eventListTournamentListButtons .eventListButton,
+.eventListTournamentListButtons .tournamentListButton {
+	background: url('/img/forms/buttons_flat.png') no-repeat left -40px;
+	color: #0069d0;
+	display: inline-block;
+	float: left;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 16px;
+	height: 38px;
+	line-height: 38px;
+	margin-right: 9px;
+	padding-left: 15px;
+	padding-right: 10px;
+	position: relative;
+	text-decoration: none;
+	width: 118px;
+}
+.eventListTournamentListButtons .eventListButton {
+	text-align: left;
+}
+.eventListTournamentListButtons .eventListButton:hover,
+.eventListTournamentListButtons .eventListButton:active {
+	color: #2292ff;
+}
+.eventListTournamentListButtons .tournamentListButton {
+	color: #000000;
+	text-align: center;
+}
+.eventListTournamentListButtons .tournamentListButton:hover,
+.eventListTournamentListButtons .tournamentListButton:active {
+	color: #0069d0;
+}
+.eventListTournamentListButtons .eventListButton .linkText {
+	background: url('/img/live_poker/arrows_event_list.png') no-repeat right top;
+	display: block;
+	line-height: 38px;
+}
+.eventListTournamentListButtons .eventListButton:hover .linkText {
+	background-position: right bottom;
+}
+.eventListTournamentListButtons .eventListButton.empty,
+.eventListTournamentListButtons .eventListButton.empty:hover {
+	color: #999999;
+}
+.eventListTournamentListButtons .eventListButton.empty .linkText,
+.eventListTournamentListButtons .eventListButton.empty:hover .linkText {
+	background: transparent;
+}
+.eventListTournamentListButtons .eventListButton .cbr,
+.eventListTournamentListButtons .tournamentListButton .cbr {
+	background: url('/img/forms/buttons_flat.png') no-repeat right -40px;
+	display: block;
+	height: 38px;
+	position: absolute;
+	right: -5px;
+	top: 0;
+	width: 5px;
+}
+
+/* Live Tournaments widget */
+.liveTournaments .sashLive {
+	background: url('/img/live_poker/sash_live_xsmall.png') no-repeat left top;
+	display: block;
+	height: 36px;
+	position: absolute;
+	right: -1px;
+	top: -5px;
+	width: 36px;
+}
+.liveTournaments .widgetInner {
+	padding-bottom: 0;
+}
+.liveTournaments .tournament {
+	border-top: 1px solid #bec5c9;
+	display: block;
+	margin: 0 -9px;
+	padding: 7px 10px;
+	position: relative;
+	top: -1px;
+}
+.liveTournaments .tournament ul {
+	list-style: none;
+}
+.liveTournaments .tournament .tournamentTitle {
+	color: #0069d0;
+	font-size: 12px;
+}
+.liveTournaments .tournament a {
+	color: #000000;
+}
+ 
+/* Event winner widget */
+.widgetEventWinner .ctl,
+.widgetEventWinner .ctr {
+	background-image: url('/img/widget_bg.png');
+	height: 5px;
+}
+.widgetEventWinner .widgetInner {
+	padding: 5px 10px;
+}
+.widgetEventWinner dl {
+	margin-top: 2px;
+}
+.widgetEventWinner dl dt {
+	color: #5d5d5d;
+	display: inline-block;
+	padding: 5px;
+	vertical-align: top;
+	width: 90px;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+.widgetEventWinner dl dd {
+	background: #f5f5f5;
+	display: inline-block;
+	padding: 5px 10px;
+	vertical-align: top;
+	width: 150px;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+
+/* Latest updates widget */
+.widgetLatestUpdates .widgetInner {
+	padding-bottom: 5px;
+}
+.widgetLatestUpdates .ctl,
+.widgetLatestUpdates .ctr {
+	background-image: url('/img/widget_bg.png');
+	height: 5px;
+}
+.widgetLatestUpdates dl dt {
+	color: #0069d0;
+}
+.widgetLatestUpdates dl dd {
+	padding-left: 20px;
+}
+.widgetLatestUpdates dl dd dt {
+	color: #5d5d5d;
+	display: inline-block;
+	width: 120px;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+.widgetLatestUpdates dl dd dd {
+	display: inline;
+	padding-left: 0;
+}
+
+/* Twitter tracker widget */
+.widgetTwitterTracker .widgetTitle {
+	margin-bottom: 0;
+}
+.widgetTwitterTracker .widgetTitle .pokerStarsPro {
+	background: url('/img/logo_pokerstars_pro_big.png') no-repeat top;
+	display: inline-block;
+	height: 0;
+	margin-left: 2px;
+	margin-right: -10px;
+	overflow: hidden;
+	padding-top: 20px;
+	vertical-align: middle;
+	width: 138px;
+}
+.widgetTwitterTracker .tweet {
+	background: #f2fcff;
+	border-bottom: 1px solid #dedede;
+	font-family: Arial, Helvetica, sans-serif;
+	margin: 0 -9px;
+	padding: 10px 10px 5px 10px;
+}
+.widgetTwitterTracker .tweetContent {
+	overflow: hidden;
+	text-overflow: ellpsis;
+	-o-text-overflow: ellipsis;
+	width: 220px;
+}
+.widgetTwitterTracker .tweetAuthor a {
+	color: #00b6ed;
+}
+.widgetTwitterTracker .tweetDate {
+	color: #5d5d5d;
+}
+.widgetTwitterTracker .more {
+	border-top: 0;
+	margin-top: 0;
+}
+
+/* Shoutbox widget */
+.widgetShoutbox .shouts {
+	background: #1a1a1a;
+	border: 1px solid #2b2b2b;
+	max-height: 360px;
+	margin: 10px 0;
+	overflow: auto;
+}
+.widgetShoutbox .shout {
+	border-bottom: 1px solid #2b2b2b;
+	font-family: Arial, Helvetica, sans-serif;
+	display: block;
+	padding: 10px;
+}
+.widgetShoutbox .shout:last-child {
+	border-bottom: 0;
+}
+.widgetShoutbox .shoutAuthor,
+.widgetShoutbox .shoutAuthor a {
+	color: #fff9c4;
+}
+.widgetShoutbox .shoutDate {
+	color: #8d8d8d;
+	font-size: 11px;
+}
+.widgetShoutbox .shoutContent {
+	color: #ffffff;
+	overflow: hidden;
+	text-overflow: ellpsis;
+	-o-text-overflow: ellipsis;
+
+}
+.widgetShoutbox textarea {
+	background: #1a1a1a;
+	border: 1px solid #2b2b2b;
+	box-sizing: border-box;
+	-khtml-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+	color: #ffffff;
+	display: block;
+	font: 12px Verdana, Arial, Helvetica, sans-serif;
+	padding: 10px;
+	resize: vertical;
+	width: 100%;
+	-moz-padding-end: 0; /*  https://bugzilla.mozilla.org/show_bug.cgi?id=157846 */
+	*width: 236px; /* IE7 */
+}
+.widgetShoutbox .button {
+	background: url('/img/forms/button_matt_blue.png') no-repeat left top;
+	display: inline-block;
+	height: 25px;
+	line-height: 25px;
+	margin-right: 35px;
+	margin-top: 10px;
+	vertical-align: top;
+	} .widgetShoutbox .button:hover {
+		background-position: left -30px;
+	} .widgetShoutbox .button:active {
+		background-position: left -60px;
+}
+.widgetShoutbox .button button {
+	background: url('/img/forms/button_matt_blue.png') no-repeat right top;
+	border: 0;
+	color: #ffffff;
+	display: block;
+	font-size: 14px;
+	float: left;
+	height: 25px;
+	line-height: 25px;
+	padding-right: 5px;
+	position: relative;
+	left: 5px;
+	width: 80px;
+	} .widgetShoutbox .button:hover button {
+		background-position: right -30px;
+	} .widgetShoutbox .button:active button {
+		background-position: right -60px;
+}
+.widgetShoutbox .symbolCounter {
+	color: #808080;
+	display: inline-block;
+	font-family: Arial, Helvetica, sans-serif;
+	height: 25px;
+	line-height: 25px;
+	margin-top: 10px;
+	vertical-align: top;
+}
+
+/* PokerNews Videos block */
+.widgetVideo .widgetInner {
+	padding-left: 0;
+	padding-right: 0;
+}
+.widgetVideo .widgetTitle,
+.widgetVideo .more {
+	margin-left: -1px;
+	margin-right: -1px;
+}
+
+/* Photos widget: most styles are being re-used from the inline Gallery widget */
+.widgetPhotos .gallery {
+	margin-right: -15px;
+	margin-top: 5px;
+}
+.widgetPhotos .gallery li {
+	margin-right: 5px;
+}
+.widgetPhotos .more {
+	margin-top: 0;
+}
+
+/* Twitter links widget */
+.widgetTwitterLinks {
+	padding: 0;
+}
+.widgetTwitterLinks .widgetInner {
+	background: url('/img/live_poker/twitter_links_widget_bg.png') no-repeat center;
+	border: 0;
+	height: 46px;
+	padding: 21px 20px 20px 20px;
+}
+.widgetTwitterLinks ul {
+	display: block;
+	list-style: none;
+}
+.widgetTwitterLinks li {
+	display: inline-block;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+.widgetTwitterLinks li.twitterLink1 {
+	margin-right: 20px;
+}
+.widgetTwitterLinks a,
+.widgetTwitterLinks a:visited,
+.widgetTwitterLinks a:hover {
+	background: url('/img/live_poker/twitter_links_bg.png') no-repeat top;
+	color: #ffffff;
+	display: block;
+	font-size: 14px;
+	height: 32px;
+	line-height: 16px;
+	padding: 7px 0;
+	text-align: center;
+	text-decoration: none;
+	width: 120px;
+	} .widgetTwitterLinks a:hover {
+	background-position: center -50px;
+}
+.widgetTwitterLinks li.twitterLink1 a {
+	background-position: center -100px;
+	} .widgetTwitterLinks li.twitterLink1 a:hover {
+	background-position: center -150px;
+}
+
+/*Follow Us*/
+.followUs .widgetInner {
+	padding-bottom: 5px;
+}
+.followUs ul {
+	display: block;
+	list-style: none;
+	text-align: center;
+	margin-right: -2px;
+	margin-top: 10px;
+}
+.followUs li {
+	display: inline-block;
+	*display: inline;
+	*zoom: 1;
+}
+.followUs li a {
+	font-size: 11px;
+	height: 20px;
+	line-height: 20px;
+	margin-right: 2px;
+	padding-top: 50px;
+	width: 58px;
+	*margin-right: 5px;
+}
+.followUs li a,
+.followUs li a:hover,
+.followUs li a:visited {
+	background: #f2f2f2;
+	background: rgba(0,0,0,0.05);
+	background-repeat: no-repeat;
+	background-position: center 10px;
+	color: #000000;
+	display: inline-block;
+	text-decoration: none;
+}
+.followUs li a:hover {
+	background-color: #e5e5e5;
+}
+
+.w300 .followUs li.facebook a {
+	background-image: url('/img/socialnets/facebook36.png');
+}
+.w300 .followUs li.hyves a {
+	background-image: url('/img/socialnets/hyves36.png');
+}
+.w300 .followUs li.twitter a {
+	background-image: url('/img/socialnets/twitter36.png');
+}
+.w300 .followUs li.youtube a {
+	background-image: url('/img/socialnets/youtube36.png');
+}
+
+/* Events list popup widget */
+.widgetEventsList .widgetInner {
+	padding-left: 20px;
+	padding-right: 20px;
+}
+.widgetEventsList .ctr {
+	background: url('/img/widget_popup_bg.png') no-repeat left bottom;
+	bottom: -17px;
+	height: 17px;
+	left: 0px;
+	right: 0px;
+	top: auto;
+	width: auto;
+	z-index: 1;
+}
+.widgetEventsList .cbl {
+	background: url('/img/widget_bg.png') no-repeat left -262px;
+	bottom: -5px;
+	height: 5px;
+	left: 9px;
+	right: 14px;
+	z-index: 2;
+}
+.widgetEventsList .cbr {
+	background: url('/img/widget_bg.png') no-repeat right -262px;
+	bottom: -5px;
+	height: 5px;
+	right: 9px;
+	width: 5px;
+	z-index: 2;
+}
+.widgetEventsList .widgetHideLink {
+	right: 20px;
+}
+.widgetEventsList ul {
+	color: #5d5d5d;
+	display: block;
+	list-style: none;
+}
+.widgetEventsList ul li {
+	padding: 2px 0;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	width: 275px;
+	white-space: nowrap;
+}
+.pnSlideshowTabItems .tabItem img {
+	width: 82px
+}
+.pnSlideshowImage img {
+	max-width: 560px;
+}
+
+.article .video-object {
+	background-color: #dedede;
+	padding: 10px 5px;
+	text-align: center;
+	border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.article .video-object iframe {max-width: 600px}
+
+.w230 #std_right_2 {margin-top: 0px !important}
+
+
+#livePokerLiveReporting .pnGallery .previous {left: 30px !important}
+#livePokerLiveReporting .pnGallery .next {right: 30px !important}
+
+#livePokerLiveReporting #widgetInnerMain {
+	min-height:600px;
+}
+
+.site-bg .eventListTournamentListButtons .eventListButton, .site-bg .eventListTournamentListButtons .tournamentListButton,
+.site-br .eventListTournamentListButtons .eventListButton, .site-br .eventListTournamentListButtons .tournamentListButton,
+.site-cz .eventListTournamentListButtons .eventListButton, .site-cz .eventListTournamentListButtons .tournamentListButton,
+.site-ee .eventListTournamentListButtons .eventListButton, .site-ee .eventListTournamentListButtons .tournamentListButton,
+.site-es .eventListTournamentListButtons .eventListButton, .site-es .eventListTournamentListButtons .tournamentListButton,
+.site-fi .eventListTournamentListButtons .eventListButton, .site-fi .eventListTournamentListButtons .tournamentListButton,
+.site-jp .eventListTournamentListButtons .eventListButton, .site-jp .eventListTournamentListButtons .tournamentListButton,
+.site-pt .eventListTournamentListButtons .eventListButton, .site-pt .eventListTournamentListButtons .tournamentListButton,
+.site-ro .eventListTournamentListButtons .eventListButton, .site-ro .eventListTournamentListButtons .tournamentListButton,
+.site-si .eventListTournamentListButtons .eventListButton, .site-si .eventListTournamentListButtons .tournamentListButton
+{font-size: 12px}
+
+.article-hidden {background: #fcc}

@@ -1,0 +1,17 @@
+[en]
+
+live_reporting=Live Reporting
+live_poker=Live Reporting
+tournaments_archive=Tournament Archive
+upcoming_events=Upcoming Events
+live_coverage=Live Coverage
+day=Day
+players_left=Players Left
+average_chip_stack=Average Chip Stack
+tournaments=Tournaments
+live=Live!
+uptour=Upcoming Tournaments
+live-tournaments=Live tournaments
+
+wsop2011URL=http://www.pokernews.com/live-reporting/2011-world-series-of-poker/
+editorChoise=— Top Stories —

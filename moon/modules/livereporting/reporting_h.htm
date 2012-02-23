@@ -1,0 +1,12 @@
+<%ls%>
+{title}<br/>
+<a href="/h/?t={tI}">Add new Hand log</a><br/>
+{e}<script type="text/javascript">var sId='{s}'{dev};</script><div class="article"><form action="{!action}" method="get"><input type="hidden" name="a" value="{tI}"/><table id="ls"><tr><th width="50"></th><th width="150">Date</th><th width="350">Title</th><th width="100">Hands Count</th><th width="50"></th><th width="50"></th></tr><%loop{items+=i1}%><tr id="l{lid}" class="{o}"><td><a href="#" onclick="return f(this)">add</a></td><td>{created}</td><td><a href="#" onclick="return b(this)">{title}</a></td><td>{c}</td><td><a href="#" onclick="return w('{lc}')">preview</a></td><td><input type="checkbox" name="c[]" value="{lid}"/></td></tr><%end%><tr><td colspan="6" style="text-align:right"><button type="submit" name="d" class="input-submit">Delete</button></td></tr></table></form></div>{pg}<script type="text/javascript" src="/js/modal.window.js"></script><script type="text/javascript" src="/js/modules/hl.js"></script>
+
+<%empty%>
+{title}<br/>
+<a href="/livereporting-reporting_h/?t={tI}">Add new Hand log</a><br/>
+{e}<div>There are no items</div>
+
+<%err%>
+<div class="error"><span>{t}</span></div>

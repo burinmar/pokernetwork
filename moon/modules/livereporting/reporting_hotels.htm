@@ -1,0 +1,458 @@
+<% list:main %>
+<div class="widget hotels">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle"><em>PokerNews</em> Hotels</h1>
+		<p class="searchByLabel">Search by</p>
+		<ul class="formTabs">
+			<% if {active_tournament_exists} %><li <%if{active_tab_tournament}%> class="current"<%end%>><a href="{url.tab_tournament}">Tournament</a></li><%end%>
+			<li <%if{active_tab_location}%> class="current"<%end%>><a href="{url.tab_location}">Location</a></li>
+		</ul>
+
+		<% if {active_tournament_exists} %>
+		<% if{active_tab_tournament}%>
+		<form method="get" action="{!action}" class="formTabContent" <%if{active_tab_location}%>style="display: none;"<%end%>>
+			<input type="hidden" name="event" value="{event.self}" />
+			<input type="hidden" name="active_tab" value="{arg.active_tab}" />
+			<div>
+				<label id="selectedTournament">Choose Tournament 
+					<select name="tournament"><% loop {list.tournaments += list:form.tournaments.item} %><option value="{id}"<%if{selected}%> selected="selected"<%end%>>{name}</option><% end %></select>
+				</label>
+				<label class="checkIn">Check in <input type="text" name="check_in" id="checkInTrn" value="{arg.check_in}" /></label>
+				<label class="nights">Nights <select name="nights">{list.nights}</select></label>
+				{block.rooms}
+				<button type="submit">Search</button>
+			</div>
+		</form>
+		<%end%>
+		<%end%>
+		<%if{active_tab_location}%>
+		<form method="get" action="{!action}" class="formTabContent" <%if{active_tab_tournament}%>style="display: none;"<%end%>>
+			<input type="hidden" name="event" value="{event.self}" />
+			<input type="hidden" name="active_tab" value="{arg.active_tab}" />
+			<div>
+				<label class="city">City <input type="text" name="location" value="{arg.location}" /></label>
+				<label class="checkIn">Check in <input type="text" name="check_in" id="checkInLoc" value="{arg.check_in_loc}" /></label>
+				<label class="nights">Nights <select name="nights">{list.nights}</select></label>
+				{block.rooms}
+				<button type="submit">Search</button>
+			</div>
+		</form>
+		<%end%>
+		<script type="text/javascript">
+		/*<![CDATA[*/
+		livePokerHotels.setupList(<% if {active_tournament_exists} %>{js.tournaments}<%end%>);
+		/*]]>*/
+		</script>
+		{block.list.results}
+		<ul class="hotelFooterLinks">
+			<li><a href="javascript:;" onclick="var w=new modalWindow(420,120);w.open('After submitting your reservation request, you will be provided with an email address to use to make inquires about your request. Our qualified and friendly agents are available to answer questions about your hotel reservations 24-hours a day, 7 days a week, 365 days a year (including holidays). If you are about to make reservation and you need our assistance e-mail us support@pokernews.com')">Customer Care</a></li>
+			<li><a target="_blank" href="http://travel.ian.com/index.jsp?pageName=viewOrCancelReservation&amp;currencyCode=USD&amp;additionalDataString=vrBookingSource%7Cindex&amp;locale=en_US&amp;cid=336011">View Reservation</a></li>
+			<li><a target="_blank" href="http://travel.ian.com/index.jsp?pageName=hotelFaq&amp;cid=336011">FAQ</a></li>
+			<li><a target="_blank" href="http://travel.ian.com/index.jsp?pageName=userAgreement&amp;locale=en_US&amp;cid=336011">Terms and Conditions</a></li>
+		</ul>
+	</div>
+</div>
+
+<% list:optionShort.item %>
+<option<%if{selected}%> selected="selected"<%end%>>{name}</option>
+
+<% list:option.item %>
+<option value="{value}"<%if{selected}%> selected="selected"<%end%>>{name}</option>
+
+<% list:form.values %>
+nights=1,2,3,4,5,6
+rooms=1,2,3,4
+adults0=1,2,3,4
+adults1=0,1,2,3,4
+adults2=0,1,2,3,4
+adults3=0,1,2,3,4
+children0=0,1,2,3
+children1=0,1,2,3
+children2=0,1,2,3
+children3=0,1,2,3
+
+<% list:form.sorts %>
+price=Price
+proximity=Distance
+bestvalue=Top Picks
+stars=Star Rating
+hotelname=Hotel Name
+
+<% list:block.rooms %>
+<fieldset class="first">
+	<label class="rooms">Rooms
+		<select name="rooms" id="srchRooms">{list.rooms}</select>
+	</label><label class="adults">Adults (age 19+) <select name="adults[0]">{list.adults0}</select></label>
+	<label class="children">Children (age 0-18) <select name="children[0]" id="children0">{list.children0}</select></label>
+	<label class="child first">Age of the 1st child <select name="children_ages[0][0]"><option value="">n/a</option>{list.children_ages00}</select></label>
+	<label class="child">Age of the 2nd child <select name="children_ages[0][1]"><option value="">n/a</option>{list.children_ages01}</select></label>
+	<label class="child">Age of the 3rd child <select name="children_ages[0][2]"><option value="">n/a</option>{list.children_ages02}</select></label>
+</fieldset>
+<fieldset>
+	<label class="adults">Adults (age 19+) <select name="adults[1]">{list.adults1}</select></label>
+	<label class="children">Children (age 0-18) <select name="children[1]" id="children1">{list.children1}</select></label>
+	<label class="child first">Age of the 1st child <select name="children_ages[1][0]"><option value="">n/a</option>{list.children_ages10}</select></label>
+	<label class="child">Age of the 2nd child <select name="children_ages[1][1]"><option value="">n/a</option>{list.children_ages11}</select></label>
+	<label class="child">Age of the 3rd child <select name="children_ages[1][2]"><option value="">n/a</option>{list.children_ages12}</select></label>
+</fieldset>
+<fieldset>
+	<label class="adults">Adults (age 19+) <select name="adults[2]">{list.adults2}</select></label>
+	<label class="children">Children (age 0-18) <select name="children[2]" id="children2">{list.children2}</select></label>
+	<label class="child first">Age of the 1st child <select name="children_ages[2][0]"><option value="">n/a</option>{list.children_ages20}</select></label>
+	<label class="child">Age of the 2nd child <select name="children_ages[2][1]"><option value="">n/a</option>{list.children_ages21}</select></label>
+	<label class="child">Age of the 3rd child <select name="children_ages[2][2]"><option value="">n/a</option>{list.children_ages22}</select></label>
+</fieldset>
+<fieldset class="last">
+	<label class="adults">Adults (age 19+) <select name="adults[3]">{list.adults3}</select></label>
+	<label class="children">Children (age 0-18) <select name="children[3]" id="children3">{list.children3}</select></label>
+	<label class="child first">Age of the 1st child <select name="children_ages[3][0]"><option value="">n/a</option>{list.children_ages30}</select></label>
+	<label class="child">Age of the 2nd child <select name="children_ages[3][1]"><option value="">n/a</option>{list.children_ages31}</select></label>
+	<label class="child">Age of the 3rd child <select name="children_ages[3][2]"><option value="">n/a</option>{list.children_ages32}</select></label>
+</fieldset>
+
+
+<% list:results %>
+<table class="hotelList">
+	<col class="photoColumn" />
+	<col class="hotelIntroColumn" />
+	<col class="hotelPriceColumn" />
+	<col class="selectButtonColumn" />
+	<thead>
+		<tr>
+		<td colspan="4">
+			<p class="sorting fl">
+				<span class="sortLabel">Sort results by:</span> 
+				<% loop {list.sorts += list:sorts.item} %>
+				<a href="{url}"<%if {active} %> style="color: black; font-weight: bold"<%end%>> {name} <%if {desc} %>▾<%else {desc} %>▴<% end %></a>
+				<% end %>
+			</p>
+			<div class="fr">{paging}</div>
+		</td>
+		</tr>
+	</thead>
+	<tbody>
+		<%loop {list.results += list:results.item} %>
+		<tr>
+			<td><a href="{url.details}"><img src="<%if {img} %>{img}<%else {img} %>/img/live_poker/blank.gif<% end %>" width="80" height="80" alt="" /></a></td>
+			<td>
+				<a href="{url.details}" class="hotelName">{name}</a><br />
+				<%if {hotelRating} %><span class="stars stars{hotelRating}">Rated {hotelRating} star(s)</span><!--# Galima ir žvaigždes dėti: ★☆ --><% end %><br />
+				<span class="address">{address}</span><br />
+				<%if {distance} %><span class="distance">{distance}. to tournament place</span><% end %>
+			</td>
+			<td class="tar">
+				<%if {basePrice} %>
+					<span class="price"><del>{basePrice}</del> <ins>{price}</ins></span><br />
+					<span class="priceExplanation">Lowest Avg. Night Rate</span><br />
+					<%if {bonusInfo} %><span class="bonusInfo">{bonusInfo}</span><%end%>
+				<%else {basePrice} %>
+					<%if {price} %>
+						<span class="price">{price}</span><br />
+						<span class="priceExplanation">Lowest Avg. Nightly Rate</span><br />
+					<% end %>
+				<% end %>
+			</td>
+			<td class="tar">
+				<a href="{url.details}" class="button">Select ▸</a>
+			</td>
+		</tr>
+		<% end %>
+	</tbody>
+	<tfoot>
+		<tr>
+		<td colspan="4">
+			<div class="fr">{paging}</div>
+		</td>
+		</tr>
+	</tfoot>
+</table>
+
+<% list:results.error %>
+<div style="padding:1em 0 0 1em">
+<h2>Error retrieving search results</h2>
+<p>Please, retry your search.</p>
+</div>
+
+<% list:results.empty %>
+<div style="padding:1em 0 0 1em">
+<h2>No results found for the specified search query</h2>
+<p>Please, refine your search query.</p>
+</div>
+
+<% list:results.ambiguousloc %>
+<div style="padding:1em 0 0 1em">
+<h2>Ambiguous search location specified</h2>
+<p>Please provide more precise location.</p>
+</div>
+
+
+
+<% hotel:main %>
+<div class="widget hotelPage hotels">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle"><em>PokerNews</em> Hotels</h1>
+		<form method="get" action="{!action}" class="bookHotel formTabContent">
+			<input type="hidden" name="event" value="{event.self}" />
+			<input type="hidden" name="active_tab" value="{arg.active_tab}" />
+			<input type="hidden" name="location" value="{arg.location}" />
+			<input type="hidden" name="tournament" value="{arg.tournament}" />
+			<input type="hidden" name="hotelId" value="{arg.hotelId}" />
+			<input type="hidden" name="rateKey" value="{arg.rateKey}" />
+			<div>
+				<label class="checkIn">Check in <input type="text" name="check_in" id="checkInLoc" value="{arg.check_in}" /></label>
+				<label class="nights">Nights <select name="nights">{list.nights}</select></label>
+				{block.rooms}
+				<button type="submit">Search</button>
+				<p class="backToResults"><a href="{url.back}">Back to Search Results</a></p>
+			</div>
+		</form>		
+		<div class="hotelHeaderName">
+			<h1 class="hotelName">{name}</h1>
+			<%if {rating} %><span class="stars stars{rating}">Rated {rating} star(s)</span><!--# Galima ir žvaigždes dėti: ★☆ --><br /><%end%>
+			<span class="address">{address}</span> <%if {tournamentDistance} %><span class="distance">({tournamentDistance}MI. to tournament place)</span><%end%><br />
+			<!--# `none provided` 
+				<span class="phone">0203 027 9779</span> -->
+		</div><%if {url.lowestPriceBook} %><div class="hotelHeaderBookNow">
+			<p class="price">
+				<%if {lowestBasePrice} %><del>{lowestBasePrice}</del><% end %>
+				<ins>{lowestPrice}</ins> <span>Lowest Avg. Nightly Rate</span></p>
+			<a href="{url.lowestPriceBook}" target="_blank" class="bookNowButton">Book Now</a>
+		</div><%end%>
+		<%if {img.head}%>
+		<div class="hotelBigPicture" id="hotelBigPicture">
+			<%if {showPuzzle} %>
+				<div id="hotelBigPictureSimple">
+					<div id="hotelPuzzle0"><img src="{img.head0}" id="hotelBigPicturePuzzle0" alt="" /></div>
+					<div id="hotelPuzzle1"><img src="{img.head1}" id="hotelBigPicturePuzzle1" alt="" /></div>
+					<div id="hotelPuzzle2"><img src="{img.head2}" id="hotelBigPicturePuzzle2" alt="" /></div>
+					<div id="hotelPuzzle3"><img src="{img.head3}" id="hotelBigPicturePuzzle3" alt="" /></div>
+					<div id="hotelPuzzle4"><img src="{img.head4}" id="hotelBigPicturePuzzle4" alt="" /></div>
+				</div>
+			<%else {showPuzzle} %>
+				<img src="{img.head}" alt="Hotel Photo" />
+			<%end%>
+			<div class="pnGalleryHotel" id="pnGalleryHotel" style="z-index:10;display:none;">
+				<a href="javascript:;" class="closeButton">Close</a>
+				<div class="activePhoto">
+					<%loop {list.photos += hotel:photos.item} %>
+						<a class="pnSlideshowImage imageLink" href="{src}" style="display: none;"></a>
+						<p class="pnSlideshowImageInfo imageInfo"  style="display: none;">{alt}</p>
+					<% end %>
+					<p class="taxNote">Note: It is the responsibility of the hotel chain and/or the individual property to ensure the accuracy of the photos displayed. PokerNews.com is not responsible for any inaccuracies in the photos.</p>
+				</div><div class="pnSlideshowTabItems tabItems">
+					<%loop {list.photosThumbs += hotel:photosThumbs.item} %>
+						<a title="{alt}" href="{src}" class="tabItem pnSlideshowTabItem"></a>
+					<% end %>
+				</div>
+			</div>
+		</div>
+		<%end%>
+		<div class="mainColumn fl">
+			<div class="hotelOverview article">
+				<div id="hotelOverview">
+				{propertyDescription}
+				<%if {hotelPolicy} %>
+					<h2>Hotel Policy</h2>
+					<p>{hotelPolicy}</p>
+				<%end%>
+				<%if {propertyInformation} %>
+					<h2>Quick Facts</h2>
+					<p>{propertyInformation}</p>
+				<%end%>
+				<%if {checkInInstructions} %>
+					<h2>Check In Instructions</h2>
+					<p>{checkInInstructions}</p>
+				<%end%>
+				<%if {guaranteePolicy} %>
+					<h2>Guarantee Policy</h2>
+					<p>{guaranteePolicy}</p>
+				<%end%>
+				<%if {depositPolicy} %>
+					<h2>Deposit Policy</h2>
+					<p>{depositPolicy}</p>
+				<%end%>
+				</div>
+				<p class="expandLink a11y" id="hotelOverviewMore">
+					<a href="javascript:;" class="more">See More ▾</a>
+					<a href="javascript:;" class="less a11y">See Less ▴</a>
+				</p>
+			</div>
+			<%if {list.amenities.1} %>
+			<div class="hotelFacilities">
+				<h2>Facilities</h2>
+				<div id="amenitiesOverview">
+				<ul>
+					<li>General
+						<ul>
+							<% loop {list.amenities.1 += hotel:amenity.item} %><li>{name}</li><% end %>
+						</ul>
+					</li>
+					<li>General (cont.)
+						<ul>
+							<% loop {list.amenities.2} %><li>{name}</li><% end %>
+						</ul>
+					</li>
+				</ul>
+				</div>
+				<p class="expandLink a11y" id="amenitiesOverviewMore">
+					<a href="javascript:;" class="more">See More ▾</a>
+					<a href="javascript:;" class="less a11y">See Less ▴</a>
+				</p>
+			</div>
+			<% end %>
+			<%if {availableRooms} %>
+			<div class="hotelRoomOptions" id="hotelRoomOptions">
+				<h2>Available Rooms</h2>
+				<%loop {availableRooms += hotel:availableRooms.item} %>
+				<div class="hotelRoomOption">
+					<img src="<%if {img} %>{img}<%else {img} %>/img/avatar100.png<%end%>" width="110" height="80" alt="" /><div class="roomSummary">
+						<p class="roomType">{typeDescription}</p>
+						<%if {list.valueAdds} %>
+						<ul>
+							<%loop {list.valueAdds += hotel:availableRooms.valueAdds.item} %>
+							<li>{name}</li>
+							<% end %>
+						</ul>
+						<% end %>
+						<p class="expandLink roomsViewMore a11y">
+							<a href="javascript:;" class="more">See more information ▾</a>
+							<a href="javascript:;" class="less a11y">See less information ▴</a>
+						</p>
+					</div><div class="roomPrice">
+						<%if {basePrice} %>
+						<span class="price"><del>{basePrice}</del> <ins>{price} <img src="/img/icon_discount.png" width="16" height="15" alt="with discount" title="{discount}" /></ins></span><br />
+						<%else {basePrice} %>
+						<span class="price">{price}</span><br />
+						<%end%>
+						<span class="priceExplanation">Avg. Night Rate</span><br />
+						<a href="{url.book}" target="_blank" class="bookNowButton">Book Now ▸</a>
+					</div>
+					<div class="roomDescription article">
+						<%if {description} %>
+						<p class="sectionMiniTitle"><b>Room Description</b></p>
+						<p>{description}</p>
+						<%end%>
+						<%if {list.amenitiesColumns} %>
+						<p class="sectionMiniTitle"><b>Room details</b></p>
+						<div class="roomDetails">
+							<%loop {list.amenitiesColumns += hotel:availableRooms.amenitiesColumns.item} %><ul>
+								<%loop {list.amenities += hotel:availableRooms.amenities.item} %>
+								<li>{name}</li>
+								<% end %>
+							</ul><%end%>
+						</div>
+						<%end%>
+						<p class="sectionMiniTitle"><b>Cancellation policy</b></p>
+						<p class="cancelationPolicy">
+							Unknown
+							<input type="hidden" name="rateCode" value="{rateCode}" />
+							<input type="hidden" name="roomTypeCode" value="{roomTypeCode}" />
+							<input type="hidden" name="supplierType" value="{supplierType}" />
+						</p>
+					</div>
+				</div>
+				<% end %>
+			</div>
+			<p class="taxNote">The room rates listed are for double occupancy per room unless otherwise stated and exclude tax recovery charges and service fees. See <a href="http://travel.ian.com/index.jsp?pageName=hotelFaq&amp;cid=336011" target="_blank">FAQs</a> for more details.</p>
+			<p class="taxNote">Note: It is the responsibility of the hotel chain and/or the individual property to ensure the accuracy of the photos displayed. PokerNews.com is not responsible for any inaccuracies in the photos.</p>
+			<% end %>
+		</div>
+		<div class="asideColumn fr">
+			<!--# `wait till registered`
+			<div class="asideWidget tripAdvisorWidget">
+				<h2>TripAdvisor</h2>
+				<img src="http://placekitten.com/300/170" width="300" height="170" alt="TripAdvisor widget" />
+			</div>-->
+			<div class="asideWidget mapWidget">
+				<h2>Location</h2>
+				<div id="geoLocationMap" style="width:300px;height:210px;"></div>
+				<%if {areaInformation} %>
+				<p><strong>Area information</strong></p>
+				<div>{areaInformation}</div>
+				<% end %>
+			</div>
+			<!--#<div class="asideBanner">
+				<a href=""><img src="http://images.wikia.com/warhammer40k/images/3/31/The_Emperor_of_mankind_by_Noldofinve.jpg" width="200" height="200" alt="baneris" /></a>
+			</div> -->
+		</div>
+		<div class="cb"></div>
+		<script type="text/javascript">
+		/*<![CDATA[*/
+		livePokerHotels.setupEntry('{latitude}','{longitude}');
+		/*]]>*/
+		</script>
+		<ul class="hotelFooterLinks">
+			<li><a href="javascript:;" onclick="var w=new modalWindow(420,120);w.open('After submitting your reservation request, you will be provided with an email address to use to make inquires about your request. Our qualified and friendly agents are available to answer questions about your hotel reservations 24-hours a day, 7 days a week, 365 days a year (including holidays). If you are about to make reservation and you need our assistance e-mail us support@pokernews.com')">Customer Care</a></li>
+			<li><a target="_blank" href="http://travel.ian.com/index.jsp?pageName=viewOrCancelReservation&amp;currencyCode=USD&amp;additionalDataString=vrBookingSource%7Cindex&amp;locale=en_US&amp;cid=336011">View Reservation</a></li>
+			<li><a target="_blank" href="http://travel.ian.com/index.jsp?pageName=hotelFaq&amp;cid=336011">FAQ</a></li>
+			<li><a target="_blank" href="http://travel.ian.com/index.jsp?pageName=userAgreement&amp;locale=en_US&amp;cid=336011">Terms and Conditions</a></li>
+		</ul>
+	</div>
+</div>
+
+
+<% hotel:availableRooms.unavailable %>
+<div class="hotelRoomOption">
+Rooms list currently unavailable
+</div>
+
+<% hotelLavailableRooms.cancellationPolicy.unavailable %>
+Cancellation policy temporarily unavailable.
+
+
+<% hotel:results.error %>
+<div class="widget hotelPage">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle"><em>PokerNews</em> Hotels</h1>
+		<div class="hotelHeaderName">
+			<h2>Error retrieving hotel information</h2>
+			<p><a href="{url.back}">Back to Search Results</a>
+		</div>
+		<div class="cb"></div>
+	</div>
+</div>
+
+<% widget:main %>
+<div class="widget">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<strong class="widgetTitle">PokerNews Hotels</strong>
+		<div class="hotelWidget">
+			<div class="hotelWidgetHeader">
+				<strong>Book your hotel for your next poker event now!</strong>
+				<p>Get the best rates at hotels near the venue. Duis et eros sem, ornare laoreet elit.</p>
+			</div>
+			<form method="get" action="{url.action}">
+				<div class="hotelWidgetForm">
+					<input type="hidden" name="event" value="{event.search}" />
+					<input type="hidden" name="active_tab" value="{arg.active_tab}" />
+
+					<label id="selectedTournament">Tournament <select name="tournament">{list.tournaments}</select></label>
+					<label>Check In <input type="text" value=" " id="checkInTrn" name="check_in" /></label>
+					<label>Nights <select name="nights"><option selected="selected">1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option></select></label>
+				</div>
+				<div class="tac"><button type="submit">Search</button></div>
+			</form>
+			<script type="text/javascript">
+			/*<![CDATA[*/
+			livePokerHotels.setupList({js.tournaments});
+			/*]]>*/
+			</script>
+		</div>
+	</div>
+</div>

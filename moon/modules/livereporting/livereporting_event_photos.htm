@@ -1,0 +1,146 @@
+<% logEntry:photos %>
+<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="photos-{id}">
+	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
+	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}
+		<%if {show_controls} %> | <a href="{url.edit}">edit</a> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
+	</div>
+	{body}
+	<%if {is_preview} %><p><a href="{url.view}">{!read_full}</a></p><%end%>
+	<div class="pnGallery">
+		<div class="hide navi">
+			<a title="Next" class="next fr" href="#"></a>
+			<a title="Previous" class="previous fl hide" href="#"></a>
+		</div>
+		<div class="activePhoto">
+		{photos_large}
+		</div>
+		<div style="overflow: hidden;">
+		<div class="pnSlideshowTabItems tabItems">
+		{photos_thumbnails}
+		</div>
+		</div>
+		<p class="status">{!photos}: <span>1</span> / <span>?</span></p>
+	</div>
+</div>
+
+<% logEntry:photos.large %>
+<a class="pnSlideshowImage imageLink" href="{src_big}" style="display: none;"></a>
+<p class="pnSlideshowImageInfo imageInfo"  style="display: none;">{alt}</p>
+
+<% logEntry:photos.thumbnail %>
+<a class="tabItem pnSlideshowTabItem" href="{src}" title=""></a>
+
+
+
+
+<% logTab:main %>
+<!--# <div class="article"> -->
+	<%if {entries} %>
+	<ul class="gallery lightbox-gallery">
+	{entries}
+	</ul>
+	<%else {entries} %>
+	<p>{!nophotos}</p>
+	<%end%>
+<!--# </div> -->
+{paginator}
+
+
+<% logTab:entries.item %>
+<li><dl><dt><a href="{src_big}" rel="lightbox" title="<%if {alt} %>{alt} | <%end%> {event_name} | {tournament_name}"><img src="{src}" width="89" alt="{alt}" /></a></dt><dd><%if {delurl} %><a href="{delurl}">[x]</a><%end%><%if {srcurl} %><a href="{srcurl}">[s]</a><%end%> {alt}</dd></dl></li>
+
+
+
+
+
+<% entry:photos %>
+<%if {control} %>
+<div id="rq-entry-control">
+	{control}
+</div>
+<%end%>
+<div class="article">
+	<h3 class="articleTitle" id="no{id}">{title}</h3>
+	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}</div>
+	{body}
+	<div class="pnGallery">
+		<div class="hide navi">
+			<a title="Next" class="next fr" href="#"></a>
+			<a title="Previous" class="previous fl hide" href="#"></a>
+		</div>
+		<div class="activePhoto">
+		{photos_large}
+		</div>
+		<div style="overflow: hidden;">
+		<div class="pnSlideshowTabItems tabItems">
+		{photos_thumbnails}
+		</div>
+		</div>
+		<p class="status">{!photos}: <span>1</span> / <span>?</span></p>
+	</div>
+	<p><a href="{url.up}" id="urlup">{!back}</a></p>
+</div>
+
+
+<% entry:photos.large %>
+<a class="pnSlideshowImage imageLink" href="{src_big}" style="display: none;"></a>
+<p class="pnSlideshowImageInfo imageInfo"  style="display: none;">{alt}</p>
+
+<% entry:photos.thumbnail %>
+<a class="tabItem pnSlideshowTabItem" href="{src}" title=""></a>
+
+
+
+<% entry:photos.item %>
+<li><dl><dt><a href="{src_big}" title="{alt} | {event_name} | {tournament_name}"><img src="{src}" alt="{alt}" width="89" /></a></dt><dd>{alt}</dd></dl></li>
+
+
+
+
+
+<% controls:photos %>
+<%if {cx.bundled_control} %><p><a href="#" id="rq-wx-start-bun">Edit</a></p><%end%>
+<script type="text/javascript">
+/*<![CDATA[*/
+var xphoto_item = {cx.js.xphoto_item};
+/*]]>*/
+</script>
+<input type="hidden" id="ipnxbase" value="{cx.url.ipn}" />
+<div id="rq-wx" style="<%if {cx.unhide} %><%else {cx.unhide} %>display:none;<%end%>">
+<form method="post" class="control" action="{!action}">
+	<input type="hidden" name="event"   value="{cx.save_event}" />
+	<input type="hidden" name="day_id"  value="{cx.day_id}" />
+	<input type="hidden" name="photos_id" value="{cx.id}" />
+	<fieldset>
+		<legend>Photos</legend>
+		<p><label>Title:</label><input type="text" name="title" maxlength="255" class="full-width" value="{cx.title}" /></p>
+		<p><label>Date:</label>
+			<select name="datetime_options" id="rq-wx-datetime-options">{cx.datetime_options}</select>
+			<span class="input-padright" id="rq-wx-datetime-custom" style="display:none;">{cx.custom_datetime} {cx.custom_tz}</span>
+		</p>
+		{cx.toolbar}
+		Text:
+		<p><textarea name="body" id="rq-wx-body" cols="55" rows="6">{cx.body}</textarea></p>
+		<p>
+			<a href="{cx.url.ipnpreview}" id="rq-wx-ipnattach">Add Photos</a>
+		</p>
+		<div id="xphotos-preview">{cx.xphotos_preview}</div>
+		<div style="clear:both" ></div>
+		<p><label>Published:</label> <input type="checkbox" name="published" value="1" class="checkbox"<%if {cx.published} %> checked="checked"<%end%> /></p>
+		<p><label>&nbsp;</label>
+			<input type="submit" value="Save"/>
+		</p>
+	</fieldset>
+</form>
+</div>
+
+
+<% controls:photos.item %>
+<div class="xphoto-item" id="xphoto-item-{id}">
+	<div><a href="javascript:livePokerAdm.xphotoDelete({id});"><img src="/img/live_poker/delete.gif" alt="delete" /></a></div>
+	<img src="{src}" width="100" alt="" />
+	<input type="hidden" name="src[{id}]" class="psrc" value="{psrc}" />
+	<input type="hidden" name="misc[{id}]" class="misc" value="{misc}" />
+	<label>Title:</label><textarea name="description[{id}]" cols="40" rows="4" class="desc">{title}</textarea><br />
+	<label>Tags:</label><input type="text" name="tags[{id}]" class="tags" value="{tags}" />
+</div>
