@@ -1,0 +1,60 @@
+<% default:box %>
+<div class="widget widgetW50 fl sep data">
+	{data}
+</div>
+
+
+
+<% default:ask %>
+<!--# <h2 class="widgetTitle">Poll</h2>
+<form class="poll" id="poll-85" method="post" action="/">
+	<p>Will Phil Ivey's 2012 exceed Erik Seidel's amazing 2011?</p>
+
+	<label class="correct"><input type="radio" id="id-335" value="id-335" name="vote"> Yes</label>
+	<span class="rating tar"><span class="ratingBarBackground fl"><span style="width: 33%;" class="ratingBar"></span></span>&nbsp;100%</span>
+
+	<label class="incorrect"><input type="radio" id="id-336" value="id-336" name="vote"> No</label>
+	<span class="rating tar"><span class="ratingBarBackground fl"><span style="width: 67%;" class="ratingBar"></span></span>&nbsp;67%</span>
+
+	<div class="hide vote-loading"><img alt="" src="img/loading_small.gif"></div>
+	<div class="vote">
+		<input type="hidden" value="85" name="question">
+		<input type="hidden" value="poll.poll#vote" name="event">
+		<button name="do-vote" type="submit" class="button">Vote</button>
+		<a href="#">View results</a>
+	</div>
+</form> -->
+
+<h2 class="widgetTitle"><%if {trivia} %>{!trivia}<%else {trivia} %>{!poll}<%end%></h2>
+<form action="{!action}" method="post" id="poll-{question-id}" class="poll">
+	<p>{question}</p>
+	{list.answers}
+	<div class="hide vote-loading"><img src="/img/loading_small.gif" alt="" /></div>
+	<div class="vote-submit vote">
+		<input type="hidden" name="question" value="{question-id}" />
+		<input type="hidden" name="event" value="{vote.event}" />
+		<button type="submit" name="do-vote" class="button">{!vote}</button>
+		<a href="{url.view_results}" class="skipresults">{!view-results}</a>
+	</div>
+</form>
+
+
+
+<% default:asked %>
+<h2 class="widgetTitle"><%if {trivia} %>{!triviaResults}<%else {trivia} %>{!pollResults}<%end%></h2>
+<form action="javascript:;" method="post" id="poll-{question-id}" class="poll">
+	<p>{question}</p>
+	{list.answers}
+	<p class="totalVotes">
+		{!totalVotes}: {total-voted}
+	</p>
+</form>
+
+
+<% default:answers.item.ask %>
+<label><input type="radio" id="id-{id}" value="id-{id}" name="vote" /> {answer}</label>
+
+
+<% default:answers.item.asked %>
+<label class="<% if {is_correct_answer} %>correct<% else {is_correct_answer} %>incorrect<%end%>"><input type="radio" <% if {is_voted_answer} %>checked="checked"<%end%> disabled="disabled" name="vote" /> {answer}</label>
+<span class="rating tar"><span class="ratingBarBackground fl"><span style="width: {percent}%;" class="ratingBar"></span></span>&nbsp;{percent}%</span>

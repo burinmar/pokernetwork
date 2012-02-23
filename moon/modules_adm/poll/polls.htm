@@ -1,0 +1,221 @@
+<% messages %>
+e.invalid_id=Invalid id
+e.entry_not_found=Entry not found
+e.invalid_file=Invalid file
+e.file_save_error=File save error
+e.entry_not_found=Entry not found
+e.parent_not_found=Category not found or no categories exist
+e.empty_question=No question entered
+e.empty_answer_text=No answer text entered
+e.empty_valid_since=No start date entered
+e.empty_valid_until=No end date entered
+e.invalid_valid_since=Start date incorrect
+e.invalid_valid_until=End date incorrect
+e.invalid_startend=Start date is bigger than end date
+e.date_overlap=There is already an active question
+e.date_overlap_s=There is already an active question in category "%s"
+e.low_answers=Too few answers, must be at least 2
+e.high_answers=Too many answers, must be at most 5
+
+<% list:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Voting: polls and trivias</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add new item</a></div>
+</div>
+
+<%if {filter} %>{filter}<% end %>
+
+<div id="entries-list">
+<table class="list">
+	<colgroup>
+		<col />
+		<col style="width: 100px"/>
+		<col style="width: 40px" />
+	</colgroup>
+	<thead>
+	<tr>
+		<th><span>Question</span></th>
+		<th><span>Zone</span></th>
+		<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
+	</tr>
+	</thead>
+	<tbody>
+	{list.entries}
+	</tbody>
+</table>
+<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
+{paging}
+</div>
+
+
+<script type="text/javascript">
+	var js_action_delete = '{event.delete}';
+</script>
+<form method="post" id="js-action-form" action="{!action}">
+	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
+	<input type="hidden" name="event" value="" id="js-action-form-event" />
+</form>
+
+<% list:entries.item %>
+<tr class="<%if {is_not_active}%>item-hidden<%end%>">
+	<td><a href="{url}">{question}</a></td>
+	<td><% if {places} %>{places}<% end %></td>
+	<td><input type="checkbox" class="row-mark" id="row:{id}" /></td>
+</tr>
+
+
+<% entry:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+<script type="text/javascript">
+var emptyAnswerControl = "{answers.item.empty}";
+var emptyAnswerControlPrimary = "{answers.item.empty.primary}";
+var isTrivia = false;
+function enableAddAnswers() { // enable adding/editing/deleting answers (only rename by default)
+	$('.answers-subcontrol .answer').livequery('keyup',function(){
+		updateAnswerControls();
+	});
+	$('.answers-subcontrol .answer').livequery('change',function(){
+		updateAnswerControls();
+	});
+	$('.deleteControl').livequery('click', function(){
+		$(this).parent().remove();
+		updateAnswerControls();
+		if (isTrivia) {
+			updateAnswerControls();
+		}
+	});
+	updateAnswerControls(null);
+}
+function updateAnswerControls() {
+	var answerControls = $('.answers-subcontrol .answer');
+	var answerControlsCount = answerControls.length;
+	if (answerControlsCount == 0) {
+		$('#answers-control').append(emptyAnswerControlPrimary);
+		$('#answers-control .position').val(1);
+		if (isTrivia) {
+			$('#answers-control input[@name="is_correct_answer"]').val(1);
+		}
+		return;
+	}
+	var maxCount = 20; //$('input[name=places\\[shared-lr\\]]').attr('checked')
+	lastControl = $(answerControls[answerControlsCount-1]);
+	if ($.trim(lastControl.val()) != '' && answerControlsCount < maxCount) {
+		$('#answers-control').append(emptyAnswerControl);
+		var positions = $('.answers-subcontrol .position');
+		var largestPosition = 1;
+		positions.each(function(){
+			if (parseInt(this.value) > largestPosition) {
+				largestPosition = parseInt(this.value)
+			}
+		})
+		$(positions[positions.length-1]).val(largestPosition +1);
+	}
+
+	if (isTrivia) {
+		var answers = $('#answers-control input[@name="is_correct_answer"]');
+		answers.each(function(index){
+			this.value = index;
+		});
+	}
+}
+
+function checkCorrectAnswer()
+{
+	var correctIdx = $('.answers-subcontrol input[@name="is_correct_answer"]:checked').attr('checked');
+	if (!correctIdx) {
+		$('#correct-answ').remove();
+		var firstAnsw = $('.answers-subcontrol input[@name="is_correct_answer"]:first').attr('checked', 'checked');
+		firstAnsw.after('<span id="correct-answ">Correct answer</span>');
+	}
+}
+function enablePollIsTrivia()
+{
+	isTrivia = true;
+	$('.answers-subcontrol input:radio').livequery('click',function(){
+		$('#correct-answ').remove();
+		$(this).after('<span id="correct-answ">Correct answer</span>');
+	});
+}
+</script>
+
+<%if {submenu} %>{submenu}<% end %>
+<form action="{!action}" method="post" class="editForm aform">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="id" value="{entry.id}" />
+	<h2 class="formTitle">Poll :: Edit poll</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<dl>
+		<dt><label>Question</label></dt>
+		<dd><input type="text" maxlength="100" size="80" class="width60 required" name="question" value="{entry.question}" /></dd>
+
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden"<%if {entry.is_hidden} %> checked="checked"<%end%> value="1" /> Is hidden</label></dd>
+
+		<dt><label>May vote</label></dt>
+		<dd>{list.restrictions}</dd>
+
+		<dt><label>Publishing zones</label></dt>
+		<dd>
+			{list.places}
+			<div class="explain">If no zone is selected, the result is the same as if "is hidden" was checked</div>
+		</dd>
+
+		<dt><label>Answers</label></dt>
+			<dd id="answers-control">
+			{list.answers}
+			<% if {allow_add_answers} %>
+				<script type="text/javascript">
+				enableAddAnswers();
+				</script>
+			<% end %>
+		</dd>
+
+		<% if {is_trivia} %>
+		<script type="text/javascript">
+		enablePollIsTrivia();
+		</script>
+		<dt><label>Correct answer text</label></dt>
+		<dd>
+			<textarea rows="3" cols="45" name="answer_text" class="required">{entry.answer_text}</textarea>
+		</dd>
+		<% end {is_trivia} %>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+<%if {show-stats} %>
+<form action="#" method="post" class="editForm aform">
+<h2 class="headline topSeperator">Statistics (out of {total} voters):</h2>
+	<table cellpadding="0" cellspacing="2" width="300">
+	{list.stats}
+	</table>
+</form>
+<%end%>
+
+<% places.item %>
+<label><input type="checkbox" name="places[{id}]" class="checkbox" <%if {checked} %>checked="checked"<%end%> /> {name}</label>
+
+
+<% answers.item %>
+<div class="answers-subcontrol">
+	<input type="text" size="30" name="answer[{id}]" maxlength="50" class="answer" value="{question}" style="margin-bottom: 3px" />
+	<input type="text" size="2" name="position[{id}]" maxlength="2" class="position" value="{position}" style="margin-bottom: 3px" />
+	<input type="hidden" name="is_new[{id}]" value="{is_new}" />
+	<%if {allow_add_answers} %><a href="javascript:;" class="deleteControl remove-item"></a><%end%>
+
+	<% if {is_trivia} %>
+	<input type="radio" name="is_correct_answer" value="{correctAnsVal}" <% if {correct} %>checked="checked"<% end {correct} %> /> <% if {correct} %><span id="correct-answ">Correct answer</span><% end {correct} %> 
+	<% end {is_trivia} %>
+</div>
+
+
+<% restrictions.item %>
+<input type="radio" name="restrictions" value="{value}" <% if {selected}%> checked="checked"<%end%> /> {name} <br />
+
+<% stats.item %>
+<tr><td>{answer}</td><td style="text-align:right;">{percent}%</td></tr>
+<tr><td colspan="2"><div class="vote-bar" style="width:{width}px; background:#3333ff; height: 4px; margin-bottom: 10px" ></div></td></td></tr>

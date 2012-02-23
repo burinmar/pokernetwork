@@ -102,10 +102,10 @@ class promos extends base_inplace_syncable
 			foreach ($sites as $site) {
 				switch ($site) {
 				case 'com':
-					$domain = 'pokernews';
+					$domain = 'www.pokernews';
 					break;
 				case _SITE_ID_:
-					$domain = 'pokernetwork';
+					$domain = 'www.pokernetwork';
 					break;
 				}
 				$domain .= is_dev()

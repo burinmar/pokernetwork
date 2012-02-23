@@ -60,6 +60,13 @@ Live Reporting {ico=reporting, hide=0,admin=content, sites=}
 	livereporting.tours = Reporting Tours
 	livereporting.tour_import = Import
 
+Poll {ico=poll, admin=content, hide=0}
+	poll.polls = Polls
+	poll.trivia = Trivias {sites=com;balkan;br;china;dk;ee;fi;fr;hu;il;it;jp;kr;lv;nj;nl;no;pl;ro;ru;se;si;tr;uk}
+	Pokerface {link=other.pokerface,sites=si}
+		other.pokerface = Pokerface
+		other.pokerface_categories = Pokerface Categories
+
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

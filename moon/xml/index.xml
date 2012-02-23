@@ -8,6 +8,8 @@
 	<com><part>right</part><name>livereporting.livereporting</name><var name="widget">1</var></com>
 	<com><part>right</part><name>reviews.homepage_rooms</name></com>
 
+	<com><part>poll</part><name>poll.poll</name><var name="zone">home</var><var name="is_trivia">0</var><var name="output">default</var></com>	
+
 	<com><part>header</part><name>sys.header</name></com>
 	<com><part>footer</part><name>sys.footer</name></com>
 </page>
