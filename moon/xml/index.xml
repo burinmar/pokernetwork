@@ -4,7 +4,7 @@
 	<!--
 <com><part>left</part><name>sys.news_homepage</name></com>
 -->
-
+	<com><part>left</part><name>articles.homepage_news</name></com>
 	<com><part>right</part><name>livereporting.livereporting</name><var name="widget">1</var></com>
 	<com><part>right</part><name>reviews.homepage_rooms</name></com>
 

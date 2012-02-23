@@ -5,7 +5,7 @@ function onload()
 {
 	// item form
 	$this->formItem = &$this->form();
-	$this->formItem->names('id', 'parent_id', 'category_type', 'title', 'uri', 'meta_keywords', 'meta_description', 'description', 'is_hidden');
+	$this->formItem->names('id', 'parent_id', 'category_type', 'title', 'uri', 'meta_keywords', 'meta_description', 'description', 'is_hidden', 'is_au');
 }
 function events($event, $par)
 {
@@ -160,6 +160,7 @@ function renderForm($vars)
 		'refresh' => $page->refresh_field(),
 	) + $form->html_values();
 	$m['is_hidden'] = $form->checked('is_hidden', 1);
+	$m['is_au'] = $form->checked('is_au', 1);
 	
 	$items = $this->getItems();
 	if ($form->get('id')) {
@@ -295,6 +296,7 @@ function saveItem()
 	$data['meta_description'] = $values['meta_description'];
 	$data['description'] = $values['description'];
 	$data['is_hidden'] = (empty($values['is_hidden'])) ? 0 : 1;
+	$data['is_au'] = (empty($values['is_au'])) ? 0 : 1;
 	$id = $data['id'];
 
 	// Validation
@@ -327,7 +329,7 @@ function saveItem()
 		return $id;
 	}
 
-	$ins = $form->get_values('title', 'uri', 'meta_keywords', 'meta_description', 'description', 'is_hidden', 'parent_id');
+	$ins = $form->get_values('title', 'uri', 'meta_keywords', 'meta_description', 'description', 'is_hidden', 'is_au', 'parent_id');
 	$ins['category_type'] = $this->get_var('articlesType');
 	
 	if ($id) {

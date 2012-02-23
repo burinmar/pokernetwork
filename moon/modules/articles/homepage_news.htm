@@ -1,0 +1,45 @@
+<% main %>
+<div class="widget topNewsIndexBox">
+	<h2 class="widgetTitle">Top Poker News from Australia<span class="auMark lightMark"></span> and around the world</h2>
+	<div id="newsSlider">
+		<% loop {news:slider:items} %>
+		<div class="slider pnSliderTab" <% if {notCurrent} %>style="display:none;"<% end %>>
+			<a href="{url.article}"><img src="{imgSrc}" alt="{imgAlt}" width="460" height="305" /></a>
+			<strong><a href="{url.article}" class="title">{title}<% if {isAu} %>&nbsp;<span class="auMark blueMark"></span><% end %></a></strong>
+			<span class="meta"><% if {url.comments} %><a class="commentIco bigCommentIco" href="{url.comments}">{comm_count} comments</a>● <% end {if} %>Posted <% if{ago} %>{ago}<% else{ago} %>at {date}<% end %></span>
+		</div>
+		<% end %>
+		<div class="stepper">
+			<b class="fl"><span class="pnSliderTabN">1</span>/4</b>
+			<a href="#" class="prev" title="Previous">&lt;</a>
+			<a href="#" class="next" title="Next">&gt;</a>
+		</div>
+		<script type="text/javascript">
+		/*<![CDATA[*/
+		$('#newsSlider').pnSlider({tabsCnt:4});
+		/*]]>*/
+		</script>
+	</div>
+</div>
+
+<div class="widget">
+	<ul class="newslistIndexBox">
+		<% loop {news:list:left:items} %>
+		<li <% if{imgSrc} %>class="photo"<% end %>>
+			<% if{imgSrc} %><a href="{url.article}"><img src="{imgSrc}" alt="{imgAlt}" width="223" height="147" /></a><% end %>
+			<a href="{url.article}" class="title">{title}<% if {isAu} %>&nbsp;<span class="auMark blueMark"></span><% end %></a><% if {url.comments} %><span class="meta"><a href="{url.comments}" class="commentIco">{comm_count}</a></span><% end %>
+			<p>{summary}</p>
+		</li>
+		<% end %>
+	</ul>
+	<ul class="newslistIndexBox noMarginRight">
+		<% loop {news:list:right:items} %>
+		<li <% if{imgSrc} %>class="photo"<% end %>>
+			<% if{imgSrc} %><a href="{url.article}"><img src="{imgSrc}" alt="{imgAlt}" width="223" height="147" /></a><% end %>
+			<a href="{url.article}" class="title">{title}<% if {isAu} %>&nbsp;<span class="auMark blueMark"></span><% end %></a><% if {url.comments} %><span class="meta"><a href="{url.comments}" class="commentIco">{comm_count}</a></span><% end %>
+			<p>{summary}</p>
+		</li>
+		<% end %>
+	</ul><span class="clr"></span>
+	<a href="{url.news}" class="more">More News »</a>
+</div>

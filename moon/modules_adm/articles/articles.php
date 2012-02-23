@@ -16,6 +16,9 @@ function onload()
 
 	$this->articlesSuffixStartId = $this->get_var('articlesSuffixStartId');
 	$this->addToArticlesSuffix = 1000;
+
+	$this->leadImgWidth = 460;
+	$this->leadImgHeight = 305;
 }
 function events($event, $par)
 {
@@ -63,7 +66,7 @@ function events($event, $par)
 				$tool->show(array(
 					'id' => $id,
 					'src' => $this->getImageSrc($m['img'],'orig/'),
-					'minWH' => '265x175',
+					'minWH' => $this->leadImgWidth.'x'.$this->leadImgHeight,
 					'fixedProportions' => TRUE
 					));
 			}
@@ -271,7 +274,7 @@ function renderForm($vars)
 		'uriNumericSuffix' => '',
 
 		'showPromo' => true,
-		'showHomepageSlider' => false,
+		'showHomepageSlider' => true,
 		'showViewArticleLink' => $form->get('id'),
 		'showTwitter' => false,//$this->my('name') == 'news',
 		'showFacebook' => false,//$this->my('name') == 'news',
@@ -526,9 +529,9 @@ function saveItem()
 
 	$txt = &moon::shared('text');
 	if ($ins['summary'] === '') {
-		$ins['summary'] = $txt->excerpt($txt->strip_tags($ins['content']), 250);
+		$ins['summary'] = $txt->excerpt($txt->strip_tags($ins['content']), 125);
 	} else {
-		$ins['summary'] = $txt->excerpt($txt->strip_tags($ins['summary']), 250);
+		$ins['summary'] = $txt->excerpt($txt->strip_tags($ins['summary']), 125);
 	}
 
 	if ($id) {
@@ -603,6 +606,9 @@ function saveImage($id , $name, &$err, $del = FALSE) //insertina irasa
 			//dabar dar trinam maziausia img
 			if ($fDel->is_file($dir_ . '/thumb_' . $fnameBase . $fnameExt)) $fDel->delete();
 
+			//dabar dar trinam vidutini img
+			if ($fDel->is_file($dir_ . '/mid_' . $fnameBase . $fnameExt)) $fDel->delete();
+
 			//dabar dar trinam originalu img
 			if ($fDel->is_file($dir_ . '/orig/' . $fnameBase . $fnameExt)) $fDel->delete();
 			$noPicture = TRUE;
@@ -630,9 +636,11 @@ function saveImage($id , $name, &$err, $del = FALSE) //insertina irasa
 		if ( $img->resize($f,$nameSave,800,800) && $f->is_file($nameSave) ) {
 			$newPhoto = $fnameBaseFull . $fnameExt;
 			//pagaminam thumbnailus is paveiksliuko
-			$img->resize_exact($f, $dir_ . '/' . $fnameBase . $fnameExt, 380, 250);
-			if ($f->is_file($dir_ . '/' . $fnameBase . '' . $fnameExt))
-			$img->resize_exact($f, $dir_ . '/thumb_' . $fnameBase . $fnameExt, 140,93);
+			$img->resize_exact($f, $dir_ . '/' . $fnameBase . $fnameExt, $this->leadImgWidth, $this->leadImgHeight);
+			if ($f->is_file($dir_ . '/' . $fnameBase . '' . $fnameExt)) {
+				$img->resize_exact($f, $dir_ . '/thumb_' . $fnameBase . $fnameExt, 120,80);
+				$img->resize_exact($f, $dir_ . '/mid_' . $fnameBase . $fnameExt, 223,147);
+			}
 		} else {
 			//technine klaida
 			$err = 2;
@@ -698,11 +706,12 @@ function imgReplace($id) //insertina irasa
 			//crop is originalo pagal imgtool duomenis
 			if ($img->crop($f, $newDir_ . '/' . $newPhoto, $nw, $nh, $left, $top)) {
 				if ($f->is_file($newDir_ . '/' . $newPhoto)) {
-					$img->resize_exact($f, $newDir_ . '/' . $newPhoto, 380, 250);
+					$img->resize_exact($f, $newDir_ . '/' . $newPhoto, $this->leadImgWidth, $this->leadImgHeight);
 				}
 			}
 			if ($f->is_file($newDir_ . '/' . $newPhoto)) {
-				$img->resize_exact($f, $newDir_ . '/thumb_' . $newPhoto, 140, 93);
+				$img->resize_exact($f, $newDir_ . '/thumb_' . $newPhoto, 120, 80);
+				$img->resize_exact($f, $newDir_ . '/mid_' . $newPhoto, 223,147);
 			}
 			$this->db->update(array('img'=>$newPhotoFull), $this->table('Articles'), $id);
 
@@ -710,7 +719,8 @@ function imgReplace($id) //insertina irasa
 			$del = array(
 				$curDir_ . '/' . $curPhoto,
 				$curDir_ . '/orig/' . $curPhoto,
-				$curDir_ . '/thumb_' . $curPhoto
+				$curDir_ . '/thumb_' . $curPhoto,
+				$curDir_ . '/mid_' . $curPhoto
 				);
 			foreach ($del as $name) {
 				if ($f->is_file($name)) {

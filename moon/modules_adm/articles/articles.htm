@@ -157,12 +157,11 @@ errorImage3=Article will remain hidden until you upload leading picture!
 			<% if {showPromo} %>
 			<br /><label><input type="checkbox" name="is_promo" id="i_is_promo" value="{is_promo}" /> PokerNetwork promotion</label>
 			<% end %>
-		</dd>
 
-		<% if{showHomepageSlider} %>
-		<dt><label><input type="checkbox" name="homepage_promo" id="i_homepage_promo" value="{homepage_promo}" /> Stick to news slider</label></dt>
-		<dd><label>Short title (for slider): <input type="text" name="short_title" id="i_short_title" value="{short_title}" size="30" maxlength="30"/></label></dd>
-		<%end%>
+			<% if{showHomepageSlider} %>
+			<br /><label><input type="checkbox" name="homepage_promo" id="i_homepage_promo" value="{homepage_promo}" /> Stick to news slider</label>
+			<%end%>
+		</dd>
 
 		<dt><label>Content</label></dt>
 		<dd class="w100">
@@ -180,7 +179,7 @@ errorImage3=Article will remain hidden until you upload leading picture!
 		<dd>
 			<input type="file" name="img" size="20" />
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Alt:&nbsp;
-			<input type="text" name="img_alt" value="{img_alt}" size="33" maxlength="128" />
+			<input type="text" name="img_alt" value="{img_alt}" size="70" maxlength="128" />
 			<div class="explain">
 				.jpg, .gif, .png images only.
 				Recomended size - 380x250 px (larger images will be resized)

@@ -11,8 +11,8 @@ class articles_import extends moon_com
 		$this->homeUrl = 'http://www.pokernetwork.com';
 		$this->siteDomain = 'www.pokernetwork.com';
 
-		$this->leadingImgWidth = '460';
-		$this->leadingImgHeight = '305';
+		$this->leadingImgWidth = 460;
+		$this->leadingImgHeight = 305;
 
 		$this->attachmentsDir = _W_DIR_ . 'articles/att/';
 		$this->leadingImgDir = _W_DIR_ . 'articles/img/';
@@ -164,7 +164,7 @@ class articles_import extends moon_com
 			$content = html_entity_decode($parser->parse($r['body']), ENT_QUOTES, 'UTF-8');
 
 			// generate summary from compiled content
-			$summary = $txt->excerpt($txt->strip_tags(htmlspecialchars_decode($content)), 250);
+			$summary = $txt->excerpt($txt->strip_tags(htmlspecialchars_decode($content)), 125);
 
 			$ins = array(
 				'id' => $r['id'],
@@ -172,7 +172,7 @@ class articles_import extends moon_com
 				'title' => $r['title'],
 				'uri' => (isset($res2[$r['id']])) ? str_replace('.htm','',$res2[$r['id']]['uri']) : '',
 				'meta_keywords' => (isset($res3[$r['id']])) ? strip_tags($res3[$r['id']]['keywords']) : '',
-				'meta_description' => (isset($res3[$r['id']])) ? strip_tags($res3[$r['id']]['description']) : '',
+				'meta_description' => (isset($res3[$r['id']])) ? strip_tags(htmlspecialchars_decode($res3[$r['id']]['description'])) : '',
 				'is_hidden' => $r['status'] ? 0 : 1,
 				'created' => $r['created'],
 				'published' => $r['created'],
@@ -503,8 +503,10 @@ class articles_import extends moon_com
 				$img->resize_exact($f, $fileDir . '/' . $fileNameBase . '.' . $fileExt, $this->leadingImgWidth, $this->leadingImgHeight);
 			}
 
-			if ($f->is_file($fileDir . '/' . $fileNameBase . '.' . $fileExt))
-			$img->resize_exact($f, $fileDir . '/thumb_' . $fileNameBase . '.' . $fileExt, 140,93);
+			if ($f->is_file($fileDir . '/' . $fileNameBase . '.' . $fileExt)) {
+				$img->resize_exact($f, $fileDir . '/thumb_' . $fileNameBase . '.' . $fileExt, 120,80);
+				$img->resize_exact($f, $fileDir . '/mid_' . $fileNameBase . '.' . $fileExt, 223,147);
+			}
 
 		}
 
