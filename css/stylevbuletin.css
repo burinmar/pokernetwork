@@ -56,19 +56,19 @@ body {
 			top: 14px;
 			width: 261px;
 		}
-		.menu {
+		.siteMenu {
 			position: absolute;
 			bottom: 0;
 			left: 0;
 		}
-			.menu a {
+			.siteMenu a {
 				display: block;
 				font-size: 13px;
 				font-weight: bold;
 				padding: 0 10px !important;
 			}
-			.menu > li {float: left; position: relative;}
-			.menu > li > a {
+			.siteMenu > li {float: left; position: relative;}
+			.siteMenu > li > a {
 				color: #d4e7ff;
 				line-height: 42px !important;
 				height: 42px;
@@ -76,12 +76,12 @@ body {
 				position: relative;
 				z-index: 1;
 			}
-			.menu > li.on > a {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAAEhL4UpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACRJREFUeNpiYGBgsAEIICBmcAAIIEYoiwUggMA8JhAJEGAoQgAfgwFBRpJ3IgAAAABJRU5ErkJggg==');}
-			.menu > li:hover > a {
+			.siteMenu > li.on > a {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAMAAAADCAYAAAEhL4UpAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAACRJREFUeNpiYGBgsAEIICBmcAAIIEYoiwUggMA8JhAJEGAoQgAfgwFBRpJ3IgAAAABJRU5ErkJggg==');}
+			.siteMenu > li:hover > a {
 				background: #fff;
 				color: #0050bd;
 			}
-			.menu ul {
+			.siteMenu ul {
 				display: none;
 				position: absolute;
 				top: 42px;
@@ -92,13 +92,13 @@ body {
 				-moz-box-shadow: 0 0 7px #000;
 				-webkit-box-shadow: 0 0 7px #000;
 				box-shadow: 0 0 7px #000;
-			} .menu > li:hover ul {display: block}
-				.menu ul a {
+			} .siteMenu > li:hover ul {display: block}
+				.siteMenu ul a {
 					line-height: 21px !important;
 					white-space: nowrap;
 					color: #0050BD;
 				}
-				.menu ul a:hover {
+				.siteMenu ul a:hover {
 					background: #0050bd;
 					color: #fff !important;
 				}
@@ -274,11 +274,11 @@ body {
 		top: 0;
 		width: 120px;
 	}
-	#overlayHeader .menu {right: 0; left: auto}
-	#overlayHeader .menu a {
+	#overlayHeader .siteMenu {right: 0; left: auto}
+	#overlayHeader .siteMenu a {
 		height: 25px;
 		line-height: 25px;
 		font-size: 10px;
 	}
-	#overlayHeader .menu ul {top: 25px}
-	#overlayHeader .menu ul a {line-height: 16px; height: 16px;}
+	#overlayHeader .siteMenu ul {top: 25px}
+	#overlayHeader .siteMenu ul a {line-height: 16px; height: 16px;}
