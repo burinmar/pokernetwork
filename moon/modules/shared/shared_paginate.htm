@@ -1,23 +1,23 @@
 ﻿<% default %>
 active=<a href="{url}" class="page">{pgv}</a>&nbsp;
-inactive=<span class="page current">{pgv}</span>&nbsp;
+inactive=<span class="on">{pgv}</span>&nbsp;
 
 
 <% nav_block %>
 <%if{puslapiai}%>
-<p class="pager">
+<div class="paging">
 	<%if{goPrev}%>
-		<a class="prev" href="{goPrev}"><span class="a11y">Previous</span></a>
+		<a class="prev" href="{goPrev}">‹ Previous</a>
 	<%else{goPrev}%>
-		<span class="prev"><span class="a11y">Previous</span></span>
+		<span class="prev">‹ Previous</span>
 	<%end%>
 	{puslapiai}
 	<%if{goNext}%>
-		<a class="next" href="{goNext}"><span class="a11y">Next</span></a>
+		<a class="next" href="{goNext}">Next ›</a>
 	<%else{goNext}%>
-		<span class="next"><span class="a11y">Next</span></span>
+		<span class="next">Next ›</span>
 	<%end%>
-</p>
+</div>
 <%end%>
 
 

@@ -44,7 +44,7 @@ rssDescription={!rssDescription}
 			<a href="{url.year}" class="archiveYear">{yName}</a><span>{yCount} articles total</span>
 			<ul<%if{expand}%><%else{expand}%> style="display:none;"<%end%>>
 				<%loop{months:items}%>
-				<li<%if{active}%> class="active"<%end%>><a href="{url.month}">{mName}</a><span>{mCount} articles total</span></li>
+				<li<%if{active}%> class="on"<%end%>><a href="{url.month}">{mName}</a><span>{mCount} articles total</span></li>
 				<%end%>
 			</ul>
 		</li>

@@ -840,6 +840,7 @@ html {
 .topNewsIndexBox {
 	background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAIAAAFh5BHmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABNJREFUeNpiunHtOECAMX3+9BoAFJcFSqKVBzcAAAAASUVORK5CYII=') repeat-x bottom left;
 	padding-bottom: 10px;
+	min-height: 410px;
 }
 	.topNewsIndexBox #newsSlider {position: relative;}
 	.topNewsIndexBox img {
