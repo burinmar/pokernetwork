@@ -108,7 +108,7 @@ class livereporting_tour extends moon_com
 		$finishedTournaments = '';
 		$i = 1;
 		$j = 1;
-		$playersUrl = $this->object('players.poker')->linkas('#');
+		$playersUrl = $this->linkas('players.poker#');
 		foreach ($tournamentsInGroup as $t) {			
 			$tournamentArgv = array(
 				'url.tournament' => $lrep->makeUri('#', array(
@@ -154,18 +154,20 @@ class livereporting_tour extends moon_com
 			}
 		}
 		
-		// related articles (by tag)
-		$articlesObject = $this->object('articles.shared');
-		$articlesObject->articleType($articlesObject->typeNews);
-		
 		$mainArgv = array(
-			'url.moreNews' => !empty($tourData['news_tag'])
-				? $articlesObject->getTagUrl($tourData['news_tag'])
-				: '',
 			'tours' => $this->partialRenderTours(),
 			'scheduled_tournaments' => $scheduledTournaments,
 			'finished_tournaments' => $finishedTournaments,
 		) + $tourData;
+
+		// related articles (by tag)
+		if ($articlesObject = $this->object('articles.shared')) {
+			$articlesObject->articleType($articlesObject->typeNews);
+			$mainArgv['url.moreNews'] = !empty($tourData['news_tag'])
+				? $articlesObject->getTagUrl($tourData['news_tag'])
+				: '';
+		}
+		
 		return $tpl->parse('tour:main', $mainArgv);
 	}
 	

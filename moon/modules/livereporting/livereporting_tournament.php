@@ -64,7 +64,7 @@ class livereporting_tournament extends moon_com
 		$skins = $this->get_var('skins');
 		$tours = poker_tours();
 		$lrepTournament = $lrep->instTournamentModel('_src_tournament');
-		$playersUrl = $this->object('players.poker')->linkas('#');
+		$playersUrl = $this->linkas('players.poker#');
 
 		$tournamentInfo = $lrepTournament->getTournament($argv['tournament_id']);
 		if (NULL == $tournamentInfo) {

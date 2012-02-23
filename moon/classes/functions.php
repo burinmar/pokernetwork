@@ -193,6 +193,29 @@ function url_logic($ev = false, $par = false) {
 			}
 		}
 
+		//gal urlas yra turas (ept, wsop, appt ir t.t.)
+		if ($found === FALSE) {
+			$uriL = trim(strtolower($uri), '/');
+			$tours = poker_tours();
+			$tid = 0;
+			foreach ($tours as $id=>$d) {
+				if ($d['uri'] === ($uriL) ) {
+					$tid = $id;
+					continue;
+				}
+			}
+			if ($tid) {
+				$uriL = '/' . $tours[$tid]['uri'] . '/';
+				if ($uriL !== $uri) {
+					//truksta slasho, arba kazkas parasyta uppercase
+					$p->redirect($uriL, 301);
+				}
+				$p->set_request_mask($uriL, '');
+				return array('livereporting.livereporting_tour#', $tid);
+			}
+
+		}
+
 		$uri = (isset ($_SERVER['REQUEST_URI'])) ? urldecode($_SERVER['REQUEST_URI']) : '';
 		$r = $e->url_parse('/' . $uri);
 		return $r;
