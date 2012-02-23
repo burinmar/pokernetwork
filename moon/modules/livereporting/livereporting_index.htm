@@ -183,40 +183,22 @@ tournaments_archive={!tournaments_archive}
 
 
 <% widget_index:main %>
-<div class="widget livePokerWidget redHeadlineWidget">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h2 class="widgetTitle">{!live_reporting}</h2>
-		{tournaments}
-		<%if {pager} %>
-			<div class="featuredPromoPager">
-				<a href="#" class="previous" title="Previous">‹ </a>
-				<span>{pager}</span>
-				<a href="#" class="next" title="Next"> ›</a>
-			</div><span class="clr"></span>
-		<%end%>
-	</div>
-</div>
-
-
-<% widget_index:main_wsop11 %>
-<div class="widget livePokerWidget livePokerWidgetWSOP">
-	<div class="widgetInner">
-		{tournaments}
-		<p class="widgetFooter tar">Presented by <img src="/img/live_poker/wsop/pokerstars_2.png" width="78" height="18" alt="PokerStars" /></p>
-	</div>
+<div class="widget liveReportingIndexBox">
+	<h2 class="widgetTitle"><a href="{url.reporting}">Live reporting ON AIR</a></h2>
+	{tournaments}
+	<a href="{url.reporting}" class="more">More Coverage »</a>
 </div>
 
 
 <% widget_index:tournaments.item %>
-<div class="livePokerTournament{index}">
-	<h3 class="tournamentTitle" <%if {logo} %>style="background: {skin_color} url('{logo}');"<%else {logo} %>style="background-image: url('{skin_logo}');"<%end%>><a href="{url}"><%if {live_coverage} %><span class="sash sashLive"><span class="a11y">{!live} </span></span><%end%><span class="a11y"><%if {tour} %>{tour} – <%end%>{name}</span></a></h3>
-</div>
+<a href="{url}" class="tourBanner" <%if {logo} %>style="background: {skin_color} url('{logo}');"<%else {logo} %>style="background-image: url('{skin_logo}');"<%end%>><span class="hide"><%if {tour} %>{tour} – <%end%>{name}</span></a>
+<!--# {live_coverage} -->
+{events}
+<span class="clr"></span>
 
 
+<% widget_index:events.item %>
+<div><a href="{url}">{name}</a></div>
 
 
 <% widget_live:main %>

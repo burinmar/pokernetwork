@@ -406,7 +406,7 @@ class livereporting_index extends moon_com
 			'tournaments' => 0,
 			'events' => 0,
 		);
-		
+
 		// {{ wsop11
 		/*
 		$runningSpecial = array();
@@ -427,7 +427,8 @@ class livereporting_index extends moon_com
 
 		if (0 != count($running)) {
 			$result .= $tpl->parse('widget_index:main', array(
-				'tournaments' => $this->helperRenderIndexWidgetTournaments($running, $tours, $skins, $lrep, $lrepTools, $locale, $text, $tpl, $newsCountVar)
+				'tournaments' => $this->helperRenderIndexWidgetTournaments($running, $tours, $skins, $lrep, $lrepTools, $locale, $text, $tpl, $newsCountVar),
+				'url.reporting' => $lrep->makeUri('index#view'),
 			));
 		}
 		
@@ -453,7 +454,8 @@ class livereporting_index extends moon_com
 					: '',
 				'index' => $nr == 0
 					? ' first '
-					: ''
+					: '',
+				'events' => '',
 			);
 			if (count($tournament['running_events']) == 1) {
 				$firstEvent = reset($tournament['running_events']);
@@ -468,6 +470,14 @@ class livereporting_index extends moon_com
 				'skinNLogoSuffix' => 'idx',
 				'logoDir' => $this->get_dir('web:LogosIdx')
 			));
+			foreach ($tournament['running_events'] as $event) {
+				$rtArgv['events'] .= $tpl->parse('widget_index:events.item', array(
+					'name' => htmlspecialchars($event['name']),
+					'url' => $lrep->makeUri('event#view', array(
+						'event_id' => $event['id']
+					))
+				));
+			}
 			$result .= $tpl->parse('widget_index:tournaments.item', $rtArgv);
 		}
 		
