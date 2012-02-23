@@ -788,10 +788,11 @@ html {
 	margin: -10px -10px 0;
 }
 
-#roomsIndexBox {}
+#roomsIndexBox {margin-top: -10px;}
 	#roomsIndexBox .roomsNav {
 		width: 200px;
 		margin-left: -10px;
+		
 	}
 	#roomsIndexBox .roomsNav td {
 		padding: 7px 10px 7px 0;
