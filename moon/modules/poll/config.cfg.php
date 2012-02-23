@@ -2,7 +2,7 @@
 
 $cfg = array();
 $cfg['poll'] = array(
-	'vocabulary{poll}' => '{dir.multilang}sys.txt',
+	'vocabulary'=>'{dir.multilang}{module}.txt',
 
     'page.Archive' => 'xml.common,fake',
 

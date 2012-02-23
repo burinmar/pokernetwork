@@ -1,0 +1,9 @@
+[en]
+
+trivia=Trivia
+poll=Poll
+view-results=View results
+vote=Vote
+triviaResults=Trivia Results
+pollResults=Poll Results
+totalVotes=Total votes
