@@ -840,11 +840,11 @@ html {
 	background: #fff url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAIAAAFh5BHmAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABNJREFUeNpiunHtOECAMX3+9BoAFJcFSqKVBzcAAAAASUVORK5CYII=') repeat-x bottom left;
 	padding-bottom: 10px;
 }
-	.topNewsIndexBox #newsSlider {
+	.topNewsIndexBox #newsSlider {position: relative;}
+	.topNewsIndexBox img {
+		border: 1px solid #0b57be;
 		margin-bottom: 10px;
-		position: relative;
 	}
-	.topNewsIndexBox img {border: 1px solid #0b57be;}
 	.topNewsIndexBox .title {
 		margin-bottom: 7px;
 		font-size: 18px;
