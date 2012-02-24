@@ -876,6 +876,8 @@ html {
 		font-size: 11px;
 		line-height: 13px;
 		margin-top: 2px;
+		overflow: hidden;
+		height: 39px;
 	}
 
 .newsList {
