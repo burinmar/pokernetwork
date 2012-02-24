@@ -39,6 +39,9 @@ class moon_vb_bridge extends moon_com
 				'nrposts' => $thread['replycount'] + 1,
 				'poster' => $thread['postusername'],
 				'url' => $baseUrl . 'showthread.php/' . $thread['threadid'] . '?goto=newpost',
+				'postword' => $thread['replycount'] == 0
+					? 'Post'
+					: 'Posts'
 			));
 		}
 
