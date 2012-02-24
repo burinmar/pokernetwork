@@ -1,0 +1,16 @@
+<% index_widget:main %>
+<div class="widget">
+	<h2 class="widgetTitle"><a href="{url.forum}">Latest forum activity</a></h2>
+	<table class="forumIndexBox">
+		<% loop {list.threads += index_widget:threads.item} %>
+		<tr>
+			<th>
+				<a href="{url}">{title}</a>
+				<span class="meta">last post by <em>{poster}</em></span>
+			</th>
+			<td><b>{nrposts}</b> Posts</td>
+		</tr>
+		<%end%>
+	</table>
+	<a href="{url.forum}" class="more">Visit our forums »</a>
+</div>
