@@ -228,8 +228,6 @@ class news extends moon_com {
 		$year = $vars['year'];
 		$month = $vars['month'];
 
-		$tag = $m['isCategory'] = isset($vars['category']['id']) ? $vars['category']['id'] : 0;
-
 		$catID = $m['isCategory'] = isset($vars['category']['id']) ? $vars['category']['id'] : 0;
 		$catIsAu = isset($vars['category']['is_au']) ? $vars['category']['is_au'] : '';
 		$catUri = '';
@@ -237,28 +235,37 @@ class news extends moon_com {
 		if (count($category = $vars['category'])) {
 			$catUri = $category['uri'];
 			
-			$pathTitles = array();
-			$bcr = $sitemap->breadcrumb();
-			foreach ($bcr as $b) {
-				$pathTitles[] = $b['title'];
-			}
-			
-			if (!empty($pathTitles)) $pageTitle = htmlspecialchars(implode(' | ', $pathTitles));
-			
-			$page->title($pageTitle);
+			$cUrl = $this->linkas('#' . $catUri);
+			$sitemap->breadcrumb(array($cUrl => $category['title']));
+
 			$page->meta('keywords', $category['meta_keywords']);
 			$page->meta('description', $category['meta_description']);
-			$m['title'] = $pageTitle;
-			$m['description'] = htmlspecialchars($category['description']);
-		} else {
-			$pageData = $sitemap->getPage();
-			if (!empty($pageData)) {
-				$m['description'] = $pageData['content_html'];
-			}
 		}
 		$m['rss'] = TRUE;
 		$m['url.self'] = $this->linkas('#' . $catUri);
-		
+
+		// path start
+		if ($year) {
+			$path = array();
+			$path[$this->linkas('#' . $year)] = $year;
+
+			if ($month) {
+				$path[$this->linkas('#' . $year . '/' . $month)] = date('F', strtotime($year . '-' . $month));
+			}
+
+			$sitemap->breadcrumb($path);
+		}
+
+		$pathTitles = array();
+		$bcr = $sitemap->breadcrumb();
+		foreach ($bcr as $b) {
+			$pathTitles[] = $b['title'];
+		}
+		if (!empty($pathTitles)) $pageTitle = htmlspecialchars(implode(' | ', $pathTitles));
+		// path end
+
+		$m['title'] = $pageTitle;
+		$page->title($pageTitle);
 		$page->head_link($m['url.self'] . 'rss.xml', 'rss', $pageTitle);
 
 		// categories
@@ -305,7 +312,6 @@ class news extends moon_com {
 				$item['date'] = $locale->datef($item['published'], 'Date');
 				$item['time'] = date('H:i', $item['published']);
 				$item['authors'] = $oShared->htmlAuthors($item['authors'], FALSE, $authors);
-
 				$item['class'] = ++$k%2 == 0 ? '' : ' class="odd"';
 				$item['isAu'] = $catIsAu || $item['isAu'];
 				$m['list:items'] .= $tpl->parse('list:items', $item);
