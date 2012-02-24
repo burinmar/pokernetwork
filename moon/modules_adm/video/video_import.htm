@@ -1,0 +1,32 @@
+<% main %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr">
+		<form action="{!action}" method="post" class="aform">
+			<input type="hidden" name="event" value="{goImport}" />
+			<button type="submit" class="button buttonAddNew">Import videos now</button>
+			{refresh}
+		</form>
+	</div>
+</div>
+
+<h2 class="formTitle">The system automatically imports new videos from Brightcove <strong>every 30 minutes</strong>.<br />You can import new videos now by clicking the button "Import videos now".<br /><br /><em style="color: #000">Note: the process might take some time.</em></h2><span class="clr"></span>
+
+
+<script type="text/javascript">
+/*<![CDATA[*/
+$('form').submit(function(e){
+		var submitButton = $(this).find("button[type='submit']");
+		submitButton.html('Importing. Please vait ...').attr('disabled', 'true');
+});
+/*]]>*/
+</script>
+
+<%if{importMsg}%>
+<div class="aform">
+	<dl>
+		<dt><label>Import results</label></dt>
+		<dd>{importMsg}</dd>
+	</dl>
+</div>
+<%end%>

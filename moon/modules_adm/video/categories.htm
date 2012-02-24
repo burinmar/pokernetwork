@@ -1,0 +1,86 @@
+<% info %>
+titleEdit=Edit category
+
+error404=Item not found!
+error1=Name required
+error2=Uri required
+error3=Please choose another uri, this one is in use
+error9=System error!
+
+<% main %>
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+</div>
+
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<input type="hidden" name="event-saveorder" value="{goSort}" />
+	
+	<table class="list sortable" style="width: 100%">
+		<colgroup>
+			<col />
+			<col />
+			<col style="width: 200px" />
+			<col style="width: 200px" />
+			<col style="width: 80px" />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr class="nodrag nodrop">
+			<th><span>Name</span></th>
+			<th><span>Uri</span></th>
+			<th class="tar"><span>Brightcove ID</span></th>
+			<th class="tar"><span>Videos</span></th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items += item} %>
+		<tr id="row{id}" {classHidden}>
+			<td><a href="{goEdit}">{name}</a></td>
+			<td><a href="{uriPrefix}{uri}/" target="_blank" class="explain">{uriPrefix}{uri}/</a></td>
+			<td class="tar explain">{id}</td>
+			<td class="tar">{videosCount}</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
+</form>
+
+<% else {items} %>
+	<p>There are no categories</p>
+<% end {items} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	
+	<dl>
+		<dt><label for="i_name">Name</label></dt>
+		<dd><input type="text" name="name" id="i_name" value="{name}" size="81" maxlength="255" class="required" /></dd>
+		
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd style="color:#666666;"><i>{uriPrefix}</i><input type="text" name="uri" id="i_uri" value="{uri}" size="74" maxlength="60" class="required" onfocus="fillUri(this,'i_title')" />/</dd>
+		
+		<dt><label for="i_short_description">Short description</label></dt>
+		<dd class="w100"><textarea rows="3" cols="79" name="short_description" id="i_short_description">{short_description}</textarea></dd>
+		
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide</label></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+<% end {viewList} %>

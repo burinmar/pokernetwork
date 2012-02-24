@@ -67,6 +67,11 @@ Poll {ico=poll, admin=content, hide=0}
 		other.pokerface = Pokerface
 		other.pokerface_categories = Pokerface Categories
 
+Video {ico=video, admin=content, hide=0}
+	video.video_import = Video import
+	video.video = Videos
+	video.categories = Video Categories
+	
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators
