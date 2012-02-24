@@ -1,0 +1,21 @@
+<% view:home %>
+<% if {items:spotlight:home} %>
+<div class="widget noMarginBottom">
+	<h2 class="widgetTitle"><a href="#">Online poker room ratings and promotions</a></h2>
+	<div id="spotlightSlider">
+		<% loop {items:spotlight:home} %>
+		<div class="slider pnSliderTab" <% if {notCurrent} %>style="display:none;"<% end %>><a href="{url.item}"><img src="{imgSrc}" alt="{imgAlt}" width="517" height="175" /></a></div>
+		<% end %>
+		<div class="stepper">
+			<b class="fl"><span class="pnSliderTabN">1</span>/{itemsTotal}</b>
+			<a href="#" class="prev" title="Previous">&lt;</a>
+			<a href="#" class="next" title="Next">&gt;</a>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+/*<![CDATA[*/
+$('#spotlightSlider').pnSlider({tabsCnt:{itemsTotal}});
+/*]]>*/
+</script>
+<%end%>

@@ -10,8 +10,8 @@ function onload()
 	$this->tblSpotlight = $this->table('Spotlight');
 	$this->_minTime = -2147483647;
 	$this->_maxTime = 2147483647;
-	$this->imgWidth = '500';
-	$this->imgHeight = '327';
+	$this->imgWidth = '517';
+	$this->imgHeight = '175';
 	$this->place = 'home';
 
 	// customize place
