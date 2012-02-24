@@ -56,5 +56,9 @@
 
 
 <% default:answers.item.asked %>
+<label><input type="radio" <% if {is_voted_answer} %>checked="checked"<%end%> disabled="disabled" name="vote" /> {answer}</label>
+<span class="rating tar"><span class="ratingBarBackground fl"><span style="width: {percent}%;" class="ratingBar"></span></span>&nbsp;{percent}%</span>
+
+<% default:answers.item.asked.trivia %>
 <label class="<% if {is_correct_answer} %>correct<% else {is_correct_answer} %>incorrect<%end%>"><input type="radio" <% if {is_voted_answer} %>checked="checked"<%end%> disabled="disabled" name="vote" /> {answer}</label>
 <span class="rating tar"><span class="ratingBarBackground fl"><span style="width: {percent}%;" class="ratingBar"></span></span>&nbsp;{percent}%</span>

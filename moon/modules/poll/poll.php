@@ -90,7 +90,7 @@ class poll extends moon_com {
 		);
 		$votes =  $question['total_voted'] ?  $question['total_voted'] : 1; // do not divide by zero
 		$tpblock = $answeredId !== FALSE
-			? 'answers.item.asked' /*. ($vars['is_trivia'] ? '.trivia' : '')*/
+			? 'answers.item.asked' . ($vars['is_trivia'] ? '.trivia' : '')
 			: 'answers.item.ask';
 		foreach ($question['answers'] as $ans) {
 			$prcnt = round($ans['votes']*100/$votes);
