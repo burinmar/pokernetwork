@@ -212,8 +212,8 @@ e.ncommdupe=There is already subforum assigned to display news comments
 
 		<dt class="is_live_dep"><label>Index page image:</label></dt>
 		<dd class="is_live_dep"><input type="file" name="logo_idx" />
-			<%if {entry.logo_idx} %><br /><input type="checkbox" name="delete_logo_idx" />
-			<span class="checkbox" style="position:relative;top:-2px;">Delete</span><br />
+			<%if {entry.logo_idx} %><br />><label><input type="checkbox" name="delete_logo_idx" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_idx}" alt="" /><%end%>
 			<div class="explain">w: 440px<br />h: 106px</div>
 		</dd>
