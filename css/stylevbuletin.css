@@ -10,7 +10,7 @@ body {
 	margin: 0 auto;
 	padding: 0
 }
-#header *, #siteFooter * {margin: 0; padding: 0; font-size: 12px; font-family: Arial, Helvetica, sans-serif; line-height: 18px;}
+#header *, #siteFooter * {margin: 0; padding: 0; font-size: 12px; font-family: Arial, Helvetica, sans-serif; line-height: 16px;}
 #header a, #siteFooter a {text-decoration: none; outline: none}
 #header a:hover, #siteFooter a:hover {color: #000}
 #header ul, #siteFooter ul {list-style: none}
@@ -63,7 +63,7 @@ body {
 		}
 			.siteMenu a {
 				display: block;
-				font-size: 13px;
+				font-size: 13px !important;
 				font-weight: bold;
 				padding: 0 10px !important;
 			}
@@ -198,7 +198,7 @@ body {
 		#siteFooter a:hover {color: #fff !important}
 		#siteFooter .fl {
 			width: 228px;
-			font-size: 11px;
+			font-size: 11px !important;
 		}
 			#siteFooter .fl p {
 				background: url('/img/logo-footer.png') no-repeat 0 0;
@@ -207,6 +207,7 @@ body {
 				margin-top: -20px;
 				margin-bottom: 18px;
 				color: #7d7b75;
+				font-size: 11px !important;
 			}
 			#siteFooter .fl b {text-transform: uppercase;}
 			#siteFooter .socialIcons a {
@@ -243,7 +244,7 @@ body {
 			display: block;
 			margin-bottom: 7px;
 		}
-		#siteFooter .fr td b {font-size: 12px; white-space: nowrap; display: block; margin-bottom: 10px}
+		#siteFooter .fr td b {font-size: 12px; white-space: nowrap; display: block; margin-bottom: 10px; line-height: 10px}
 		#siteFooter .fr .copy p {float: right; color: #7d7b75;}
 		#siteFooter .fr .copy a {
 			margin-right: 17px;
