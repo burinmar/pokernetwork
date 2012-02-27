@@ -33,7 +33,6 @@ class tmp extends moon_com {
 	function events($event) {
 		$this->use_page('tmp');
 		$this->set_var('view', $event);
-		var_dump($event);
 	}
 
 	function properties() {
