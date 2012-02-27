@@ -7,8 +7,8 @@ class output extends moon_com {
 			$t = & $this->load_template('_layouts');
 			//jeigu veikiam kaip layout komponentas
 			if ($vars['layout'] !== '' && $t->has_part($vars['layout'])) {
-				if (isset($vars['parts']['center'])) {
-					$vars['parts']['center'] = $this->breadcrumb() . $vars['parts']['center'];
+				if (isset($vars['parts']['header'])) {
+					$vars['parts']['header'] = $vars['parts']['header'] . $this->breadcrumb();
 				}
 				$body = $t->parse($vars['layout'], $vars['parts']);
 			}
