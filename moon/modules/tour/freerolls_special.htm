@@ -1,0 +1,217 @@
+﻿<% main %>
+<div class="left fl tournaments">
+		<div class="widget">
+			<h1 class="pageTitle">{pageTitle}</h1>
+			<%if{pageIntro}%><div class="article freerollsIntro">{pageIntro}</div><%end%>
+
+		
+	<%insert{filter}%>
+		<form action="{!action}" class="filterForm{classIsOn}" id="formfilter">
+			<table class="tournamentsFilter">
+				<tr>
+					<%if{rooms}%><th><label for="select_room">Room</label></th><%end%>
+					<th><label for="select_prize">Prize</label></th>
+					<th></th>
+				</tr>
+				<tr>
+					<%if{rooms}%>
+					<td>
+						<select name="room" size="1" id="select_room">
+							<option value=""></option>{rooms}
+						</select>
+					</td>
+					<%end%>
+					<td>
+						<select name="prize" size="1" id="select_prize">{prizes}</select>
+					</td>
+					<td><button type="submit" title="Filter"  class="grayButton">Filter</button> </td>
+				</tr>
+			</table>
+		</form>
+
+	<%end%>
+
+<%if{items}%>
+<ul class="specFreerolls">
+<% loop{items} %>
+<li>
+	<% if {logo} %><a href="{goRoom}" rel="nofollow"><img src="{logo}" alt="{room}" class="roomLogo" /></a><% end %>
+	<table>
+		<colgroup>
+			<col style="width: 219px" />
+			<col />
+		</colgroup>
+		<tr>
+			<td class="vab">
+				<b>Start date</b>
+				<p>{tourDate} {gmt} <%if{startsIn}%><span class="startsIn cr">(starts in {startsIn})</span><%end%></p>
+				<% insert {subscribe} %>
+					<%if {subscribed} %>
+					<a href="{sub_link}" class="grayButton removeAlert ab{id}">Remove Alert</a>
+					<%else {subscribed} %>
+					<a href="{sub_link}" class="grayButton ab{id}">Alert me!</a>
+					<%end%>
+				<%end%>
+
+			</td>
+			<td>
+				<a href="#" class="title">{name}</a>
+				<a href="#"><img width="517" height="175" alt="Avatar" src="http://placekitten.com/517/175" /></a>
+			</td>
+		</tr>
+		<tr class="paddingTop">
+			<td><b>Qualification Period</b></td>
+			<td><% if {qualificationFrom} %>{qualificationFrom} -<% end %> {qualificationTo} <%if{qStarted}%><span class="timeLeft alreadyStarted">Already Started</span><%end{qStarted}%></td>
+		</tr>
+		<tr>
+			<td><b>Prize Pool</b></td>
+			<td>{prizePool}</td>
+		</tr>
+		<tr>
+			<td><b>Points Req.</b></td>
+			<td>{pointsReq}</td>
+		</tr>
+		<tr>
+			<td><b>Bonus</b></td>
+			<td>{bonus}</td>
+		</tr>
+		<%if{bonusCode}%>
+		<tr class="paddingTop">
+			<td><b>Bonus Code</b></td>
+			<td><b>{bonusCode}</b></td>
+		</tr>
+		<%end%>
+		<%if{marketingCode}%>
+		<tr>
+			<td><b>Marketing Code</b></td>
+			<td><b>{marketingCode}</b></td>
+		</tr>
+		<%end%>
+		<%if{password}%>
+		<tr>
+			<td><b>Password</b></td>
+			<td><% if {passFrom} %>Password will be released on {passFrom} <span title="{tzName}">{gmt}</span><% else{passFrom} %><b>{password}</b><% end %></td>
+		</tr>
+		<%end%>
+	</table>
+	<a href="{goRoom}" class="button">Start Playing</a> <a href="#" class="more2">More Information »</a>
+</li>
+
+<%end{loop}%>
+</ul>
+{paging}
+<%end{if}%>
+	</div>
+</div>
+<!--# end -->
+
+<!--# Naudojama rss'ui; + sys.rss -->
+<% rss-item %>
+<p><strong>{room} | {!exclusive_freerolls}</strong></p>
+<% if {addNotes} %>{addNotes}<% end %>
+<dl>
+	<dt>{!prize_pool}:</dt><dd>{prizePool}</dd>
+	<dt>{!points}:</dt><dd>{pointsReq}</dd>
+	<dt>{!bonus}:</dt><dd>{bonus}</dd>
+	<dt>{!qualification}:</dt>
+		<dd><% if {qualificationFrom} %>{qualificationFrom} - <% end %> {qualificationTo}</dd>
+	<dt>{!start_date}:</dt><dd>{tourDate}</dd>
+</dl>
+	
+	
+<% alerts:main %>
+<div class="widget overBreadcrumb myAlerts">
+			<h2 class="widgetTitle">Freeroll alerts</h2>
+			<div class="roomsAlert">
+				<a href="#" class="grayButton">Rooms to Alert</a>
+				<div class="popup">
+					<table>
+						<colgroup>
+							<col style="width: 30px" />
+							<col />
+							<col style="width: 30px" />
+						</colgroup>
+						<% loop {list.rooms+=alerts:room.item} %>
+ 							<tr>
+							<td><img src="{img}" alt="" /></td>
+							<td>{title}</td>
+							<td class="tar"><input type="checkbox" name="room[{id}]"<%if {checked} %> checked="checked"<%end%> /></td>
+							</tr>
+						<% end {list.rooms} %>
+						<tr>
+							<td></td>
+							<td>All</td>
+							<td class="tar"><input type="checkbox" /></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+			<ul class="myAlertsList">
+				<li>
+					<a href="#" class="remove" title="Remove Alert">&times;</a>
+					<p>Feb 26, 18:00 GMT</p>
+					<a href="#">$5,000 PokerNews MaxStack Final II.</a>
+				</li>
+				<li>
+					<a href="#" class="remove" title="Remove Alert">&times;</a>
+					<p>Feb 26, 18:00 GMT</p>
+					<a href="#">$5,000 PokerNews MaxStack PokerNews MaxStack Final II.</a>
+				</li>
+				<li>
+					<a href="#" class="remove" title="Remove Alert">&times;</a>
+					<p>Feb 26, 18:00 GMT</p>
+					<a href="#">$5,000 PokerNews MaxStack PokerNews MaxStack Final II.</a>
+				</li>
+			</ul>
+		</div>
+
+
+<div class="widget<%if{hPg}%><%else{hPg}%> widgetWithMiniPager<%end%> widgetFreerollAlerts" id="freerollAlerts">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h2 class="widgetTitle">{!my-alerts}</h2>
+		<div class="alertRooms" id="alertRooms">
+			<a class="alertRoomsButton" href="{!action}#"><span class="linkText">{!rooms-alert}<span class="cbr"></span></span></a>
+			<div class="widget widgetPopup widgetAlertRooms">
+				<div class="widgetInner">
+					<div class="ctl"></div>
+					<div class="ctr"></div>
+					<div class="cbl"></div>
+					<div class="cbr"></div>
+					<h3 class="widgetTitle">{!rooms-list}</h3>
+					<form action="{!action}" method="post">
+						<input type="hidden" name="event" value="{save_rooms_event}" />
+						<div>
+							<ul class="filterRoomsList tar">
+								<li class="all"><label>{!all} <input type="checkbox" class="toggleAll" /></label></li>
+								<li class="{even_odd}"><label><span class="fl"><img src="{img}" alt="" class="roomLogo" />{title}</span> <input type="checkbox" name="room[{id}]" /></label></li>
+
+							</ul>
+							<button type="submit" class="submit">{!save}</button>
+						</div>
+					</form>
+					<a href="#" class="widgetHideLink" title="{!close}"><span class="a11y">{!close}</span></a>
+				</div>
+			</div>
+		</div>
+		<h3 class="upcomingFreerollsTitle">{!your-upcoming}</h3>
+		<ul class="upcomingFreerollsList">
+			<% loop {list.freerolls += alerts:freeroll.item} %>
+			<li class="<%if{a11y}%>a11y <%end%>pg pg{pg}">
+				<span class="freerollDate">{date}</span>
+				<a href="{url}" class="freerollTitle">{title}</a>
+				<a href="{urlunsub}" class="removeAlert" title="{!remove-alert}"><span class="a11y">{!remove-alert}</span></a>
+			</li>
+			<% end {list.freerolls} %>
+			<li id="i"<%if{hI}%> class="hide"<%end%>>{!click-to-alert}</li>
+		</ul>
+		<div class="widgetMiniPager<%if{hPg}%> hide<%end%>" id="freerollAlertsPager">
+			<a href="#" class="previous" title="{!prev}">{!prev}</a>
+			<input id="p" type="text" value="1/{pCnt}" />
+			<a href="#" class="next" title="{!next}">{!next}</a>
+		</div>
+	</div>
+</div>
