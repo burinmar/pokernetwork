@@ -9,6 +9,6 @@ sys.captcha# = captcha.php
 sys.clicks_tracker* = clicks-tracker/
 articles.export# = news-export-xml/
 
-sys.tmp = temp
+sys.tmp* = temp
 
 sys.banners* = banners/

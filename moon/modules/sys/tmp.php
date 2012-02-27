@@ -23,14 +23,21 @@ class tmp extends moon_com {
 			$toolbar = $rtf->toolbar('_commentEditor', '');
 		}
 		
-		$res = $tpl->parse('main', array(
+		$tplBlock = $tpl->has_part($vars['view']) ? $vars['view'] : 'main';
+		$res = $tpl->parse($tplBlock, array(
 			'toolbar' => $toolbar
 		));
 		return $res;
 	}
 	
-	function events() {
+	function events($event) {
 		$this->use_page('tmp');
+		$this->set_var('view', $event);
+		var_dump($event);
+	}
+
+	function properties() {
+		return array('view' => '');
 	}
 
 	//***************************************
