@@ -227,6 +227,32 @@ function url_logic($ev = false, $par = false) {
 	}
 }
 
+function short_url($url,$s=FALSE)
+{
+	static $api = NULL;
+	if($api===NULL&&$s) $api=$s;
+	switch ($api) {
+		case NULL:
+		case 'tinyurl':
+			if (NULL===$api) include_class('tinyurl');
+			$tinyURL = new TinyURL();
+			if($shortLink = $tinyURL->get($url)) {
+				$api = 'tinyurl';
+				return $shortLink;
+			} else moon::error('short_url->tinyurl.com error: ' . $tinyURL->error);
+			$api = NULL;
+		case 'bitly':
+			if (NULL===$api) include_class('bitly');
+			$bitLylogin = 'pokernewscom';
+			$bitLyApiKey = 'R_2c1f48329380d9e47456612718aa2153';
+			$bitly = new Bitly($bitLylogin, $bitLyApiKey);
+			if($shortLink = $bitly->shortenSingle($url)) {
+				$api = 'bitly';
+				return $shortLink;
+			} else moon::error('short_url->bit.ly error: ' . $bitly->error);
+			return '';
+	}
+}
 
 function blame($component, $action, $ids) {
 	if (is_array($ids)) {
