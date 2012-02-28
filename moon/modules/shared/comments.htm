@@ -73,17 +73,15 @@ error3={!error3}
 	<input type="hidden" name="iCard" value="{iCard}" />
 
 	<div id="comm-form">
-		<h2 class="formTitle"><span>{!whatdoyouThink}</span></h2>
-
 		<%if{error}%><p class="error"><span>{error}</span></p><%end%>
 
 		<%if{anonymous}%>
 			<p>{!registerforComment}</p>
-			{!23} <input placeholder="Username" class="fl" type="text" name="username" value="{username}"/>
-			{!24} <input placeholder="Password" type="password" name="pass" />
+			<input placeholder="Username" class="fl" type="text" name="username" value="{username}"/>
+			<input placeholder="Password" type="password" name="pass" />
 		<%end%>
 		<textarea rows="5" cols="58" placeholder="Your comment" name="comment" id="i_body">{comment}</textarea>
-		<%if{fbID}%><br/>
+		<%if{fbID}%>
 		<label><input type="checkbox" name="facebook" value="{facebook}" /> {!postToWall}</label><br />
 		<%end{fbID}%>
 		<input type="submit" class="button" name="save" value="{!2}">
