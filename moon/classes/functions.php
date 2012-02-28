@@ -402,6 +402,35 @@ function geo_zones()
 	return $z;
 }
 
+function isSpam($message) {
+
+	$user = & moon :: user();
+	if ($user->i_admin()) {
+		return FALSE;
+	}
+	include_class('akismet');
+	$page = &moon::page();
+	$homeUrl = $page->home_url();
+	if (is_dev()) {
+		$homeUrl = substr($homeUrl, -4) . 'com/';
+	}
+	$akismet = new Akismet($homeUrl, '42be146b8dc1');
+	$akismet->setCommentAuthor($user->get('nick'));
+	$akismet->setCommentAuthorEmail($user->get('email'));
+	$akismet->setCommentContent($message);
+	$akismet->setUserIP($user->get_ip());
+	try {
+		$isSpam = $akismet->isCommentSpam();
+		return $isSpam;
+	} catch (Exception $ex) {
+		// invalid api key
+		// not a spam by default,
+		moon::error('Akismet api key rejected');
+		return false;
+	}
+
+}
+
 function getInteger($i) {
 	if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
 		return intval($i);
