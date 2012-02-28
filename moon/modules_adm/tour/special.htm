@@ -41,20 +41,13 @@ error9=System error!
 		<input type="hidden" name="event" value="{goDelete}" />
 		<!--# <input type="hidden" name="event-clear" value="{goClear}" /> -->
 		<table class="list">
-			<colgroup>
-				<col style="width: 100px" />
-				<col />
-				<col />
-				<col />
-				<col style="width: 20px" />
-			</colgroup>
 			<thead>
 			<tr>
-				<th><a href="{orderby1}">Date</a></th>
+				<th width="125"><a href="{orderby1}">Date</a></th>
 				<th><span>Title</span></th>
 				<th><span>Room</span></th>
 				<th><a href="{orderby2}">Created</a></th>
-				<th class="checkall"></th>
+				<th width="20" class="checkall"></th>
 			</tr>
 			</thead>
 			<tbody>
@@ -123,22 +116,46 @@ function setCurrency(sel) {
 <form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<input type="hidden" name="id" value="{id}" />
+	<input type="hidden" name="master_id" value="{master_id}" />
 	<h2 class="formTitle">{formTitle}</h2>
 	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
 	<span class="clr"></span>
 	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
 
 	<dl>
+
+	<%if{master_id}%>
+	<dd class="w100">
+		<div>
+		<div class="explain{class-sync}">This tournament is synchronized with some www.pokernews.com <a href="http://www.pokernews.com/adm/tour-special/edit/{master_id}.htm" onclick="window.open(this.href);return false;">special tournament</a>. The original item is:<br />&nbsp;</div>
+			<div class="forSlaveOriginalText">
+               <table>
+               	<tr valign="top">
+               		<td><i>Title:</i></td>
+               		<td>{name}</td>
+               	</tr>
+               	<tr valign="top">
+               		<td><i>Body:</i></td>
+               		<td><div style="max-height:300px;overflow:auto">{master_body}</div></td>
+               	</tr>
+
+               </table>
+			</div>
+		</div>
+	</dd>
+
+	<dt><label for="i_name">Tournament name</label></dt>
+	<dd class="w100">
+		{name} />
+		<%if{landingURL}%><div><a href="{landingURL}" onclick="window.open(this.href);return false;" class="newwindow">View this tournament in new window</a></div><%end%>
+	</dd>
+
+	<%else{master_id}%>
 	<dt><label for="i_name">Tournament name</label></dt>
 	<dd class="w100">
 		<input type="text" name="name" id="i_name" value="{name}" size="80" maxlength="255" class="required" />
 		<%if{landingURL}%><div><a href="{landingURL}" onclick="window.open(this.href);return false;" class="newwindow">View this tournament in new window</a></div><%end%>
 	</dd>
-	<dd>
-		<label><input type="checkbox" name="hide" id="i_hide" value="{hide}" />Hide this tournament </label>
-		<%if{isCOM}%><span style="margin-left:30px"></span><input type="checkbox" name="nosync" id="i_nosync" value="{nosync}" /> <label for="i_nosync">This tournament is for <i>www.pokerworks.com</i> only</label><%end%>
-	</dd>
-
 	<dt><label for="i_timezone">Time Zone</label></dt>
 	<dd>
 		<select name="timezone" id="i_timezone" class="required">{timezones}</select>
@@ -191,26 +208,26 @@ function setCurrency(sel) {
 		<input type="radio" name="exclusive" id="i_exclusive0" value="{exclusive0}" /><label for="i_exclusive0">A Special Offer from PokerWorks</label><br />
 		<input type="radio" name="exclusive" id="i_exclusive1" value="{exclusive1}" /><label for="i_exclusive1">Exclusive to Members of PokerWorks</label>
 	</dd>
-
+    <%end%>
 	<dt><label for="i_content">Description</label></dt>
-		<dd class="w100">
-			<%if{master_id}%>
-				<div>
-				<div class="explain">This tournament is synchronized with some www.pokernews.com <a href="http://www.pokernews.com/adm/tour-special/edit/{master_id}.htm" onclick="window.open(this.href);return false;">special tournament</a>. You must ensure that your translation will correspond to the original description.</div>
-				<%if{master_title}%><div class="forSlaveOriginalText">{master_body}</div><%end%>
-				</div>
-			<%end%>
-			{toolbar}
-			<textarea rows="20" cols="70" name="body" id="i_content">{body}</textarea>
-		</dd>
+	<dd class="w100">
+		{toolbar}
+		<textarea rows="20" cols="70" name="body" id="i_content">{body}</textarea>
+	</dd>
 
-		<dt><label for="i_tags">Tags</label></dt>
-		<dd class="w100">
-			
-			<%if{master_tags}%><div class="forSlaveOriginalText">Tags: {master_tags}</div><%end%>
-			<input type="text" name="tags" id="i_tags" value="{tags}" size="80" maxlength="255" />
-			<div class="explain">Separate multiple tags with comma.</div>
-		</dd>
+	<%if{master_id}%>
+		<dt><label>Tournament Begins</label></dt>
+		<dd>{master_time}</dd>
+
+		<dt><label>Poker Room</label></dt>
+		<dd>{master_room}</dd>
+	<%end%>
+
+
+	<dd>
+		<label><input type="checkbox" name="hide" id="i_hide" value="{hide}" />Hide this tournament </label>
+	</dd>
+
 	</dl>
 
 	<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>

@@ -6,7 +6,7 @@ class special extends moon_com {
 	{
 		//form of item
 		$this->form = & $this->form();
-		$this->form->names('id', 'hide', 'date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'team_id', 'body', 'tags', 'dateTime', 'qFromTime', 'qToTime', 'master_id', 'master_updated', 'updated', 'exclusive','password','password_from', 'passFromTime', 'nosync');
+		$this->form->names('id', 'hide', 'date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'team_id', 'body', 'tags', 'dateTime', 'qFromTime', 'qToTime', 'master_id', 'master_updated', 'updated', 'exclusive','password','password_from', 'passFromTime', 'nosync', 'master_id');
 		$this->form->fill(array('date' => time(), 'timezone' => 0, 'qualification_points' => - 1, 'exclusive'=>0));
 
 		//form of filter
@@ -70,7 +70,7 @@ class special extends moon_com {
 
 			 case 'cron' :
 			 	// importuoja is pokernews
-				$s = $this->runSync();
+				$s = $this->syncRun();
                 $page = & moon :: page();
 				$page->set_local('cron', $s);
 				return;
@@ -294,7 +294,6 @@ class special extends moon_com {
 		if (is_numeric($m['password_from']) && $m['password_from'] > 86400) {
 			list($shift) = $locale->timezone($m['timezone'], $m['password_from']);
 			$m['password_from'] += $shift;
-			$datetime = $m['password_from'];
 			$m['passFromTime'] = gmdate('H:i', $m['password_from']);
 			$m['password_from'] = gmdate('Y-m-d', $m['password_from']);
 		}
@@ -325,7 +324,6 @@ class special extends moon_com {
 		}
 		$m['currency'] = isset($rooms[$m['room_id']]) ? $rooms[$m['room_id']]['currency'] : 'USD';
 		$m['rooms'] = $f->options('room_id', $selRooms);
-		$m['teams'] = $f->options('team_id', $this->getTeams());
 		//pridedam attachmentus ir toolbara
 		if (is_object($rtf = $this->object('rtf'))) {
 			$rtf->setInstance($this->get_var('rtf'));
@@ -334,16 +332,18 @@ class special extends moon_com {
 
 		//master info
 		if ($m['master_id']) {
-			$m['syncStatus'] = (int)$m['updated']>(int)$m['master_updated'] ? 1 : 2;
+			list($shift, $gmt) = $locale->timezone($m['timezone'], $f->get('date'));
+			$m['master_time'] = $locale->gmdatef($f->get('date'), 'DateTime', $shift).' '.$gmt;
+			$m['master_room'] = isset ($rooms[$m['room_id']]) ? $rooms[$m['room_id']]['name']:'unknown';
+			$m['class-sync'] = (int) $m['updated'] > (int) $m['master_updated'] ? ' sync1':' sync2';
 			$a = (int)$m['updated']<0 ? 0 : $this->getMasterInfo($m['master_id']);
 			if (!empty($a)) {
 				$txt = moon::shared('text');
-				$m['master_title'] = htmlspecialchars($a['name']);
+				//$m['master_title'] = htmlspecialchars($a['name']);
 				$m['master_body'] = nl2br(htmlspecialchars($a['body']));
 				if ($a['body_previous']) {
 					$m['master_body'] = $txt->htmlDiff($a['body_previous'],$a['body']);
 				}
-				$m['master_tags'] = htmlspecialchars($a['tags']);
 			}
 		}
 		$m['exclusive0'] = $f->checked('exclusive', '0');
@@ -429,6 +429,30 @@ class special extends moon_com {
 		$form->fill($_POST);
 		$d = $form->get_values();
 		$id = intval($d['id']);
+		$masterID = $d['master_id'];
+		if ($masterID && $id) {
+			//gautu duomenu apdorojimas
+			$d['hide'] = empty ($d['hide']) ? 0:1;
+			$d = $form->get_values( 'body', 'hide') + $this->getItem($id);
+			//validacija
+			if ($d['name'] === '') {
+				$form->fill($d, false);
+				$this->set_var('error', 1);
+				return false;
+			}
+			//save to database
+			$ins = $form->get_values('body', 'hide');
+			//iskarpa ir kompiliuojam i html
+			$rtf = $this->object('rtf');
+			$rtf->setInstance($this->get_var('rtf'));
+			list(, $ins['body_html']) = $rtf->parseText($id, $ins['body'], TRUE);
+			$ins['updated'] = time();
+			$this->db->update($ins, $this->myTable, array('id' => $id));
+			blame($this->my('fullname'), 'Updated', $id);
+			//update master table
+			$this->db->query('UPDATE ' . $this->table('SpecTournamentsMaster') . ' SET body_previous = body WHERE id=' . intval($masterID));
+			return $id;
+		}
 
 		//gautu duomenu apdorojimas
 		$d['date'] = $this->makeTime($d['date'], $d['dateTime']);
@@ -515,9 +539,6 @@ class special extends moon_com {
 		//iskarpa ir kompiliuojam i html
 		$rtf->setInstance($this->get_var('rtf'));
 		list(, $ins['body_html']) = $rtf->parseText($id, $ins['body'], TRUE);
-		//if (_SITE_ID_ === 'com') {
-			//$ins['nosync'] = $form->get('nosync');
-		//}
 		//
 		$db = & $this->db();
 		if ($id) {
@@ -532,29 +553,10 @@ class special extends moon_com {
             // log this action
 			blame($this->my('fullname'), 'Created', $id);
 		}
-		//$this->db_add_search($id,$ins);
-
 		/*if ($id) { //"prisegam" objektus
 		$rtf->assignObjects($id);
 		}*/
 		$form->fill(array('id' => $id));
-		$this->updateRoomTable();
-
-		//if (_SITE_ID_ === 'com') {
-		if (false) {
-			cronTask($this->my('module') . '.sync#init');
-		}
-		else {
-			//update master table
-            $a = $this->db->single_query('
-				SELECT master_id FROM ' . $this->myTable . ' WHERE
-				id = ' . intval($id)
-				);
-			if (!empty($a[0])) {
-				// has master
-				$db->query('UPDATE ' . $this->table('SpecTournamentsMaster') . ' SET body_previous = body WHERE id=' . intval($a[0]));
-			}
-		}
 		return $id;
 	}
 
@@ -638,42 +640,6 @@ class special extends moon_com {
 	}
 
 
-	function getTeams()
-	{   return array();
-		$dat = $this->db->array_query('
-			SELECT id, name, IF (isover OR end_date<CURDATE(), 1, 0) as over, hide
-			FROM ' . $this->table('Teams') . '
-			ORDER BY start_date DESC
-		');
-		$m = array(array('Active Teams', array()), array('Outdated Teams', array()));
-		foreach ($dat as $v) {
-			if ($v[3]) {
-				$v[1] .= ' (hidden)';
-			}
-			if ($v[2]) {
-				$m[1][1][$v[0]] = $v[1];
-			}
-			else {
-				$m[0][1][$v[0]] = $v[1];
-			}
-		}
-		return $m;
-	}
-
-	function updateRoomTable()
-	{
-		$locale = &moon::locale();
-		$dat = $this->db->array_query('
-			SELECT room_id, MAX(date) FROM ' . $this->myTable . '
-			WHERE hide=0 AND `date`>' . $locale->now() . '
-			GROUP BY room_id
-		');
-		$this->db->query('UPDATE ' . $this->table('Rooms') . ' SET last_special=0 WHERE last_special>0');
-		foreach ($dat as $d) {
-			$this->db->update(array('last_special' => $d[1]), $this->table('Rooms'), (int)$d[0]);
-		}
-	}
-
     function getMasterInfo($id)
 	{
 		return $this->db->single_query_assoc('
@@ -703,53 +669,50 @@ class special extends moon_com {
 	//***********************
 	//           SYNC         /
 	//**********************/
-	function runSync() {
+	function syncRun() {
 
-		$this->findActiveRooms();
+		// Mus domins tik aktyvus kambariai
+		$sql = 'SELECT id, id FROM ' . $this->table('Rooms'). ' WHERE is_hidden=0';
+		$this->roomID  = array_keys($this->db->array_query($sql, TRUE));
 		if (empty($this->roomID)) {
 			return 'Error: there are no active rooms!';
 		}
-		$lastUpdate = $this->get_max_updated_timestamp();
-		if (callPnEvent('com', 'tour.freerolls_special#sync-export', array('timestamp' => $lastUpdate), $answer,FALSE)) {
+		$lastUpdate = $this->syncGetTime();
+		if (callPnEvent('com', 'tour.freerolls_special#sync-export', array('timestamp' => $lastUpdate), $answer, FALSE)) {
 			//randam kokie master_id atejo
 			$ids = array();
 			foreach ($answer AS $v) {
 				$ids[] = $v['id'];
 			}
-			$masterExist = $this->check_master_exist($ids);
+			$masterExist = $this->syncFindExisting($ids);
+			$this->syncNow = time();
 			foreach ($answer AS $v) {
 				if (empty ($masterExist[$v['id']])) {
-					$this->update_tournament($v, array());
+					$this->syncUpdateItem($v, array());
 				}
 				else {
-					$this->update_tournament($v, $masterExist[$v['id']]);
+					$this->syncUpdateItem($v, $masterExist[$v['id']]);
 				}
 			}
 			//pravalom senus (daugiau kaip 60 d. )
-			$seni = time() - 86400 * 60;
+			/*$seni = time() - 86400 * 60;
 			$sql = "DELETE FROM " . $this->table('SpecTournamentsMaster') . " WHERE `date` < " . $seni . " ";
-			$this->db->query($sql);
+			$this->db->query($sql);*/
 			return ' Freerolls imported: ' . count($answer);
 		}
 		else {
 			return 'Error!';
 		}
-
 	}
 
-	function get_max_updated_timestamp() {
+	function syncGetTime() {
 		$sql = 'SELECT MAX(ABS(master_updated)) FROM ' . $this->myTable . '  WHERE date>' . time();
 		$m = $this->db->single_query($sql);
 		return (empty ($m[0]) ? 0 : $m[0]);
 	}
 
-	function findActiveRooms() {
-		$sql = 'SELECT id, id FROM ' . $this->table('Rooms'). ' WHERE is_hidden=0';
-		$this->roomID  = array_keys($this->db->array_query($sql, TRUE));
-	}
 
-
-	function check_master_exist($ids) {
+	function syncFindExisting($ids) {
 		if (empty ($ids)) {
 			return array();
 		}
@@ -759,47 +722,49 @@ class special extends moon_com {
 	}
 
 
-	function update_tournament($tournament, $exist) {
-		$fields = array( 'qualification_from', 'qualification_to', 'qualification_points', 'date', 'timezone', 'prizepool', 'room_id', 'hide', 'created', 'exclusive', 'password', 'password_from');
+	function syncUpdateItem($arrived, $existing) {
+		$fields = array( 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'date', 'timezone', 'prizepool', 'room_id', 'hide', 'created', 'exclusive', 'password', 'password_from');
 		$ins = array();
 		foreach ($fields as $v) {
-			$ins[$v] = $tournament[$v];
+			$ins[$v] = $arrived[$v];
 		}
-		if (empty($exist['updated'])) {
-			//update body too
+		if (empty($existing['updated'])) {
+			//autopublish
+			//$ins['hide'] = in_array($ins['room_id'], $this->roomID) ? $ins['hide']:2;
 			$ins['hide'] = in_array($ins['room_id'], $this->roomID) ? 1 : 2;
 			$ins['updated'] = 0;
-			$ins['name'] = $tournament['name'];
-			$ins['body'] = $tournament['body'];
-			$ins['tags'] = $tournament['tags'];
+			$ins['body'] = $arrived['body'];
 		}
-		$ins['master_id'] = $tournament['id'];
-		$ins['master_updated'] = $tournament['updated'];
-		if (empty ($exist['id'])) {
-            if (empty($tournament['nosync'])) {
+		elseif (!$ins['hide']) {
+			unset ($ins['hide']);
+			//pastaba, dabar hidden neateina vis tiek
+		}
+		$ins['master_id'] = $arrived['id'];
+		//$ins['master_updated'] = $arrived['updated'];
+		$ins['master_updated'] = $this->syncNow;
+		if (empty ($existing['id'])) {
+            if (empty($arrived['nosync'])) {
             	//insert
 				$this->db->insert($ins, $this->myTable);
             }
 		}
 		else {
 			//update
-			if (!empty($tournament['nosync'])) {
+			if (!empty($arrived['nosync'])) {
             	$ins['hide'] = 2;
             }
-			$this->db->update($ins, $this->myTable, $exist['id']);
+			$this->db->update($ins, $this->myTable, $existing['id']);
 		}
 		$ins = array();
-		$ins['name'] = $tournament['name'];
-		$ins['body'] = $tournament['body'];
-		$ins['tags'] = $tournament['tags'];
-		$ins['date'] = $tournament['date'];
-		$is = $this->db->single_query('SELECT id FROM '. $this->table('SpecTournamentsMaster').' WHERE id=' .intval($tournament['id']));
+		$ins['body'] = $arrived['body'];
+		$tbMaster = $this->table('SpecTournamentsMaster');
+		$is = $this->db->single_query('SELECT id FROM '. $tbMaster.' WHERE id=' .intval($arrived['id']));
 		if (empty($is[0])) {
-			$ins['id'] = $tournament['id'];
-			$this->db->replace($ins, $this->table('SpecTournamentsMaster'));
+			$ins['id'] = $arrived['id'];
+			$this->db->replace($ins, $tbMaster);
 		}
 		else {
-			$this->db->update($ins, $this->table('SpecTournamentsMaster'), $tournament['id']);
+			$this->db->update($ins, $tbMaster, $arrived['id']);
 		}
 	}
 
