@@ -228,7 +228,7 @@ latestVideos=Latest Videos
 		<div class="ctr"></div>
 		<div class="cbl"></div>
 		<div class="cbr"></div>
-		<h2 class="widgetTitle">{!pokernews_videos}</h2>
+		<h2 class="widgetTitle">Videos</h2>
 		<!-- Start of Brightcove Player -->
 		<div style="display:none"></div>
 		<object id="videoPlayerBC" class="BrightcoveExperience">
@@ -236,7 +236,7 @@ latestVideos=Latest Videos
 			<param name="width" value="{width}" />
 			<param name="height" value="{height}" />
 			<param name="playerID" value="{playerId}" />
-			<param name="publisherID" value="1544546948"/>
+			<param name="publisherID" value="1544546948"/><!--#1544549453-->
 			<param name="isVid" value="true" />
 			<param name="isUI" value="true" />
 			<param name="dynamicStreaming" value="true" />
@@ -246,7 +246,7 @@ latestVideos=Latest Videos
 			<param name="allowScriptAccess" value="always" />
 		</object>
 		<!-- End of Brightcove Player -->
-		<% if {url.more} %><p class="more tar"><a class="shoutContent" href="{url.more}">{!more}</a></p><% end %>
+		<% if {url.more} %><a href="{url.more}" class="more marginTop">More Videos »</a><% end %>
 	</div>
 </div>
 
