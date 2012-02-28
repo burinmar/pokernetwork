@@ -141,6 +141,7 @@ class comments extends moon_com {
 		$m['!action'] = $this->selfUrl;
 		$m['obj_id'] = $parentID;
 		$m['event'] = $this->my('fullname') . "#delete";
+		$m['form'] = $forma;
 		$m['canDeleteMulti'] = false;//$iAdmin; - disabled select all
 		if ($hideList) {
 			$m['items'] = '&nbsp;';
@@ -199,7 +200,7 @@ class comments extends moon_com {
 						//spam report
 						//$d['goSpam'] = htmlspecialchars($this->selfUrl . '?comm-spam=' . $v['id'] . (!$m['onlyLatest']?'&comm':''));
 						//javascript
-						$d['goSpam'] = 1;
+						//$d['goSpam'] = 1;
 					}
 					if ($myID == $v['user_id'] || $iAdmin) {
 						$d['goEdit'] = htmlspecialchars($this->selfUrl . '?comm-edit=' . $v['id'] . (!$m['onlyLatest']?'&comm':''));
@@ -228,7 +229,7 @@ class comments extends moon_com {
 			}
 		}
 		$res = $t->parse('viewComments', $m);
-		return $res . $forma;
+		return $res;
 	}
 
 

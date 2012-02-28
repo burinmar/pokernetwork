@@ -3,7 +3,7 @@ $cfg = array();
 $cfg['articles'] = array(
 	
 	//'sys.multiLang' => 3,
-	//'vocabulary' => '{dir.multilang}{module}.txt;{dir.multilang}shared.txt;{dir.multilang}reviews.txt',
+	'vocabulary' => '{dir.multilang}{module}.txt;{dir.multilang}shared.txt;{dir.multilang}reviews.txt',
 
 	'page.1col' => 'xml.col1_darkright,fake',
 	'page.2col' => 'xml.2col,fake',

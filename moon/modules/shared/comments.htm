@@ -4,93 +4,90 @@ error2={!badlogin}
 error3={!error3}
 
 <% viewComments %>
-<script type="text/javascript">
-/*<![CDATA[*/
-	var commMsgDelete = "{!15}";
-	var commMsgSpam = "<em>Thank you. This comment will be reviewed by Moderators.</em>";
-	var commCheckAll = true;
-/*]]>*/
-</script>
-<%if{onlyLatest}%><h2 class="articleCommentsHeader" id="comm-list">{!comments}</h2>
-<%else{onlyLatest}%><h2 class="articleCommentsHeader" id="comm-list">{!comments}</h2><%end%>
-<%if{msg}%><div class="error-ok">{msg}</div><%end%>
-<%if{items}%>
-	<% if {canDeleteMulti} %>
-	<form action="{!action}" id="commListForm" method="post" class="faqForm">
-	<input type="hidden" name="event" value="{event}" />
-	<input type="hidden" name="obj_id" value="{obj_id}" />
-	<%end%>
-		<div class="articleComments" id="cl">
-		<%loop{items}%>
-			<div class="comment">
-				<img class="fl avatar" src="{authorAvatar}" alt="{author}"/>
-				<span class="commentActions">
-					<% if {goQuote} %><a href="{goQuote}#comm-form" class="quote">{!19}</a><% end %>
-					<% if {goEdit} %><span><a href="{goEdit}#comm-form" class="edit">{!14}</a></span><% end %>
-					<% if {goDelete} %><span><a href="{goDelete}" class="delete">{!16}</a></span><% end %>
-					<% if {goSpam} %><span><a href="" class="spam" id="spam{id}">{!20}</a></span><% end %>
-					<% if {canDeleteMulti} %><input type="checkbox" name="it[]" id="i_{id}" value="{id}" /><% end %>
-				</span><span class="clr">&nbsp;</span>
-				<div class="fl cl commentMeta">
-					<a href="{authorURL}">{author}</a><br />
-					<span class="date">{date}</span>
-				</div>
-				{comment}
-				<div class="cl"></div>
-			</div>
-		<%end%>
-		</div>
-	<% if {canDeleteMulti} %>
-		<div style="margin:10px 0;float:right;">
-			<button type="submit" name="save" value="1" class="button fl">{!16}</button>
-			<a href="" class="button" id="commCheckAll" style="display:none">Check all</a>
-		</div>
-		<div style="clear:both;"></div>
-	</form>
-	<% end %>
+<div class="widget comments">
+	<script type="text/javascript">
+	/*<![CDATA[*/
+		var commMsgDelete = "{!15}";
+		var commMsgSpam = "<em>Thank you. This comment will be reviewed by Moderators.</em>";
+		var commCheckAll = true;
+	/*]]>*/
+	</script>
+	<h2 class="widgetTitle" id="comm-list">Comments ({commentsCount})</h2>
 
-		<% if {onlyLatest} %>
-		<div class="commentsForum">
-			<p><a href="{goShowAll}">{!26}</a></p>
-		</div>
-		<% else {onlyLatest} %>
-		{paging}
+	<%if{msg}%><div class="error-ok">{msg}</div><%end%>
+	<%if{items}%>
+		<% if {canDeleteMulti} %>
+		<form action="{!action}" id="commListForm" method="post" class="faqForm">
+		<input type="hidden" name="event" value="{event}" />
+		<input type="hidden" name="obj_id" value="{obj_id}" />
+		<%end%>
+			<ul>
+			<%loop{items}%>
+				<li>
+					<a href="{authorURL}"><img src="{authorAvatar}" alt="{author}" width="35" height="35" /></a>
+					<div>
+						<a href="{authorURL}">{author}</a>
+						<span class="meta">{date}</span>
+						<p>{comment}</p>
+					</div>
+					<span class="adminTools">
+						<% if {goEdit} %><a href="{goEdit}#comm-form">{!14}</a> | <% end %>
+						<% if {goQuote} %><a href="{goQuote}#comm-form" class="quote">{!19}</a><% end %>
+						<% if {goDelete} %><a href="{goDelete}" class="delete">{!16}</a><% end %>
+						<% if {goSpam} %><a href="" class="spam" id="spam{id}">{!20}</a><% end %>
+						<% if {canDeleteMulti} %><input type="checkbox" name="it[]" id="i_{id}" value="{id}" /><% end %>
+					</span>
+				</li>
+			<%end%>
+			</ul>
+		<% if {canDeleteMulti} %>
+			<div style="margin:10px 0;float:right;">
+				<button type="submit" name="save" value="1" class="button fl">{!16}</button>
+				<a href="" class="button" id="commCheckAll" style="display:none">Check all</a>
+			</div>
+			<div style="clear:both;"></div>
+		</form>
 		<% end %>
 
-<% else {items} %>
-<p>{!empty}</p>
-<% end %>
+			<% if {onlyLatest} %>
+			<div class="commentsForum">
+				<p><a href="{goShowAll}">{!26}</a></p>
+			</div>
+			<% else {onlyLatest} %>
+			{paging}
+			<% end %>
 
+	<% else {items} %>
+	<p>{!empty}</p>
+	<% end %>
+
+	{form}
+</div>
 
 <% viewForm %>
+
 <form action="{!action}#comm-form" id="commForm" method="post" class="faqForm">
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<input type="hidden" name="obj_id" value="{obj_id}" />
 	<input type="hidden" name="id" value="{id}" />
 	<input type="hidden" name="iCard" value="{iCard}" />
 
-	<div id="comm-form" class="widget"><div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
+	<div id="comm-form">
 		<h2 class="formTitle"><span>{!whatdoyouThink}</span></h2>
 
-
-		<%if{error}%><div class="error"><span>{error}</span></div><%end%>
+		<%if{error}%><p class="error"><span>{error}</span></p><%end%>
 
 		<%if{anonymous}%>
-		<p class="regToComment">{!registerforComment}</p>
-			<label class="textField">{!23} <input type="text" name="username" value="{username}"/></label>
-			<label class="textField">{!24} <input type="password" name="pass" /></label>
-
+			<p>{!registerforComment}</p>
+			{!23} <input placeholder="Username" class="fl" type="text" name="username" value="{username}"/>
+			{!24} <input placeholder="Password" type="password" name="pass" />
 		<%end%>
-		<textarea rows="6" cols="60" placeholder="Your comment" name="comment" id="i_body">{comment}</textarea>
+		<textarea rows="5" cols="58" placeholder="Your comment" name="comment" id="i_body">{comment}</textarea>
 		<%if{fbID}%><br/>
-		<label><input type="checkbox" name="facebook" value="{facebook}" /> {!postToWall}</label>
+		<label><input type="checkbox" name="facebook" value="{facebook}" /> {!postToWall}</label><br />
 		<%end{fbID}%>
-		<p class="formSubmit"><span><button type="submit" name="save" value="1">{!2}</button></span></p>
-	</div></div>
+		<input type="submit" class="button" name="save" value="{!2}">
+	</div>
 </form>
 
 
