@@ -107,24 +107,26 @@
 
 <!--# Naudojama rss'ui; + sys.rss -->
 <% rss-item %>
-<p><strong>{room} | {!exclusive_freerolls}</strong></p>
+<p><strong>{room} | Exclusive PokerNews Freeroll</strong></p>
 <% if {addNotes} %>{addNotes}<% end %>
 <dl>
-	<dt>{!prize_pool}:</dt><dd>{prizePool}</dd>
-	<dt>{!points}:</dt><dd>{pointsReq}</dd>
-	<dt>{!bonus}:</dt><dd>{bonus}</dd>
-	<dt>{!qualification}:</dt>
+	<dt>Prize Pool:</dt><dd>{prizePool}</dd>
+	<dt>Points Req.:</dt><dd>{pointsReq}</dd>
+	<dt>Bonus:</dt><dd>{bonus}</dd>
+	<dt>Qualification Period:</dt>
 		<dd><% if {qualificationFrom} %>{qualificationFrom} - <% end %> {qualificationTo}</dd>
-	<dt>{!start_date}:</dt><dd>{tourDate}</dd>
+	<dt>Start date:</dt><dd>{tourDate}</dd>
 </dl>
 	
 	
 <% alerts:main %>
-<div class="widget overBreadcrumb myAlerts">
+<div class="widget overBreadcrumb myAlerts" id="freerollAlerts">
 			<h2 class="widgetTitle">Freeroll alerts</h2>
 			<div class="roomsAlert">
 				<a href="#" class="grayButton">Rooms to Alert</a>
 				<div class="popup">
+					<form action="{!action}" method="post">
+					<input type="hidden" name="event" value="{save_rooms_event}" />
 					<table>
 						<colgroup>
 							<col style="width: 30px" />
@@ -141,77 +143,26 @@
 						<tr>
 							<td></td>
 							<td>All</td>
-							<td class="tar"><input type="checkbox" /></td>
+							<td class="tar"><input type="checkbox" class="toggleAll" /></td>
 						</tr>
 					</table>
+					<button type="submit" class="submit">Save</button>
+					</form>
 				</div>
 			</div>
 			<ul class="myAlertsList">
+				<% loop {list.freerolls += alerts:freeroll.item} %>
 				<li>
-					<a href="#" class="remove" title="Remove Alert">&times;</a>
-					<p>Feb 26, 18:00 GMT</p>
-					<a href="#">$5,000 PokerNews MaxStack Final II.</a>
+					<a href="{urlunsub}" class="remove" title="Remove Alert">&times;</a>
+					<p>{date}</p>
+					<a href="{url}">{title}</a>
 				</li>
-				<li>
-					<a href="#" class="remove" title="Remove Alert">&times;</a>
-					<p>Feb 26, 18:00 GMT</p>
-					<a href="#">$5,000 PokerNews MaxStack PokerNews MaxStack Final II.</a>
-				</li>
-				<li>
-					<a href="#" class="remove" title="Remove Alert">&times;</a>
-					<p>Feb 26, 18:00 GMT</p>
-					<a href="#">$5,000 PokerNews MaxStack PokerNews MaxStack Final II.</a>
-				</li>
+				<% end {list.freerolls} %>
+				<li id="i"<%if{hI}%> class="hide"<%end%>>Click "Alert me!" to add a freeroll</li>
 			</ul>
-		</div>
-
-
-<div class="widget<%if{hPg}%><%else{hPg}%> widgetWithMiniPager<%end%> widgetFreerollAlerts" id="freerollAlerts">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h2 class="widgetTitle">{!my-alerts}</h2>
-		<div class="alertRooms" id="alertRooms">
-			<a class="alertRoomsButton" href="{!action}#"><span class="linkText">{!rooms-alert}<span class="cbr"></span></span></a>
-			<div class="widget widgetPopup widgetAlertRooms">
-				<div class="widgetInner">
-					<div class="ctl"></div>
-					<div class="ctr"></div>
-					<div class="cbl"></div>
-					<div class="cbr"></div>
-					<h3 class="widgetTitle">{!rooms-list}</h3>
-					<form action="{!action}" method="post">
-						<input type="hidden" name="event" value="{save_rooms_event}" />
-						<div>
-							<ul class="filterRoomsList tar">
-								<li class="all"><label>{!all} <input type="checkbox" class="toggleAll" /></label></li>
-								<li class="{even_odd}"><label><span class="fl"><img src="{img}" alt="" class="roomLogo" />{title}</span> <input type="checkbox" name="room[{id}]" /></label></li>
-
-							</ul>
-							<button type="submit" class="submit">{!save}</button>
-						</div>
-					</form>
-					<a href="#" class="widgetHideLink" title="{!close}"><span class="a11y">{!close}</span></a>
-				</div>
+			<div class="widgetMiniPager<%if{hPg}%> hide<%end%>" id="freerollAlertsPager">
+				<a href="#" class="previous" title="Prev">Prev</a>
+				<input id="p" type="text" value="1/{pCnt}" />
+				<a href="#" class="next" title="Next">Next</a>
 			</div>
 		</div>
-		<h3 class="upcomingFreerollsTitle">{!your-upcoming}</h3>
-		<ul class="upcomingFreerollsList">
-			<% loop {list.freerolls += alerts:freeroll.item} %>
-			<li class="<%if{a11y}%>a11y <%end%>pg pg{pg}">
-				<span class="freerollDate">{date}</span>
-				<a href="{url}" class="freerollTitle">{title}</a>
-				<a href="{urlunsub}" class="removeAlert" title="{!remove-alert}"><span class="a11y">{!remove-alert}</span></a>
-			</li>
-			<% end {list.freerolls} %>
-			<li id="i"<%if{hI}%> class="hide"<%end%>>{!click-to-alert}</li>
-		</ul>
-		<div class="widgetMiniPager<%if{hPg}%> hide<%end%>" id="freerollAlertsPager">
-			<a href="#" class="previous" title="{!prev}">{!prev}</a>
-			<input id="p" type="text" value="1/{pCnt}" />
-			<a href="#" class="next" title="{!next}">{!next}</a>
-		</div>
-	</div>
-</div>
