@@ -1,10 +1,10 @@
 ﻿<% toolbar %>
-<% if {showTitle} %><h2>{!share}</h2><% end %>
-<ul class="articleSocialLinks">
+<div class="socialIcons">
 	{socialNetwork1}
 	{socialNetwork2}
 	{socialNetwork3}
-</ul>{b}
+	<span class="clr"></span>
+</div>
 
 <% socialTracker %>
 <script type="text/javascript">st()</script>
@@ -23,19 +23,16 @@
 {vkontakte}
 
 <% social:facebook %>
-<li class="facebook"><a href="http://www.facebook.com/share.php?u={jsURL}" target="_blank" title="{!shareFacebook}">Facebook</a></li>
+<a class="facebook" href="http://www.facebook.com/share.php?u={jsURL}" target="_blank" title="Facebook">Facebook</a>
 <% social:twitter %>
-<li class="twitter"><a href="{twitterURL}" rel="nofollow" title="{!tweet}" onclick="if (this.href.indexOf('go_twitter') != -1) this.href +='=1'" target="_blank">Twitter</a></li>
+<a class="twitter" href="{twitterURL}" rel="nofollow" title="Tweet" onclick="if (this.href.indexOf('go_twitter') != -1) this.href +='=1'" target="_blank">Twitter</a>
 <% social:gplus %>
-<li class="gplus">
-	<script type="text/javascript" src="https://apis.google.com/js/plusone.js">{lang: '{lang}'}</script>
-	<div class="gplus-container"><div class="g-plusone" data-size="standard" data-count="false"></div></div> Google +1
-</li>
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js">{lang: '{lang}'}</script>
+<div class="gplus-container"><div class="g-plusone" data-size="medium" data-count="false"></div></div>
 <% social:vkontakte %>
 <li class="vkontakte"><a href="http://vkontakte.ru/share.php?url={jsURL}" target="_blank">В Контакте</a></li>
 <% social:svejo %>
 <li class="svejo"><a href="http://svejo.net/story/submit_by_url?url={jsURL}" target="_blank">Свежо</a></li>
-
 
 
 <% toolbar_reporting %>

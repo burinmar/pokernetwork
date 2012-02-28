@@ -71,7 +71,7 @@ $(document).ready(function () {
 		<h1>{title}</h1>
 			
 			<span class="meta">
-			<% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} comments</a> ● <% end {if} %>
+			<% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} comment(s)</a> ● <% end {if} %>
 			Posted <% if{ago} %>{ago}<% else{ago} %>at {time} {date}<% end %><%if{authors}%> by {authors}<%end%>
 			</span>
 			
@@ -93,9 +93,9 @@ $(document).ready(function () {
 				{fbLike}
 			</div>
 	</div>
+	{comments}
 </div>
 <div class="right fr">
-	
 	<% if {img} %>
 	<div class="leadingPhoto rightInsert wFull">
 		<img src="{img}" alt="{img_alt}" />

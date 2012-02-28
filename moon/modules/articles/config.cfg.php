@@ -24,7 +24,13 @@ $cfg['articles'] = array(
 	'var.imagesSrcArticlesStd' => '/w/articles/img/',
 	'var.typeNews' => 1,
 	//'var.imgSrcEditors' => '/w/editors/',
-	//'var.imgEditorsDefault' => '/img/avatar200.png'
+	//'var.imgEditorsDefault' => '/img/avatar200.png',
+
+	// Comments
+	'comp.comments' => 'MoonShared.comments',
+	'tb.Comments' => 'articles_comments',
+	'tb.CommentsParent' => 'articles',
+	'tb.Users' => 'users'
 
 );
 ?>

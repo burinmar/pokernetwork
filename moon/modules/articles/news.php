@@ -171,7 +171,6 @@ class news extends moon_com {
 
 		$this->setPaging();
 		if (isset($_GET['print'])) {
-			$addComments = FALSE;
 			$this->set_var('print', TRUE);
 			$this->use_page('');
 			$page->set_local('output','print');
@@ -407,6 +406,7 @@ class news extends moon_com {
 			$m['img_alt'] = htmlspecialchars($article['img_alt']);
 		}
 		$m['url.self'] = $oShared->getArticleUri($article['id'], $article['uri'], $article['published']);
+		$m['url.comments'] = ($m['comm_count'] = $article['comm_count']) ? $m['url.self'] . '#cl' : '';
 
 		$tools = &moon::shared('tools');
 		$m['shareThis'] = $tools->toolbar(array('twitterTags' => $article['twitter_tags']));
@@ -437,6 +437,21 @@ class news extends moon_com {
 		}
 
 		if ($print === FALSE) {
+
+			if (is_dev()) {
+				$homeUrl = str_replace('.dev', '.com', $homeUrl);
+			}
+			$iCard = array();
+			$iCard['title'] = $article['title'];
+			$img = $this->getImageSrc($article['img'], 'thumb_');
+			$iCard['img'] = $img ? $homeUrl . $img : '';
+			$iCard['url'] = $homeUrl . $m['url.self'];
+			$iCard['description'] = $article['summary'];
+
+			$commentsComp = &$this->object('comments');
+			if (is_object($commentsComp)) $m['comments'] = $commentsComp->show($article['id'], $iCard);
+			else $article['comments'] = '';
+
 			/*
 			// related players
 			$a = $oShared->getPlayersByTags($article['tags']);
@@ -489,7 +504,6 @@ class news extends moon_com {
 		} else {
 			$m['fbLike'] = $m['fbLikeB'] = $article['comments'] = '';
 		}
-		$m['relatedTwoRows'] = $m['relatedPlayers'] != '' && $m['relatedTours'] != '';
 		return $tpl->parse('viewArticle', $m);
 	}
 
@@ -711,7 +725,7 @@ class news extends moon_com {
 	function getArticleByUri($uri = FALSE)
 	{
 		if ($uri) {
-			$sql = 'SELECT id, uri, title, published, authors, category_id as category, meta_keywords, meta_description, img, img_alt, tags, content_html, is_turbo, room_id, double_banner, content_type, is_promo, promo_text, promo_box_on, summary, twitter_tags
+			$sql = 'SELECT id, uri, title, published, authors, category_id as category, meta_keywords, meta_description, img, img_alt, tags, content_html, is_turbo, room_id, double_banner, content_type, is_promo, promo_text, promo_box_on, summary, twitter_tags, comm_count
 				FROM ' . $this->tblArticles . ' USE INDEX (uri)
 				WHERE	uri = "' . $this->db->escape($uri) . '" AND
 				     	article_type = ' . $this->type . ' AND
@@ -724,7 +738,7 @@ class news extends moon_com {
 	function getArticleById($id = FALSE)
 	{
 		if ($id) {
-			$sql = 'SELECT id, uri, title, published, authors, category_id as category, meta_keywords, meta_description, img, img_alt, tags, content_html, is_turbo, room_id, double_banner, content_type, is_promo, promo_text, promo_box_on, summary, twitter_tags
+			$sql = 'SELECT id, uri, title, published, authors, category_id as category, meta_keywords, meta_description, img, img_alt, tags, content_html, is_turbo, room_id, double_banner, content_type, is_promo, promo_text, promo_box_on, summary, twitter_tags, comm_count
 				FROM ' . $this->tblArticles . '
 				WHERE	id = ' . $id . ' AND
 				     	article_type = ' . $this->type . ' AND
