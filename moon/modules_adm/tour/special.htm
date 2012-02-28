@@ -25,7 +25,9 @@ error9=System error!
 	<tr>
 		<td><label>Title: <input type="text" name="filter[text]" value="{text}" size="20" maxlength="30"/></label></td>
 		<td><label>Room: <select name="filter[room_id]"><option value=""></option>{rooms}</select></label></td>
-		<td><label>Tag: <input type="text" name="filter[tag]" value="{tag}" size="20" maxlength="30"/></label></td>
+		<!--#
+<td><label>Tag: <input type="text" name="filter[tag]" value="{tag}" size="20" maxlength="30"/></label></td>
+-->
 		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show deleted</label></td>
 		<td><input type="submit" value="Filter" /></td>
 	</tr>
@@ -60,7 +62,7 @@ error9=System error!
 						Qualification: {qualification_from} / {qualification_to} | {qualification_points}
 						<%if{prizepool}%>| Prize Pool: {prizepool} {currency}<%end%>
 						<%if{tags}%><div>Tags: {tags}</div><%end%>
-						<%if{team_id}%><div>Team freeroll!</div><%end%>
+						<%if{spotlight_id}%><div>Has picture!</div><%end%>
 						</div>
 					</td>
 					<td>
@@ -78,12 +80,13 @@ error9=System error!
 		</div>
 	</form>
 	{puslapiai}<br />
-	<% if {site-slave} %>
+
 		<div class="explain">
-			Some special tournaments are imported from the www.pokerworks.com. Such tournaments are marked with special icons: <br/>
+			Some special tournaments are imported from the www.pokernews.com. Such tournaments are marked with special icons: <br/>
 			<span class="sync1" title="Status: up to date"></span> - the tournament is up to date, <br/>
-			<span class="sync2" title="Status: needs attention"></span> - the tournament was updated, so you have to check it and update.</div>
-	<% end {site-slave} %>
+			<span class="sync2" title="Status: needs attention"></span> - the tournament was updated, so you have to check it and update.
+		</div>
+
 <% else {items} %>
 	<p>There are no items</p>
 <% end {if} %>
@@ -106,6 +109,16 @@ function setCurrency(sel) {
 		s = roomC[s];
 	}
 	jQuery('#iCurrency').html(s);
+}
+function setSpotlight(sel) {
+	/*var s = sel.value;
+	if (typeof(roomC[s]) == "undefined") {
+		s = 'USD';
+	}
+	else {
+		s = roomC[s];
+	}
+	jQuery('#iCurrency').html(s);*/
 }
 /*]]>*/
 </script>
@@ -213,6 +226,11 @@ function setCurrency(sel) {
 	<dd class="w100">
 		{toolbar}
 		<textarea rows="20" cols="70" name="body" id="i_content">{body}</textarea>
+	</dd>
+
+	<dt><label for="i_spotlight">Spotlight</label></dt>
+	<dd>
+		<select name="spotlight_id" id="i_spotlight" onchange="setSpotlight(this)"><option value="0"></option>{spotlight}</select>
 	</dd>
 
 	<%if{master_id}%>

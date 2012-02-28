@@ -34,6 +34,7 @@
 <%if{items}%>
 <ul class="specFreerolls">
 <% loop{items} %>
+<%if{spotlight}%>
 <li>
 	<% if {logo} %><a href="{goRoom}" rel="nofollow"><img src="{logo}" alt="{room}" class="roomLogo" /></a><% end %>
 	<table>
@@ -56,7 +57,7 @@
 			</td>
 			<td>
 				<a href="#" class="title">{name}</a>
-				<a href="#"><img width="517" height="175" alt="Avatar" src="http://placekitten.com/517/175" /></a>
+				<%if{spotlight}%><a href="#"><img width="517" height="175" alt="Avatar" src="{spotlight}" /></a><%end%>
 			</td>
 		</tr>
 		<tr class="paddingTop">
@@ -96,7 +97,59 @@
 	</table>
 	<a href="{goRoom}" class="button">Start Playing</a> <a href="#" class="more2">More Information »</a>
 </li>
-
+<%else{spotlight}%>
+<li class="nopromoPicture">
+	<table>
+		<colgroup>
+			<col style="width: 219px" />
+			<col />
+		</colgroup>
+		<tr>
+			<td><% if {logo} %><a href="{goRoom}" rel="nofollow"><img src="{logo}" alt="{room}" class="roomLogo" /></a><% end %></td>
+			<td><a href="#" class="title">{name}</a></td>
+		</tr>
+		<tr class="paddingTop">
+			<td class="vab"><b>Start date</b></td>
+			<td class="vab">{tourDate} {gmt} <%if{startsIn}%><span class="startsIn cr">(starts in {startsIn})</span><%end%> {subscribe}</td>
+		</tr>
+		<tr class="paddingTop">
+			<td><b>Qualification Period</b></td>
+			<td><% if {qualificationFrom} %>{qualificationFrom} -<% end %> {qualificationTo} <%if{qStarted}%><span class="timeLeft alreadyStarted">Already Started</span><%end{qStarted}%></td>
+		</tr>
+		<tr>
+			<td><b>Prize Pool</b></td>
+			<td>{prizePool}</td>
+		</tr>
+		<tr>
+			<td><b>Points Req.</b></td>
+			<td>{pointsReq}</td>
+		</tr>
+		<tr>
+			<td><b>Bonus</b></td>
+			<td>{bonus}</td>
+		</tr>
+		<%if{bonusCode}%>
+		<tr class="paddingTop">
+			<td><b>Bonus Code</b></td>
+			<td><b>{bonusCode}</b></td>
+		</tr>
+		<%end%>
+		<%if{marketingCode}%>
+		<tr>
+			<td><b>Marketing Code</b></td>
+			<td><b>{marketingCode}</b></td>
+		</tr>
+		<%end%>
+		<%if{password}%>
+		<tr>
+			<td><b>Password</b></td>
+			<td><% if {passFrom} %>Password will be released on {passFrom} <span title="{tzName}">{gmt}</span><% else{passFrom} %><b>{password}</b><% end %></td>
+		</tr>
+		<%end%>
+	</table>
+	<a href="#" class="button">Start Playing</a> <a href="#" class="more2">More Information »</a>
+</li>
+<%end{if-spotlight}%>
 <%end{loop}%>
 </ul>
 {paging}

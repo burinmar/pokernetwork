@@ -148,6 +148,8 @@ class freerolls_special extends moon_com {
 			//$src = $this->get_var('srcRooms');
 			$txt = & moon :: shared('text');
 
+			$spotlights = $this->getSpotlights();
+
 			$c = 0;
 			foreach ($rec as $i => $v) {
 				$r['c'] = ++$c;
@@ -203,7 +205,10 @@ class freerolls_special extends moon_com {
 					$r['goRoom'] = $r['bonus'] = $r['bonusCode'] = $r['marketingCode'] = '';
 					$r['room'] = $v['room_id'];
 				}
-
+				$r['spotlight'] = '';
+				if (isset($spotlights[$v['spotlight_id']])) {
+					$r['spotlight'] = '/w/spotlight/' . $spotlights[$v['spotlight_id']]['img'];
+				}
 
 				$r['subscribe'] = !empty($userId);
 				if ($r['subscribe']) {
@@ -540,6 +545,11 @@ class freerolls_special extends moon_com {
 		$m = array();
 		foreach ($a as $v) $m[$v['id']] = $v;
 		return $m;
+	}
+
+	function getSpotlights() {
+		$sql = 'SELECT id, title, img FROM spotlight WHERE is_hidden=0';
+		return $this->db->array_query_assoc($sql . ' ORDER BY title', 'id');
 	}
 
 
