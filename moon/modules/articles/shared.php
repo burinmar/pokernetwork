@@ -20,35 +20,17 @@ class shared extends moon_com {
 	}
 
 	function properties() {
-		return array(
-			'view' => '',
-			'listLimit' => 5
-		);
+		return array();
 	}
 	
 	function main($vars)
 	{
-		$output = '';
-		switch ($vars['view']) {
-			case 'homepage-news':
-				$output = $this->htmlNewsListHomepage($vars);
-				break;
-			default:
-				break;
-		}
-		return $output;
+		return '';
 	}
 
 	//***************************************
 	//           --- HTML ---
 	//***************************************
-	function htmlNewsListHomepage($vars)
-	{
-		$tpl = $this->load_template();
-		$m = array();
-		return $tpl->parse('list_homepage_news', $m);
-	}
-	
 	function htmlAuthors($idsString, $enableLinks = FALSE, $idsArr = array())
 	{
 		$authors = '';
@@ -298,17 +280,21 @@ class shared extends moon_com {
 	 * @param string tag url
 	 */
 	function getTagUrl($tag) {
-		$sitemap = &moon::shared('sitemap');
+
+		$tagSrc = 'news';
+		/*$sitemap = &moon::shared('sitemap');
 		$uri = '';
-		$tagSrc = '';
 		switch ($this->articleType) {
 			case $this->typeNews:
 			default:
-				$uri = $sitemap->getLink('news');
+				$tagSrc = 'news';
+				//$uri = $sitemap->getLink('news');
 				break;
-		}
-		
-		return $uri . 'tags/' . moon::shared('text')->make_uri(urlencode($tag)) . '/';
+		}*/
+		$ctags = $this->object('other.ctags');
+		return $ctags->getUrl($tag, $tagSrc);
+
+		//return $uri . 'tags/' . moon::shared('text')->make_uri(urlencode($tag)) . '/';
 		//return $this->linkas("$uri");
 	}
 	

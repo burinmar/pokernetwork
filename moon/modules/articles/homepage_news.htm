@@ -6,7 +6,7 @@
 		<div class="slider pnSliderTab" <% if {notCurrent} %>style="display:none;"<% end %>>
 			<a href="{url.article}"><img src="{imgSrc}" alt="{imgAlt}" width="460" height="305" /></a>
 			<strong><a href="{url.article}" class="title">{title}<% if {isAu} %>&nbsp;<span class="auMark blueMark"></span><% end %></a></strong>
-			<span class="meta"><% if {url.comments} %><a class="commentIco bigCommentIco" href="{url.comments}">{comm_count} comments</a>● <% end {if} %>Posted <% if{ago} %>{ago}<% else{ago} %>at {date}<% end %></span>
+			<span class="meta"><% if {url.comments} %><a class="commentIco bigCommentIco" href="{url.comments}">{comm_count} {commentsWord}</a>● <% end {if} %>Posted <% if{ago} %>{ago}<% else{ago} %>at {date}<% end %></span>
 		</div>
 		<% end %>
 		<div class="stepper">

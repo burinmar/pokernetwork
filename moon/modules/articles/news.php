@@ -118,7 +118,7 @@ class news extends moon_com {
 					}
 					$tag = urldecode($segments[1]);
 
-					//$page->redirect($this->oShared->getTagUrl($tag), 301);
+					$page->redirect($this->oShared->getTagUrl($tag), 301);
 					
 					$tagData = $this->getTagData($tag);
 					if (empty($tagData)) {
@@ -301,7 +301,8 @@ class news extends moon_com {
 
 			foreach ($items as $k => $item) {
 				$item['url.article'] = $oShared->getArticleUri($item['id'], $item['uri'], $item['published']);
-				$this->assignCommentsUrl($item);
+				$item['url.comments'] = $item['comm_count'] ? $item['url.article'] . '#cl' : '';
+				$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 				$item['title'] = htmlspecialchars($item['title']);
 				$item['summary'] = htmlspecialchars($item['summary']);
 				if ($item['img']) {
@@ -407,6 +408,7 @@ class news extends moon_com {
 		}
 		$m['url.self'] = $oShared->getArticleUri($article['id'], $article['uri'], $article['published']);
 		$m['url.comments'] = ($m['comm_count'] = $article['comm_count']) ? $m['url.self'] . '#cl' : '';
+		$m['commentsWord'] = $m['comm_count'] == 1 ? 'comment' : 'comments';
 
 		$tools = &moon::shared('tools');
 		$m['shareThis'] = $tools->toolbar(array('twitterTags' => $article['twitter_tags']));
@@ -418,10 +420,10 @@ class news extends moon_com {
 			$tagsAll = explode(',', $article['tags']);
 			$tagsDB = explode(',', $this->db->escape($article['tags']));
 
-			$tagsActive = $oShared->getActiveTags($tagsDB);
+			//$tagsActive = $oShared->getActiveTags($tagsDB);
 			foreach ($tagsAll as $k => $name) {
 				$t['tagName'] = htmlspecialchars($name);
-				$t['tagUri'] = (array_search($name, $tagsActive) !== FALSE) ? $oShared->getTagUrl($name) : '';
+				$t['tagUri'] = $oShared->getTagUrl($name);//(array_search($name, $tagsActive) !== FALSE) ? $oShared->getTagUrl($name) : '';
 
 				$tags[] = trim($tpl->parse('tags', $t));
 			}
@@ -593,13 +595,6 @@ class news extends moon_com {
 			}
 		}
 		return $html;
-	}
-
-	function assignCommentsUrl(&$item)
-	{
-		if ($item['comm_count']) {
-			$item['url.comments'] = $item['url.article'] . '#cl';
-		}
 	}
 
 	function getImageSrc($imageFn, $prefix = '')

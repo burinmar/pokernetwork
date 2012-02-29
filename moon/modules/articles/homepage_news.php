@@ -46,6 +46,7 @@ class homepage_news extends moon_com {
 				'isAu' => $r['isAu']
 			);
 			$item['url.comments'] = $r['comm_count'] ? $item['url.article'].'#cl' : '';
+			$item['commentsWord'] = $r['comm_count'] == 1 ? 'comment' : 'comments';
 
 			if ($k < 4) {
 				// slider

@@ -44,7 +44,7 @@ latestVideos=Latest Videos
 
 	<div class="videoInfo article fl">
 		<h1><a href="{uri.featured}">{name}</a></h1>
-		<span class="meta"><% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} comment(s)</a> ● <% end %> {publishedDate}</span>
+		<span class="meta"><% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} {commentsWord}</a> ● <% end %> {publishedDate}</span>
 		<% if {description} %><p>{description}</p><% end %>
 		<% if {shareThis} %>
 		<h3>Share this video</h3>
@@ -122,7 +122,7 @@ latestVideos=Latest Videos
 <div class="widget video">
 	<div class="videoInfo article fl">
 		<h1><a href="{uri.self}">{name}</a></h1>
-		<span class="meta"><% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} comment(s)</a> ● <% end %> {publishedDate}</span>
+		<span class="meta"><% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} {commentsWord}</a> ● <% end %> {publishedDate}</span>
 		<% if {description} %><p>{description}</p><% end %>
 		<% if {shareThis} %>
 		<h3>Share this video</h3>
