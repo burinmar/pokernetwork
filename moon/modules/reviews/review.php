@@ -50,6 +50,10 @@ class review extends moon_com {
 								$p->page404();
 							}
 							break;
+						case 'freerolls' :
+							//var_dump($p->requested_event('param'));
+							$p->call_event($this->my('module') . '.review_freerolls#', $p->requested_event('param'));
+							break;
 
 
 						default :

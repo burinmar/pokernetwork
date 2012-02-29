@@ -198,12 +198,14 @@ class freerolls_special extends moon_com {
 					$r['marketingCode'] = htmlspecialchars($room['marketing_code']);
 					$r['prizePool'] = $v['prizepool'] ? $this->currency($v['prizepool'], $room['currency']) : '';
 					$r['goRoom'] = '/' . $room['alias'] . '/ext/';
+					$r['url.freeroll'] = '/' . $room['alias'] . '/freerolls/' . $v['id'] . '.htm';
 					//if ($room['logo']) $r['logo'] = $src . $room['logo'];
 					if ($room['logo']) $r['logo'] = img('rw', $room['id'], $room['logo'].'?2');
 				}
 				else {
 					$r['goRoom'] = $r['bonus'] = $r['bonusCode'] = $r['marketingCode'] = '';
 					$r['room'] = $v['room_id'];
+					$r['url.freeroll'] = '';
 				}
 				$r['spotlight'] = '';
 				if (isset($spotlights[$v['spotlight_id']])) {
@@ -217,10 +219,7 @@ class freerolls_special extends moon_com {
 					$r2['id'] = $v['id'];
 					$r['subscribe'] = $tpl->parse('subscribe', $r2);
 				}
-				$r['goIcs'] = $tpl->ready_js($this->linkas('ics#', '', array('i' => $v['id'])));
-				$dates = gmstrftime("%Y%m%dT%H%M%SZ", $v['date']);
-				if (TRUE === $addQSd) $dates = str_replace(array('-', ' ', ':'), array('', 'T', ''), $v['qualification_from']) . 'Z' . '/' . $dates; else $dates .= '/' . $dates;
-				$r['goGcal'] = $tpl->ready_js('http://www.google.com/calendar/render?action=TEMPLATE&amp;text=' . urlencode($v['name']) . '&amp;dates=' . urlencode($dates) . '&amp;location=' . urlencode($r['room']));
+
 
 				$m['items'] .= $tpl->parse('items', $r);
 			}

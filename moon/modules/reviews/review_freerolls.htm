@@ -1,0 +1,134 @@
+<% LandingPage %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="{lang}" lang="{lang}"{rtl}>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>{!1} - {name}</title>
+<link rel="stylesheet" href="/css/landing.css?{cssMod}" type="text/css" />
+<!--# <%if{rtl}%><link rel="stylesheet" href="/css/rtl.css" type="text/css" /><%end%> -->
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js" ></script>
+<script type="text/javascript" src="/js/pokernews.js?1275397581" ></script>
+<% if {googleID} %>
+	<script type="text/javascript">
+	var _gaq = _gaq || [];
+	_gaq.push(['_setAccount', '{googleID}']);
+	_gaq.push(['_trackPageview']);
+
+	(function() {
+	var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	})();
+	</script>
+<% end %>
+</head>
+
+<body class="{pageID}">
+<%insert{main}%>
+	<div id="wrapper">
+		<div id="header2">
+			<a href="{roomLink}" title="{roomName}" id="logo"><img alt="{roomName}" src="{roomLogo}" /></a>
+			<span id="exclusiveTo"><% if {exclusive} %>Exclusive<% else {exclusive} %>Special<%end%> <a href="/">PokerNetwork</a></span>
+		</div>
+		<div id="content">
+			<div id="intro">
+				<h1 id="pageTitle">{name}</h1>
+				<dl id="tournamentDate">
+					<dt>Date</dt>
+					<dd>{tourDate} <span class="timeZone">{gmt}</span></dd>
+				</dl>
+				<dl id="qualificationPeriod">
+					<dt>Qualification</dt>
+					<dd><% if {qualificationFrom} %>{qualificationFrom} - <% end %>{qualificationTo}</dd>
+				</dl>
+			</div>
+
+			<div id="description">
+				<div class="fl{center}" id="downloadBlock">
+					<a id="download" href="{roomDownloadLink}">DOWNLOAD</a>
+					OS {osText}
+				</div>
+				
+				<%if{marketing_code}%>
+				<div class="fl" id="bonusCodes">
+					Marketing code<br />
+					<span class="bonusCode">{marketing_code}</span>
+				</div>
+				<%end%>
+				
+				<%if{bonus_code}%>
+				<div class="fl" id="bonusCodes">
+					Bonus code<br />
+					<span class="bonusCode">{bonus_code}</span>
+				</div>
+				<%end%>
+				<span class="clr"></span>
+				
+				<%if{text}%>
+				<div id="details">
+					<h2 class="expandable">Info</h2>
+					<div id="freeroll_details">{text}</div>
+				</div>
+				<%end%>
+
+				<%if{upcoming}%>
+				<div id="upcomingFreerolls">
+					<h2>{!24}</h2>
+					<table>
+						<colgroup>
+							<col style="width: 80px" />
+							<col style="width: 80px" />
+							<col style="width: 175px" />
+							<col />
+							<col style="width: 140px" />
+						</colgroup>
+						<%loop{upcoming}%>
+						<tr{classOdd}>
+							<td colspan="5" class="title">
+								<!--# <a href="#" class="detailsLink">{name}</a> -->
+								<span class="expandable">{name}</span>
+								<div class="upcomingDetails">{body_html}</div>
+							</td>
+						</tr>
+						<tr{classOdd}>
+							<th>{!prize_pool}</th>
+							<th>{!points}</th>
+							<th>{!qualification}</th>
+							<th>{!bonus}</th>
+							<th>{!12}</th>
+						</tr>
+						<tr{classOdd}>
+							<td>{prizepool}</td>
+							<td>{qualification_points}</td>
+							<td><% if {qualificationFrom} %>{qualificationFrom} - <% end %>{qualificationTo}</td>
+							<td>{bonus}</td>
+							<td>{tourDate} {gmt}</td>
+						</tr>
+						<%end{loop}%>
+
+
+					</table>
+				</div>
+				<%end{upcoming}%>
+			</div>
+		</div>
+	</div>
+<%end{insert}%>
+<script type="text/javascript">
+/*<![CDATA[*/
+if (jQuery) {
+	jQuery('#freeroll_details').addClass('hide');
+	jQuery('.upcomingDetails').addClass('hide');
+	jQuery('.expandable').each(function(){
+		jQuery(this).html('<a href="." class="detailsLink">' + jQuery(this).html() + '</a>');
+	});
+	jQuery('.detailsLink').click(function(){
+		jQuery(this).parent().parent().children('div').toggle();
+		jQuery(this).blur().toggleClass('isopen');
+		return false
+	});
+}
+/*]]>*/
+</script>
+</body>
+</html>

@@ -5,7 +5,7 @@ class special extends moon_com {
 	function onload() {
 		//form of item
 		$this->form = & $this->form();
-		$this->form->names('id', 'hide', 'date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'dateTime', 'qFromTime', 'qToTime', 'master_id', 'master_updated', 'updated', 'exclusive', 'password', 'password_from', 'passFromTime', 'nosync', 'master_id');
+		$this->form->names('id', 'hide', 'date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'dateTime', 'qFromTime', 'qToTime', 'master_id', 'master_updated', 'updated', 'exclusive', 'password', 'password_from', 'passFromTime', 'nosync', 'master_id', 'skin');
 		$this->form->fill(array('date' => time(), 'timezone' => 0, 'qualification_points' => - 1, 'exclusive' => 0));
 		//form of filter
 		$this->formFilter = & $this->form('f2');
@@ -257,6 +257,7 @@ class special extends moon_com {
 		else {
 			$m['password_from'] = $m['passFromTime'] = '';
 		}
+		$m['iDeveloper'] = moon::user()->i_admin('developer');
 		$rooms = $this->getRooms($m['room_id']);
 		$selRooms = array();
 		$m['jsCurrency'] = '';
@@ -267,19 +268,19 @@ class special extends moon_com {
 			$selRooms[$v['id']] = $v['name'];
 		}
 
-		/*if ($id && isset($rooms[$m['room_id']])) {
-		$uri = $rooms[$m['room_id']]['alias'];
-		$now = $locale->now;
-		if ($uri && !$f->get('hide') && $datetime > $now) {
-		$m['landingURL'] = '/' . $uri . '/freerolls/' . $id . '.htm';
+		if ($id && isset($rooms[$m['room_id']])) {
+			$uri = $rooms[$m['room_id']]['alias'];
+			$now = $locale->now;
+			if ($uri && !$f->get('hide') && $datetime > $now) {
+				$m['landingURL'] = '/' . $uri . '/freerolls/' . $id . '.htm';
+			}
 		}
-		}*/
-		if ($id) {
+		/*if ($id) {
 			$now = $locale->now;
 			if (!$f->get('hide') && $datetime > $now) {
 				$m['landingURL'] = moon :: shared('sitemap')->getLink('freerolls-special') . '?id=' . $id;
 			}
-		}
+		}*/
 		$m['currency'] = isset ($rooms[$m['room_id']]) ? $rooms[$m['room_id']]['currency']:'USD';
 		$m['rooms'] = $f->options('room_id', $selRooms);
 		//spotlights
@@ -387,7 +388,7 @@ class special extends moon_com {
 		if ($masterID && $id) {
 			//gautu duomenu apdorojimas
 			$d['hide'] = empty ($d['hide']) ? 0:1;
-			$d = $form->get_values('body', 'hide', 'spotlight_id') + $this->getItem($id);
+			$d = $form->get_values('body', 'hide', 'spotlight_id', 'skin') + $this->getItem($id);
 			//validacija
 			if ($d['name'] === '') {
 				$form->fill($d, false);
@@ -395,7 +396,7 @@ class special extends moon_com {
 				return false;
 			}
 			//save to database
-			$ins = $form->get_values('body', 'hide', 'spotlight_id');
+			$ins = $form->get_values('body', 'hide', 'spotlight_id', 'skin');
 			//iskarpa ir kompiliuojam i html
 			$rtf = $this->object('rtf');
 			$rtf->setInstance($this->get_var('rtf'));
@@ -477,7 +478,7 @@ class special extends moon_com {
 			return $id;
 		}
 		//save to database
-		$ins = $form->get_values('date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'exclusive', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'hide', 'password', 'password_from');
+		$ins = $form->get_values('date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'exclusive', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'hide', 'password', 'password_from', 'skin');
 		$locale = & moon :: locale();
 		list($shift) = $locale->timezone($ins['timezone'], $ins['date']);
 		$ins['date'] -= $shift;

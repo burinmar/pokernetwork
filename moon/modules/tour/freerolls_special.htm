@@ -56,8 +56,8 @@
 
 			</td>
 			<td>
-				<a href="#" class="title">{name}</a>
-				<%if{spotlight}%><a href="#"><img width="517" height="175" alt="Avatar" src="{spotlight}" /></a><%end%>
+				<a href="{url.freeroll}" class="title">{name}</a>
+				<%if{spotlight}%><a href="{url.freeroll}"><img width="517" height="175" alt="" src="{spotlight}" /></a><%end%>
 			</td>
 		</tr>
 		<tr class="paddingTop">
@@ -95,7 +95,7 @@
 		</tr>
 		<%end%>
 	</table>
-	<a href="{goRoom}" class="button">Start Playing</a> <a href="#" class="more2">More Information »</a>
+	<a href="{goRoom}" class="button">Start Playing</a> <a href="{url.freeroll}" class="more2">More Information »</a>
 </li>
 <%else{spotlight}%>
 <li class="nopromoPicture">
@@ -106,7 +106,7 @@
 		</colgroup>
 		<tr>
 			<td><% if {logo} %><a href="{goRoom}" rel="nofollow"><img src="{logo}" alt="{room}" class="roomLogo" /></a><% end %></td>
-			<td><a href="#" class="title">{name}</a></td>
+			<td><a href="{url.freeroll}" class="title">{name}</a></td>
 		</tr>
 		<tr class="paddingTop">
 			<td class="vab"><b>Start date</b></td>
@@ -147,7 +147,7 @@
 		</tr>
 		<%end%>
 	</table>
-	<a href="#" class="button">Start Playing</a> <a href="#" class="more2">More Information »</a>
+	<a href="{goRoom}" class="button">Start Playing</a> <a href="{url.freeroll}" class="more2">More Information »</a>
 </li>
 <%end{if-spotlight}%>
 <%end{loop}%>
