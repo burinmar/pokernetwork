@@ -8,6 +8,8 @@ $cfg['other'] = array(
 
 	'tb.Users' => 'users',
 	'tb.Spotlight' => 'spotlight',
+	'tb.TwitterMessages' => 'twitter_messages',
+	'tb.TwitterPlayers' => 'twitter_players',
 
 	'var.imgSrcSpotlight' => '/w/spotlight/',
 	

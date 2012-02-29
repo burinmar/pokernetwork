@@ -1,0 +1,118 @@
+<% list_messages %>
+<div class="widget twitterListPage">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle">{!poker_tweets}<% if {playerName} %> - {playerName}<% else {playerName} %> <% end %></h1>
+		<p class="widgetIntro"><%if{playerName}%>{!keep_track_player}<%else{playerName}%>{!keep_track}<%end%></p>
+		<ul class="navigationButtons">
+			<li><a href="{uri.messages}" class="current">{!tweets_by}<span class="cbr"></span></a></li><li><a href="{uri.players}">{!tweeters}<span class="cbr"></span></a></li>
+		</ul>
+		<% if {items:messages} %>
+		<div class="twitterTracker">
+			<% loop {items:messages} %>
+			<div class="tweet">
+				<a href="{url.author}" class="tweetAuthorPhoto fl10"><img src="{avatarSrc}" width="48" height="48" alt="{author}" /></a>
+				<dl class="tweetContent fl">
+					<dt class="tweetAuthor"><a href="{url.author}">{author}</a></dt>
+					<dd class="tweetContent">{message}</dd>
+					<% if {date} %><dd class="tweetDate">{date}</dd><% end %>
+				</dl>
+				<div class="cb"></div>
+			</div>
+			<% end %>
+		</div>
+		{paging}
+		<% end %>
+	</div>
+</div>
+
+
+<% list_players %>
+<div class="widget twitterListPage">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle">{!poker_tweeters}</h1>
+		<p class="widgetIntro">{!keep_track}</p>
+		<ul class="navigationButtons">
+			<li><a href="{uri.messages}">{!tweets_by}<span class="cbr"></span></a></li><li><a href="{uri.players}" class="current">{!tweeters}<span class="cbr"></span></a></li>
+		</ul>
+		{searchBox}
+		<% if {items:players} %>
+		<ul class="twitterList">
+			<% loop {items:players} %>
+			<li>
+				<a href="{url.author}">
+					<img class="fl20" src="{avatarSrc}" width="48" height="48" alt="{author}" />
+					{author}<br />
+					<% if {date} %><span class="date">{!last_post} {date}</span><% end %>
+				</a>
+			</li>
+			<% end %>
+		</ul>
+		{paging}
+		<% end %>
+	</div>
+</div>
+
+
+<% twitter_box %>
+<% if {items:box} %>
+<div class="widget">
+	<h2 class="widgetTitle"><a href="{allMessagesUri}">Fresh Tweets</a></h2>
+	<ul class="tweets clrfix">
+		<% loop {items:box} %>
+		<li>
+			<a href="{authorUri}"><img src="{avatarSrc}" alt="{name}" width="48" height="48" /></a>
+			<p><b>{name}</b> <a href="{url.twitter}" target="_blank">@{screen_name}</a><br />{message}</p>
+		</li>
+		<% end %>
+	</ul>
+	<a href="{allMessagesUri}" class="more">More Tweets »</a>
+</div>
+<% end %>
+
+
+<% twitter_box_reporting %>
+<% if {items:box:reporting} %>
+<div class="widget widgetWithMoreLink widgetTwitterTracker">
+	<div class="widgetInner">
+		<span class="ctl"></span>
+		<span class="ctr"></span>
+		<span class="cbl"></span>
+		<span class="cbr"></span>
+		<h3 class="widgetTitle">{!twitter_tracker}</h3>
+
+		<% loop {items:box:reporting} %>
+		<div class="tweet">
+			<a href="{authorUri}" class="tweetAuthorPhoto">
+				<img class="fl10" src="{avatarSrc}" width="48" height="48" alt="{name}" />
+			</a>
+			<dl class="tweetContent fl">
+				<dt class="tweetAuthor"><a href="{authorUri}">{name}</a></dt>
+				<dd class="tweetContent">{message}</dd>
+				<dd class="tweetDate">{time}</dd>
+			</dl>
+			<span class="clr"> </span>
+		</div>
+		<% end %>
+		<p class="more tar"><a href="{allMessagesUri}">{!full_list}</a></p>
+	</div>
+</div>
+<% end %>
+
+
+<%search_box%>
+<form onsubmit="return false;" class="liveSearch" action="{goSearch}" method="get" style="background: #f2f3f4; margin-top: 20px; padding: 20px 200px;">
+	<div>
+		<input type="text" name="q" placeholder="{!live_search}" value="<%if{searchKeyword}%>{searchKeyword}<%else{searchKeyword}%>{!live_search}<%end%>" class="altStyle hasPlaceholder ajax-suggestion url-{ajaxuri}ajax-suggest/" autocomplete="off" onfocus="($(this).val()=='{!live_search}')?$(this).val(''):'';"/><button type="reset" title="{!clear}" onclick="$(this).prev().val('').trigger('focus');return false;"><span class="a11y">{!clear}</span></button>
+		<div id="search-result-suggestions">
+		<div id="search-results"></div>
+		</div>
+	</div>
+</form>

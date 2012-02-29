@@ -10,6 +10,7 @@
 	<com><part>right</part><name>other.spotlight</name><var name="view">home</var></com>
 	<com><part>right</part><name>reviews.homepage_rooms</name></com>
 	<com><part>right</part><name>other.moon_vb_bridge</name><var name="render">index-widget</var></com>
+	<com><part>right</part><name>other.twitter</name><var name="view">twitter-box</var></com>
 
 	<com><part>poll</part><name>poll.poll</name><var name="zone">home</var><var name="is_trivia">0</var><var name="output">default</var></com>	
 
