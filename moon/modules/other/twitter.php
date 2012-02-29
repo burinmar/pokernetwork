@@ -311,7 +311,6 @@ class twitter extends moon_com {
 
 	function getLastItems($lastMessages = true)
 	{
-		$starsProFlag = $starsProExclude ? 0 : 1;
 		$sql = 'SELECT name, screen_name, image_url, created, message
 			FROM ' . $this->tblMessages  . '
 			WHERE is_hidden = 0 ' . ($lastMessages ? ' AND is_last_message = 1' : '') . '
