@@ -59,3 +59,20 @@ span.sync1, span.sync2 {
 	vertical-align: middle;
 	background-position: top right;
 }
+
+.sync {
+	background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1gQGEw4Lz2lFoQAAASJJREFUOMudkT1Lw1AYhZ9oyeAHdHETXP0HDnXRWevSUUEUXAtZnPwL4hxBrqMgiGIEpziklI7uWlEhq98O1yavQ0hIbFLbPON97zn3nvPCHzyFUBZPIfLVllImkbgj4jdF3s5HM/EUIp9uJPabcucwtInhKaTWcCF4j04+LmF6JbnQOltjcROjyKAC0DpdAqC2eghjE4lwGCqxu6cQDDMzjGd12+yLcrGjjeQHCePVwpf2t6744RuA3aNGNkKGyeVcg5Ae3fCGKnP9HaQLKyJAF5eYzpsmnT2klzszBjVct0052L7mPnAxmeJFHpgx5nnlkVkW2FMb/6+pbpvSDVxxtCWOtuTYX5dbfSJ5mxlo8hx0xNHW6OK0yVPQLifOKzXmF/bpks5b1kywAAAAAElFTkSuQmCC') no-repeat 0 0;
+	padding-left: 20px;
+	display: inline-block;
+	position: relative;
+	top: -20px;
+}
+
+.trackersTable {width: 100%}
+	.trackersTable th {padding: 0 10px 5px 0; color: #666; font-weight: normal; text-align: right}
+	.trackersTable td {padding: 0 0 5px 0}
+	.trackersTable td label {margin-left: 10px; white-space: nowrap}
+
+.uri-list dt {width: 35px}
+	.uri-list dt label {font-size: 16px; color: #000}
+.uri-list dd {padding-left: 75px}

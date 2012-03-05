@@ -18,6 +18,7 @@ Tournaments {ico=tournaments, admin=tournaments}
 Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 	Reviews {link=reviews.reviews}
 		reviews.reviews = Room Profile {link=reviews.reviews#edit|*id*}
+		reviews.roomtrackers = Trackers {link=reviews.roomtrackers|*id*} 
 		reviews.promo = Promotions {link=reviews.promo#|*id*}
 		reviews.pages = Additional Pages {link=reviews.pages#|*id*}
 		reviews.statisticsRoom = Statistics {link=reviews.statistics#|*id*}

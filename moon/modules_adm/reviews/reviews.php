@@ -49,6 +49,11 @@ function events($event,$par)
 		$this->forget();
 		break;
 
+	case 'sync':
+		$this->syncRooms();
+		$this->redirect('#');
+		break;
+
 	case 'get-siteinfo':
 		$r = $this->import_siteinfo();
 		$p = & moon :: page();
@@ -104,6 +109,11 @@ function main($vars)
 			'toolbar' => '',
 			//'hide' =>$f->checked('hide',1)
 		) + $f->html_values();
+		if ($f->get('is_hidden') > 0) {
+			$f->fill(array('is_hidden' => 1));
+		}
+		$m['hide'] = $f->checked('is_hidden', 1);
+		$m['jsName'] = $t->ready_js($f->get('name'));
 
         //$dirLogo=$this->get_dir('sponsor');
 		//if ($m['logo']) $m['logo']=$dirLogo.$m['logo'];
@@ -233,10 +243,11 @@ function main($vars)
 		    }
 		} else {
             //filtras nerodomas kai tuscias sarasas
-			if (!$fm['isOn']) $m['filtras'] = '';
+			//if (!$fm['isOn']) $m['filtras'] = '';
 		}
 
 		$m['goNew']=$this->linkas('#edit');
+		$m['url.sync']=$this->linkas('#sync');
 
 		$title = $win->current_info('title');
         $m['title'] = htmlspecialchars($title);
@@ -350,6 +361,7 @@ function saveItem()
 	$form->fill($_POST);
     $d=$form->get_values();
 	$id=intval($d['id']);
+	$d['is_hidden'] = empty ($d['is_hidden']) ? 0:1;
 
 	//gautu duomenu apdorojimas
 	//$d['hide'] = isset($_POST['hide']) && $_POST['hide'] ? 1:0;
@@ -382,7 +394,7 @@ function saveItem()
     if ($wasRefresh=$form->was_refresh()) return $id;
 
     //save to database
-	$ins=$form->get_values(/*'name',*/ 'bonus_text',/*'bonus_terms',*/'intro_text', 'review_summary'/*, 'review_type'*/, 'editors_rating', 'ratings');
+	$ins=$form->get_values(/*'name',*/'alias', 'bonus_text',/*'bonus_terms',*/'intro_text', 'review_summary'/*, 'review_type'*/, 'editors_rating', 'ratings', 'is_hidden');
 	$ins['review_type'] = 1;
 	$ins['updated'] = time();
 	$db=&$this->db();
@@ -448,6 +460,167 @@ function getStats()
 	$sql='SELECT room_id, SUM(uri_count) as visits, SUM(uri_download_count) as downloads FROM '.$this->table('Stats') . " WHERE day>='".date('Y-m-01')."' GROUP BY room_id ORDER BY NULL";
 	return $this->db->array_query_assoc($sql, 'room_id');
 }
+
+function syncRooms() {
+	if (callPnEvent('adm', 'reviews.export#pokernetwork-rooms', '', $a, FALSE)) {
+		$s = '';
+		if (isset($a['rooms']) && is_array($a['rooms'])) {
+			$s .= $this->syncImportRooms($a['rooms']);
+		}
+		if (isset($a['gallery']) && is_array($a['gallery'])) {
+			$s .= $this->syncImportGallery($a['gallery']);
+		}
+		if (isset($a['deposits']) && is_array($a['deposits'])) {
+			$s .= $this->syncImportDeposits($a['deposits'], $a['deposits_rooms']);
+		}
+		//print_r($a);
+		//exit;
+		moon::page()->alert($s, 'N');
+	}
+	else {
+		moon::page()->alert('Error! Unable to update.');
+	}
+}
+
+function syncImportRooms($a)
+{
+	$inf=array(0,0);
+	if ($kiek=count($a)) {
+		$ins=array();
+		$table=$this->table('Rooms');
+
+		$is=$this->db->array_query("SELECT id, id FROM $table", TRUE);
+		$names = array('id', 'name', 'software_os', 'currency', 'min_deposit', 'suggested_deposit', 'time_limit_to_qualify', 'rake_requirements', 'bonus_int', 'bonus_percent', 'url', 'established', 'auditor', 'network', 'email', 'logo', 'logo_dark', 'favicon', 'logo_big', 'logo_filled');
+		foreach ($a as $v) {
+			$ins=array();
+			$id=$v['id'];
+			foreach ($names as $nm) {
+				$ins[$nm] = $v[$nm];
+			}
+			if (isset($is[$id])) {
+				if ($v['is_deleted']) {
+					$ins['is_hidden'] = 2;
+				}
+				$this->db->update($ins,$table, array('id'=>$id));
+				$inf[0]++;
+				unset($is[$id]);
+			}
+			else {
+				$ins['is_hidden'] = $v['is_deleted'] ? 2 : 1;
+				$ins['sort_1'] = 300;
+				$this->db->insert($ins,$table);
+				$inf[1]++;
+			}
+		}
+		if (count($is)) {
+			$this->db->update(array('is_hidden'=>2), $table, 'id in ('.implode(', ', array_keys($is)).')');
+		}
+	}
+	return "Rooms: updated {$inf[0]}, inserted {$inf[1]}";
+}
+
+
+
+function syncImportGallery($a)
+{
+	$c = 0;
+    if ($kiek=count($a)) {
+		$ins=array();
+		$table=$this->table('RoomsGallery');
+		$dat = $this->db->array_query_assoc("SELECT id,img,updated FROM $table");
+		$is = array();
+		foreach ($dat as $v) {
+			$is[$v['id']] = $v;
+		}
+		$names = array('id', 'room_id', 'img', 'alt', 'updated');
+		foreach ($a as $v) {
+			$id=$v['id'];
+			foreach ($names as $nm) {
+				$ins[$nm] = $v[$nm];
+			}
+			if (isset($is[$id]) && $is[$id]['updated']==$v['updated']) {
+				//nepasikeites
+				unset($is[$id]);
+				continue;
+			}
+
+            if (isset($is[$id])) {
+				$this->db->update($ins,$table, array('id'=>$id));
+				$c++;
+				unset($is[$id]);
+			}
+			else {
+				$this->db->insert($ins,$table);
+				$c++;
+			}
+		}
+		//dabar panaikinam siuksles
+		if (count($is)) {
+			$this->db->query("
+				DELETE FROM $table
+				WHERE id IN ('" . implode("', '", array_keys($is)) . "')"
+				);
+		}
+	}
+	return " | Gallery updated ($c)";
+}
+
+function syncImportDeposits($a,$b)
+{
+	$c=0;
+	if ($kiek=count($a)) {
+		$ins=array();
+		$table=$this->table('Deposits');
+
+		$is=$this->db->array_query("SELECT id, id FROM $table", TRUE);
+		$names = array('id', 'name', 'uri', 'img', 'img_big', 'homepage_url', 'currencies');
+		foreach ($a as $v) {
+			$ins=array();
+			$id=$v['id'];
+			foreach ($names as $nm) {
+				$ins[$nm] = $v[$nm];
+			}
+
+			if (isset($is[$id])) {
+				if ($v['is_deleted']) {
+					$ins['hide'] = 2;
+				}
+				$this->db->update($ins,$table, array('id'=>$id));
+				$c++;
+				unset($is[$id]);
+			}
+			else {
+				$ins['hide'] = $v['is_deleted'] ? 2 : 1;
+				$this->db->insert($ins,$table);
+				$c++;
+			}
+		}
+		if (count($is)) {
+			$this->db->update(array('hide'=>2), $table, 'id in ('.implode(', ', array_keys($is)).')');
+		}
+	}
+	if ($kiek=count($b)) {
+		$ins=array();
+		$table=$this->table('DepositsRooms');
+	    $this->db->query("TRUNCATE TABLE $table");
+		foreach ($b as $roomID=>$v) {
+			if ($v) {
+				$dIDs = explode(',', $v);
+				$roomID = (int) $roomID;
+				foreach ($dIDs as $dID) {
+					$ins[] = "($roomID," . intval($dID) . ")";
+				}
+			}
+
+		}
+		if (count($ins)) {
+			$sql = 'INSERT INTO ' . $table . ' (room_id, deposit_id) VALUES ' . implode(', ', $ins);
+			$this->db->query($sql);
+		}
+	}
+	return " | Deposit options updated ($c)";
+}
+
 
 }
 ?>

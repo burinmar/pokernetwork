@@ -1,0 +1,76 @@
+<% info %>
+titleNew=Add tracker
+titleEdit=Edit tracker
+404=Item not found!
+
+
+<% main %>
+<script type="text/javascript">
+/*<![CDATA[*/
+jQuery(document).ready(function(){
+	jQuery("input[type='text']").change( function() {
+		jQuery("#div-notice").show();
+	});
+	jQuery("#filter-form").submit( function() {
+		var id = jQuery("#div-notice:visible").attr('id');
+		if (id) {
+			var answer = confirm('Unsaved changes to trackers were made. Are you sure you want to navigate away from this page?')
+			if (!answer) {
+				return false;
+			}
+		}
+	});
+});
+/*]]>*/
+</script>
+<div class="tabzoneHeader clrfix">
+	<h1>{title}</h1>
+	{submenu}
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<h2 class="formTitle">Trackers for {title}</h2><span class="clr"></span>
+
+<form action="{!action}" method="post" id="EditForm" name="EditForm" class="aform">
+	<input type="hidden" name="_event_" value="{_event_}"/>{refresh}
+	<input type="hidden" name="room_id" value="{room_id}"/>
+
+	<div class="formButton fr"><input type="submit" value="Save &amp; return" /></div>
+	<div class="alerts alert-w fl" id="div-notice" style="display:none">Notice: Unsaved changes were made</div>
+	<span class="clr"></span>
+	
+	<dl class="uri-list">
+
+		<%loop{rows += uri_row} %>
+		<dt><label>{title}</label></dt>
+		<dd class="w100">
+			<table class="trackersTable">
+				<tr>
+					<th>Visit</th>
+					<td><input name="uri[{id}]" value="{uri}" size="90" maxlength="200" type="text" /></td>
+					<td><label><input type="checkbox" name="iframe[{id}]"  value="{iframe}" />iframe</label></td>
+				</tr>
+				<tr>
+					<th>Download</th>
+					<td><input name="uri_download[{id}]" value="{urid}" size="90" maxlength="200" type="text" /></td>
+					<td></td>
+				</tr>
+				<tr>
+					<th>Bonus code</th>
+					<td><input name="bonus_code[{id}]" value="{bonus_code}" size="40" maxlength="39" type="text" style="width: auto" /></td>
+					<td></td>
+				</tr>
+				<% if {show_marketing_code} %>
+				<tr>
+					<th>Marketing code</th>
+					<td><input name="marketing_code[{id}]" value="{marketing_code}" size="40" maxlength="20" type="text" style="width: auto" /></td>
+					<td></td>
+				</tr>
+				<% end %>
+			</table>
+		</dd>
+		<%end {loop}%>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+
+</form>
+

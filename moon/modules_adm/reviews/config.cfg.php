@@ -7,6 +7,8 @@ $cfg['reviews'] = array(
 	'sys.db' => '',
 
 	'tb.Rooms' => 'rw2_rooms',
+	'tb.RoomsGallery' => 'rw2_gallery',
+	'tb.Trackers' => 'rw2_trackers',
 	'tb.PromoList' => 'rw2_promo_list',
 	'tb.PromotionsMaster' => 'rw2_promo_master',
 	'tb.Reviews' => 'rw2_reviews',

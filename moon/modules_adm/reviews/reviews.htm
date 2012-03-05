@@ -12,6 +12,7 @@ error9=System error!
 <div class="tabzoneHeader clrfix">
 	<h1>Poker Rooms</h1>
 </div>
+<div class="n sync"><a href="{url.sync}" id="sync_promos">Update list</a></div>
 
 <!--# Filtro forma -->
 <% insert {filtras} %>
@@ -191,13 +192,16 @@ $(document).ready(function() {
 	<span class="clr"></span>
 	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
 	<dl>
-		<%if{logo}%>
-			<dt><label class="formHeadline">Logo</label></dt>
-			<dd><div class="fr"><a href="/{alias}/" onclick="window.open(this.href);return false" class="newwindow">Preview in new tab</a></div><img src="{logo}" alt="{name}" /></dd>
-		<%end{logo}%>
+
+		<dt><label class="formHeadline">Logo</label></dt>
+		<dd><div class="fr"><a href="/{alias}/" onclick="window.open(this.href);return false" class="newwindow">Preview in new tab</a></div><%if{logo}%><img src="{logo}" alt="{name}" /><%else{logo}%>{name}<%end{logo}%><br/><label><input type="checkbox" name="is_hidden" id="i_hide" value="{hide}" />Hide this room </label></dd>
+
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd>/ <input type="text" name="alias" id="i_uri" value="{alias}" size="70" maxlength="60" class="required" onfocus="if(this.value=='') {this.value=makeUri('{jsName}');this.focus();}" />	/</dd>
 		
 		<dt><label>Bonus</label></dt>
 		<dd><b>{bonus_int}, &nbsp; &nbsp; {bonus_percent}%</b></dd>
+
 
 		<dt><label for="i_bonus_text">Bonus text</label></dt>
 		<dd><textarea name="bonus_text" id="i_bonus_text" cols="70" rows="2">{bonus_text}</textarea><div class="explain">Short text describing the bonus.</div></dd>
