@@ -93,6 +93,7 @@ function main($vars)
 		//$p->css($t->parse('cssForm'));
 		//$p->css('/img/adm/tabber.css');
 		//$p->js('/js/tabber.js');
+		$p->js('/js/modules_adm/reviews.reviews.js');
 
 		$f = $this->form;
 		$title= $f->get('id') ? $info['titleEdit'].' :: '.$f->get('name') : $info['titleNew'];
