@@ -182,31 +182,70 @@
 	
 	<script type="text/javascript">
 		$(document).ready(function(){
+			var rendered = false;
+			function renderJQplot(elID, data, yLabel) {
+				rendered = true;
+				var plot = $.jqplot(elID, [data], {
+					axes: {
+						xaxis: {
+							renderer: $.jqplot.DateAxisRenderer,
+							label: '',
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+							tickOptions: {
+								//formatString:'%b %#d, %y',
+								labelPosition: 'middle'
+							}
+						},
+						yaxis: {
+							label: yLabel,
+							labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+							min: 0,
+							tickOptions: {
+								formatString: '%d'
+							}
+						}
+					},
+					highlighter: {
+						show: true,
+						sizeAdjust: 7.5
+					},
+					seriesDefaults: {
+						showMarker:false,
+						pointLabels: { show:true, hideZeros: true }
+					}
+				});
+			}
 			$('#showCharts').click(function(e){
 				e.preventDefault();
-				$('#charts').toggle();
+				if (!rendered) {
+					$('#ajaxloading').show();
+					$.ajax({
+						url: '{url.stats-data}',
+						dataType: 'json',
+						success: function(resp) {
+							$('#charts').toggle();
+							if (resp.views) renderJQplot('stats-views', resp.views, 'Views');
+							if (resp.clicks) renderJQplot('stats-clicks', resp.clicks, 'Clicks');
+							$('#ajaxloading').hide();
+						},
+						error: function() {
+							$('#ajaxloading').hide();
+							alert('Unable to load charts data');
+						}
+					});
+				} else $('#charts').toggle();
 			});
 		});
 	</script>
 	<br />
 	<a id="showCharts" href="#" style="border-bottom: 1px dotted">Show charts</a>
+	<img id="ajaxloading" src="/img/rtf/loading.gif" style="display:none;width:20px;padding-left:5px;" />
 	<div id="charts" style="display:none;">
 		<br /><div class="clr">&nbsp;</div>
-		<div id="stats-chart-views"></div>
+		<div id="stats-views" style="height:300px;width:900px; "></div>
 		<br /><br />
-		<div id="stats-chart-clicks"></div>
-		<script type="text/javascript">
-		swfobject.embedSWF(
-			"/img/adm/open-flash-chart.swf", "stats-chart-views", "800", "300",
-			"9.0.0", "/img/adm/open-flash-chart.swf",
-			{"data-file":"{url.chart-data-views}"}
-		);
-		swfobject.embedSWF(
-			"/img/adm/open-flash-chart.swf", "stats-chart-clicks", "800", "300",
-			"9.0.0", "/img/adm/open-flash-chart.swf",
-			{"data-file":"{url.chart-data-clicks}"}
-		);
-		</script>
+		<div id="stats-clicks" style="height:300px;width:900px; "></div>
 	</div>
 <% end %>
 

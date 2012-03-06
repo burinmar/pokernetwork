@@ -45,17 +45,26 @@ class statistics extends moon_com
 			$id = $par[0];
 		}
 		
-		if ($id && isset($_GET['data-views'])) {
+		if ($id && isset($_GET['stats-data'])) {
 			header('content-type: application/json');
 			header('content-type: text/plain');
-			print $this->getGraphData($id, 'views');
-			moon_close();
-			exit;
-		}
-		if ($id && isset($_GET['data-clicks'])) {
-			header('content-type: application/json');
-			header('content-type: text/plain');
-			print $this->getGraphData($id, 'clicks');
+
+			$statsViews = array();
+			$statsClicks = array();
+			$stats = $this->getStatistics($id);
+			foreach ($stats as $date=>$st) {
+				$d = date('Y-m-d',$st['date']);
+				$v = (int)$st['views'];
+				$c = (int)$st['clicks'];
+				$statsViews[] = array($d, $v);
+				$statsClicks[] = array($d, $c);
+			}
+			$ret = array(
+				'views' => $statsViews,
+				'clicks' => $statsClicks
+			);
+			print json_encode($ret);
+			$this->forget();
 			moon_close();
 			exit;
 		}
@@ -187,10 +196,21 @@ class statistics extends moon_com
 			'zonesMode' => $mode == 'zones',
 			'bannersMode' => $mode == 'banners',
 			
-			'url.chart-data-views' => $this->linkas('#'.$mode, str_replace(':', '-', $id), array('data-views'=>1,'t'=>time())),
-			'url.chart-data-clicks' => $this->linkas('#'.$mode, str_replace(':', '-', $id), array('data-clicks'=>1,'t'=>time()))
+			'url.stats-data' => $this->linkas('#'.$mode, str_replace(':', '-', $id), array('stats-data'=>1,'t'=>time()))
 		);
 		
+		// jQPlot start
+		$page->js('/js/jquery.min.js');
+		$page->js('/js/jqplot/jquery.jqplot.min.js');
+		$page->js('/js/jqplot/plugins/jqplot.canvasTextRenderer.min.js');
+		$page->js('/js/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min.js');
+		$page->js('/js/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js');
+		$page->js('/js/jqplot/plugins/jqplot.dateAxisRenderer.min.js');
+		$page->js('/js/jqplot/plugins/jqplot.highlighter.min.js');
+		$page->js('/js/jqplot/plugins/jqplot.pointLabels.min.js');
+		$page->css('/js/jqplot/jquery.jqplot.css');
+		// jQPlot end
+
 		$itemsCampaigns = array();
 		$itemsZones = array();
 		$itemsBanners = array();
@@ -588,67 +608,6 @@ class statistics extends moon_com
 		$this->sqlOrder = 'ORDER BY ' . $ord->sql_order();
 		//gauna linkus orderby{nr}
 		return $links;
-	}
-	
-	
-	function getGraphData($id, $show = 'views')
-	{
-		$tpl = &$this->load_template();
-		$messages = $tpl->parse_array('messages');
-		
-		include_class('php-ofc-library/open-flash-chart');
-		$data = array();
-		$labels = array();
-		$dataMax = 1;
-		
-		$stats = $this->getStatistics($id);
-		
-		$chart = new open_flash_chart();
-		$line = new line();
-		
-		switch ($show) {
-			case 'views':
-				$line->set_key($messages['label_views'], 14);
-				foreach ($stats as $stat) {
-					$labels[] = gmdate('Y-m-d', $stat['date']);
-					$data[] = (int)$stat['views'];
-					$dataMax = max($dataMax, $stat['views']);
-				}
-				$line->set_colour('#5B56B6');
-				break;
-			case 'clicks':
-				$line->set_key($messages['label_clicks'], 14);
-				foreach ($stats as $stat) {
-					$labels[] = gmdate('Y-m-d', $stat['date']);
-					$data[] = (int)$stat['clicks'];
-					$dataMax = max($dataMax, $stat['clicks']);
-				}
-				$line->set_colour('#6BA024');
-				break;
-		}
-		$line->set_values($data);
-		$chart->add_element($line);
-		
-		$x_labels = new x_axis_labels();
-		$x_labels->set_steps(1);
-		$x_labels->set_vertical();
-		$x_labels->set_colour('#000000');
-		$x_labels->set_labels($labels);
-		
-		$x = new x_axis();
-		$x->set_colour('#D7E4A3');
-		$x->set_grid_colour('#D7E4A3');
-		$x->set_offset(FALSE);
-		$x->set_steps(1);
-		$x->set_labels($x_labels);
-		
-		$chart->set_x_axis($x);
-		
-		$y = new y_axis();
-		$y->set_range(0, $dataMax, ceil($dataMax/10));
-		$chart->add_y_axis($y);
-		
-		return $chart->toPrettyString();
 	}
 	
 	function getStatistics($id = 0)
