@@ -24,6 +24,7 @@ class header extends moon_com
 		foreach ($mainMenu as $item) {
 			$tplArgv['menu'] .= $this->partialRenderMenuItem($item, $tpl, $activeMainMenu);
 		}
+		$tplArgv['url.search'] = $navi->getLink('search');
 
 		return $tpl->parse('main', $tplArgv);
 	}

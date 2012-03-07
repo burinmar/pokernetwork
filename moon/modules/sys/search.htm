@@ -1,0 +1,78 @@
+<% tabs %>
+news = {!articles}
+video = {!videos}
+images = {!images}
+
+
+<% main %>
+<div class="widget">
+	<%if{word}%>
+		<h1 class="pageTitle">{!results_for} <span class="searchTerm">{word}</span></h1>
+	<%else{word}%>
+		<h1 class="pageTitle">{pageTitle}</h1>
+	<%end%>
+	<form action="{!action}" class="refineSearchTermsForm">
+		<div>
+			<label class="textField"><span class="a11y"><%if{word}%>{!define}<%else{word}%>{!search_for}<%end%> </span><input type="text" name="q" placeholder="{!search_terms}" value="{word}" /></label>
+			<button type="submit">{!find}</button>
+		</div>
+	</form>
+	<ul class="searchTypes">
+		<%loop{tab-item}%>
+			<%if{on}%>
+				<li class="current"><span>{title}</span> ({count})</li>
+			<%else{on}%>
+				<li><a href="{url}">{title}</a> ({count})</li>
+			<%end%>
+		<%end%>
+		<%if {clear_url} %>
+			<li><a href="{!action}">{!clear}</a></li>
+		<%end%>
+	</ul>
+	{results}
+	{puslapiai}
+</div>
+
+<% itemArticle %>
+<div class="articlePreview articlePreviewWithImage">
+	<a href="{url}"><img src="{img}" alt="{img_alt}" class="fl20" /></a>
+	<h2 class="articleTitle"><a href="{url}">{title}</a></h2>
+	<%if{date}%><p class="articleMeta"><span class="date">{date}</span></p><%end%>
+	<p>{summary}&nbsp;</p>
+	<div class="cb"></div>
+</div>
+
+<% itemVideo %>
+<dl class="videoThumbnail" style="margin-right: 18px">
+	<dt class="image"><a href="{url.video}"><img src="{thumbSrc}" alt="{title}" /><span class="length"> {length}</span></a></dt>
+	<dd class="title"><a href="{url.video}">{title}</a></dd>
+	<dd class="meta"><span class="date">{date}</span></dd>
+</dl>
+
+<% itemsImg %>
+<ul class="gallery">
+	{photos}
+</ul>
+<script type="text/javascript">
+/*<![CDATA[*/
+jQuery(document).ready(function(){
+	jQuery('a[rel*=lightbox]').click(function(e){
+		e.preventDefault();
+	});
+	jQuery('ul.gallery').each(function(){
+		jQuery('a[rel*=lightbox]', this).lightBox();
+	});
+});
+/*]]>*/
+</script>
+
+<% itemImg %>
+<li><dl><dt><a href="{src_big}" rel="lightbox" title="<%if {alt} %>{alt} | <%end%> {event_name} | {tournament_name}"><img src="{src}" alt="{alt}" width="89" /></a></dt><dd>{alt}</dd></dl></li>
+
+
+<% item %>
+<div class="articlePreview">
+	<h2 class="articleTitle"><a href="{url}">{title}</a></h2>
+	<p>{summary}&nbsp;</p>
+	<div class="cb"></div>
+</div>

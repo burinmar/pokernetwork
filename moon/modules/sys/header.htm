@@ -11,8 +11,8 @@
 		<%loop {menu += menu.item} %><li {td:class}><a href="{url}">{title}</a><% insert{submenu} %><ul>{menu}</ul><%end%></li><%end%>
 	</ul>
 	<div class="search">
-		<form action="#">
-			<input type="text" placeholder="Search" />
+		<form action="{url.search}" method="get">
+			<input type="text" name="q" placeholder="Search" />
 			<button type="submit" title="Find"><span class="hide">Find</span></button>
 		</form>
 	</div>
