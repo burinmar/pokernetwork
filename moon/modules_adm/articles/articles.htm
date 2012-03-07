@@ -163,18 +163,17 @@ errorImage3=Article will remain hidden until you upload leading picture!
 			<%end%>
 		</dd>
 
-		<dt><label>Content</label></dt>
-		<dd class="w100">
-			{toolbar}
-			<textarea rows="25" cols="65" name="content" id="i_content" >{content}</textarea>
-		</dd>
-
-		<dt><label for="i_content_type">Content type</label></dt>
-		<dd class="dd100">
+		<dt>
+			<label>Content
 			<select name="content_type" id="i_content_type">
 				<option value="">Regular</option>
 				{optContentType}
 			</select>
+			</label>
+		</dt>
+		<dd class="w100">
+			{toolbar}
+			<textarea rows="25" cols="65" name="content" id="i_content" >{content}</textarea>
 		</dd>
 
 		<dt><label for="i_summary">Summary</label></dt>
@@ -190,7 +189,7 @@ errorImage3=Article will remain hidden until you upload leading picture!
 			<input type="text" name="img_alt" value="{img_alt}" size="70" maxlength="128" />
 			<div class="explain">
 				.jpg, .gif, .png images only.
-				Recomended size - 380x250 px (larger images will be resized)
+				Recomended size - 460x305 px (larger images will be resized)
 			</div><br />
 			<script type="text/javascript">initMultiUpload('img',6);</script>
 			<% if {imgSrc} %>
