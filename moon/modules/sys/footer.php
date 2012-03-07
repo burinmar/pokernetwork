@@ -13,6 +13,7 @@ class footer extends moon_com
 			'url_sitemap' => $navi->getLink('sitemap'),
 			'url_privacy_policy' => $navi->getLink('privacy'),
 			'url_disclaimer' => $navi->getLink('disclaimer'),
+			'url_career' => $navi->getLink('career'),
 		);
 
 		foreach ($mainMenu as $item) {
