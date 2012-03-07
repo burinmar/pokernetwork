@@ -12,3 +12,8 @@ articles.export# = news-export-xml/
 sys.tmp* = temp
 
 sys.banners* = banners/
+
+users.signup#login = login/
+users.signup#logout = logout
+users.forgot* = forgot-password/
+users.profile* = profile/

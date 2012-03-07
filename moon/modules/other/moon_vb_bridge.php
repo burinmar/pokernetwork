@@ -2,6 +2,22 @@
 
 class moon_vb_bridge extends moon_com
 {
+	function properties()
+	{
+		return array(
+			'render' => null
+		);
+	}
+
+	function events($event, $par) 
+	{
+		switch($event) {
+		case 'vb-mock-noexist':
+			$this->use_page('');
+			break;
+		}
+	}
+
 	function main($argv)
 	{
 		switch ($argv['render']) {
@@ -46,6 +62,5 @@ class moon_vb_bridge extends moon_com
 		}
 
 		return $tpl->parse('index_widget:main', $tplArgv);
-
 	}
 }

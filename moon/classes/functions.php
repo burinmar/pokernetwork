@@ -48,9 +48,10 @@ function url_logic($ev = false, $par = false) {
 				return array('sys.captcha#','');
 			case '/homepage-rooms/js.php':
 				return array('reviews.homepage_rooms#js','');
-
 			case '/sys-google/':
 				return array('sys.google#','');
+			case '/vb-mock-noexist':
+				return array('other.moon_vb_bridge#vb-mock-noexist', $_SERVER['REQUEST_URI']);
 		}
 
 		$db = & moon :: db();

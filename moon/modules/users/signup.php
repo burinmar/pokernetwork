@@ -25,7 +25,6 @@ class signup extends moon_com {
 			}
 		}
 		switch ($event) {
-
 			case 'logout' :
 				$u = & moon :: user();
 				if (is_object($loginObj = $this->object('login_object'))) {
