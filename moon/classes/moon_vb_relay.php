@@ -56,14 +56,20 @@ class moon_vb_relay
 		$vbulletin = $this->vbulletin();
 
 		// user exists
-		if (false == ($userInfo = $this->fetchUserinfoFromUsername($username)))
+		if (false == ($userInfo = $this->fetchUserinfoFromUsername($username))) {
+			$this->envVbEnd();
 			return null;
+		}
 		// password is correct
-		if (md5(md5($password) . $userInfo['salt']) != $userInfo['password']) 
+		if (md5(md5($password) . $userInfo['salt']) != $userInfo['password']) {
+			$this->envVbEnd();
 			return null;
+		}
 		// not marked for death
-		if (in_array($userInfo['usergroupid'], array(self::NOACTIVATION_USERGROUP, self::BANNED_USERGROUP)))
+		if (in_array($userInfo['usergroupid'], array(self::NOACTIVATION_USERGROUP, self::BANNED_USERGROUP))) {
+			$this->envVbEnd();
 			return null;
+		}
 
 		$vbulletin->userinfo = $userInfo;
 
@@ -77,7 +83,7 @@ class moon_vb_relay
 
 		$vbulletin->session->save();
 		$this->envVbEnd();
-		
+
 		return $userInfo;
 	}
 

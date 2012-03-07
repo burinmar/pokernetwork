@@ -43,8 +43,9 @@ class header extends moon_com
 			return $tpl->parse('user_block.user', $tplArgv);
 		} else {
 			$tplArgv = array();
-			$tplArgv['url.forgot']   = $this->linkas('users.forgot#');
-			$tplArgv['url.register'] = $this->linkas('users.signup#');
+			$tplArgv['url.forgot']   = '/forums/login.php?do=lostpw';
+			$tplArgv['url.register'] = '/forums/register.php';
+			$tplArgv['url.login']    = '/';
 			$tplArgv['eventLogin'] = 'users.signup#login';
 			/*if (moon::page()->get_local('header.hidesignIn'))
 				return '';*/

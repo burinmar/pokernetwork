@@ -55,16 +55,6 @@ function vbLogin($uName, $uPass, &$err) {
 
 function autologin($cookie)  //pagal cookie
 {
-    $userID= ($pos=strpos($cookie,'_')) ? intval(substr($cookie,$pos+1)):0;
-	if ($userID) {
-		$uInfo=$this->db_login_info($userID,$err);
-		if (is_array($uInfo) && $this->autologin_code($uInfo['id'],$uInfo['email'])===$cookie) {
-			$u=&moon::user();
-			$u->login($uInfo);
-			return true;
-		}
-	}
-	$this->cookie('',time()-3600);//istrinam
 	return false;
 }
 
