@@ -34,6 +34,17 @@ class startup extends moon_com {
 
 
 		$u = & moon :: user();
+
+		if ($u->id() == 0) {
+			include_class('moon_vb_relay');
+			if (null != ($userInfo = moon_vb_relay::getInstance()->loggedIn())) {
+				$loginObj = $this->object('login_object');
+				$loginObj->loginUnconditional($userInfo);
+				// redirect?
+			}
+		}
+		// vb update
+
         //autologinam ir patikrinam teises
 		/*if (is_object($loginObj = $this->object('login_object'))) {
 			if ($u->get_user_id()) {

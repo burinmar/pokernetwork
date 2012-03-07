@@ -87,6 +87,17 @@ class moon_vb_relay
 		return $userInfo;
 	}
 
+	public function loggedIn()
+	{
+		$this->envVbStart();
+		$userInfo = $this->vbulletin()->userinfo;
+		$this->envVbEnd();
+
+		return $userInfo['userid'] != 0
+			? $userInfo
+			: null;
+	}
+
 	private function fetchUserinfoFromUsername($username, $option=0, $languageid=0)
 	{
 		$vbulletin = $this->vbulletin();

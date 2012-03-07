@@ -30,6 +30,24 @@ function getPermissionGroups($group=false, $perm=false) {
 //*************************************
 //             PUBLIC
 //*************************************
+function logout()
+{
+	moon::user()->logout();
+	$this->cookie('',time()-3600);//istrinam prisimink
+}
+
+function login($uName,$uPass,&$err) {
+	if ($userID= $this->get_login_id($uName,$uPass,$err)) {
+		$uInfo=$this->db_login_info($userID,$err);
+		if (is_array($uInfo)) {
+			$u=&moon::user();
+			$u->login($uInfo);
+			return true;
+		}
+	}
+	return false;
+}
+
 function vbLogout()
 {
 	include_class('moon_vb_relay');
@@ -43,14 +61,19 @@ function vbLogin($uName, $uPass, &$err) {
 	$userInfo = moon_vb_relay::getInstance()->login($uName, $uPass);
 	if (null != $userInfo) {
 		$err = 0;
-		moon::user()->login(array(
-			'id'    => intval($userInfo['userid']),
-			'nick'  => $userInfo['username'],
-			'admin' => 0,
-			'email' => $userInfo['email'],
-		));
+		$this->loginUnconditional($userInfo);
 	}
 	return false;
+}
+
+function loginUnconditional($userInfo)
+{
+	moon::user()->login(array(
+		'id'    => intval($userInfo['userid']),
+		'nick'  => $userInfo['username'],
+		'admin' => 0,
+		'email' => $userInfo['email'],
+	));
 }
 
 function autologin($cookie)  //pagal cookie
