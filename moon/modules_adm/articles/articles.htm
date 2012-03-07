@@ -169,6 +169,14 @@ errorImage3=Article will remain hidden until you upload leading picture!
 			<textarea rows="25" cols="65" name="content" id="i_content" >{content}</textarea>
 		</dd>
 
+		<dt><label for="i_content_type">Content type</label></dt>
+		<dd class="dd100">
+			<select name="content_type" id="i_content_type">
+				<option value="">Regular</option>
+				{optContentType}
+			</select>
+		</dd>
+
 		<dt><label for="i_summary">Summary</label></dt>
 		<dd><textarea rows="3" cols="65" name="summary" id="i_summary">{summary}</textarea></dd>
 

@@ -337,11 +337,9 @@ function renderForm($vars)
 	$optRooms = $this->getRoomsForBanner();
 	$m['optRooms'] = $form->options('room_id', $optRooms);
 
-	/*
 	$optContentType = $this->getContentTypes($form->get('content_type'));
 	$m['optContentType'] = $form->options('content_type', $optContentType);
-	*/
-
+	
 	/*
 	//geo target
 	$m['showGeoTarget'] = true;
