@@ -25,12 +25,17 @@
 	<li><a href="{url.register}">Sign Up</a></li>
 	<li><a href="{url.forgot}">Forgot Password</a></li>
 	<li class="signIn">
-		<a href="#" onclick="return false;">Sign In</a>
-		<div class="loginForm">
-			<div class="error" style="display:none">Bad login username or password</div>
-			<input type="text" placeholder="Username" class="username" />
-			<input type="password" placeholder="Password" /><button type="submit" title="Sign In"><span class="hide">Sign In</span></button>
-		</div>
+		<a href="/" onclick="return false;">Sign In</a>
+		<form action="{!action}" method="post" class="loginForm">
+			<input type="hidden" name="event" value="{eventLogin}" />
+			<!--#<div class="error" style="display:none">Bad login username or password</div>-->
+			<input type="text" name="nick" value="" placeholder="Username" class="username" />
+            <input type="password" name="password"  value="" placeholder="Password" /><button type="submit" title="Sign In"><span class="hide">Sign In</span></button>
+			<!--#
+			<label><input type="checkbox" name="remember" value="{remember}" /> {!remember_me}</label>
+			<a href="{url.forgot}" id="urlForgot">{!forgot_password}</a>
+			-->
+		</form>
 	</li>
 </ul>
 <script type="text/javascript">

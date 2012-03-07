@@ -45,8 +45,9 @@ class header extends moon_com
 			$tplArgv = array();
 			$tplArgv['url.forgot']   = $this->linkas('users.forgot#');
 			$tplArgv['url.register'] = $this->linkas('users.signup#');
-			if (moon::page()->get_local('header.hidesignIn'))
-				return '';
+			$tplArgv['eventLogin'] = 'users.signup#login';
+			/*if (moon::page()->get_local('header.hidesignIn'))
+				return '';*/
 			moon::page()->js('/js/jquery/placeholder.min.js');
 			return $tpl->parse('user_block.nouser', $tplArgv);
 		}
