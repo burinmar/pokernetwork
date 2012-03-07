@@ -28,7 +28,7 @@ class signup extends moon_com {
 			case 'logout' :
 				$u = & moon :: user();
 				if (is_object($loginObj = $this->object('login_object'))) {
-					$loginObj->logout();
+					$loginObj->vbLogout();
 				}
 				$p = & moon :: page();
 				$p->back(true);
@@ -43,7 +43,7 @@ class signup extends moon_com {
                 if (!$userID) {
 					if (isset ($_POST['nick']) && isset ($_POST['password'])) {
 						if (is_object($loginObj = $this->object('login_object'))) {
-							$loginObj->login($_POST['nick'], $_POST['password'], $err);
+							$loginObj->vbLogin($_POST['nick'], $_POST['password'], $err);
 							if ($err) {
 								$this->set_var('error', 100 + $err);
 								$this->use_page('Signup');

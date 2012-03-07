@@ -30,25 +30,25 @@ function getPermissionGroups($group=false, $perm=false) {
 //*************************************
 //             PUBLIC
 //*************************************
-function logout()
+function vbLogout()
 {
 	include_class('moon_vb_relay');
 	moon::user()->logout();
-	$this->cookie('',time()-3600);//istrinam prisimink
 	moon_vb_relay::getInstance()->logout();
 }
 
-function login($uName,$uPass,&$err) {
-	if ($userID= $this->get_login_id($uName,$uPass,$err)) {
-		$uInfo=$this->db_login_info($userID,$err);
-		if (is_array($uInfo)) {
-			$u=&moon::user();
-			$u->login($uInfo);
-			$code = $this->autologin_code($uInfo['id'],$uInfo['email']);
-			$lifetime=isset($_POST['remember']) ? 86400*300 : 3600*2 ; //300d : 2h
-			$this->cookie( $code, time()+$lifetime);
-			return true;
-		}
+function vbLogin($uName, $uPass, &$err) {
+	include_class('moon_vb_relay');
+	$err = 1;
+	$userInfo = moon_vb_relay::getInstance()->login($uName, $uPass);
+	if (null != $userInfo) {
+		$err = 0;
+		moon::user()->login(array(
+			'id'    => intval($userInfo['userid']),
+			'nick'  => $userInfo['username'],
+			'admin' => 0,
+			'email' => $userInfo['email'],
+		));
 	}
 	return false;
 }
