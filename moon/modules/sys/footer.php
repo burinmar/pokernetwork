@@ -14,6 +14,8 @@ class footer extends moon_com
 			'url_privacy_policy' => $navi->getLink('privacy'),
 			'url_disclaimer' => $navi->getLink('disclaimer'),
 			'url_career' => $navi->getLink('career'),
+			'url_contact' => $navi->getLink('contacts'),
+			
 		);
 
 		foreach ($mainMenu as $item) {
