@@ -6,7 +6,10 @@ class moon_vb_relay
 	{
 		static $instance;
 		if (!$instance)
-			$instance = new moon_vb_relay(getcwd());
+			$vbCwd = getcwd();
+			if (strpos($vbCwd, DIRECTORY_SEPARATOR . 'forums') === false)
+				$vbCwd .= DIRECTORY_SEPARATOR . 'forums';
+			$instance = new moon_vb_relay($vbCwd);
 
 		return $instance;
 	}
@@ -14,11 +17,12 @@ class moon_vb_relay
 	const BANNED_USERGROUP = 8; // typical default for banned = 19
 	const NOACTIVATION_USERGROUP = 3; // typical default for user awaiting activation
 
-	private $moonCwd = '.';
+	private $vbCwd = '.';
+	private $storedCwd = '.';
 	private $loginSearchpattern = "/[^a-zA-Z0-9]+/";
-	private function __construct($cwd)
+	private function __construct($vbCwd)
 	{
-		$this->moonCwd = $cwd;
+		$this->vbCwd = $vbCwd;
 
 		define('NOPMPOPUP', 1);
 		define('NONOTICES', 1);
@@ -114,12 +118,14 @@ class moon_vb_relay
 
 	private function envVbStart()
 	{
-		chdir($this->moonCwd . DIRECTORY_SEPARATOR . 'forums');
+		$this->storedCwd = getcwd();
+		chdir($this->vbCwd);
 		require_once('./global.php');
 	}
 
 	private function envVbEnd()
 	{
-		chdir($this->moonCwd);
+		chdir($this->storedCwd);
+		$this->storedCwd = '.';
 	}
 }

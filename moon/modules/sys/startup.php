@@ -43,6 +43,8 @@ class startup extends moon_com {
 				// redirect?
 			}
 		}
+		if ($event == 'forum')
+			return ;
 		// vb update
 
         //autologinam ir patikrinam teises
