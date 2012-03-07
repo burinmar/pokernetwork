@@ -1,6 +1,60 @@
 #landing {
-	background: #000;
+	background-color: #000;
+	background-image: url('/img/landing/default/bg.jpg');
+	background-position: top left;
+	background-repeat: no-repeat;
 	margin-bottom: 20px;
 	color: #fff;
+	padding: 40px 65px 65px;
 }
-#landing .article, #landing .article p {color: #fff}
+	#landing .article, #landing .article p {color: #fff}
+	#landing .article a {color: #8feaf5}
+	#landing .article a:hover {color: #fff}
+	#landing .head {
+		padding: 0 0 0 420px;
+		height: 400px;
+	}
+	#landing h1 {
+		font-weight: normal;
+		font-size: 40px;
+		line-height: 44px;
+		margin-bottom: 25px;
+	}
+	#landing .download {
+		background-image: url('/img/landing/default/download.png');
+		background-position: top left;
+		background-repeat: no-repeat;
+		width: 169px;
+		height: 40px;
+		line-height: 40px;
+		text-align: center;
+		font-weight: bold;
+		font-size: 14px;
+		text-transform: uppercase;
+		color: #fff;
+		display: inline-block;
+		margin-bottom: 25px;
+	}
+	#landing table {
+		margin-bottom: 10px;
+		width: 100%;
+	}
+	#landing tr td:first-child {padding-right: 50px;}
+	#landing tr:first-child td {padding-bottom: 10px;}
+	#landing td {color: #fff; text-transform: uppercase}
+		#landing .bonusCode span {margin-top: 5px}
+	#landing td b {
+		display: block;
+		font-size: 20px;
+		font-weight: normal;
+		text-transform: capitalize;
+		white-space: nowrap;
+		margin: 5px 0;
+	}
+	#landing .tzone {
+		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAAHeq0ewAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAALFJREFUeNpidHBwYACCaQxAxrT/QAAQQCDGf0YQCyCAwCwYAAggRpA8UGEmEDMywERBKpgYEGA6QADBjUEGIDEmqF4wYGRkhDEzGeEuQCiYDsRZAAEEk/iPZD4j3E0gCZgLGKECYHOhTAa4s2ACYEFHR0cGZADis4B0AhkoFgEEGIqz9u/fz4AOoCaBnYoSUjAAcyFaSKCEF0GAVTHMR0jBCFcM8sh0dF/CNIHEQfIgdQDH7ohBFJ6WYgAAAABJRU5ErkJggg==') no-repeat left 3px;
+		display: inline-block;
+		font-size: 11px;
+		font-weight: bold;
+		padding-left: 16px;
+	}
