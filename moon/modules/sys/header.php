@@ -81,6 +81,7 @@ class header extends moon_com
 	// max 2 levels
 	private function getMenuTree($items)
 	{
+		uasort($items, array($this, 'childrenLast'));
 		$items2D = array();
 		foreach ($items as $itemNode) {
 			if ($this->isMenuItemHidden($itemNode)) {
@@ -114,6 +115,13 @@ class header extends moon_com
 
 		// usort($items2D, array($this, 'sortEntriesTree'));
 		return $items2D;
+	}
+
+	private function childrenLast($a, $b)
+	{
+		if ($a['parent'] == $b['parent'])
+			return $a['sort'] > $b['sort'];
+		return $a['parent'] > $b['parent'];
 	}
 
 	private function isMenuItemHidden($item) 

@@ -163,7 +163,7 @@ class shared_sitemap {
 		$this->items = array();
 		$db = & moon :: db();
 		$sql = '
-			SELECT id, page_id, parent_id, uri, title, active_tab, menu_tab_class, hide, options, geo_target
+			SELECT id, page_id, parent_id, uri, title, active_tab, menu_tab_class, hide, options, geo_target, sort
 			FROM ' . $this->table . '
 			WHERE is_deleted = 0
 			ORDER BY sort';
@@ -186,6 +186,7 @@ class shared_sitemap {
 			$item['url'] = $r['uri'];
 			$item['id'] = $no;
 			$item['parent'] = $r['parent_id'];
+			$item['sort'] = $r['sort'];
 			$item['page_id'] = $r['page_id'];
 			$item['title'] = $r['title'];
 			if ($r['menu_tab_class'] != '') {
