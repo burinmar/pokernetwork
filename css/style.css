@@ -18,7 +18,7 @@ td {vertical-align: top}
 th {text-align: left; font-weight: normal}
 p {margin-bottom: 10px; color: #000}
 .noMarginBottom {margin-bottom: 0 !important}
-.noMarginRight {margin-right: 0 !important}	
+.noMarginRight {margin-right: 0 !important}
 .noPadding {padding: 0 !important}
 input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}

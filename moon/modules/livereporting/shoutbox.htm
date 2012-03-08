@@ -5,48 +5,40 @@ error3=Please login.
 default_content={!6}
 
 <% viewBox %>
-<div class="widget widgetBlack widgetWithMoreLink widgetShoutbox">
-	<div class="widgetInner">
-		<span class="ctl"></span>
-		<span class="ctr"></span>
-		<span class="cbl"></span>
-		<span class="cbr"></span>
-		<h3 class="widgetTitle">{!7}</h3>
-		<div class="shouts" id="shoutbox">
-			<div id="shoutbox-ajax-content">
-			<%insert{ajax-content}%>
-				<%if{items}%>
-				<%loop{items}%>
-				<dl class="shout">
-					<dt class="shoutAuthor"><a href="{author_url}">{author_nick}</a><% if {canDel} %><a href="{goDel}" onclick="return confirm('{!8}');" class="fr sm10">[{!9}]</a>	<% end %></dt>
-					<dd class="shoutDate">{date}</dd>
-					<dd class="shoutContent">{content}</dd>
-				</dl>
-				<%end%>
-				<%else{items}%>
-				<dl class="shout">
-					<dd class="shoutContent">{!noshouts}</dd>
-				</dl>
-				<%end%>
-			<%end{ajax-content}%>
-			</div>
+<div class="widget widgetShoutbox">
+	<h3 class="widgetTitle">{!7}</h3>
+	<div class="shouts" id="shoutbox">
+		<div id="shoutbox-ajax-content">
+		<%insert{ajax-content}%>
+			<%if{items}%>
+			<%loop{items}%>
+			<dl class="shout">
+				<dt class="shoutAuthor"><a href="{author_url}">{author_nick}</a><% if {canDel} %><a href="{goDel}" onclick="return confirm('{!8}');" class="fr">[{!9}]</a><% end %></dt>
+				<dd class="shoutContent">{content}</dd>
+			</dl>
+			<%end%>
+			<%else{items}%>
+			<dl class="shout">
+				<dd class="shoutContent">{!noshouts}</dd>
+			</dl>
+			<%end%>
+		<%end{ajax-content}%>
 		</div>
-		<%if{not_expired}%>
-		<%insert{form}%>
-			<div class="shoutbox-form">
-				<% if {error} %><span class="shoutboxerror">{error}</span><% end %>
-				<form action="{!action}" method="post"  onsubmit="return (this.content.value.length>0 ? true:false)">
-					<input type="hidden" name="event" value="{event}" />
-					{refresh}
-					<textarea name="content" id="iShoutbox" rows="5" cols="30">{content}</textarea>
-					<label class="button"><button type="submit">{!10}</button></label>
-					<span id="counter" class="symbolCounter"></span>
-				</form>
-			</div>
-		<%end%>
-		<%end%>
-		<p class="more tar"><a href="{goArchive}" class="shoutContent">{!hist}</a></p>
 	</div>
+	<%if{not_expired}%>
+	<%insert{form}%>
+		<div class="shoutbox-form">
+			<% if {error} %><span class="shoutboxerror">{error}</span><% end %>
+			<form action="{!action}" method="post"  onsubmit="return (this.content.value.length>0 ? true:false)">
+				<input type="hidden" name="event" value="{event}" />
+				{refresh}
+				<textarea name="content" id="iShoutbox" rows="5" cols="30">{content}</textarea>
+				<button type="submit" class="button">{!10}</button>
+				<span id="counter" class="symbolCounter"></span>
+			</form>
+		</div>
+	<%end%>
+	<%end%>
 </div>
 			
 <%if{not_expired}%>

@@ -5,40 +5,38 @@ tournaments_archive={!tournaments_archive}
 
 <% index:main %>
 <div class="widget livePokerPage livePokerHomePage">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{!live_poker}</h1>
-		<!-- running -->
-		<% if {running_tournaments} %>
-		{running_tournaments}
-		<% end %>
-		<!-- /running -->
-		<!-- upcoming -->
-		<%if {upcoming_tournaments} %>
-		<p class="tac head1">{!uptour}</p>
-		{upcoming_tournaments}
-		<%else {upcoming_tournaments} %>
-		<div class="livePokerBlock">
-			{tournaments_archive}
-		</div>
-		<% end %>
-		<!-- /upcoming -->
-		<!-- tours -->
-		<% if {tours} %>
-		<div class="livePokerBlock livePokerBlockTourGallery">
-			<p class="head2">{!tournaments}</p>
-			<ul class="tourGallery">
-				{tours}
-			</ul>
-			<div class="cb"></div>
-		</div>
-		<% end %>
-		<!-- /tours -->
-	</div>
+	<h1 class="pageTitle">{!live_poker}</h1>
+	<!-- running -->
+	<% if {running_tournaments} %>
+	{running_tournaments}
+	<% end %>
+	<!-- /running -->
 </div>
+<div class="widget livePokerPage">
+	<!-- upcoming -->
+	<%if {upcoming_tournaments} %>
+	<h3 class="widgetTitle">{!uptour}</h3>
+	<div class="livePokerBlock" style="margin-top: 30px; margin-bottom: 20px">
+		{upcoming_tournaments}
+	</div>
+	<%else {upcoming_tournaments} %>
+	<div class="livePokerBlock">
+		{tournaments_archive}
+	</div>
+	<% end %>
+	<!-- /upcoming -->
+</div>
+
+<!-- tours -->
+<% if {tours} %>
+<div class="widget livePokerBlockTourGallery clrfix">
+	<h3 class="widgetTitle">{!tournaments}</h3>
+	<ul class="tourGallery clrfix">
+		{tours}
+	</ul>
+</div>
+<% end %>
+<!-- /tours -->
 
 <% index:running_tournaments.item %>
 <div class="livePokerBlock">
@@ -107,7 +105,7 @@ tournaments_archive={!tournaments_archive}
 	
 
 <% index:upcoming_tournaments.item %>
-<div class="livePokerBlock upcoming-tournament">
+<div class="upcoming-tournament">
 	<%if {logo} %>
 		<h2 style="background: url('{logo}') {skin_color};" class="imageHead"><a href="{url}"><span class="a11y"><%if {tour} %>{tour} – <%end%>{name}</span></a></h2>
 	<%else {logo} %>
@@ -120,10 +118,10 @@ tournaments_archive={!tournaments_archive}
 		</tbody>
 	</table>
 	<% end %>
-	<% if {tournaments_archive} %>
-	{tournaments_archive}
-	<% end %>
 </div>
+<% if {tournaments_archive} %>
+{tournaments_archive}
+<% end %>
 
 
 <% index:upcoming_tournaments.events.item %>
@@ -134,23 +132,17 @@ tournaments_archive={!tournaments_archive}
 
 
 <% index:tournaments_archive %>
-<p class="tar"><a class="livePokerArchiveButton" href="{url}"><span class="linkText">{!tournaments_archive}</span><span class="cbr"></span></a></p>
+<div class="tar"><a class="livePokerArchiveButton" href="{url}"><span class="linkText">{!tournaments_archive}</span><span class="cbr"></span></a></div>
 
 
 
 <% tournaments-archive:main %>
 <div class="widget livePokerPage livePokerArchive">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{!live_poker}</h1>
-		<ul class="tourArchive">
-		{tournaments}
-		</ul>
-		{paginator}
-	</div>
+	<h1 class="pageTitle">{!live_poker}</h1>
+	<ul class="tourArchive">
+	{tournaments}
+	</ul>
+	{paginator}
 </div>
 
 
@@ -202,15 +194,9 @@ tournaments_archive={!tournaments_archive}
 
 
 <% widget_live:main %>
-<div class="widget liveTournaments">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h2 class="widgetTitle"><span class="sash sashLive"></span>{!live-tournaments}</h2>
-		{tournaments}
-	</div>
+<div class="widget liveTournaments overBreadcrumb">
+	<h2 class="widgetTitle">{!live-tournaments}<span class="live">On Air Now</span></h2>
+	{tournaments}
 </div>
 
 

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <page>
-	<layout>col1</layout>
+	<layout>col</layout>
 
 	<com><part>center</part><name>fake</name></com>
 	<!-- <com><part>right_video</part><name>video.video</name><var name="view">reporting-box</var></com> -->

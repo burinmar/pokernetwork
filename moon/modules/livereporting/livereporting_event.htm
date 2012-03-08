@@ -33,15 +33,10 @@ payouts = payouts | {!payouts}
 
 
 <% log:main %>
-<div class="widget livePokerPage livePokerEventPage" id="{mainContainerId}">
-	<div class="widgetInner" id="widgetInnerMain">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{tournament_name}</h1>
-		<div class="w640 fl20">
-			<h2>{event_name}</h2>
+<div id="body" class="clrfix wColNarrow">
+	<div class="left fl">
+		<div class="widget livePokerPage livePokerEventPage" id="{mainContainerId}">
+			<h1 class="pageTitle">{tournament_name} › <span>{event_name}</span></h1>
 			<%if {list.days} %>
 			<div class="dayListing">
 				<span class="dayListingTitle">{!days} </span>
@@ -50,10 +45,12 @@ payouts = payouts | {!payouts}
 				</ul>
 			</div>
 			<%end%>
-			<ul class="tabs">
-				{list.tabs}
-			</ul>
-			{paginator}
+			<div class="filterTabs filterTabsTopLine clrfix">
+				<b>Show:</b>
+				<ul>
+					{list.tabs}
+				</ul>
+			</div>
 
 			<%if {launch_live_count} %>
 			<script type="text/javascript">
@@ -71,231 +68,195 @@ payouts = payouts | {!payouts}
 			{list.entries}
 			{paginator}
 		</div>
-		<div class="w300 fl">
-			<p class="eventListTournamentListButtons">
-				<%if {eventlist.singleevent} %>
-					<a class="eventListButton empty"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
-				<%else {eventlist.singleevent} %>
-					<a href="{url_events}" class="eventListButton" id="widgetELShow" onclick="return false;"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
-				<%end%>
+	</div>
+	<div class="right fr">
+		<p class="eventListTournamentListButtons">
+			<%if {eventlist.singleevent} %>
+				<a class="eventListButton empty"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
+			<%else {eventlist.singleevent} %>
+				<a href="{url_events}" class="eventListButton" id="widgetELShow" onclick="return false;"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
+			<%end%>
 
-				<a href="{url_events}" class="tournamentListButton"><span class="linkText">{!tournament}<span class="cbr"></span></span></a>
-			</p>
-			<div class="widget widgetWithMiniPager widgetPopup widgetEventsList" id="widgetEL">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<h3 class="widgetTitle">{!events_list}</h3>
-					<ul <%if {eventlist.paged} %>style="min-height: 220px;"<%end%>>
-					{eventlist.list.events}
-					</ul>
-					<a href="" class="widgetHideLink" title="Close" id="widgetELHide"><span class="a11y">Close</span></a>
-					<div class="widgetMiniPager">
-						<a href="#" class="previous" title="Previous" id="widgetELPrev">‹ Previous</a>
-						<span>
-							{eventlist.list.events.pager}
-						</span>
-						<a href="#" class="next" title="Next" id="widgetELNext">Next ›</a>
-					</div>
-				</div>
+			<a href="{url_events}" class="tournamentListButton"><span class="linkText">{!tournament}<span class="cbr"></span></span></a>
+		</p>
+		<div class="widget widgetWithMiniPager widgetPopup widgetEventsList" id="widgetEL">
+			<h3 class="widgetTitle">{!events_list}</h3>
+			<ul <%if {eventlist.paged} %>style="min-height: 220px;"<%end%>>
+			{eventlist.list.events}
+			</ul>
+			<a href="" class="widgetHideLink" title="Close" id="widgetELHide"><span class="a11y">Close</span></a>
+			<div class="widgetMiniPager">
+				<a href="#" class="previous" title="Previous" id="widgetELPrev">‹ Previous</a>
+				<span>
+					{eventlist.list.events.pager}
+				</span>
+				<a href="#" class="next" title="Next" id="widgetELNext">Next ›</a>
 			</div>
-			<%if {showControls} %>
-			<div class="widget widgetChipsCount">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<h3 class="widgetTitle">Controls</h3>
-					{sidebar_controls}
-				</div>
-			</div>
-			<%end%>
-			<%if {widget.winner} %>
-			<div class="widget widgetEventWinner">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<dl>
-						<dt class="tar">{!winner}</dt>
-						<dd><%if {winner.winnerurl} %>
-							<a href="{winner.winnerurl}"><%if {winner.winnerimg} %><img width="48" height="48" alt="" src="{winner.winnerimg}" class="fl10" /><%end%>{winner.winner}</a>
-							<%else {winner.winnerurl} %>
-							{winner.winner}
-							<%end%>
-						</dd>
-					</dl>
-					<%if {winner.cards} %>
-					<dl>
-						<dt class="tar">{!winning_hand}</dt>
-						<dd>{winner.cards}</dd>
-					</dl>
-					<%end%>
-					<%if {winner.prize} %>
-					<dl>
-						<dt class="tar">{!prize}</dt>
-						<dd>{winner.prize}</dd>
-					</dl>
-					<%end%>
-				</div>
-			</div>
-			<%end%>
-			<%if {widget.latest_updates} %>
-			<div class="widget widgetLatestUpdates">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<dl>
-						<%if {round.round_block} %>
-						<dt>{!level_info}</dt>
-						<dd>
-							<dl>
-								<dt>{!round}</dt>
-								<dd>{round.round}</dd>
-							</dl>
-							<%if {round.limit_not_blind} %>
-							<dl>
-								<dt>Limits</dt>
-								<dd>{round.smallblind} / {round.bigblind}</dd>
-							</dl>
-							<%else {round.limit_not_blind} %>
-							<dl>
-								<dt>{!blinds}</dt>
-								<dd>{round.smallblind} / {round.bigblind}</dd>
-							</dl>
-							<%end%>
-							<dl>
-								<dt>{!ante}</dt>
-								<dd>{round.ante}</dd>
-							</dl>
-						</dd>
-						<%end%>
-						<%if {pl.players_block} %>
-						<dt>{!players_info}</dt>
-						<dd>
-							<%if {pl.ptotal} %>
-							<dl>
-								<dt>{!players_left}</dt>
-								<dd>{pl.pleft}</dd>
-							</dl>
-							<dl>
-								<dt>{!entries}</dt>
-								<dd>{pl.ptotal}</dd>
-							</dl>
-							<%end%>
-							<%if {pl.chips_avg} %>
-							<dl>
-								<dt>{!average_chip_stack}</dt>
-								<dd>{pl.chips_avg}</dd>
-							</dl>
-							<dl>
-								<dt>{!chips_total}</dt>
-								<dd>{pl.chips_total}</dd>
-							</dl>
-							<%end%>
-							<%if {pl.prizepool} %>
-							<dl>
-								<dt>{!prize_pool}</dt>
-								<dd>{pl.prizepool}</dd>
-							</dl>
-							<%end%>
-						</dd>
-						<%end%>
-						<%if {npj.npj_block} %>
-						<dt>{!next_pay_jump}</dt>
-						<dd>{!place} {npj.place}, {npj.sum}</dd>
-						<%end%>
-					</dl>
-				</div>
-			</div>
-			<%end%>
-			<% if {widget.top_chip_counts} %>
-			<div class="widget widgetChipsCount">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<h3 class="widgetTitle">{!top_chip_counts}</h3>
-					<table class="chipsCount tal" summary="{!chip_statistics}">
-						<col class="position" />
-						<col class="player" />
-						<col class="sponsor" />
-						<col class="chipsTotal" />
-						<col class="chipsDelta" />
-						<tbody>
-							{chips.top_chip_counts}
-						</tbody>
-					</table>
-				</div>
-			</div>
-			<% end %>
-			{right_video}
-			<div id="lrep_right_1" class="js-adset bannerFull" style="display:none;"></div>
-			<script type="text/javascript">
-			/*<![CDATA[*/
-			addBanner('lrep_right_1', 'lrep:right:1');
-			/*]]>*/
-			</script>
-			{right_twitter_stars_pro}
-			{right_twitter}
-			<div id="lrep_right_2" class="js-adset bannerFull" style="display:none;"></div>
-			<script type="text/javascript">
-			/*<![CDATA[*/
-			addBanner('lrep_right_2', 'lrep:right:2');
-			/*]]>*/
-			</script>
-			{right_shoutbox}
-			<% if {list.event_photos} %>
-			<div class="widget widgetWithMoreLink widgetPhotos">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<h3 class="widgetTitle">{!photos}</h3>
-					<ul class="gallery lightbox-gallery">
-						{list.event_photos}
-					</ul>
-					<p class="more tar"><a href="{url.more_photos}">{!view_more_photos}</a></p>
-				</div>
-			</div>
-			<% end %>
-			<% if {com_social} %>
-			<div class="widget widgetTwitterLinks">
-				<div class="widgetInner">
-					<ul><li class="twitterLink1"><a href="http://twitter.com/PokerNews_Live">Live Reporting<br />on Twitter</a></li><li class="twitterLink2"><a href="http://twitter.com/pokernews/">PokerNews<br />on Twitter</a></li></ul>
-				</div>
-			</div>
-			<%end%>
-			<%if {nl_social} %>
-			<div class="widget followUs">
-				<div class="widgetInner">
-					<span class="ctl"></span>
-					<span class="ctr"></span>
-					<span class="cbl"></span>
-					<span class="cbr"></span>
-					<h3 class="widgetTitle">Volg Ons</h3>
-					<ul>
-						<li class="twitter"><a href="http://twitter.com/pokernewsnl">Twitter</a></li>
-						<li class="facebook"><a href="http://www.facebook.com/PokerNewsNL">Facebook</a></li>
-						<li class="youtube"><a href="http://www.youtube.com/user/pokernewsnl">YouTube</a></li>
-						<li class="hyves"><a href="http://pokernews.hyves.nl/">Hyves</a></li>
-					</ul>
-				</div>
-			</div>
-			<%end%>
 		</div>
-		<div class="cb"></div>
+		<%if {showControls} %>
+		<div class="widget widgetChipsCount">
+			<h3 class="widgetTitle">Controls</h3>
+			{sidebar_controls}
+		</div>
+		<%end%>
+		<%if {widget.winner} %>
+		<div class="widget widgetEventWinner">
+			<h3 class="widgetTitle">{!winner}</h3>
+			<%if {winner.winnerimg} %><img width="48" height="48" alt="" src="{winner.winnerimg}" /><br /><%end%>
+			<table>
+				<tr>
+					<th>{!winner}</th>
+					<td class="tar"><%if {winner.winnerurl} %><a href="{winner.winnerurl}">{winner.winner}</a><%else {winner.winnerurl} %>{winner.winner}</td>
+				</tr>
+				<%if {winner.cards} %>
+				<tr>
+					<th>{!winning_hand}</th>
+					<td class="tar">{winner.cards}</td>
+				</tr>
+				<%end%>
+				<%if {winner.prize} %>
+				<tr>
+					<th>{!prize}</th>
+					<td class="tar">{winner.prize}</td>
+				</tr>
+				<%end%>
+			</table>
+		</div>
+		<%end%>
+		<%if {widget.latest_updates} %>
+			<div class="widget widgetLatestUpdates">
+			<h3 class="widgetTitle">{!level_info}</h3>
+			<table>
+				<%if {round.round_block} %>
+				<tr>
+					<th>{!round}</th>
+					<td class="tar">{round.round}</td>
+				</tr>
+				<%if {round.limit_not_blind} %>
+				<tr>
+					<th>Limits</th>
+					<td class="tar">{round.smallblind} / {round.bigblind}</td>
+				</tr>
+				<%else {round.limit_not_blind} %>
+				<tr>
+					<th>{!blinds}</th>
+					<td class="tar">{round.smallblind} / {round.bigblind}</td>
+				</tr>
+				<%end%>
+				<tr>
+					<th>{!ante}</th>
+					<td class="tar">{round.ante}</td>
+				</tr>
+				<%end%>
+			</table>
+			</div>
+			<div class="widget widgetLatestUpdates">
+				<h3 class="widgetTitle">{!players_info}</h3>
+				<%if {pl.players_block} %>
+				<table>
+					<%if {pl.ptotal} %>
+					<tr>
+						<th>{!players_left}</th>
+						<td class="tar">{pl.pleft}</td>
+					</tr>
+					<tr>
+						<th>{!entries}</th>
+						<td class="tar">{pl.ptotal}</td>
+					</tr>
+					<%end%>
+					<%if {pl.chips_avg} %>
+					<tr>
+						<th>{!average_chip_stack}</th>
+						<td class="tar">{pl.chips_avg}</td>
+					</tr>
+					<tr>
+						<th>{!chips_total}</th>
+						<td class="tar">{pl.chips_total}</td>
+					</tr>
+					<%end%>
+					<%if {pl.prizepool} %>
+					<tr>
+						<th>{!prize_pool}</th>
+						<td class="tar">{pl.prizepool}</td>
+					</tr>
+					<%end%>
+				</table>
+				<%end%>
+				<%if {npj.npj_block} %>
+				<table>
+					<tr>
+						<th>{!next_pay_jump}</th>
+						<td class="tar">{!place} {npj.place}, {npj.sum}</td>
+					</tr>
+				</table>
+				<%end%>
+			</div>
+		<%end%>
+		<% if {widget.top_chip_counts} %>
+		<div class="widget widgetChipsCount">
+			<h3 class="widgetTitle">{!top_chip_counts}</h3>
+			<table class="chipsCount tal" summary="{!chip_statistics}">
+				<col class="position" />
+				<col class="player" />
+				<col class="sponsor" />
+				<col class="chipsTotal" />
+				<col class="chipsDelta" />
+				<tbody>
+					{chips.top_chip_counts}
+				</tbody>
+			</table>
+		</div>
+		<% end %>
+		<div id="lrep_right_1" class="js-adset bannerFull" style="display:none;"></div>
+		<script type="text/javascript">
+		/*<![CDATA[*/
+		addBanner('lrep_right_1', 'lrep:right:1');
+		/*]]>*/
+		</script>
+		{right_twitter_stars_pro}
+		{right_twitter}
+		<div id="lrep_right_2" class="js-adset bannerFull" style="display:none;"></div>
+		<script type="text/javascript">
+		/*<![CDATA[*/
+		addBanner('lrep_right_2', 'lrep:right:2');
+		/*]]>*/
+		</script>
+		{right_shoutbox}
+		<% if {list.event_photos} %>
+		<div class="widget widgetWithMoreLink widgetPhotos">
+			<h3 class="widgetTitle">{!photos}</h3>
+			<ul class="gallery lightbox-gallery">
+				{list.event_photos}
+			</ul>
+			<a href="{url.more_photos}"  class="more">{!view_more_photos}</a>
+		</div>
+		<% end %>
+		<% if {com_social} %>
+		<div class="widget widgetTwitterLinks">
+			<div class="widgetInner">
+				<ul><li class="twitterLink1"><a href="http://twitter.com/PokerNews_Live">Live Reporting<br />on Twitter</a></li><li class="twitterLink2"><a href="http://twitter.com/pokernews/">PokerNews<br />on Twitter</a></li></ul>
+			</div>
+		</div>
+		<%end%>
+		<%if {nl_social} %>
+		<div class="widget followUs">
+			<div class="widgetInner">
+				<span class="ctl"></span>
+				<span class="ctr"></span>
+				<span class="cbl"></span>
+				<span class="cbr"></span>
+				<h3 class="widgetTitle">Volg Ons</h3>
+				<ul>
+					<li class="twitter"><a href="http://twitter.com/pokernewsnl">Twitter</a></li>
+					<li class="facebook"><a href="http://www.facebook.com/PokerNewsNL">Facebook</a></li>
+					<li class="youtube"><a href="http://www.youtube.com/user/pokernewsnl">YouTube</a></li>
+					<li class="hyves"><a href="http://pokernews.hyves.nl/">Hyves</a></li>
+				</ul>
+			</div>
+		</div>
+		<%end%>
 	</div>
 </div>
-
 <% log:days.active %>
 <li class="<%if {nextDay}%>nextDay <%end%>current"><span>{name}</span></li>
 
@@ -309,15 +270,15 @@ payouts = payouts | {!payouts}
 
 
 <% log:tab.active %>
-<li class="current"><a href="{url}">{name}<span class="edge"></span></a></li>
+<li class="on"><a href="{url}">{name}</a></li>
 
 
 <% log:tab.inactive %>
-<li><a href="{url}">{name}<span class="edge"></span></a></li>
+<li><a href="{url}">{name}</a></li>
 
 
 <% log:tab.inactive_empty %>
-<li class="empty"><a>{name}<span class="edge"></span></a></li>
+<li class="empty"><a>{name}</a></li>
 
 
 <% log:top_chip_counts.item %>

@@ -14,7 +14,7 @@
 .isAdmBox .widget input[type="password"]:focus {
 	border-color: #0098c1;
 }
-
+.a11y {display: none}
 
 /* Widget title */
 .livePokerPage .widgetTitle {
@@ -23,9 +23,8 @@
 .livePokerHomePage .widgetTitle {
 	margin-bottom: -1px;
 }
-.livePokerPage .w300 {
-	position: relative;
-}
+
+.livePokerPage .pageTitle span {font-size: 14px; font-weight: normal}
 
 /* Card */
 .card {
@@ -44,13 +43,8 @@
 }
 
 /* Live Poker block */
-.livePokerBlock {
-	background: url('/img/live_poker/tour_bg.png') repeat-x left top;
-	border-top: 1px solid #bdc3c7;
-	margin-left: -9px;
-	margin-right: -9px;
-	padding: 15px;
-}
+.livePokerBlock {margin: 0 18px 30px;}
+.livePokerFeature p {color: #fff}
 .livePokerPage h2 {
 	background-position: left top;
 	border-radius: 6px;
@@ -70,6 +64,7 @@
 		margin-bottom: 20px;
 		} .livePokerTourIntro h2.imageHead {
 		margin: 15px 5px 20px 5px;
+		width: 700px;
 	}
 .livePokerPage h2.imageHead a,
 .livePokerPage h2.imageHead span.a {
@@ -86,7 +81,7 @@
 	*padding-top: 40px; /* IE7 */
 }
 .livePokerPage .tourLogo {
-	margin-top: 30px;
+	margin: 30px 0;
 	text-align: center;
 }
 .livePokerTourIntro h2 {
@@ -100,24 +95,6 @@
 	line-height: normal;
 }
 
-/* Shoutbox History page */
-.shoutboxHistory .shoutboxHistoryTitle {
-	border-bottom: 1px dotted #bec5c9;
-	font-size: 18px;
-	line-height: normal;
-	margin-top: 20px;
-	padding-bottom: 10px;
-}
-.shoutboxHistory .shout {
-	border-bottom: 1px dotted #bec5c9;
-	display: block;
-	margin-top: 15px;
-	padding-bottom: 15px;
-}
-.shoutboxHistory .shoutDate {
-	color: #5d5d5d;
-	font-size: 11px;
-}
 
 /* Tournament background */
 .livePokerFeature {
@@ -302,7 +279,7 @@ div.articleMeta {margin-bottom: 1.5em}
 .livePokerArchiveButton,
 .livePokerArchiveButton:visited {
 	background: url('/img/forms/buttons_flat.png') no-repeat left top;
-	color: #0069d0;
+	color: #0050bd;
 	display: inline-block;
 	font-size: 14px;
 	height: 31px;
@@ -402,20 +379,17 @@ div.articleMeta {margin-bottom: 1.5em}
 }
 .tourGallery {
 	display: block;
-	font-family: Arial, Helvetica, sans-serif;
 	list-style: none;
-	margin-right: -10px;
 }
 .tourGallery li {
-	background: #f2f2f2;
 	display: inline-block;
 	float: left;
-	height: 166px;
-	margin: 10px 10px 0 0;
+	height: 150px;
+	margin: 0 10px 10px 0;
 	position: relative;
 	text-align: center;
 	vertical-align: top;
-	width: 166px;
+	width: 174px;
 }
 .tourGallery .sashLive {
 	background: url('/img/live_poker/sash_live_small.png') no-repeat;
@@ -437,8 +411,8 @@ div.articleMeta {margin-bottom: 1.5em}
 }
 .tourGallery dt {
 	display: block;
-	height: 121px;
-	line-height: 121px;
+	height: 110px;
+	line-height: 110px;
 	text-align: center;
 }
 .tourGallery dt img {
@@ -451,67 +425,37 @@ div.articleMeta {margin-bottom: 1.5em}
 	text-align: center;
 	padding: 0 20px;
 }
-.tourGallery a {
-	color: #000000;
-	text-decoration: none;
-}
 
 /* Event day listing */
 .dayListing {
-	color: #5d5d5d;
-	display: block;
-	height: 24px;
-	line-height: 22px;
-	list-style: none;
-	margin: 5px 0;
+	margin-top: -10px;
+	margin-bottom: 20px;
+	font-size: 17px;
+	font-weight: bold;
+	text-transform: uppercase;
+	color: #a9a79a;
 }
-.dayListing .dayListingTitle {
-	border-top: 1px solid transparent;
-	display: block;
-	float: left;
-	margin-right: 5px;
-}
-.dayListing ul {
-	display: inline;
-}
+.dayListing ul {display: inline;}
 .dayListing li {
-	border: 1px solid #c9c9c9;
-	border-left: 0;
-	display: block;
-	float: left;
-	height: 22px;
-	text-align: center;
-	width: 22px;
+	display: inline-block;
+	margin-right: 10px;
 }
-.dayListing li.nextDay {
-	border-left: 1px solid #c9c9c9;
-	margin-left: 5px;
+.dayListing li a {color: #a9a79a;}
+.dayListing li.current span {
+	color: #0050bd
 }
-.dayListing li.current {
-	background: url('/img/live_poker/daylisting_bg.png') repeat-x left -25px;
-	border-color: #000000;
-	color: #ffffff;
-}
-.dayListing li a {
-	background: url('/img/live_poker/daylisting_bg.png') repeat-x left top;
-	color: #000000;
-	display: block;
-	text-decoration: none;
-}
-.dayListing li a:hover {
-	background-position: left -50px;
-}
+
 
 /* Tournament Archive */
 .tourArchive {
 	list-style: none;
 	margin-bottom: 10px;
-	margin-left: -9px;
-	margin-right: -9px;
+	margin-left: -10px;
+	margin-right: -10px;
 }
 .tourArchive li {
-	border-bottom:1px dotted #CFCFCF;
-	margin-bottom:10px;
+	border-bottom: 1px dotted #CFCFCF;
+	margin-bottom: 10px;
 	padding: 0 10px 10px 10px;
 }
 .tourArchive ul {
@@ -527,12 +471,12 @@ div.articleMeta {margin-bottom: 1.5em}
 	color: #000000;
 }
 .tourArchive li li a:hover {
-	color: #0069d0;
+	color: #0050bd;
 }
 .tourArchive li img {
 }
 .tourArchive .fr {
-	width: 428px;
+	width: 460px;
 }
 .tourArchive li p {
 	margin-bottom:0;
@@ -555,58 +499,48 @@ div.articleMeta {margin-bottom: 1.5em}
  * TABLES
  */
 /* Tournament Schedule and Tournament Leaderboard */
-.tourSchedule,
+.tourSchedule {margin-bottom: 20px;}
+.tourSchedule .live {margin-left: 5px}
+.tourSchedule td {
+	padding: 10px;
+}
 .tourWinners {
-	border-collapse: separate;
-	border-spacing: 1px;
 	margin-bottom: 20px;
 	width: 100%;
 }
 .tourSchedule th,
 .tourWinners th {
-	color: #4d4d4d;
-	font-weight: normal;
+	color: #515151;
 	font-size: 11px;
 	line-height: 13px;
-}
-.tourSchedule tbody tr {
-	height: 52px;
-	*height: 36px; /* IE7 */
+	text-transform: uppercase;
+	font-weight: bold;
+	padding-bottom: 5px;
 }
 .tourWinners tbody tr {
 	height: 68px;
 	*height: 52px; /* IE7 */
 }
-.tourSchedule td,
 .tourWinners td {
-	background: #f5f5f5;
 	padding: 8px 10px;
 	vertical-align: top;
 }
-.tourWinners td {
+.tourWinners tr td {
 	padding: 5px;
+	background: #ecebe4;
 }
-.tourSchedule tr.odd td,
-.tourWinners tr.odd td {
-	background: #eaeaea;
+.tourWinners tr:nth-child(even) td {
+	background: transparent;
 }
+
 .tourSchedule td a.eventTitle,
 .tourWinners td a.eventTitle {
-	color: #000000;
+	font-weight: bold;
 }
-.tourSchedule .eventVenue,
-.tourWinners .eventVenue {
-	color: #4d4d4d;
-	font-style: italic;
-}
-.tourSchedule .eventDates {
-	font-style: italic;
-}
-.tourSchedule .eventUpcoming,
+
+.tourSchedule .eventDates,
 .tourWinners .eventDates {
-	color: #4d4d4d;
-}
-.tourWinners .eventDates {
+	color: #000;
 	font-size: 11px;
 }
 .tourSchedule tr.liveCoverage td {
@@ -673,12 +607,6 @@ div.articleMeta {margin-bottom: 1.5em}
 }
 .chipsCount .sponsor img {
 	vertical-align: middle;
-}
-.chipsCount tr.odd {
-	background: #f2f2f2;
-}
-.rightSide .chipsCount tr.odd {
-	background: transparent;
 }
 .chipsCount .busted .numeric {
 	color: #4d4d4d;
@@ -775,7 +703,7 @@ div.articleMeta {margin-bottom: 1.5em}
 .eventListTournamentListButtons .eventListButton,
 .eventListTournamentListButtons .tournamentListButton {
 	background: url('/img/forms/buttons_flat.png') no-repeat left -40px;
-	color: #0069d0;
+	color: #0050bd;
 	display: inline-block;
 	float: left;
 	font-family: Arial, Helvetica, sans-serif;
@@ -802,7 +730,7 @@ div.articleMeta {margin-bottom: 1.5em}
 }
 .eventListTournamentListButtons .tournamentListButton:hover,
 .eventListTournamentListButtons .tournamentListButton:active {
-	color: #0069d0;
+	color: #0050bd;
 }
 .eventListTournamentListButtons .eventListButton .linkText {
 	background: url('/img/live_poker/arrows_event_list.png') no-repeat right top;
@@ -832,31 +760,33 @@ div.articleMeta {margin-bottom: 1.5em}
 }
 
 /* Live Tournaments widget */
-.liveTournaments .sashLive {
-	background: url('/img/live_poker/sash_live_xsmall.png') no-repeat left top;
-	display: block;
-	height: 36px;
+.live {
+	background: #ff0c00;
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: bold;
+	font-size: 12px;
+	padding: 0 2px;
+	line-height: 14px;
+	display: inline-block;
+}
+.liveTournaments .live {
 	position: absolute;
-	right: -1px;
-	top: -5px;
-	width: 36px;
+	right: 5px;
+	top: 16px;
 }
-.liveTournaments .widgetInner {
-	padding-bottom: 0;
-}
+.liveTournaments .widgetTitle {margin-bottom: 0}
 .liveTournaments .tournament {
 	border-top: 1px solid #bec5c9;
 	display: block;
-	margin: 0 -9px;
+	margin: 0 -10px;
 	padding: 7px 10px;
-	position: relative;
-	top: -1px;
-}
+} .liveTournaments .tournament:first-of-type {border: 0 none}
 .liveTournaments .tournament ul {
 	list-style: none;
 }
 .liveTournaments .tournament .tournamentTitle {
-	color: #0069d0;
+	color: #0050bd;
 	font-size: 12px;
 }
 .liveTournaments .tournament a {
@@ -864,61 +794,13 @@ div.articleMeta {margin-bottom: 1.5em}
 }
  
 /* Event winner widget */
-.widgetEventWinner .ctl,
-.widgetEventWinner .ctr {
-	background-image: url('/img/widget_bg.png');
-	height: 5px;
-}
-.widgetEventWinner .widgetInner {
-	padding: 5px 10px;
-}
-.widgetEventWinner dl {
-	margin-top: 2px;
-}
-.widgetEventWinner dl dt {
-	color: #5d5d5d;
-	display: inline-block;
-	padding: 5px;
-	vertical-align: top;
-	width: 90px;
-	*display: inline; /* IE7 */
-	*zoom: 1; /* IE7 */
-}
-.widgetEventWinner dl dd {
-	background: #f5f5f5;
-	display: inline-block;
-	padding: 5px 10px;
-	vertical-align: top;
-	width: 150px;
-	*display: inline; /* IE7 */
-	*zoom: 1; /* IE7 */
-}
-
 /* Latest updates widget */
-.widgetLatestUpdates .widgetInner {
-	padding-bottom: 5px;
+.widgetLatestUpdates table, .widgetEventWinner table {
+	width: 100%;
 }
-.widgetLatestUpdates .ctl,
-.widgetLatestUpdates .ctr {
-	background-image: url('/img/widget_bg.png');
-	height: 5px;
-}
-.widgetLatestUpdates dl dt {
-	color: #0069d0;
-}
-.widgetLatestUpdates dl dd {
-	padding-left: 20px;
-}
-.widgetLatestUpdates dl dd dt {
-	color: #5d5d5d;
-	display: inline-block;
-	width: 120px;
-	*display: inline; /* IE7 */
-	*zoom: 1; /* IE7 */
-}
-.widgetLatestUpdates dl dd dd {
-	display: inline;
-	padding-left: 0;
+.widgetLatestUpdates table th, .widgetEventWinner table th {
+	color: #000;
+	font-weight: bold;
 }
 
 /* Twitter tracker widget */
@@ -962,90 +844,35 @@ div.articleMeta {margin-bottom: 1.5em}
 
 /* Shoutbox widget */
 .widgetShoutbox .shouts {
-	background: #1a1a1a;
-	border: 1px solid #2b2b2b;
-	max-height: 360px;
+	max-height: 200px;
 	margin: 10px 0;
 	overflow: auto;
 }
 .widgetShoutbox .shout {
-	border-bottom: 1px solid #2b2b2b;
-	font-family: Arial, Helvetica, sans-serif;
 	display: block;
-	padding: 10px;
 }
 .widgetShoutbox .shout:last-child {
 	border-bottom: 0;
 }
 .widgetShoutbox .shoutAuthor,
 .widgetShoutbox .shoutAuthor a {
-	color: #fff9c4;
-}
-.widgetShoutbox .shoutDate {
-	color: #8d8d8d;
-	font-size: 11px;
+	color: #0050bd;
 }
 .widgetShoutbox .shoutContent {
-	color: #ffffff;
+	color: #000;
 	overflow: hidden;
 	text-overflow: ellpsis;
 	-o-text-overflow: ellipsis;
+	margin-bottom: 10px;
 
 }
 .widgetShoutbox textarea {
-	background: #1a1a1a;
-	border: 1px solid #2b2b2b;
-	box-sizing: border-box;
-	-khtml-box-sizing: border-box;
-	-moz-box-sizing: border-box;
-	-webkit-box-sizing: border-box;
-	color: #ffffff;
-	display: block;
-	font: 12px Verdana, Arial, Helvetica, sans-serif;
-	padding: 10px;
-	resize: vertical;
-	width: 100%;
-	-moz-padding-end: 0; /*  https://bugzilla.mozilla.org/show_bug.cgi?id=157846 */
-	*width: 236px; /* IE7 */
+	width: 210px;
 }
-.widgetShoutbox .button {
-	background: url('/img/forms/button_matt_blue.png') no-repeat left top;
-	display: inline-block;
-	height: 25px;
-	line-height: 25px;
-	margin-right: 35px;
-	margin-top: 10px;
-	vertical-align: top;
-	} .widgetShoutbox .button:hover {
-		background-position: left -30px;
-	} .widgetShoutbox .button:active {
-		background-position: left -60px;
-}
-.widgetShoutbox .button button {
-	background: url('/img/forms/button_matt_blue.png') no-repeat right top;
-	border: 0;
-	color: #ffffff;
-	display: block;
-	font-size: 14px;
-	float: left;
-	height: 25px;
-	line-height: 25px;
-	padding-right: 5px;
-	position: relative;
-	left: 5px;
-	width: 80px;
-	} .widgetShoutbox .button:hover button {
-		background-position: right -30px;
-	} .widgetShoutbox .button:active button {
-		background-position: right -60px;
-}
+
 .widgetShoutbox .symbolCounter {
 	color: #808080;
 	display: inline-block;
-	font-family: Arial, Helvetica, sans-serif;
-	height: 25px;
-	line-height: 25px;
-	margin-top: 10px;
 	vertical-align: top;
 }
 
@@ -1066,7 +893,7 @@ div.articleMeta {margin-bottom: 1.5em}
 	margin-top: 5px;
 }
 .widgetPhotos .gallery li {
-	margin-right: 5px;
+	margin-right: 20px;
 }
 .widgetPhotos .more {
 	margin-top: 0;
@@ -1243,16 +1070,49 @@ div.articleMeta {margin-bottom: 1.5em}
 	min-height:600px;
 }
 
-.site-bg .eventListTournamentListButtons .eventListButton, .site-bg .eventListTournamentListButtons .tournamentListButton,
-.site-br .eventListTournamentListButtons .eventListButton, .site-br .eventListTournamentListButtons .tournamentListButton,
-.site-cz .eventListTournamentListButtons .eventListButton, .site-cz .eventListTournamentListButtons .tournamentListButton,
-.site-ee .eventListTournamentListButtons .eventListButton, .site-ee .eventListTournamentListButtons .tournamentListButton,
-.site-es .eventListTournamentListButtons .eventListButton, .site-es .eventListTournamentListButtons .tournamentListButton,
-.site-fi .eventListTournamentListButtons .eventListButton, .site-fi .eventListTournamentListButtons .tournamentListButton,
-.site-jp .eventListTournamentListButtons .eventListButton, .site-jp .eventListTournamentListButtons .tournamentListButton,
-.site-pt .eventListTournamentListButtons .eventListButton, .site-pt .eventListTournamentListButtons .tournamentListButton,
-.site-ro .eventListTournamentListButtons .eventListButton, .site-ro .eventListTournamentListButtons .tournamentListButton,
-.site-si .eventListTournamentListButtons .eventListButton, .site-si .eventListTournamentListButtons .tournamentListButton
-{font-size: 12px}
+/* Image gallery */
+.gallery {
+	display: block;
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 11px;
+	list-style: none;
+	margin-right: -12px;
+	margin-top: 30px;
+	margin-bottom: 0px !important;
+	padding-left: 0px !important;
+}
+.gallery li {
+	display: inline-block;
+	margin-bottom: 10px;
+	margin-right: 12px;
+	vertical-align: top;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+.gallery dl,
+.gallery dt,
+.gallery dd {
+	display: block;
+	width: 89px;
+}
+.gallery dd {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	-o-text-overflow: ellipsis;
+}
+.gallery dt img {
+	display: block;
+}
+.gallery a {
+	text-decoration: none;
+}
 
 .article-hidden {background: #fcc}
+.more3 {
+	font-weight: bold;
+	border-bottom: 1px solid #d8d6c7;
+	display: block;
+	text-transform: uppercase;
+	line-height: 30px;
+}
