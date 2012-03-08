@@ -20,7 +20,9 @@ function moon_reconfig() {
 function is_dev() {
 	static $_isDev = NULL;
 	if (NULL === $_isDev) {
-		return $_isDev = ((isset ($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], '.dev')) ? 1 : 0);
+		return $_isDev = 
+			(isset ($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], '.dev')
+			|| isset($_SERVER['WINDIR'])) ;
 	}
 	return $_isDev;
 }
