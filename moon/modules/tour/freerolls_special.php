@@ -194,6 +194,7 @@ class freerolls_special extends moon_com {
 					$room = $rooms[$v['room_id']];
 					$r['room'] = $room['name'];
 					$r['bonus'] = $room['bonus_text'];
+					list($room['bonus_code'], $room['marketing_code']) = explode('|', $room['bonus_code'] . '|');
 					$r['bonusCode'] = htmlspecialchars($room['bonus_code']);
 					$r['marketingCode'] = htmlspecialchars($room['marketing_code']);
 					$r['prizePool'] = $v['prizepool'] ? $this->currency($v['prizepool'], $room['currency']) : '';
@@ -538,9 +539,10 @@ class freerolls_special extends moon_com {
 	// additionally used from sys.rss
 	function getRooms() {
 		$a = $this->db->array_query_assoc('
-			SELECT id,name,alias,logo,bonus_text,currency,bonus_code,marketing_code
-			FROM ' . $this->table('Rooms') . '
-			WHERE is_hidden=0');
+			SELECT id,name,r.alias,logo,bonus_text,currency, bonus_code
+			FROM ' . $this->table('Rooms') . ' r, ' . $this->table('Trackers') . " t
+			WHERE is_hidden = 0 AND r.id=t.parent_id AND t.alias=''"
+			);
 		$m = array();
 		foreach ($a as $v) $m[$v['id']] = $v;
 		return $m;
