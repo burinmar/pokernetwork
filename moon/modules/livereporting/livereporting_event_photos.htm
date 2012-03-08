@@ -1,7 +1,7 @@
 <% logEntry:photos %>
 <div class="article <%if{is_hidden}%>article-hidden<%end%>" id="photos-{id}">
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
-	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}
+	<div class="meta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}
 		<%if {show_controls} %> | <a href="{url.edit}">edit</a> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
 	</div>
 	{body}
@@ -61,7 +61,7 @@
 <%end%>
 <div class="article">
 	<h3 class="articleTitle" id="no{id}">{title}</h3>
-	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}</div>
+	<div class="meta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}</div>
 	{body}
 	<div class="pnGallery">
 		<div class="hide navi">
@@ -77,7 +77,7 @@
 		</div>
 		</div>
 		<p class="status">{!photos}: <span>1</span> / <span>?</span></p>
-	</div>
+	</div><br />
 	<p><a href="{url.up}" id="urlup">{!back}</a></p>
 </div>
 

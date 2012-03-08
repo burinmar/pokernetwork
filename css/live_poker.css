@@ -15,7 +15,10 @@
 	border-color: #0098c1;
 }
 .a11y {display: none}
-
+.fl10 {
+    float: left;
+    margin-right: 10px;
+}
 /* Widget title */
 .livePokerPage .widgetTitle {
 	margin-bottom: 10px;
@@ -153,6 +156,8 @@
 }
 .livePokerEventPage .article {
 	border-bottom: 1px dotted #bec5c9;
+	margin-bottom: 20px;
+	padding-bottom: 20px;
 }
 .livePokerFeature .eventDay {
 	color: #c0c0c0;
@@ -173,10 +178,9 @@
 	font-size: 14px;
 }
 .livePokerPage .articleTitle {
-	color: #034ea2;
+	color: #0050BD;
 	font-size: 18px;
 	line-height: normal;
-	margin-top: 20px;
 }
 .livePokerFeature .articleTitle{
 	color: #fff9c4;
@@ -200,7 +204,7 @@
 }
 .livePokerBlock .articleMeta .author {
 	background: none;
-	color: #034ea2;
+	color: #0050BD;
 	display: inline;
 	font-size: inherit;
 	padding: 0;
@@ -272,8 +276,9 @@
 }
 
 /* Social network buttons */
-div.articleMeta {margin-bottom: 1.5em}
-.livePokerPage .articleSocialLinks .gplus {position: relative; top: 4px; left: 5px; display: inline-block}
+div.meta {margin-bottom: 1.5em}
+.meta a {color: #0050bd}
+.livePokerPage .articleSocialLinks .gplus {position: relative; top: 4px; left: 5px; display: inline-block; overflow: hidden}
 .livePokerPage .articleSocialLinks img {vertical-align: middle; margin-left: 5px}
 /* Tournament Archive button */
 .livePokerArchiveButton,
@@ -611,10 +616,14 @@ div.articleMeta {margin-bottom: 1.5em}
 .chipsCount .busted .numeric {
 	color: #4d4d4d;
 }
+.chipsCount tr:nth-child(odd) td {
+	background: #ecebe4;
+}
 .chipsCount td {
 	padding: 0 5px;
 	line-height: 28px;
 	vertical-align: middle;
+	color: #000;
 }
 
 /* Payouts */
@@ -636,7 +645,7 @@ div.articleMeta {margin-bottom: 1.5em}
 	text-align: right;
 }
 .payouts tr.odd {
-	background: #f2f2f2;
+	background: #ecebe4;
 }
 	/* columns */
 .payouts .position {
@@ -662,6 +671,7 @@ div.articleMeta {margin-bottom: 1.5em}
 .payouts td {
 	padding: 5px 10px;
 	vertical-align: top;
+	color: #000;
 }
 
 /* Changed bets */
@@ -997,51 +1007,26 @@ div.articleMeta {margin-bottom: 1.5em}
 }
 
 /* Events list popup widget */
-.widgetEventsList .widgetInner {
-	padding-left: 20px;
-	padding-right: 20px;
-}
-.widgetEventsList .ctr {
-	background: url('/img/widget_popup_bg.png') no-repeat left bottom;
-	bottom: -17px;
-	height: 17px;
-	left: 0px;
-	right: 0px;
-	top: auto;
-	width: auto;
-	z-index: 1;
-}
-.widgetEventsList .cbl {
-	background: url('/img/widget_bg.png') no-repeat left -262px;
-	bottom: -5px;
-	height: 5px;
-	left: 9px;
-	right: 14px;
-	z-index: 2;
-}
-.widgetEventsList .cbr {
-	background: url('/img/widget_bg.png') no-repeat right -262px;
-	bottom: -5px;
-	height: 5px;
-	right: 9px;
-	width: 5px;
-	z-index: 2;
-}
-.widgetEventsList .widgetHideLink {
-	right: 20px;
-}
 .widgetEventsList ul {
-	color: #5d5d5d;
 	display: block;
 	list-style: none;
+	margin-bottom: 10px;
+}
+.widgetEventsList b {
+	color: #000;
+	font-size: 12px;
 }
 .widgetEventsList ul li {
-	padding: 2px 0;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	width: 275px;
-	white-space: nowrap;
+	margin-top: 5px;
+	font-size: 11px;
 }
+.widgetEventsList .paging {
+	padding: 10px 0 0 0;
+	position: static;
+	background: url('data:image/gif;base64,R0lGODlhAQADAJEAAOHg09jWx/Py6wAAACH5BAAAAAAALAAAAAABAAMAAAICDFQAOw==') repeat-x top left;
+	margin-bottom: 0;
+}
+.widgetEventsList .paging a {padding: 0}
 .pnSlideshowTabItems .tabItem img {
 	width: 82px
 }
@@ -1084,7 +1069,7 @@ div.articleMeta {margin-bottom: 1.5em}
 .gallery li {
 	display: inline-block;
 	margin-bottom: 10px;
-	margin-right: 12px;
+	margin-right: 15px;
 	vertical-align: top;
 	*display: inline; /* IE7 */
 	*zoom: 1; /* IE7 */

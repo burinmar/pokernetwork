@@ -23,7 +23,7 @@ payouts = payouts | {!payouts}
 <li class="pg pg{page}"><a href="{url}">{name}</a></li>
 
 <% log:events.pop.item.current %>
-<li class="pg pg{page}">{name}</li>
+<li class="pg pg{page}"><b>{name}</b></li>
 
 <% log:events.pop.pager.active %>
 <a class="minipager pgg pgg{page}" id="switch-{page}" rel="#tab-{page}" href="#" title="Page {pageTitle}">•</a>
@@ -70,29 +70,23 @@ payouts = payouts | {!payouts}
 		</div>
 	</div>
 	<div class="right fr">
-		<p class="eventListTournamentListButtons">
-			<%if {eventlist.singleevent} %>
-				<a class="eventListButton empty"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
-			<%else {eventlist.singleevent} %>
-				<a href="{url_events}" class="eventListButton" id="widgetELShow" onclick="return false;"><span class="linkText">{!events_list}<span class="cbr"></span></span></a>
-			<%end%>
-
-			<a href="{url_events}" class="tournamentListButton"><span class="linkText">{!tournament}<span class="cbr"></span></span></a>
-		</p>
-		<div class="widget widgetWithMiniPager widgetPopup widgetEventsList" id="widgetEL">
-			<h3 class="widgetTitle">{!events_list}</h3>
-			<ul <%if {eventlist.paged} %>style="min-height: 220px;"<%end%>>
-			{eventlist.list.events}
-			</ul>
-			<a href="" class="widgetHideLink" title="Close" id="widgetELHide"><span class="a11y">Close</span></a>
-			<div class="widgetMiniPager">
-				<a href="#" class="previous" title="Previous" id="widgetELPrev">‹ Previous</a>
-				<span>
-					{eventlist.list.events.pager}
-				</span>
-				<a href="#" class="next" title="Next" id="widgetELNext">Next ›</a>
+		<%if {eventlist.singleevent} %>
+		<%else {eventlist.singleevent} %>
+			<div class="widget overBreadcrumb">
+				<h3 class="widgetTitle" id="widgetELShow">{!events_list}</h3>
+				<div class="widgetEventsList" id="widgetEL">
+					<ul>
+					{eventlist.list.events}
+					</ul>
+					<div class="paging clrfix">
+						<a href="#" class="fl" title="Previous" id="widgetELPrev">‹ Previous</a>
+						<a href="#" class="fr" title="Next" id="widgetELNext">Next ›</a>
+					</div>
+					<span class="clr"></span>
+				</div>
+				
 			</div>
-		</div>
+		<%end%>
 		<%if {showControls} %>
 		<div class="widget widgetChipsCount">
 			<h3 class="widgetTitle">Controls</h3>
@@ -106,7 +100,7 @@ payouts = payouts | {!payouts}
 			<table>
 				<tr>
 					<th>{!winner}</th>
-					<td class="tar"><%if {winner.winnerurl} %><a href="{winner.winnerurl}">{winner.winner}</a><%else {winner.winnerurl} %>{winner.winner}</td>
+					<td class="tar"><%if {winner.winnerurl} %><a href="{winner.winnerurl}">{winner.winner}</a><%else {winner.winnerurl} %>{winner.winner}<%end%></td>
 				</tr>
 				<%if {winner.cards} %>
 				<tr>
@@ -238,23 +232,6 @@ payouts = payouts | {!payouts}
 			</div>
 		</div>
 		<%end%>
-		<%if {nl_social} %>
-		<div class="widget followUs">
-			<div class="widgetInner">
-				<span class="ctl"></span>
-				<span class="ctr"></span>
-				<span class="cbl"></span>
-				<span class="cbr"></span>
-				<h3 class="widgetTitle">Volg Ons</h3>
-				<ul>
-					<li class="twitter"><a href="http://twitter.com/pokernewsnl">Twitter</a></li>
-					<li class="facebook"><a href="http://www.facebook.com/PokerNewsNL">Facebook</a></li>
-					<li class="youtube"><a href="http://www.youtube.com/user/pokernewsnl">YouTube</a></li>
-					<li class="hyves"><a href="http://pokernews.hyves.nl/">Hyves</a></li>
-				</ul>
-			</div>
-		</div>
-		<%end%>
 	</div>
 </div>
 <% log:days.active %>
@@ -366,7 +343,7 @@ day.all=   {!day_all}
 		<li><input type="text" id="rSbPleft" value="{pl.pleft}" size="3" /> of
 			<input type="text" id="rSbPTotal" value="{pl.ptotal}" size="3" />
 			<input type="hidden" id="rSbPEvent" value="{pl.event}" size="3" />
-			<a href="javascript:;" id="rSbPSave"><img src="/img/adm/_edit.gif" alt="" /></a>
+			<a href="javascript:;" id="rSbPSave">Save</a>
 			<script type="text/javascript">
 			var write_sbplayers_url = '{write_sbplayers_url}';
 			</script>

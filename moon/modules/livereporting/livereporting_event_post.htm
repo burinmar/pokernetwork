@@ -1,7 +1,7 @@
 <% logEntry:post %>
 <div class="article <%if{is_hidden}%>article-hidden<%end%>" id="post-{id}">
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
-	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
+	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {round_id} %> &bull; {!round} {round_nr}<%if {round_details} %>: {round_small_blind}-{round_big_blind}, {round_ante} ante<%end%><%end%> {sociallinks}
 		<%if {show_controls} %> | <a href="{url.edit}">edit</a> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
 	</div>
@@ -29,7 +29,7 @@
 <%end%>
 <div class="article">
 	<h3 class="articleTitle" id="no{id}">{title}</h3>
-	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%> {sociallinks}</div>
+	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%> {sociallinks}</div>
 	<% if {image} %><div class="fl10">
 		<div><img src="{image_src}" alt="{image_description}" /></div>
 		<% if {image_description} %><div class="caption" style="width:{image_width}px;">{image_description}</div><%end%>
@@ -40,7 +40,7 @@
 		<a href="{url}">{tag}</a>{comma}
 		<%end%>.</p>
 	<%end%>
-	<span class="clr"> </span>
+	<span class="clr"> </span><br />
 	<p><a href="{url.up}" id="urlup">{!back}</a></p>
 </div>
 

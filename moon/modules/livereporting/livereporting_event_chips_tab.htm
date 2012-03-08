@@ -1,39 +1,37 @@
 <% logTab:main %>
-<!--# <div class="article"> -->
-	<h3 class="articleTitle">{!chip_statistics}<%if {chips_last_updated} %>&nbsp;&nbsp;&nbsp;<em style="font-size: 11px; color: #999">Last update on <span style="color: #000">{chips_last_updated}</span></em><%end%></h3>
-	<table class="chipsCount tal" summary="{!chip_statistics}">
-		<col class="player" />
-		<col class="sponsor" />
-		<%if {adm} %><col class="chipsTotal" /><%end%>
-		<col class="chipsTotal" />
-		<%if {adm} %><col class="chipsTime" /><%end%>
-		<col class="chipsDelta" />
-		<%if {adm} %>
-		<tbody>
-			<tr class="sortRow"><td colspan="2" style="padding-left:27px;"><a href="{cts_name_url}" class="{cts_name_class}">Sort</a></td>
-				<td class="numeric" colspan="2"><a href="{cts_chip_url}" class="{cts_chip_class}">Sort</a></td>
-				<td><input type="hidden" id="cts_sort" value="{cts_sort}" /></td>
-			</tr>
-		</tbody>
-		<%end%>
-		<tbody id="chipsCountEntries">
-		{entries}
-		</tbody>
-		<%if {adm} %>
-		<tbody><tr>
-			<td colspan="2"><label><input type="checkbox" id="delctchipsmark" /> Mark all</label></td>
-			<td class="numeric"><input type="button" id="newctchips" value="Save" /></td>
-			<td colspan="3"></td>
-		</tr></tbody>
-		<%end%>
-	</table>
+<%if {chips_last_updated} %><span class="meta">Last update on <b style="color: #000">{chips_last_updated}</b></span><%end%>
+<table class="chipsCount tal" summary="{!chip_statistics}">
+	<col class="player" />
+	<col class="sponsor" />
+	<%if {adm} %><col class="chipsTotal" /><%end%>
+	<col class="chipsTotal" />
+	<%if {adm} %><col class="chipsTime" /><%end%>
+	<col class="chipsDelta" />
 	<%if {adm} %>
-	<p><input type="button" id="delctplayerb" value="Delete selected" /> (will delete player and corresponding chips)</p>
-	<br />
-	<p>Add new player: <input type="text" value="" id="newctplayer" /> <input type="button" id="newctplayerb" value="Save" />
+	<tbody>
+		<tr class="sortRow"><td colspan="2" style="padding-left:27px;"><a href="{cts_name_url}" class="{cts_name_class}">Sort</a></td>
+			<td class="numeric" colspan="2"><a href="{cts_chip_url}" class="{cts_chip_class}">Sort</a></td>
+			<td><input type="hidden" id="cts_sort" value="{cts_sort}" /></td>
+		</tr>
+	</tbody>
 	<%end%>
-	<span class="clr"></span>
-<!--# </div> -->
+	<tbody id="chipsCountEntries">
+	{entries}
+	</tbody>
+	<%if {adm} %>
+	<tbody><tr>
+		<td colspan="2"><label><input type="checkbox" id="delctchipsmark" /> Mark all</label></td>
+		<td class="numeric"><input type="button" id="newctchips" value="Save" /></td>
+		<td colspan="3"></td>
+	</tr></tbody>
+	<%end%>
+</table>
+<%if {adm} %>
+<p><input type="button" id="delctplayerb" value="Delete selected" /> (will delete player and corresponding chips)</p>
+<br />
+<p>Add new player: <input type="text" value="" id="newctplayer" /> <input type="button" id="newctplayerb" value="Save" />
+<%end%>
+<span class="clr"></span>
 <%if {adm} %>
 <script type="text/javascript">
 var write_ctchips_url='{write_ctchips_url}';

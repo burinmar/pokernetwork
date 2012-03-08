@@ -605,6 +605,7 @@ class livereporting_event extends moon_com
 		}
 
 		$page->css('/css/live_poker.css');
+		$page->css('/css/article.css');
 		$page->js('/js/live-poker.js');
 		$page->js('/js/jquery/lightbox-0.5.js');
 		$page->css('/css/jquery/lightbox-0.5.css');

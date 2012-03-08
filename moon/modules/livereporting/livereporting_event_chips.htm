@@ -1,7 +1,7 @@
 <% logEntry:chips %>
 <div class="article <%if{is_hidden}%>article-hidden<%end%>" id="chips-{id}">
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}<%if {is_full} %> ({!full})<%end%></a></h3>
-	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%> {sociallinks}
+	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%> {sociallinks}
 		<%if {show_controls} %> | <a href="{url.edit}">edit</a> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
 	</div>
 	<% if {image} %><div class="fl10">
@@ -63,7 +63,7 @@
 <%end%>
 <div class="article">
 	<h3 class="articleTitle" id="no{id}">{title}<%if {is_full} %> ({!full})<%end%></h3>
-	<div class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}</div>
+	<div class="meta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}</div>
 	<% if {image} %><div class="fl10">
 		<div><img src="{image_src}" alt="{image_description}" /></div>
 		<% if {image_description} %><div class="caption" style="width:{image_width}px;">{image_description}</div><%end%>
@@ -88,7 +88,7 @@
 	<tbody>
 	{entries}
 	</tbody>
-	</table>
+	</table><br />
 	<p><a href="{url.up}" id="urlup">{!back}</a></p>
 	<span class="clr"> </span>
 </div>

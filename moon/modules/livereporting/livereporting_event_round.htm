@@ -1,7 +1,7 @@
 <% logEntry:round %>
 <div class="article <%if{is_hidden}%>article-hidden<%end%>" id="round-{id}">
 	<h3 class="articleTitle" id="no{id}">{!round} {round} {!started}</h3>
-	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
+	<p class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {show_controls} %> | <a href="{url.edit}">edit</a> <%if {show_fullcontrols} %> | <a href="{url.stop}">stop</a><%end%><%end%>
 	</p>
 	<div class="changedBets">
@@ -32,7 +32,7 @@
 <%end%>
 <div class="article">
 	<h3 class="articleTitle" id="no{id}">{!round} {round}</h3>
-	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> {!posted_by}</p>
+	<p class="meta">{!posted} <span class="date">{created_on}</span> {!posted_by}</p>
 	<span class="clr"> </span>
 	<p><a href="{url.up}">{!back}</a></p>
 </div>
