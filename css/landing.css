@@ -35,15 +35,15 @@
 		display: inline-block;
 		margin-bottom: 25px;
 	}
-	#landing table {
+	#landing .head table {
 		margin-bottom: 10px;
 		width: 100%;
 	}
-	#landing tr td:first-child {padding-right: 50px;}
-	#landing tr:first-child td {padding-bottom: 10px;}
-	#landing td {color: #fff; text-transform: uppercase}
+	#landing .head tr td:first-child {padding-right: 50px;}
+	#landing .head tr:first-child td {padding-bottom: 10px;}
+	#landing .head td {color: #fff; text-transform: uppercase}
 		#landing .bonusCode span {margin-top: 5px}
-	#landing td b {
+	#landing .head td b {
 		display: block;
 		font-size: 20px;
 		font-weight: normal;
