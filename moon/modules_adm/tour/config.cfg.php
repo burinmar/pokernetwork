@@ -9,6 +9,6 @@ $cfg['tour'] = array(
 	'page.Common' => 'sys.adm,fake',
 	#rtf
 	'comp.rtf' => 'MoonShared.rtf',
-	'var.rtf' => ''
+	'var.rtf' => 'freeroll'
 );
 ?>

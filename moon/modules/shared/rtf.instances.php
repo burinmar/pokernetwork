@@ -69,5 +69,9 @@ switch ($instance) {
 		$cfg['imgWH'] = '380x600';
 		break;
 
+	case 'freeroll' :
+		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'), 'allowScript' => TRUE);
+		break;
+
 }
 ?>

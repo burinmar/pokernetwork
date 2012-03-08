@@ -344,7 +344,7 @@ class review extends moon_com {
 		list($tOffset, $gmt,, $tzName) = $locale->timezone( (int)$user->get_user('timezone') );
 		$rec = $this->getSpecialFreerolls($roomId);
 		$r = array();
-		$m['url.moreFreerolls'] = $this->linkas('tour.freerolls_special#');
+		$m['url.moreFreerolls'] = $this->linkas('tour.freerolls_special#','','room='.$room['id']);
 		foreach ($rec as $i=>$v) {
 			//$r['url.full'] = $this->linkas('#', $v['id']);
 			$r['name'] = htmlspecialchars($v['name']);
