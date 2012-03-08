@@ -27,7 +27,7 @@ $cfg['reviews'] = array(
 	'page.Index' => 'xml.col1_darkright,fake',
 	'page.Main' => 'xml.col1_darkright,fake',
 	'page.RoomsList' => 'xml.col1,fake',
-	'page.Freeroll' => 'xml.col1,fake',
+	'page.Freeroll' => 'xml.col,fake',
 	//rtf
 	'comp.rtf' => 'MoonShared.rtf',
 

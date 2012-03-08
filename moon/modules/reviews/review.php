@@ -94,10 +94,13 @@ class review extends moon_com {
 			return array();
 		}
 		if (is_null($this->roomData)) {
-			$q = "SELECT * FROM " . $this->table('Rooms') . " WHERE id=" . $this->roomID;
+			$q = "SELECT r.*, t.bonus_code FROM " . $this->table('Rooms') . " r, " . $this->table('Trackers') . " t WHERE r.id=" . $this->roomID ."  AND r.id=t.parent_id AND t.alias=''";
 			$data = $this->db->single_query_assoc($q);
 			if (!count($data)) {
 				$this->roomID = 0;
+			}
+			else {
+				list($data['bonus_code'], $data['marketing_code']) = explode('|', $data['bonus_code'] . '|');
 			}
 			$this->roomData = $data;
 		}

@@ -136,6 +136,7 @@ class rooms extends moon_com {
 			}
 			$d['editors_rating%'] = $d['editors_rating'];
 			$d['editors_rating'] = number_format($d['editors_rating'] / 10,1);
+			list($d['bonus_code'], $d['marketing_code']) = explode('|', $d['bonus_code'] . '|');
 
 			$d['roomDownloadLink'] = '/' . $d['alias'] . '/download/';
 
@@ -182,9 +183,9 @@ class rooms extends moon_com {
 		}
 
 		$sql = '
-			SELECT id, name, alias, logo, bonus_code, marketing_code, software_os,bonus_text,editors_rating,ratings
-			FROM ' . $this->table('Rooms') . '
-			WHERE is_hidden = 0' . $where . '
+			SELECT r.id, name, r.alias, logo, bonus_code, software_os,bonus_text,editors_rating,ratings
+			FROM ' . $this->table('Rooms') . ' r, ' . $this->table('Trackers') . " t
+			WHERE is_hidden = 0 AND r.id=t.parent_id AND t.alias=''" . $where . '
 			ORDER BY ' . $order;
 		$result = $this->db->array_query_assoc($sql);
 		//rusiuojam pagal editoriaus reitinga

@@ -131,9 +131,9 @@ class homepage_rooms extends moon_com {
 	//           --- DB AND OTHER ---
 	//***************************************
 	function getTopRooms() {
-		$sql = 'SELECT `id`, `name`, `alias`, `favicon`, `logo`, `editors_rating`,`ratings`
-			FROM ' . $this->table('Rooms') . '
-			WHERE is_hidden = 0
+		$sql = 'SELECT `id`, `name`, r.`alias`, `favicon`, `logo`, `editors_rating`,`ratings`
+			FROM ' . $this->table('Rooms') . ' r, ' . $this->table('Trackers') . " t
+			WHERE is_hidden = 0 AND r.id=t.parent_id AND t.alias=''".'
 			ORDER BY editors_rating DESC, sort_1 ASC
 			LIMIT 10
 			';
