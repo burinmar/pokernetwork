@@ -5,11 +5,12 @@ class moon_vb_relay
 	public function getInstance()
 	{
 		static $instance;
-		if (!$instance)
+		if (!$instance) {
 			$vbCwd = getcwd();
 			if (strpos($vbCwd, DIRECTORY_SEPARATOR . 'forums') === false)
 				$vbCwd .= DIRECTORY_SEPARATOR . 'forums';
 			$instance = new moon_vb_relay($vbCwd);
+		}
 
 		return $instance;
 	}
