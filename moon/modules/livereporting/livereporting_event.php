@@ -1020,7 +1020,7 @@ class livereporting_event extends moon_com
 			}
 			
 			//
-			$page->css('/css/live-poker-adm.css');
+			$page->css('/css/live_poker_adm.css');
 			//
 			$mainArgv['sidebar_controls'] = $this->partialRenderAdmSidebar($argv, $e);
 		}
@@ -1346,7 +1346,7 @@ class livereporting_event extends moon_com
 
 		$error = false;
 
-		if ($sessStarted < time() - 1800 || empty($sid[$key])) {
+		if ($sessStarted < time() - 1 || empty($sid[$key])) {
 			$realSid = '';
 			$sendData = array(
 				'ns' => 'lrep',

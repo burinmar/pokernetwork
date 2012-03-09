@@ -3,16 +3,17 @@ var livePoker = function() {
 	var ELPager = {};
 	function showELPage(page) {
 		jQuery('#widgetEL .pg').hide();
-		jQuery('#widgetEL .pgg' + ELPageNr + '').removeClass('current')
+		jQuery('#widgetEL .pgg' + ELPageNr + '').removeClass('current');
 		ELPageNr = page;
-		jQuery('#widgetEL .pgg' + ELPageNr + '').addClass('current')
+		jQuery('#widgetEL .pgg' + ELPageNr + '').addClass('current');
 		jQuery('#widgetEL .pg' + page).show();
 	}
 	function setupEL() {
 		if (typeof jQuery('#widgetEL .pgga').attr('class') == 'undefined') {
 			return;
 		}
-		ELPageNr = parseInt(jQuery('#widgetEL .pgga').attr('class').match(/pgg([0-9]+)/)[1]);
+		ELPageNr = parseInt(jQuery('#widgetEL .pgga').attr('class').match(/pgg([0-9]+)/)[1], 10);
+		showELPage(ELPageNr);
 		jQuery('#widgetELShow').click(function(e) {
 			e.preventDefault();
 			showELPage(ELPageNr);
@@ -26,7 +27,7 @@ var livePoker = function() {
 		});
 		jQuery('#widgetEL .pgg').click(function(e) {
 			e.preventDefault();
-			var page = parseInt(jQuery(this).attr('class').match(/pgg([0-9]+)/)[1]);
+			var page = parseInt(jQuery(this).attr('class').match(/pgg([0-9]+)/)[1], 10);
 			if (ELPageNr != page) {
 				showELPage(page);
 			}
@@ -43,7 +44,7 @@ var livePoker = function() {
 				showELPage(ELPageNr - 1);
 			}
 		});
-	};
+	}
 	function setupGalleryBoxes() {
 		jQuery('ul.lightbox-gallery').each(function(){
 			jQuery('a[rel*=lightbox]', this).click(function(e){

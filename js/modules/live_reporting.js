@@ -577,7 +577,7 @@ var livePokerAdm = function() {
 			}
 		});
 		$('#rSbPSave').click(function(){
-			$('#rSbPleft, #rSbPTotal').attr('disabled', 'disabled').css('background-color', 'silver');
+			$('#rSbPleft, #rSbPTotal').attr('disabled', 'disabled');
 			$.ajax({
 				type: "POST",
 				url: write_sbplayers_url,
@@ -589,7 +589,7 @@ var livePokerAdm = function() {
 				dataType: 'json',
 				timeout: 30000,
 				success: function(resp) {
-					$('#rSbPleft, #rSbPTotal').removeAttr('disabled').css('background-color', 'transparent');
+					$('#rSbPleft, #rSbPTotal').removeAttr('disabled');
 				}
 			});
 		});

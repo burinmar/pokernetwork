@@ -64,16 +64,12 @@ $cfg['livereporting'] = array(
 	'dir.web:SliderImgs' => '/w/lrep/slider/',
 	'dir.web:SliderDefimg' => '/img/lr-slider-temp.png',
 
-	'var.ipnReadBase'  => substr($_SERVER['HTTP_HOST'], -3, 3) == 'dev'
+	'var.ipnReadBase'  => is_dev()
 		? 'http://imgsrv.dev'
-		: (is_dev()
-			? 'http://pnimg.dev.ntsg.lt'
-			: 'http://pnimg.net'),
-	'var.ipnWriteBase' => substr($_SERVER['HTTP_HOST'], -3, 3) == 'dev'
+		: 'http://pnimg.net',
+	'var.ipnWriteBase' => is_dev()
 		? 'http://imgsrv.pokernews.dev'
-		: (is_dev()
-			? 'http://imgsrv.pokernews.dev.ntsg.lt'
-			: 'http://imgsrv.pokernews.com'),
+		: 'http://imgsrv.pokernews.com',
 	'var.ipnLoginUrl'  => '/app/',
 	'var.ipnUploadUrl' => '/app/app-upload/q/',
 	'var.ipnBrowseUrl' => '/app/app-browse/q/',

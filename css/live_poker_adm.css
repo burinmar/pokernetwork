@@ -1,0 +1,223 @@
+/* article */
+.livePoker .article-hidden {
+	border: 1px solid #BEC5C9;
+	background: #fcc;
+}
+
+p.blocky {
+	margin-top: 15px;
+}
+
+/* sb days */
+#rq-sidebar .day-state-1 {
+	font-weight: bold;
+}
+#rq-sidebar .unreported {
+	font-style: italic;
+}
+/* sb misc */
+#rq-sidebar hr {
+	margin: 10px 0;
+}
+*:first-child+html #rq-sidebar hr {
+	margin: auto;
+}
+#rq-sidebar .small, #rq-log-controls .small, #rq-entry-control .small {
+	font: 8pt/10pt sans-serif !important;
+}
+#rq-sidebar .gray, #rq-log-controls .gray, #rq-entry-control .gray {
+	color:gray;
+}
+#rq-sidebar ul {
+	list-style-type: none;
+}
+#rq-sidebar ul ul {
+	padding-left: 2em;
+}
+/* sb quick links (controls) */
+.rq-sidewc #rq-wc-start,
+.rq-sidewp #rq-wp-start,
+.rq-sidewepp #rq-wepp-start,
+.rq-sidewew  #rq-wew-start,
+.rq-sidewep  #rq-wep-start,
+.rq-sidewr #rq-wr-start,
+.rq-sidewm #rq-wm-start,
+.rq-sidewx #rq-wx-start,
+.rq-sidewt #rq-wt-start
+{
+	font-weight: bold;
+}
+/* day/event state change */
+#rq-wd-actions, #rq-we-actions {
+	display: none;
+}
+/* chips */
+/* #rq-wc-sect-batch, #rq-wc-sect-list {
+	display: none;
+} */
+/* event sb and control decorations */
+#rq-we-sect-prizepool,	#rq-we-sect-winners,	#rq-we-sect-list, #rq-we-sect-misc,
+#rq-we-sect-prizepool-c2, #rq-we-sect-winners-c2, #rq-we-sect-list-c2  {
+	display: none;
+}
+
+/* more or less optional control decorations, in-log and separate pages */
+/* misc */
+#rq-log-controls fieldset, #rq-entry-control fieldset {
+	border: 1px solid #034EA2;
+	margin: 0 0 .5em 0;
+	padding: 0 1em 1em;
+	line-height: 1.5em;
+}
+#rq-log-controls form.control legend, #rq-entry-control form.control legend{
+	padding: .5em;
+	font-size: 9pt;
+}
+#rq-log-controls form.control img, #rq-entry-control form.control img {
+	margin:2px !important;
+}
+#rq-log-controls form.control textarea, #rq-entry-control form.control textarea {
+	width: 98%;
+	font-size: 9pt;
+	overflow: auto;
+}
+#rq-log-controls form.control input.full-width, #rq-entry-control form.control input.full-width {
+	width: 98%;
+}
+#rq-log-controls form.control .input-padright input, #rq-entry-control form.control .input-padright input{
+	margin-right: 2px;
+}
+#rq-log-controls form.control label, #rq-entry-control form.control label {
+	display: block;
+	float: left;
+	width: 80px;
+}
+#rq-log-controls form.control p, #rq-entry-control form.control p {
+	margin-bottom:6px;
+}
+#rq-log-controls input.checkbox, #rq-entry-control input.checkbox {
+	position: relative;
+	top: 2px;
+}
+*:first-child+html #rq-log-controls input.checkbox, *:first-child+html #rq-entry-control input.checkbox {
+	top: -1px;
+}
+/* chips preview table */
+#rq-log-controls .green, #rq-entry-control .green {
+	background: #aea;
+}
+#rq-log-controls .red, #rq-entry-control .red {
+	background: #eaa;
+}
+#rq-log-controls .redgreen, #rq-entry-control .redgreen {
+	background: #eea;
+}
+#rq-log-controls table.chipstable th, table.chipstable td {
+	padding: 0 40px 0 2px;
+	text-align: left;
+}
+#rq-log-controls table.chipstable tr.busted, table.profilechips tr.busted{
+	background:#ebb;
+}
+#rq-log-controls table.chipstable img.splogo {
+	vertical-align:middle;
+	width:16px;
+	height:16px;
+	position:relative;
+	top: -2px;
+}
+#rq-log-controls table.chipstable .pl20 {
+	padding-left:20px
+}
+#rq-log-controls table.chipstable .pnsponsor {
+	padding: 2px 0 2px 18px;
+	background: url('/i/sponsors/ico_pn.gif') no-repeat;
+}
+/* event control - sorting textarea */
+#rq-log-controls table.colsym2 td {
+	font: 9pt/15px verdana !important;
+	vertical-align: top;
+}
+#rq-log-controls table.colsym2 textarea {
+	font: 9pt/15px verdana !important;
+	width:450px !important;
+}
+/* event control tables */
+#rq-log-controls table.longtable {
+	width: 100%;
+}
+#rq-log-controls table.longtable tbody td {
+	font-size: 8pt;
+}
+#rq-log-controls table.longtable td, #rq-log-controls table.longtable th {
+	padding: 1px 3px;
+	text-align: left;
+}
+#rq-log-controls table.longtable tr {
+	border-bottom: 1px solid silver;
+}
+/* betting structure */
+#rq-log-controls table.rounds td{
+	padding: 2px 4px;
+	border:1px solid silver;
+}
+/* player profile */
+#rq-entry-control table.profilechips th{
+	padding: 0 20px 0 2px;
+	text-align: left;
+}
+#rq-entry-control table.profilechips td{
+	padding: 0 2px 0 2px;
+	border: 1px solid silver;
+}
+/* photos selection */
+#rq-entry-control .xphoto-item, #rq-log-controls .xphoto-item {
+	width:280px;float:left;position:relative;
+}
+#rq-entry-control .xphoto-item div, #rq-log-controls .xphoto-item div {
+	float:left;position:absolute;left:80px;top:4px;
+}
+#rq-entry-control .xphoto-item img, #rq-log-controls .xphoto-item img {
+	float:left;
+	width:100px;
+}
+#rq-entry-control .xphoto-item div img, #rq-log-controls .xphoto-item div img {
+	float: none;
+	width:auto;
+}
+#rq-entry-control .xphoto-item label, #rq-log-controls .xphoto-item label {
+	width: 50px;
+}
+#rq-entry-control .xphoto-item textarea, #rq-log-controls .xphoto-item textarea {
+	width:150px !important;
+	height:45px;
+}
+#rq-entry-control .xphoto-item input, #rq-log-controls .xphoto-item input {
+	width:150px;
+}
+
+.delctchips, #delctchipsmark {
+	position:relative;
+	top:3px;
+}
+
+.chipsCount .old {
+	color: red;
+}
+
+.sortRow a.active {
+	font-weight: bold !important;
+}
+
+.modalWindowClose {
+	float:right;
+}
+
+.modalWindowContent {
+	text-align:left;
+	margin:20px;
+}
+
+.modalWindowContent p {
+	margin-bottom: 15px;
+}
