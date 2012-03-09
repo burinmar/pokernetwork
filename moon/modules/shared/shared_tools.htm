@@ -57,7 +57,7 @@
 <%if {firstuse} %><script type="text/javascript">
 $(function(){
 	var gp = document.createElement('script'); gp.type = 'text/javascript'; gp.async = true;
-	var lng = document.createTextNode("{lang: '{lang}'}"); gp.appendChild(lng);
+	gp.text = "{lang: '{lang}'}";
 	gp.src = "http://apis.google.com/js/plusone.js";
 	var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(gp, s);
 });

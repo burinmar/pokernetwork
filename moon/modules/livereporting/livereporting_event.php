@@ -612,6 +612,7 @@ class livereporting_event extends moon_com
 		if ($page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent')) {
 			$page->js('/js/jquery/livequery.js');
 			$page->js('/js/jquery/form-2.28-unowen.js');
+			$page->js('/js/jquery/postmessage.js');
 			$page->js('/js/jquery/cookie.js');
 			$page->js('/js/modules/live_reporting.js');
 		}

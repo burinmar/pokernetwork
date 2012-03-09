@@ -601,12 +601,14 @@ var livePokerAdm = function() {
 			ipnBrowseWnd = window.open(this.href, 'ipn_browser', 'width=840,height=645,toolbar=no,scrollbars=yes,resizable=yes');
 		});
 		if ($('#rq-wp-ipnattach').length > 0 || $('#rq-wx-ipnattach').length > 0 || $('#rq-wc-ipnattach').length > 0) {
-			document.rqIpnAutosave=function(key) {
-				if (key == 'photos-inst') {
-					rwIpnAutosavePhotosInst();
-				}
-			};
-			document.rqIpnAttach=function(key, id, misc, src, description, tags, initialInBatch) {
+			var rqIpnAttachProxy = function(data) {
+				var key = data.key,
+					id = data.id,
+					misc = data.misc,
+					src = data.src,
+					description = data.description,
+					tags = data.tags,
+					initialInBatch = data.initialInBatch;
 				switch (key) {
 					case 'post':
 						rwIpnAttach(id, misc, src, description, tags, '#rq-wp', $('#ipnbase'));
@@ -631,6 +633,21 @@ var livePokerAdm = function() {
 						break;
 				}
 			};
+			var rqIpnAutosaveProxy = function(key) {
+				if (key == 'photos-inst') {
+					rwIpnAutosavePhotosInst();
+				}
+			};
+			var behaveSilly = $.browser.msie; // depends on document.domain
+			if (behaveSilly) {
+				document.rqIpnAttach = rqIpnAttachProxy;
+				document.rqIpnAutosave = rqIpnAutosaveProxy;
+			} else {
+				$.pm.bind("rqIpnAttach", rqIpnAttachProxy, 'http://imgsrv.pokernews.com');
+				$.pm.bind("rqIpnAttach", rqIpnAttachProxy, 'http://imgsrv.pokernews.dev');
+				$.pm.bind("rqIpnAutosave", rqIpnAutosaveProxy, 'http://imgsrv.pokernews.com');
+				$.pm.bind("rqIpnAutosave", rqIpnAutosaveProxy, 'http://imgsrv.pokernews.dev');
+			}
 		}
 		function rwIpnAttach(id, misc, src, description, tags, context, $ipnbase) {
 			src = src.substring(0, src.length - 15) + 'b' + src.substring(src.length - 14);
