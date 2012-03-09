@@ -596,9 +596,13 @@ var livePokerAdm = function() {
 	}
 	function setupFormsPhotoControl() {
 		var ipnBrowseWnd;
-		$('#rq-wp-ipnattach, #rq-wp-ipnupload, #rq-wp-ipnattach2, #rq-wx-ipnattach, #rq-wc-ipnattach, #rq-wc-ipnupload, #rq-wc-ipnattach2').click(function(e){
+		$('#rq-wp-ipnattach, #rq-wp-ipnattach2, #rq-wx-ipnattach, #rq-wc-ipnattach, #rq-wc-ipnupload, #rq-wc-ipnattach2').click(function(e){
 			e.preventDefault();
 			ipnBrowseWnd = window.open(this.href, 'ipn_browser', 'width=840,height=645,toolbar=no,scrollbars=yes,resizable=yes');
+		});
+		$('#rq-wp-ipnupload').click(function(e){
+			e.preventDefault();
+			ipnBrowseWnd = window.open(this.href, 'ipn_browser', 'width=840,height=510,toolbar=no,scrollbars=yes,resizable=yes');
 		});
 		if ($('#rq-wp-ipnattach').length > 0 || $('#rq-wx-ipnattach').length > 0 || $('#rq-wc-ipnattach').length > 0) {
 			var rqIpnAttachProxy = function(data) {
