@@ -221,7 +221,8 @@ function main($vars)
 			$stats = $this->getStats();
 			//$dirLogo = $this->get_dir('sponsor');
 			foreach ($dat as $d) {
-				$d['class'] = $d['is_hidden'] ? 'item-hidden' : '';
+				$noTracker = empty($d['uri']) && empty($d['uri_download']);
+				$d['class'] = $noTracker || $d['is_hidden'] ? 'item-hidden' : '';
 				$d['title'] = htmlspecialchars($d['name']);
 				$d['alias']=htmlspecialchars($d['alias']);
                 //$d['logo']=$d['logo'] ? $dirLogo.$d['logo']:'';
@@ -297,7 +298,9 @@ function getListCount()
 function getList($limit='',$order='')
 {
 	if ($order) $order=' ORDER BY '.$order;
-	$sql='SELECT * FROM '.$this->myTable.$this->_where().$order.$limit;
+	$sql='
+		SELECT r.*, t.uri, t.uri_download FROM '.$this->myTable.' r
+		LEFT JOIN ' . $this->table('Trackers').' t ON r.id=t.parent_id AND t.alias=\'\''.$this->_where().$order.$limit;
 	return $this->db->array_query_assoc($sql);
 }
 

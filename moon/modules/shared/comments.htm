@@ -1,13 +1,13 @@
 <% info %>
-error1={!1}
-error2={!badlogin}
-error3={!error3}
+error1=Please, enter comment bellow! Thanks.
+error2=Bad username or password
+error3=Your message was auto-detected as spam.
 
 <% viewComments %>
 <div class="widget comments">
 	<script type="text/javascript">
 	/*<![CDATA[*/
-		var commMsgDelete = "{!15}";
+		var commMsgDelete = "Do you really want delete this item?";
 		var commMsgSpam = "<em>Thank you. This comment will be reviewed by Moderators.</em>";
 		var commCheckAll = true;
 	/*]]>*/
@@ -31,10 +31,10 @@ error3={!error3}
 						<p>{comment}</p>
 					</div>
 					<span class="adminTools">
-						<% if {goEdit} %><a href="{goEdit}#comm-form">{!14}</a> | <% end %>
-						<% if {goQuote} %><a href="{goQuote}#comm-form" class="quote">{!19}</a><% end %>
-						<% if {goDelete} %><a href="{goDelete}" class="delete">{!16}</a><% end %>
-						<% if {goSpam} %><a href="" class="spam" id="spam{id}">{!20}</a><% end %>
+						<% if {goEdit} %><a href="{goEdit}#comm-form">Edit</a> | <% end %>
+						<% if {goQuote} %><a href="{goQuote}#comm-form" class="quote">Quote</a><% end %>
+						<% if {goDelete} %><a href="{goDelete}" class="delete">Delete</a><% end %>
+						<% if {goSpam} %><a href="" class="spam" id="spam{id}">Spam</a><% end %>
 						<% if {canDeleteMulti} %><input type="checkbox" name="it[]" id="i_{id}" value="{id}" /><% end %>
 					</span>
 				</li>
@@ -42,7 +42,7 @@ error3={!error3}
 			</ul>
 		<% if {canDeleteMulti} %>
 			<div style="margin:10px 0;float:right;">
-				<button type="submit" name="save" value="1" class="button fl">{!16}</button>
+				<button type="submit" name="save" value="1" class="button fl">Delete</button>
 				<a href="" class="button" id="commCheckAll" style="display:none">Check all</a>
 			</div>
 			<div style="clear:both;"></div>
@@ -51,14 +51,14 @@ error3={!error3}
 
 			<% if {onlyLatest} %>
 			<div class="commentsForum">
-				<p><a href="{goShowAll}">{!26}</a></p>
+				<p><a href="{goShowAll}">Read {comm_count} comment(s) on this article</a></p>
 			</div>
 			<% else {onlyLatest} %>
 			{paging}
 			<% end %>
 
 	<% else {items} %>
-	<p>{!empty}</p>
+	<p>No comments yet. Be the first to post one!</p>
 	<% end %>
 
 	{form}
@@ -76,15 +76,15 @@ error3={!error3}
 		<%if{error}%><p class="error"><span>{error}</span></p><%end%>
 
 		<%if{anonymous}%>
-			<p>{!registerforComment}</p>
+			<p><a href="{!link:page|signup}">Register</a> to leave a comment <!--#or <a href="{url.facebook}">login with facebook</a>--></p>
 			<input placeholder="Username" class="fl" type="text" name="username" value="{username}"/>
 			<input placeholder="Password" type="password" name="pass" />
 		<%end%>
 		<textarea rows="5" cols="58" placeholder="Your comment" name="comment" id="i_body">{comment}</textarea>
 		<%if{fbID}%>
-		<label><input type="checkbox" name="facebook" value="{facebook}" /> {!postToWall}</label><br />
+		<label><input type="checkbox" name="facebook" value="{facebook}" /> Post this comment to my facebook wall</label><br />
 		<%end{fbID}%>
-		<input type="submit" class="button" name="save" value="{!2}">
+		<input type="submit" class="button" name="save" value="Post it">
 	</div>
 </form>
 

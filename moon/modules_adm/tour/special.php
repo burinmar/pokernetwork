@@ -5,8 +5,8 @@ class special extends moon_com {
 	function onload() {
 		//form of item
 		$this->form = & $this->form();
-		$this->form->names('id', 'hide', 'date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'dateTime', 'qFromTime', 'qToTime', 'master_id', 'master_updated', 'updated', 'exclusive', 'password', 'password_from', 'passFromTime', 'nosync', 'master_id', 'skin');
-		$this->form->fill(array('date' => time(), 'timezone' => 0, 'qualification_points' => - 1, 'exclusive' => 0));
+		$this->form->names('id', 'hide', 'date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'dateTime', 'qFromTime', 'qToTime', 'master_id', 'master_updated', 'updated', 'password', 'password_from', 'passFromTime', 'nosync', 'master_id', 'skin');
+		$this->form->fill(array('date' => time(), 'timezone' => 0, 'qualification_points' => - 1));
 		//form of filter
 		$this->formFilter = & $this->form('f2');
 		$this->formFilter->names('room_id', 'text', 'hidden', 'tag');
@@ -316,8 +316,7 @@ class special extends moon_com {
 				}
 			}
 		}
-		$m['exclusive0'] = $f->checked('exclusive', '0');
-		$m['exclusive1'] = $f->checked('exclusive', '1');
+
 		$res = $t->parse('viewForm', $m);
 		//resave vars for list
 		$save = array('psl' => $vars['psl'], 'sort' => $vars['sort'], 'filter' => $vars['filter']);
@@ -413,7 +412,6 @@ class special extends moon_com {
 		$d['password_from'] = $this->makeTime($d['password_from'], $d['passFromTime']);
 		$d['hide'] = empty ($d['hide']) ? 0:1;
 		$d['nosync'] = empty ($d['nosync']) ? 0:1;
-		$d['exclusive'] = empty ($d['exclusive']) ? 0:1;
 		$d['qualification_from'] = $this->makeTime($d['qualification_from'], $d['qFromTime']);
 		$d['qualification_to'] = $this->makeTime($d['qualification_to'], $d['qToTime']);
 		if ($d['qualification_points'] === '') {
@@ -478,7 +476,7 @@ class special extends moon_com {
 			return $id;
 		}
 		//save to database
-		$ins = $form->get_values('date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'exclusive', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'hide', 'password', 'password_from', 'skin');
+		$ins = $form->get_values('date', 'name', 'qualification_from', 'qualification_to', 'qualification_points', 'timezone', 'prizepool', 'room_id', 'spotlight_id', 'body', 'tags', 'hide', 'password', 'password_from', 'skin');
 		$locale = & moon :: locale();
 		list($shift) = $locale->timezone($ins['timezone'], $ins['date']);
 		$ins['date'] -= $shift;
@@ -654,7 +652,7 @@ class special extends moon_com {
 	}
 
 	function syncUpdateItem($arrived, $existing) {
-		$fields = array('name', 'qualification_from', 'qualification_to', 'qualification_points', 'date', 'timezone', 'prizepool', 'room_id', 'hide', 'created', 'exclusive', 'password', 'password_from');
+		$fields = array('name', 'qualification_from', 'qualification_to', 'qualification_points', 'date', 'timezone', 'prizepool', 'room_id', 'hide', 'created', 'password', 'password_from');
 		$ins = array();
 		foreach ($fields as $v) {
 			$ins[$v] = $arrived[$v];
