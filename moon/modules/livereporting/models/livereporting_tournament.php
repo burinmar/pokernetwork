@@ -302,9 +302,26 @@ class livereporting_model_tournament extends livereporting_model_pylon
 	protected function getUpcomingTournaments($limit)
 	{
 		return $this->db->array_query_assoc('
-			SELECT id, name, logo_mid logo, logo_small, skin, tour, from_date, timezone
+			SELECT id, name, logo_mid logo, skin, tour, from_date, timezone
 			FROM ' . $this->table('Tournaments') . '
 			WHERE state=0 AND is_live=1 AND from_date>' . (round(time() / 60)*60 - 3600*24)  . '
+			ORDER BY from_date
+			LIMIT ' . intval($limit)
+		, 'id');
+	}
+
+	protected function getUpcomingTournamentsByNearestEvent($limit)
+	{
+		return $this->db->array_query_assoc('
+			SELECT id, name, logo_small logo, skin, tour, e.from_date, timezone
+			FROM ' . $this->table('Tournaments') . ' t
+			INNER JOIN (
+				SELECT tournament_id, MIN(from_date) from_date
+				FROM ' . $this->table('Events') . '
+				WHERE state=0 AND is_live=1
+				GROUP BY tournament_id
+			) e ON e.tournament_id = t.id
+			WHERE state=0 AND is_live=1 AND e.from_date>' . (round(time() / 60)*60 - 3600*24)  . '
 			ORDER BY from_date
 			LIMIT ' . intval($limit)
 		, 'id');
@@ -410,6 +427,9 @@ class livereporting_model_tournament_src_index extends livereporting_model_tourn
 
 	function getUpcomingTournaments($limit = 4) 
 		{ return parent::getUpcomingTournaments($limit); }
+		
+	function getUpcomingTournamentsByNearestEvent($limit = 4) 
+		{ return parent::getUpcomingTournamentsByNearestEvent($limit); }
 		
 	function helperGetUpcomingEvents($tournamentIds) 
 		{ return parent::helperGetUpcomingEvents($tournamentIds); }

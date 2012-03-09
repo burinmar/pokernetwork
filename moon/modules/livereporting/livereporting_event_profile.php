@@ -76,23 +76,26 @@ class livereporting_event_profile extends livereporting_event_pylon
 			'cu.card' => htmlspecialchars($profile['card']),
 			'cu.is_pnews' => htmlspecialchars($profile['is_pnews']),
 			'cu.sponsor' => $profile['sponsor'],
-			'cu.sponsorimg' => img('rw', $profile['sponsor_id'], $profile['sponsorimg']),
+			'cu.sponsorimg' => $profile['sponsor_id'] > 0
+				? img('rw', $profile['sponsor_id'], $profile['sponsorimg'])
+				: $profile['sponsorimg'],
 			'cu.sponsorurl' => $profile['sponsorurl'],
 			'cu.status'  => $lrep->instTools()->helperPlayerStatus($profile['status'], $profile['sponsor']),
 			'cu.chips_list' => ''
 		);
 
-		$chipsHistory = array_reverse($this->getChipsHistory($profile['id'], $data['day_id'], $data['event_id']));
-		$lastChipNr = count($chipsHistory) - 1;
-		foreach ($chipsHistory as $cNr => $chip) {
+		$chipsHistory = $this->getChipsHistory($profile['id'], $data['day_id'], $data['event_id']);
+		$seenNullChip = false;
+		foreach ($chipsHistory as $chip) {
 			$createdOn = $text->ago($chip['created_on']);
 			if ($createdOn == '' || $chip['created_on'] > time()) {
 				$createdOn = $locale->gmdatef($chip['created_on'] + $data['tzOffset'], 'Reporting') . ' ' . $data['tzName'];
 			}
-			if ($chip['chips'] === NULL && $cNr == $lastChipNr) { // should be initial chip
+			if ($chip['chips'] === NULL && !$seenNullChip) { // should be initial chip
+				$seenNullChip = true;
 				continue;
 			}
-			$profileArgv['cu.chips_list'] .= $tpl->parse('cu.chips_list.item', array(
+			$profileArgv['cu.chips_list'] = $tpl->parse('cu.chips_list.item', array(
 				'chips' => $chip['chips'],
 				'busted' => intval($chip['chips']) == 0,
 				'chips_change' => $chip['chips_change'],
@@ -115,7 +118,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 						'type' => 'chips',
 						'id' => $chip['import_id']))
 					: ''
-			));
+			)) . $profileArgv['cu.chips_list'];
 		}
 
 		$profileArgv['control'] = $this->renderControl(array(
@@ -140,21 +143,34 @@ class livereporting_event_profile extends livereporting_event_pylon
 	private function getProfile($id, $eventId, $dayId)
 	{
 		$profile = $this->db->single_query_assoc('
-			SELECT p.id, p.name, p.card, p.is_pnews, p.sponsor_id, p.status,
-				r.name sponsor, r.favicon sponsorimg, r.alias sponsorurl, r.is_hidden sphid
+			SELECT p.id, p.name, p.card, p.is_pnews, p.sponsor_id, p.status
 			FROM ' . $this->table('Players') . ' p
-			LEFT JOIN ' . $this->table('Rooms') . ' r
-				ON r.id=p.sponsor_id
 			WHERE p.id=' . getInteger($id) . '
 				AND p.event_id=' . getInteger($eventId)
 		);
 		if (0 == count($profile)) {
 			return NULL;
 		}
-		if ($profile['sphid'] == '0') { // sponsor not hidden
-			$profile['sponsorurl'] = '/' . $profile['sponsorurl'] . '/';
+
+		$sponsors = $profile['sponsor_id'] !== null
+			? $this->lrep()->instEventModel('_src_event')->getSponsorsById(array($profile['sponsor_id']))
+			: array();
+			
+		if (isset($sponsors[$profile['sponsor_id']])) {
+			$sponsor = $sponsors[$profile['sponsor_id']];
+			$profile += array(
+				'sponsor'    => $sponsor['name'],
+				'sponsorimg' => $sponsor['favicon'],
+				'sponsorurl' => !$sponsor['is_hidden'] && !empty($sponsor['alias'])
+					? '/' . $sponsor['alias'] . '/'
+					: null
+			);
 		} else {
-			$profile['sponsorurl'] = NULL;
+			$profile += array(
+				'sponsor'    => null,
+				'sponsorimg' => null,
+				'sponsorurl' => null
+			);
 		}
 
 		$bluffData = $this->db->single_query_assoc('

@@ -167,7 +167,6 @@ class livereporting_tour extends moon_com
 				? $articlesObject->getTagUrl($tourData['news_tag'])
 				: '';
 		}
-		
 		return $tpl->parse('tour:main', $mainArgv);
 	}
 	

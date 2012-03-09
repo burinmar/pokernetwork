@@ -522,26 +522,49 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		return $this->dayParallel($daysData, $dayId);
 	}
+
+	private function getFauxRoomSponsors()
+	{
+		return array(
+			-1 => array(
+				'id' => -1,
+				'alias' => '',
+				'name'  => 'DeepStack Team Pro',
+				'favicon' => '/img/live_poker/deepstacks-icon.png',
+				'is_hidden' => 0,
+			)
+		);
+	}
 	
 	protected function getSponsorsById($ids)
 	{
-		if (empty($ids)) {
-			return array();
-		}
 		$ids = array_unique($ids);
-		return $this->db->array_query_assoc('
-			SELECT id, alias, name, favicon FROM ' . $this->table('Rooms') . '
-			WHERE id IN (' . implode(',', $ids) . ')
-		', 'id');
+		foreach ($ids as $key => $id) {
+			$ids[$key] = intval($id);
+		}
+		if (0 == count($ids)) {
+			$return = array();
+		} else {			
+			$return = $this->db->array_query_assoc('
+				SELECT id, alias, name, favicon, is_hidden FROM ' . $this->table('Rooms') . '
+				WHERE id IN (' . implode(',', $ids) . ')
+			', 'id');
+		}
+		$return += $this->getFauxRoomSponsors();
+
+		return $return;
 	}
 	
 	protected function getSponsors()
 	{
-		return $this->db->array_query_assoc('
+		$return = $this->db->array_query_assoc('
 			SELECT id, name, is_hidden
 			FROM ' . $this->table('Rooms') . '
 			ORDER BY name
 		', 'id');
+		$return += $this->getFauxRoomSponsors();
+
+		return $return;
 	}
 	
 	protected function getLastChips($eventId, $dayId, $tiny = FALSE, $onlyLastDay = FALSE)
@@ -888,6 +911,10 @@ class livereporting_model_event_src_event extends livereporting_model_event
 		{ return parent::updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId); }
 	function dayParallel($eventId, $dayId)
 		{ return parent::dayParallelIface($eventId, $dayId); }
+	function getSponsorsById($ids)
+		{ return parent::getSponsorsById($ids); }
+	function getSponsors()
+		{ return parent::getSponsors(); }
 }
 
 /**

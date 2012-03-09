@@ -136,7 +136,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 					? str_replace('{}', $chip['id'], $playerUrl)
 					: '',
 				'player_sponsorimg' => isset($chip['sponsor']['ico'])
-					? img('rw', @$chip['sponsor']['id'], $chip['sponsor']['ico'])
+					? ($chip['sponsor']['id'] > 0
+						? img('rw', @$chip['sponsor']['id'], $chip['sponsor']['ico'])
+						: $chip['sponsor']['ico'])
 					: NULL,
 				'player_sponsor' => $lrepTools->helperPlayerStatus(
 					isset($chip['status'])  ? $chip['status'] : '',
@@ -214,7 +216,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		
 		//if (!$data['contents']['is_full_import'])
 		$this->chipsSort($entry['chips']);
-		
+
 		$rArgv['entries'] = '';
 		foreach ($entry['chips'] as $k => $chip) {
 			$chipsArgv = $this->helperRenderChipArgv($chip, $k, !empty($data['contents']['is_full_import']));
@@ -226,7 +228,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 						: '',
 					'player_sponsor' => $chip['sponsor'],
 					'player_sponsorimg' => !empty($chip['sponsorimg'])
-						? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
+						? ($chip['sponsor_id'] > 0
+							? img('rw', @$chip['sponsor_id'], $chip['sponsorimg'])
+							: $chip['sponsorimg'])
 						: NULL,
 					'player_sponsorurl' =>  $chip['sponsorurl'],
 					'player_status'  =>  $lrep->instTools()->helperPlayerStatus($chip['status'], $chip['sponsor']),
@@ -400,7 +404,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 				);
 				$chipsArgv['sponsor'] = trim($tpl->parse('logTab:chips.chips.item.sponsor', array(
 					'sponsorimg' => !empty($chip['sponsorimg'])
-						? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
+						? ($chip['sponsor_id'] > 0 
+							? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
+							: $chip['sponsorimg'])
 						: null,
 					'sponsorurl' =>  $chip['sponsorurl'],
 					'sponsor' => $chip['sponsor'],
@@ -699,7 +705,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 				$sponsors[] = $player['sponsor_id'];
 			}
 		}
-		$sponsors = $this->getSponsors($sponsors);
+		$sponsors = $this->lrep()->instEventModel('_src_event')->getSponsorsById($sponsors);
 
 		// always sync this section with save(preprocess) !
 		$place = 1;
@@ -849,26 +855,38 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 		if (count($chips) > 0) {
 			$players = $this->db->array_query_assoc('
-				SELECT p.id, p.name, p.is_pnews, p.sponsor_id, p.status,
-					r.name sponsor, r.favicon sponsorimg, r.alias sponsorurl, r.is_hidden sphid
+				SELECT p.id, p.name, p.is_pnews, p.sponsor_id, p.status
 				FROM ' . $this->table('Players') . ' p
-				LEFT JOIN ' . $this->table('Rooms') . ' r
-					ON r.id=p.sponsor_id
 				WHERE p.id IN (' . implode(',', array_keys($chips)) . ')
 			');
+			$sponsorIds = array();
+			foreach ($players as $row) {
+				if (!empty($row['sponsor_id'])) {
+					$sponsorIds[] = $row['sponsor_id'];
+				}
+			}
+			$sponsors = $this->lrep()->instEventModel('_src_event')->getSponsorsById($sponsorIds);
 			foreach ($players as $player) {
-				$chips[intval($player['id'])] += array(
+				$add = array(
 					'id'      => $player['id'],
 					'uname'   => $player['name'],
 					'ispn'    => $player['is_pnews'],
 					'status'  => $player['status'],
 					'sponsor_id' => $player['sponsor_id'],
-					'sponsor'    => $player['sponsor'],
-					'sponsorimg' => $player['sponsorimg'],
-					'sponsorurl' => $player['sphid'] == '0'
-						? '/' . $player['sponsorurl'] . '/'
-						: NULL
+					'sponsor'    => null,
+					'sponsorimg' => null,
+					'sponsorurl' => null
 				);
+				if (isset($sponsors[$player['sponsor_id']])) {
+					$sponsor = $sponsors[$player['sponsor_id']];
+					$add['sponsor'] = $sponsor['name'];
+					$add['sponsorimg'] = $sponsor['favicon'];
+					$add['sponsorurl'] = !$sponsor['is_hidden'] && !empty($sponsor['alias'])
+						? '/' . $sponsor['alias'] . '/'
+						: null;
+				}
+
+				$chips[intval($player['id'])] += $add;
 			}
 		}
 		$entry['chips'] = $chips;
@@ -883,18 +901,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}		
 		
 		return $entry;
-	}
-
-	private function getSponsors($ids)
-	{
-		if (empty($ids)) {
-			return array();
-		}
-		$ids = array_unique($ids);
-		return $this->db->array_query_assoc('
-			SELECT id, alias, name, favicon FROM ' . $this->table('Rooms') . '
-			WHERE id IN (' . implode(',', $ids) . ')
-		', 'id');
 	}
 
 	private function getPlayersData($eventId, $dayId, $datetime, $includeIntermediate = FALSE)
@@ -1349,7 +1355,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 					$sponsors[] = $player['sponsor_id'];
 				}
 			}
-			$sponsors = $this->getSponsors($sponsors);
+			$sponsors = $this->lrep()->instEventModel('_src_event')->getSponsorsById($sponsors);
 
 			// always sync this section with preview() !
 			// loop-populate variables below

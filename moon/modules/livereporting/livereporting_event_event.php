@@ -222,7 +222,13 @@ class livereporting_event_event extends livereporting_event_pylon
 		$playersPokerUrl = $this->linkas('players.poker#');
 
 		$payouts = $this->getPayouts($data['event_id'], TRUE);
-		$sponsors = $this->getSponsors(TRUE);
+		$sponsorIds = array();
+		foreach ($payouts as $row) {
+			if (!empty($row['player.sponsor_id'])) {
+				$sponsorIds[] = $row['player.sponsor_id'];
+			}
+		}
+		$sponsors = $lrep->instEventModel('_src_event')->getSponsorsById($sponsorIds);
 
 		$mainArgv = array(
 			'entries' => '',
@@ -248,16 +254,20 @@ class livereporting_event_event extends livereporting_event_pylon
 				'wins' => number_format($payout['sum']),
 				'name' => htmlspecialchars($payout['player.name']),
 			);
-			if ($payout['player.id'] != NULL && isset($sponsors[$payout['player.id']])) {
-				$sponsor = $sponsors[$payout['player.id']];
+			if ($payout['player.id'] != NULL && isset($sponsors[$payout['player.sponsor_id']])) {
+				$sponsor = $sponsors[$payout['player.sponsor_id']];
 				$evArgv += array(
 					'sponsor' => $lrep->instTools()->helperPlayerStatus(!empty($payout['player.status'])
 							? $payout['player.status']
 							: '',
 						$sponsor['name']),
-					'sponsorimg' => img('rw', $sponsor['id'], $sponsor['sponsorimg']),
+					'sponsorimg' => !empty($sponsor['favicon'])
+						? ($sponsor['id'] > 0 
+							? img('rw', $sponsor['id'], $sponsor['favicon'])
+							: $sponsor['favicon'])
+						: null,
 				);
-				if ($sponsor['is_hidden'] == '0') {
+				if ($sponsor['is_hidden'] == '0' && !empty($sponsor['alias'])) {
 					$evArgv['sponsorurl'] = '/' . $sponsor['alias'] . '/';
 				}
 			}
@@ -356,13 +366,10 @@ class livereporting_event_event extends livereporting_event_pylon
 		return $tpl->parse('controls:event', $controlsArgv);
 	}
 
-	private function getSponsors($extended = FALSE)
+	// @todo get rid of this
+	private function getSponsors()
 	{
-		return $this->db->array_query_assoc('
-			SELECT id, name, is_hidden' . ($extended ? ',favicon sponsorimg, alias' : '') . '
-			FROM ' . $this->table('Rooms') . '
-			ORDER BY name
-		', 'id');
+		return $this->lrep()->instEventModel('_src_event')->getSponsors();
 	}
 
 	private function getPlayersPagingLabels($eventId) 
