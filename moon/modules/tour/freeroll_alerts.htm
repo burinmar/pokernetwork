@@ -1,0 +1,46 @@
+﻿<% alerts:main %>
+<div class="widget overBreadcrumb myAlerts" id="freerollAlerts">
+	<h2 class="widgetTitle">Freeroll alerts</h2>
+	<div class="roomsAlert">
+		<a href="#" class="grayButton">Rooms to Alert</a>
+		<div class="popup">
+			<form action="{!action}" method="post">
+			<input type="hidden" name="event" value="{save_rooms_event}" />
+			<table>
+				<colgroup>
+					<col style="width: 30px" />
+					<col />
+					<col style="width: 30px" />
+				</colgroup>
+				<% loop {list.rooms+=alerts:room.item} %>
+						<tr>
+					<td><img src="{img}" alt="" /></td>
+					<td>{title}</td>
+					<td class="tar"><input type="checkbox" name="room[{id}]" value="1"<%if {checked} %> checked="checked"<%end%> /></td>
+					</tr>
+				<% end {list.rooms} %>
+				<tr>
+					<td></td>
+					<td>All</td>
+					<td class="tar"><input type="checkbox" class="toggleAll" /></td>
+				</tr>
+			</table>
+			<button type="submit" class="submit">Save</button>
+			</form>
+		</div>
+	</div>
+	<ul class="myAlertsList">
+	<%if{list.freerolls}%>
+		<% loop {list.freerolls += alerts:freeroll.item} %>
+		<li>
+			<a href="{urlunsub}" class="remove" title="Remove Alert">&times;</a>
+			<p>{date}</p>
+			<a href="{url}">{title}</a>
+		</li>
+		<% end {list.freerolls} %>
+	<%else{list.freerolls}%>
+		<li id="i">Click "Alert me!" to add a freeroll</li>
+	<%end%>
+	</ul>
+	{puslapiai}
+</div>

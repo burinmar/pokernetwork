@@ -3,52 +3,15 @@ class freerolls_special extends moon_com {
 
 	function onload() {
 		$this->formFilter = & $this->form();
-		$this->formFilter->names('game', 'prize', 'room','team','df','dt');
+		$this->formFilter->names('game', 'prize', 'room');
 		$this->formFilter->fill($_GET);
 		$this->myTable = $this->table('SpecTournaments');
 	}
 
 	function events($event, $par) {
 		switch ($event) {
-			case 'sync-activate':
-				//aktyvuojam spec. freeroll nusiurbima is com
-				cronTask('tour.sync#');
-				$page = & moon :: page();
-				$page->set_local('transporter', 'ok');
-				break;
-
-			case 'sync-export':
-				//eksportuojam special freerolus (praso transporteris)
-				$specTourList = array();
-				if(isset($par['timestamp'])){
-					$timestamp = intval($par['timestamp']);
-					$specTourList = $this->db->array_query_assoc("
-						SELECT *  FROM ".$this->myTable."
-						WHERE `updated` > ".$timestamp." AND hide=0 AND date>" . time()
-						);
-				}
-				$page = & moon :: page();
-				$page->set_local('transporter', $specTourList);
-				break;
-
-			case 'save-subscription-rooms':
-				$form = &$this->form();
-				$form->names('room');
-				$form->fill($_POST);
-				$data = $form->get_values();
-				$this->saveSubscriptionRooms($data);
-				$this->redirect('#');
-				break;
 
 			default:
-				if (isset ($par[1]) && $par[0] == 'subscribe') {
-					$isAjax = isset($_GET['ajax']);
-					$response = $this->renderSaveAlertsTournament($par[1], $isAjax);
-					if ($isAjax) {
-						echo str_replace(array('\t','\r','\n','\/','\"'), array('','','','/',"'"), json_encode($response));
-						$this->forget(); moon_close(); exit;
-					}
-				}
 				$page = & moon :: page();
 				if ($page->uri_segments(2) === 'rss.xml' ) {
 					$this->forget();
@@ -74,7 +37,7 @@ class freerolls_special extends moon_com {
 		/* special_freeroll_alerts */
 		$u = &moon::user();
 		if ($u->get_user_id()) {
-			$page->insert_html($this->renderAlertsSB(), 'column');
+			$page->insert_html($this->object('freeroll_alerts')->main(), 'column');
 		}
 
 
@@ -94,23 +57,14 @@ class freerolls_special extends moon_com {
 		$fForm = array(
 			'prizes' => $filter->options('prize', $fPrize),
 			'rooms' => $filter->options('room', $fRooms),
-			'df' => intval($filter->get('df')),
-			'dt' => intval($filter->get('dt')),
 			'classIsOn' => count($addGet) ? ' filter-on' : '',
 			'!action' => $this->linkas('#')
 		);
-		$fForm['interval'] = '';
-		if ($fForm['df']) $fForm['interval'] = $locale->datef($locale->from_days($fForm['df']), '%d %{m.Sau} %Y');
-		if ($fForm['dt']) $fForm['interval'] .= ' - ' . $locale->datef($locale->from_days($fForm['dt']), '%d %{m.Sau} %Y');
 		$filterHTML = $tpl->parse('filter', $fForm);
 
 		$m = array(
 			'filter' => $filterHTML,
 			'items' => '',
-			'monthNames' => '"'.implode('", "', $locale->months_names() ) .'"',
-			'weekNames' => '"'.implode('", "', $locale->get_array('w.Pirm') ) .'"',
-			'siteID' => (_SITE_ID_ == 'uk' || _SITE_ID_ == 'il') ? _SITE_ID_ : '',
-			//'calendarUrl' => $this->linkas('tournaments_calendar#'),
 			'tab-item' => ''
 		);
 
@@ -129,8 +83,8 @@ class freerolls_special extends moon_com {
 		$userId = $user->get_user_id();
 		if ($userId) {
 			$subscriptions = $this->getUserSubscriptions($userId);
-			$page->css('/css/freerolls.css');
-			$page->js('/js/freerolls.js');
+			//$page->css('/css/freerolls.css');
+			//$page->js('/js/freerolls.js');
 		}
 
 		if ($count = $this->countTournaments()) {
@@ -216,7 +170,8 @@ class freerolls_special extends moon_com {
 				$r['subscribe'] = !empty($userId);
 				if ($r['subscribe']) {
 					$r2['subscribed'] = $this->isSubscribed($v['id'], $v['room_id'], $subscriptions);
-					$r2['sub_link'] = $this->linkas('#', 'subscribe.' . ($r2['subscribed'] ? -$v['id'] : $v['id']));
+					$addGet[$r2['subscribed'] ? 'far' : 'faa'] = $v['id'];
+					$r2['sub_link'] = $this->linkas('#','', $addGet);
 					$r2['id'] = $v['id'];
 					$r['subscribe'] = $tpl->parse('subscribe', $r2);
 				}
@@ -236,222 +191,7 @@ class freerolls_special extends moon_com {
 		return in_array($id, $subscriptions['tournaments'])	|| in_array($roomId, $subscriptions['rooms']) && !in_array(-$id, $subscriptions['tournaments']);
 	}
 
-	function renderAlertsSB($argv = null) {
-		$tpl = $this->load_template();
-		$page = &moon::page();
-		$user = &moon::user();
-		$userId = $user->get_user_id();
-		$locale = &moon::locale();
-		if (!$userId) return '';
-
-		$page->css('/css/freerolls.css');
-		$page->js('/js/freerolls.js');
-
-		$subscriptions = $this->getUserSubscriptions($userId);
-
-		$mainArgv = array(
-			'list.freerolls' => '',
-			'list.rooms' => '',
-			'save_rooms_event' => $this->my('fullname') . '#save-subscription-rooms',
-		);
-
-		$rooms = $this->getUserRooms();
-		$eventOdd = 0;
-		//$srcLogos = $this->get_var('srcRooms');
-		foreach ($rooms as $room) {
-			$mainArgv['list.rooms'] .= $tpl->parse('alerts:room.item', array(
-				'id' => $room['id'],
-				'even_odd' => $eventOdd % 2	? 'odd'	: 'even',
-				//'img' => $srcLogos . $room['logo'],
-				'img' => img('rw', $room['id'], $room['logo']),
-				'title' => htmlspecialchars($room['name']),
-				'checked' => in_array($room['id'], $subscriptions['rooms'])
-			));
-			$eventOdd ++;
-		}
-
-		$tournaments = array();
-		if (0 != count($subscriptions['rooms']) || 0 != count($subscriptions['tournaments'])) {
-			$tournaments = $this->db->array_query_assoc('
-				SELECT t.id, t.date, t.name, r.alias
-				FROM ' . $this->table('SpecTournaments') . ' t
-				INNER JOIN ' . $this->table('Rooms') . ' r
-					ON t.room_id=r.id
-				WHERE t.hide=0 AND t.`date`>' . time() . ' AND (' . (
-					0 != count($subscriptions['rooms'])
-						? ' t.room_id IN (' . implode(',', $subscriptions['rooms']) . ')'
-						: ''
-				) . (0 != count($subscriptions['rooms']) && 0 != count($subscriptions['tournaments']) ? ' OR ' : '') . (
-					0 != count($subscriptions['tournaments'])
-						? ' t.id IN (' . implode(',', $subscriptions['tournaments']) . ')'
-						: ''
-				) . ')
-				ORDER BY date
-			');
-			foreach ($tournaments as $k => $tournament) if (in_array(-$tournament['id'], $subscriptions['tournaments'])) unset($tournaments[$k]);
-		}
-
-		$k = 0;
-		$pageBy = 7;
-		list($tOffset, $gmt) = $locale->timezone((int)$user->get_user('timezone'));
-		foreach ($tournaments as $tournament) {
-			$pg = floor($k / $pageBy) + 1;
-			$mainArgv['list.freerolls'] .= $tpl->parse('alerts:freeroll.item', array(
-				'pg' => $pg,
-				'a11y' => $pg>1 ? TRUE : FALSE,
-				'date' => $locale->gmdatef($tournament['date'] + $tOffset, 'freerollTime') /* . ' ' . $gmt */,
-				'title' => htmlspecialchars($tournament['name']),
-				'url' => '/' . $tournament['alias'] . '/ext/',
-				'urlunsub' => $this->linkas('#', 'subscribe.' . -$tournament['id'])
-			));
-			$k++;
-		}
-		$c=count($tournaments);
-		$n=$mainArgv['pCnt'] = ceil($c / $pageBy);
-		$mainArgv['hPg'] = $n<2;
-		$mainArgv['hI'] = $c>0;
-
-		if (is_array($argv) && isset($argv['unparsed'])) return $mainArgv;
-		return $tpl->parse('alerts:main', $mainArgv);
-	}
-
-	function renderSaveAlertsTournament($id, $isAjax) {
-		$user = moon::user();
-		$userId = $user->get_user_id();
-		if (!$userId) {
-			$page = moon::page();
-			$page->page404();
-		}
-		$tpl = $this->load_template();
-
-		$id = intval($id);
-		$tournament = $this->getTournament(abs($id));
-		if (empty($tournament)) {
-			$page = moon::page();
-			$page->page404();
-		}
-		$roomId = $tournament['room_id'];
-
-		$subscriptions = $this->getUserSubscriptions($userId);
-		$isSubscribed = $this->isSubscribed(abs($id), $roomId, $subscriptions);
-
-		$isSubscribing = $id > 0;
-		$id = abs($id);
-
-		if ($isSubscribing && !$isSubscribed) {
-			$isUnsubbedTournament = in_array(-$id, $subscriptions['tournaments']);
-			$isSubbedRoom		 = in_array($roomId, $subscriptions['rooms']);
-			if ($isUnsubbedTournament) {
-				$tIndex = array_search(-$id, $subscriptions['tournaments']);
-				unset ($subscriptions['tournaments'][$tIndex]);
-			}
-			if (!$isSubbedRoom) $subscriptions['tournaments'][] = $id;
-		} elseif (!$isSubscribing && $isSubscribed) {
-			$isSubbedTournament = in_array($id, $subscriptions['tournaments']);
-			$isSubbedRoom	   = in_array($roomId, $subscriptions['rooms']);
-			if ($isSubbedTournament) {
-				$tIndex = array_search($id, $subscriptions['tournaments']);
-				unset ($subscriptions['tournaments'][$tIndex]);
-			}
-			if ($isSubbedRoom) $subscriptions['tournaments'][] = -$id;
-		}
-
-		$this->saveSubscriptionTournaments($subscriptions['tournaments']);
-		$this->getUserSubscriptions($userId, $subscriptions);
-
-		if ($isAjax) {
-			$r2['subscribed'] = $this->isSubscribed($id, $roomId, $subscriptions);
-			$r2['sub_link'] = $this->linkas('#', 'subscribe.' . ($r2['subscribed'] ? -$id : $id));
-			$r2['id'] = $id;
-			$list = $this->renderAlertsSB(array('unparsed' => true));
-			$r = array(
-				'id' => abs($id),
-				'link' => $tpl->parse('subscribe', $r2),
-				'freerolls' => $list['list.freerolls']
-			);
-			return $r;
-		}
-	}
-
-	function saveSubscriptionTournaments($data) {
-		$user = &moon::user();
-		$userId = $user->get_user_id();
-		if (empty ($userId)) return;
-		$validTournaments = $this->getTournamentsLight();
-		$vMap = array();
-		foreach ($validTournaments as $v) {
-			$vMap[] = $v['id'];
-			$vMap[] = -$v['id'];
-		}
-		$tournaments = array_intersect($vMap, $data);
-		$tournaments = implode(',', $tournaments);
-		$this->db->query('
-			INSERT INTO ' . $this->table('SpecSubscriptions') . '
-			(user_id, tournaments) VALUES(' . $userId . ', "' . $tournaments . '")
-			ON DUPLICATE KEY
-			UPDATE tournaments="' . $tournaments . '"
-		');
-	}
-
-	function saveSubscriptionRooms($data) {
-		$user = &moon::user();
-		$userId = $user->get_user_id();
-		if (empty ($userId)) return ;
-		$dbData = $this->db->single_query_assoc('
-			SELECT rooms,tournaments
-			FROM ' . $this->table('SpecSubscriptions') . '
-			WHERE user_id=' . $userId . '
-		');
-		if (!(array_key_exists('room', $data))) return;
-		$data = is_array($data['room']) ? array_keys($data['room']) : array();
-		$t = $a = $d = $r = array();
-		if (!empty($dbData)) {
-			$a = explode(',',$dbData['tournaments']);
-			$r = explode(',',$dbData['rooms']);
-			foreach ($a as $k => $v) {
-				if ($v === '') {unset($a[$k]); continue;}
-				if ($v<0) $d[$k] = -$v;
-			}
-		}
-
-		$r = array_diff($r,$data);
-		if (!empty($d) && !empty($r)) {
-			$t = $this->db->array_query('SELECT id
-				FROM ' . $this->table('SpecTournaments') . '
-				WHERE room_id IN (' . implode(',', $r) . ')
-					AND id IN (' . implode(',', $d) . ')
-			');
-		}
-
-		foreach ($t as $v) if (($k = array_search($v[0], $d))!==FALSE) unset($a[$k]);
-
-		$validRooms = $this->db->array_query_assoc('
-			SELECT id
-			FROM ' . $this->table('Rooms') . '
-			WHERE is_hidden=0
-			', 'id');
-
-		$r = array_intersect(array_keys($validRooms), $data);
-		$r = implode(',', $r);
-		$t = implode(',', $a);
-		$this->db->query('
-			INSERT INTO ' . $this->table('SpecSubscriptions') . '
-			(user_id, rooms, tournaments) VALUES(' . $userId . ', "' . $r . '", "' . $t . '")
-			ON DUPLICATE KEY
-			UPDATE rooms="' . $r . '", tournaments="' . $t . '"
-		');
-	}
-
-	function getUserSubscriptions($userId, $setData = NULL) {
-		static $cache = array();
-		if (NULL !== $setData) {
-			$cache[$userId] = $setData;
-			return $setData;
-		}
-		if (isset ($cache[$userId])) {
-			return $cache[$userId];
-		}
-
+	function getUserSubscriptions($userId) {
 		$data = $this->db->single_query_assoc('
 			SELECT rooms,tournaments FROM ' . $this->table('SpecSubscriptions') . '
 			WHERE user_id=' . intval($userId) . '
@@ -464,35 +204,11 @@ class freerolls_special extends moon_com {
 			if ($data['rooms'][0] === '') unset($data['rooms'][0]);
 			if ($data['tournaments'][0] === '') unset($data['tournaments'][0]);
 		} else $data = array('rooms' => array(), 'tournaments' => array());
-		$cache[$userId] = $data;
-		return $cache[$userId];
-	}
-
-	function getUserRooms() {
-		$user = &moon::user();
-		$userSubscriptions = $this->getUserSubscriptions($user->get_user_id());
-		$roomIds = array_unique(array_merge(
-			  $this->getRoomsRange(),
-			  $userSubscriptions['rooms']));
-		if (0 == count($roomIds)) return array();
-		return $this->db->array_query_assoc('
-			SELECT id,name,favicon logo
-			FROM ' . $this->table('Rooms') . '
-			WHERE is_hidden=0 AND id IN (' . implode(',', $roomIds) . ')
-			ORDER BY name
-			', 'id');
+		return $data;
 	}
 
 	function getTournaments($limit = '') {
 		return $this->db->array_query_assoc('SELECT * FROM ' . $this->myTable . $this->sqlWhere() . ' ORDER BY `date` asc, prizepool desc ' . $limit);
-	}
-
-	function getTournamentsLight() {
-		return $this->db->array_query_assoc('SELECT id, room_id FROM ' . $this->myTable . $this->sqlWhere());
-	}
-
-	function getTournament($id) {
-		return $this->db->single_query_assoc('SELECT id, room_id FROM ' . $this->myTable . $this->sqlWhere() . ' AND id=' . intval($id));
 	}
 
 	function countTournaments() {
@@ -508,15 +224,9 @@ class freerolls_special extends moon_com {
 		$a = $this->formFilter->get_values();
 
 		if (strlen($a['room'])) $where .= ' AND room_id=' . intval($a['room']);
-		if ($a['team']) $where .= ' AND team_id=' . intval($a['team']);
 		list($min, $max) = $this->getPrizeRange($a['prize']);
 		if ($min) $where .= ' AND prizepool >= ' . $min;
 		if ($max) $where .= ' AND prizepool <= ' . $max;
-		if ($a['df']) {
-			$where .= ' AND TO_DAYS(FROM_UNIXTIME(`date`))>=' . intval($a['df']);
-			if (!$a['dt']) $a['dt'] = $a['df'];
-		}
-		if ($a['dt']) $where .= ' AND TO_DAYS(FROM_UNIXTIME(`date`))<=' . intval($a['dt']);
 		return ($this->tmpWhere = $where);
 	}
 
@@ -583,7 +293,7 @@ class freerolls_special extends moon_com {
 		$xmlWriter->start_node('freerolls');
 
 		$xml = & moon::shared('rss');
-		$useCache = empty($_GET['team']) && !isset($_GET['all']) ? TRUE : FALSE;
+		$useCache = !isset($_GET['all']) ? TRUE : FALSE;
 		$content = $xml->feed($homeURL . substr( $this->linkas('#', 'rss.xml'), 0, -4), 'rss', $useCache);
 		if ($content === FALSE || isset($_GET['xml'])) {
 			$t = & $this->load_template();
