@@ -43,7 +43,7 @@ payouts = payouts | {!payouts}
 				<ul>
 					{list.days}
 				</ul>
-			</div>
+			</div><span class="clr"></span>
 			<%end%>
 			<div class="filterTabs filterTabsTopLine clrfix">
 				<b>Show:</b>
@@ -51,6 +51,7 @@ payouts = payouts | {!payouts}
 					{list.tabs}
 				</ul>
 			</div>
+			<span class="clr"></span>
 
 			<%if {launch_live_count} %>
 			<script type="text/javascript">
@@ -246,7 +247,7 @@ payouts = payouts | {!payouts}
 
 
 <% log:tab.part.liveupdate %>
-<sup id="lrAjaxLiveUpdate"></sup>
+<span id="lrAjaxLiveUpdate">3</span>
 
 
 <% log:tab.active %>

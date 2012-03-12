@@ -443,8 +443,10 @@ div.meta {margin-bottom: 1.5em}
 .dayListing ul {display: inline;}
 .dayListing li {
 	display: inline-block;
+	*float: left;
 	margin-right: 10px;
 }
+.dayListingTitle {*float: left}
 .dayListing li a {color: #a9a79a;}
 .dayListing li.current span {
 	color: #0050bd
@@ -1100,4 +1102,12 @@ div.meta {margin-bottom: 1.5em}
 	display: block;
 	text-transform: uppercase;
 	line-height: 30px;
+}
+.filterTabs #lrAjaxLiveUpdate {
+	color: #f99;
+	float: right;
+	margin-left: 5px;
+	font-size: 10px;
+	position: relative;
+	top: -5px;
 }
