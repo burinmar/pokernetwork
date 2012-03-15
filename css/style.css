@@ -24,7 +24,7 @@ input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
 input[type="checkbox"] {vertical-align: middle}
 button, input[type="submit"] {cursor: pointer}
-#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li, .myAlertsList li {zoom: 1;}
+#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li, .myAlertsList li, .blogsList li {zoom: 1;}
 
 /*Global*/
 .meta {
@@ -1354,3 +1354,82 @@ html {
 	}
 	.roomsAlert:hover .grayButton {background: #ececec;}
 	.roomsAlert:hover .popup {display: block;}
+
+/*Blogs*/
+.blogsList li {
+	border-bottom: 1px solid #d8d6c7;
+	margin-bottom: 23px;
+	padding-bottom: 10px;
+	position: relative;
+}
+	.blogsList li img {
+		border: 1px solid #0b57be;
+		float: left;
+	}
+	.blogsList li div {margin-left: 70px;}
+	.blogsList li p {margin-top: 15px;}
+	.blogsList li .author {
+		font-weight: bold;
+		font-size: 14px;
+	}
+	.blogsList li .title {
+		font-size: 18px;
+		margin-bottom: 10px;
+		margin-top: 3px;
+	}
+	.readPost, .visitBlog {
+		text-transform: uppercase;
+		font-size: 11px;
+		font-weight: bold;
+		margin-right: 12px;
+	}
+	.visitBlog {color: #a9a79a}
+	.postAction {
+		position: absolute;
+		top: -5px;
+		right: 0;
+	} .delete {color: red}
+	.postAction a {
+		margin-left: 5px;
+		font-size: 11px;
+		display: inline-block;
+		background: #fff;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		padding: 0 5px;
+		line-height: 16px;
+	}
+.popularPosts li {margin-bottom: 7px}
+	.popularPosts li .title, .popularPosts li p {
+		font-size: 13px;
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		width: 225px;
+	}
+	.popularPosts li .meta a {color: #0050bd}
+	.popularPosts li p {font-size: 11px}
+
+.myBlogControl .bigButton {width: 157px;}
+.myBlogControl .widgetTitle a {
+	float: right;
+	color: #0050bd;
+	text-transform: none;
+}
+
+.blogPost .aboutAuthor img {
+	border: 1px solid #0b57be;
+	float: left;
+}
+.blogPost .aboutAuthor p {margin-left: 80px; line-height: 20px}
+	.blogPost .aboutAuthor p b {font-size: 18px; display: block; margin-bottom: 2px}
+.blogPost .more2 {margin-top: 15px}
+.blogPost .article {margin-top: 15px; position: relative}
+	.blogPost .article .postAction {top: -20px}
+.blogPost .tags {margin: 20px 0}
+.tags h3 {
+	color: #515151;
+	text-transform: uppercase;
+	font-size: 11px;
+	margin-bottom: 2px;
+}
