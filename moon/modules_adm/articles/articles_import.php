@@ -2,7 +2,35 @@
 
 class articles_import extends moon_com 
 {
+	/*
 
+	IMPORT INSTRUCTIONS
+	
+	nurodyt sena db
+
+	1. $this->oldDB = 'pokernetwork_old';
+
+	paleisti importus
+
+	2. http://www.pokernetwork.dev/adm/articles-articles_import/categories
+	3. http://www.pokernetwork.dev/adm/articles-articles_import/tags
+	4. http://www.pokernetwork.dev/adm/articles-articles_import/news
+		reikes kelis kartus paleisti, importuoja dalimis
+	5. http://www.pokernetwork.dev/adm/articles-articles_import/recompile
+
+	6. moon/modules/articles.config.cfg.php 'var.suffixStartId' - nurodyt select max(id) + 1 from articles
+	
+	7. padaryt reikalingus redirectus naujienu kategorijoms
+		http://www.pokernetwork.com/australian-poker-news
+		http://www.pokernetwork.com/sports-betting
+		http://www.pokernetwork.com/world-poker-news
+		http://www.pokernetwork.com/articles
+		http://www.pokernetwork.com/promotions
+		http://www.pokernetwork.com/poker-strategy
+
+		-> http://www.pokernetwork.com/news/australian-poker-news ir tt.
+
+	*/
 
 	function onload()
 	{
@@ -73,7 +101,7 @@ class articles_import extends moon_com
 				LEFT JOIN ' . $this->oldDB . '.node_relation nrel ON n.nid=nrel.pnid AND nrel.relation = "node_to_image"
 			WHERE ' . (!empty($importedIds) ? 'n.nid NOT IN (' . implode(',', $importedIds) . ') AND ' : '') . ' n.type= "story"
 			ORDER BY rand()
-			LIMIT 56
+			LIMIT 500
 		';
 		$res = $this->db->array_query_assoc($sql, 'id');
 		$msg[] = count($res);
