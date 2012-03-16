@@ -86,7 +86,7 @@ function loginUnconditional($userInfo)
 		$ip = moon::user()->get_ip();
 		$this->db->replace(
 				array('user_id'=>$userInfo['userid'], 'ip'=>$ip, 'created'=>gmdate('Y-m-d')),
-				$this->table('UsedIP')
+				'users_used_ip'
 				);
 	}
 }
