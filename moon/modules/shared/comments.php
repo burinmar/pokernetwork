@@ -219,9 +219,10 @@ class comments extends moon_com {
 				if (isset ($users[$v['user_id']])) {
 					$ui = $users[$v['user_id']];
 					$d['author'] = htmlspecialchars($ui['nick']);
-					if ($uLink) {
+					$d['authorURL'] = '/forums/member.php?u=' . $v['user_id'];
+					/*if ($uLink) {
 						$d['authorURL'] = $uLink . htmlspecialchars($ui['nick']).'/';
-					}
+					}*/
 					if ($ui['avatar']) {
 						$d['authorAvatar'] = img('avatar', $v['user_id'] . '-' . $ui['avatar']);
 					}
