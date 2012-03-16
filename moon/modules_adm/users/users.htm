@@ -22,7 +22,9 @@ error6=User with such nick already exists.
 	<input type="hidden" name="event" value="{goFilter}" />
 	<table><tr>
 		<td><select name="filter[kur]">{kur}</select>: <input type="text" name="filter[text]" value="{text}" size="20" maxlength="30"/></td>
-		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show inactive</label></td>
+		<!--#
+<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show inactive</label></td>
+-->
 		<td><input type="submit" value="Filter" /></td>
 		</tr></table>
 	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
@@ -36,7 +38,7 @@ error6=User with such nick already exists.
 		<th><a href="{orderby1}">Nick</a></th>
 		<th width="20"></th>
 		<th><a href="{orderby2}">Email</a></th>
-		<th><span>Name</span></th>
+		<th><span>&nbsp;</span></th>
 		<th style="width: 100px"><a href="{orderby3}">Last login</a></th>
 		<th style="width: 100px"><a href="{orderby4}">Created</a></th>
 	</tr>
@@ -93,7 +95,7 @@ error6=User with such nick already exists.
 		<tr>
 		<th><a href="{orderby1}">Nick</a></th>
 			<th><span>Permissions</span></th>
-			<th><span>E-mail, name</span></th>
+			<th><span>E-mail</span></th>
 		<th><a href="{orderby2}">Created</a></th>
 		</tr>
 		</thead>
@@ -167,7 +169,7 @@ function changeRole(obj){
 
 	<dt><label for="i_nick">Nick</label></dt>
 	<dd>
-		<input type="text" name="nick" id="i_nick" value="{nick}" size="50" maxlength="60" class="required"/>
+		<input type="text" name="nick" id="i_nick" value="{nick}" size="50" maxlength="100" class="required"/>
 		<div class="explain">4-50 characters.</div>
 	</dd>
 
@@ -182,7 +184,8 @@ function changeRole(obj){
 		<input type="text" name="email" id="i_email" value="{email}" size="50" maxlength="50" class="required"/>
 	</dd>
 
-	<dt><label for="i_name">Name</label></dt>
+	<!--#
+<dt><label for="i_name">Name</label></dt>
 	<dd>
 		<input type="text" name="name" id="i_name" value="{name}" size="50" maxlength="45" />
 	</dd>
@@ -191,6 +194,7 @@ function changeRole(obj){
 	<dd>
 		<select name="status">{status}</select>
 	</dd>
+-->
 
 	<dt><label for="i_name">Permissions</label></dt>
 	<dd>

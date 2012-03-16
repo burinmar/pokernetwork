@@ -5,7 +5,7 @@ $(document).ready(function () {
 	var settings_object = {
 		upload_url : 'media.php', // flash session cookie fix
 		flash_url : '/img/adm/swfupload.swf',
-		post_params: {'files-upload':1,'banner_id':bannerId,'SI':phpSessionId},
+		post_params: {'files-upload':1, 'swfupload':1,'banner_id':bannerId,'SI':phpSessionId},
 		
 		// File Upload Settings
 		file_size_limit : '20 MB',

@@ -52,14 +52,15 @@ class stats extends moon_com {
 	function getStats() {
 		$sql =
 		"SELECT
-			DATE_FORMAT(created, '%Y-%m') AS `year_month`,
+			FROM_UNIXTIME(joindate, '%Y-%m') AS `year_month`,
 			COUNT(*) AS `registered`
-		FROM `".$this->table('Users')."`
-		WHERE status = 1
+		FROM `vb_user`
+		WHERE usergroupid > 1
 		GROUP BY `year_month`";
 
 		$result = array();
-		$dbResult = $this->db->query($sql);
+		$db = moon::db('database-vb');
+		$dbResult = $db->query($sql);
 		while ($row = $this->db->fetch_row_assoc($dbResult)) {
 			list($year, $month) = explode("-", $row["year_month"]);
 			$result[$year][(int)$month] = $row["registered"];

@@ -16,6 +16,9 @@ class users extends moon_com {
 
 		/* main table */
 		$this->myTable = $this->table('Users');
+
+		$this->dbvb = & moon::db('database-vb');
+		$this->myTable = 'vb_user';
 	}
 
 	function events($event, $par) {
@@ -116,7 +119,7 @@ class users extends moon_com {
 		$f = & $this->formFilter;
 		$f->fill($vars['filter']);
 		$filter = $f->get_values();
-		$selKur = array('nick' => 'Nick', 'email' => 'E-mail', 'name' => 'Name');
+		$selKur = array('nick' => 'Nick', 'email' => 'E-mail');
 		$fm = array();
 		$fm['text'] = $f->html_values('text');
 		$fm['kur'] = $f->options('kur', $selKur);
@@ -149,8 +152,8 @@ class users extends moon_com {
 			$loc = & moon :: locale();
 			$now = $loc->now();
 			foreach ($dat as $d) {
-				$d['class'] = $d['status'] != 1 ? 'item-hidden':'';
-				$d['admin'] = $d['status'] == 1 && $d['access'] ? 1:0;
+				$d['class'] = $d['usergroupid'] != 2 && $d['usergroupid'] < 5 ? 'item-hidden':'';
+				$d['admin'] = FALSE && /*$d['status'] == 1 &&*/ $d['access'] ? 1:0;
 				$d['email'] = htmlspecialchars($d['email']);
 				$d['name'] = htmlspecialchars($d['name']);
 				$d['nick'] = htmlspecialchars($d['nick']);
@@ -402,17 +405,26 @@ class users extends moon_com {
 			}
 		}
 		$w[] = "access<>''";
-		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)):'';
+		$sql = 'SELECT id, access FROM ' . $this->table('Users') . ' WHERE ' . implode(' AND ', $w);
+		$access = $this->db->array_query($sql, TRUE);
+		$ids = array_keys($access);
+		$m = array();
+		if (count($ids)) {
 		//sql
-		$sql = '
-			SELECT id, nick, email, name, created, login_date, avatar, status, access
-			FROM ' . $this->table('Users') . $where . $order . ' limit 1000';
-		return $this->db->array_query_assoc($sql);
+			$sql = '
+				SELECT userid as id, username as nick, `password`, email, `usertitle` as name, lastvisit as login_date, joindate as created, usergroupid
+				FROM ' . $this->myTable . ' WHERE userid IN ('.implode(',', $ids).')' . $order . ' limit 1000';
+			$m = $this->dbvb->array_query_assoc($sql);
+			foreach ($m as $k => $v) {
+				$m[$k]['access'] = isset($access[$v['id']]) ? $access[$v['id']] : '';
+			}
+		}
+		return $m;
 	}
 
 	function getListCount() {
 		$sql = 'SELECT count(*) FROM ' . $this->myTable . $this->_where();
-		$m = $this->db->single_query($sql);
+		$m = $this->dbvb->single_query($sql);
 		return (count($m) ? $m[0]:0);
 	}
 
@@ -420,8 +432,10 @@ class users extends moon_com {
 		if ($order) {
 			$order = ' ORDER BY ' . $order;
 		}
-		$sql = 'SELECT * FROM ' . $this->myTable . $this->_where() . $order . $limit;
-		return $this->db->array_query_assoc($sql);
+		$sql = '
+			SELECT userid as id, username as nick, `password`, email, `usertitle` as name, lastvisit as login_date, joindate as created, usergroupid
+			FROM ' . $this->myTable . $this->_where() . $order . $limit;
+		return $this->dbvb->array_query_assoc($sql);
 	}
 
 	function _where() {
@@ -431,17 +445,18 @@ class users extends moon_com {
 		$a = $this->formFilter->get_values();
 		$w = array();
 		//$w[] = "login_date<>'0000-00-00'";
-		if (empty ($a['hidden'])) {
+		/*if (empty ($a['hidden'])) {
 			$w[] = "status<>0";
-		}
+		}*/
 		if ($a['text'] !== '') {
 			$find = (strlen($a['text']) > 2 ? '%':'') . $this->db->escape($a['text'], TRUE);
 			switch ($a['kur']) {
 
 				case 'email':
-				case 'nick':
-				case 'name':
 					$w[] = $a['kur'] . " like '$find%'";
+					break;
+				case 'nick':
+					$w[] = "username like '$find%'";
 					break;
 
 				default:
@@ -452,9 +467,16 @@ class users extends moon_com {
 	}
 
 	function getItem($id) {
-		return $this->db->single_query_assoc('
-			SELECT * FROM ' . $this->myTable . ' WHERE
-			id = ' . intval($id));
+		$m = $this->dbvb->single_query_assoc('
+			SELECT userid as id, username as nick, `password`, email, `usertitle` as name, lastvisit as login_date, joindate as created, usergroupid
+			FROM ' . $this->myTable . ' WHERE
+			userid = ' . intval($id));
+		if (count($m)) {
+			$sql = 'SELECT access FROM ' . $this->table('Users') . ' WHERE id = ' . intval($id);
+			$a = $this->db->single_query($sql);
+			$m['access'] = empty($a[0]) ? '' : $a[0];
+		}
+		return $m;
 	}
 
 	function saveItem() {
@@ -479,6 +501,8 @@ class users extends moon_com {
 		//jei bus klaida
 		$form->fill($d, false);
 
+
+
 		/* validacija */
 		$err = 0;
 		$ilg = strlen($d['nick']);
@@ -488,7 +512,7 @@ class users extends moon_com {
 		elseif ($d['email'] === '') {
 			$err = 2;
 		}
-		elseif ($ilg < 4 || $ilg > 50) {
+		elseif ($ilg < 1 || $ilg > 100) {
 			//|| preg_match('/[^a-z0-9_.-]/i', $d['nick'], $rMas)
 			$err = 3;
 		}
@@ -497,10 +521,10 @@ class users extends moon_com {
 		}
 		else {
 			//check for duplicates
-			$sql = "SELECT SUM( IF(nick='" . $this->db->escape($d['nick']) . "',100,1) )
+			$sql = "SELECT SUM( IF(username='" . $this->db->escape($d['nick']) . "',100,1) )
 			FROM " . $this->myTable . "
-			WHERE (nick='" . $this->db->escape($d['nick']) . "' OR email='" . $this->db->escape($d['email']) . "') AND id<>" . $id;
-			if (count($a = $this->db->single_query($sql)) && $a[0]) {
+			WHERE (username='" . $this->db->escape($d['nick']) . "' OR email='" . $this->db->escape($d['email']) . "') AND userid<>" . $id;
+			if (count($a = $this->dbvb->single_query($sql)) && $a[0]) {
 				$err = $a[0] > 99 ? 6:5;
 			}
 		}
@@ -514,25 +538,39 @@ class users extends moon_com {
 		if ($wasRefresh = $form->was_refresh()) {
 			return $id;
 		}
-		$was = $this->getItem($id);
+		//$was = $this->getItem($id);
 
 		/* save to database */
-		$ins = $form->get_values('nick', 'email', 'name', 'timezone', 'status', 'access');
+		$ins = $form->get_values('email');
+		$ins['username'] = $d['nick'];
 		if (!$id || $d['password'] !== '') {
-			$ins['password'] = md5($d['password']);
+			$ins['salt'] = uniqid('');
+			$ins['password'] = md5(md5($d['password']) .  $ins['salt']);
+			$ins['passworddate'] = gmdate('Y-m-d');
 		}
 		//
-		$db = & $this->db();
+		$db = & $this->dbvb;
 		if ($id) {
-			$db->update_query($ins, $this->myTable, array('id' => $id));
+			$db->update_query($ins, $this->myTable, array('userid' => $id));
 			// log this action
 			blame($this->my('fullname'), 'Updated', $id);
 		}
 		else {
-			$ins['created'] = gmdate('Y-m-d');
-			$id = $db->insert_query($ins, $this->myTable, 'id');
+			$ins['usergroupid'] = '2';
+			$ins['usertitle'] = 'PNW Novice';
+			$ins['joindate'] = time();
+			$ins['reputationlevelid'] = '5';
+			$ins['options'] = '45108311';
+			$id = $db->insert_query($ins, $this->myTable, 'userid');
 			// log this action
 			blame($this->my('fullname'), 'Created', $id);
+		}
+
+		/* save to database access */
+		$ins = $form->get_values('access');
+		if ($id) {
+			$ins['id'] = $id;
+			$this->db->replace($ins, $this->table('Users'), array('id' => $id));
 		}
 		$form->fill(array('id' => $id));
 		return $id;

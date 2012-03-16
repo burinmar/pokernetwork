@@ -26,11 +26,11 @@ class startup extends moon_com {
 					}
 					else {
 						//patikrinam autologina
-						if (isset($_POST['cglg']) && isset($_POST['swfupload'])) {
-							$_COOKIE["cglg"] = $_POST['cglg'];
+						if (isset($_POST['pnlg']) && isset($_POST['swfupload'])) {
+							$_COOKIE["pnlg"] = $_POST['pnlg'];
 						}
-						if (isset ($_COOKIE['cglg'])) {
-							$loginObj->autologin($_COOKIE['cglg']);
+						if (isset ($_COOKIE['pnlg'])) {
+							$loginObj->autologin($_COOKIE['pnlg']);
 						}
 					}
 				}
