@@ -75,7 +75,7 @@ switch ($instance) {
 
 	case 'blog_post':
 		$cfg['fileDir'] = 'w/blogs/';
-		$cfg['fileSRC'] = '/w/blogs';
+		$cfg['fileSRC'] = '/w/blogs/';
 		$cfg['parserFeatures'] =  array(
 			'replace' => array('h' => 'h2'),
 			'tags' => 'h|b|i|u|quote|list|list-1|url|video|img|sub|sup|strike|code|table',
