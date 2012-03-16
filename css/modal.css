@@ -1,0 +1,208 @@
+@charset "UTF-8";
+/* CSS Document */
+
+html {
+	background: transparent;
+}
+body {
+	background: transparent;
+	box-shadow: none;
+	-khtml-box-shadow: none;
+	-moz-box-shadow: none;
+	-webkit-box-shadow: none;
+	padding: 10px 10px 0 10px;
+	width: auto;
+}
+#wrapper {width: auto}
+.modalWindowClose {
+	right: 0;
+	top: 0;
+}
+h1 {margin-bottom: 20px}
+.intro {
+	margin-top: 20px;
+	margin-bottom: 10px;
+}
+dt {
+	font-weight: bold;
+	margin-top: 10px;
+}
+dd {padding-left: 30px;}
+dd label { /* radio buttons */
+	margin-right: 10px;
+}
+input[type="email"],
+input[type="password"],
+input[type="text"],
+input[type="url"],
+textarea {
+	width: 95%;
+}
+button {
+	font-size: 14px;
+	margin: 20px 30px 0 30px;
+}
+.error {
+	color: #d2001b;
+}
+
+/* Flash file uploads */
+.swfupload {
+	border: 2px outset #5d5d5d;
+}
+#fsUploadProgress1 {
+	display: list;
+	list-style: disc;
+}
+.progressWrapper {
+	display: list-item;
+}
+button#btnUpload {
+	margin-left: 0;
+	margin-right: 0;
+}
+
+/********** SWF upload ************/
+
+.progressWrapper {
+	width: 357px;
+	overflow: hidden;
+}
+
+.progressContainer {
+	margin: 5px;
+	padding: 4px;
+	border: solid 1px #E8E8E8;
+	background-color: #F7F7F7;
+	overflow: hidden;
+}
+.objbrowser{
+	overflow: auto;
+	width: 740px
+}
+/* Message */
+.message {
+	margin: 1em 0;
+	padding: 10px 20px;
+	border: solid 1px #FFDD99;
+	background-color: #FFFFCC;
+	overflow: hidden;
+}
+/* Error */
+.red {
+	border: solid 1px #B50000;
+	background-color: #FFEBEB;
+}
+
+/* Current */
+.green {
+	border: solid 1px #DDF0DD;
+	background-color: #EBFFEB;
+}
+
+/* Complete */
+.blue {
+	border: solid 1px #CEE2F2;
+	background-color: #F0F5FF;
+}
+
+.progressName {
+	font-size: 8pt;
+	font-weight: 700;
+	color: #555;
+	width: 323px;
+	height: 14px;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.progressBarInProgress,
+.progressBarComplete,
+.progressBarError {
+	font-size: 0;
+	width: 0%;
+	height: 2px;
+	background-color: blue;
+	margin-top: 2px;
+}
+
+.progressBarComplete {
+	width: 100%;
+	background-color: green;
+	visibility: hidden;
+}
+
+.progressBarError {
+	width: 100%;
+	background-color: red;
+	visibility: hidden;
+}
+
+.progressBarStatus {
+	margin-top: 2px;
+	width: 337px;
+	font-size: 7pt;
+	font-family: Arial;
+	text-align: left;
+	white-space: nowrap;
+}
+
+a.progressCancel {
+	font-size: 0;
+	display: block;
+	height: 14px;
+	width: 14px;
+	background-image: url('/img/adm/cancelbutton.gif');
+	background-repeat: no-repeat;
+	background-position: -14px 0px;
+	float: right;
+}
+
+a.progressCancel:hover {
+	background-position: 0px 0px;
+}
+
+
+/* Modal windows */
+.modalWindow {
+	background-color: #ffffff;
+	border: 1px solid #bec5c9;
+	border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 20px;
+	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	-khtml-box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	-moz-box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	}
+iframe.modalWindow {
+	padding: 10px;
+}
+	.modalWindowClose {
+		background: url('/img/popupClose.png') no-repeat left top;
+		height: 0;
+		outline: 0;
+		overflow: hidden;
+		padding-top: 21px;
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		width: 21px;
+		} html[dir="rtl"] .modalWindowClose {
+		left: 15px;
+		right: auto;
+		} .modalWindowClose:hover {
+		background-position: left -30px;
+	}
+	.modalWindow .article {
+		border-top: 0;
+		padding: 0;
+	}
+	.modalWindow h1 {
+		color: #373737;
+		font-size: 19px;
+		margin-bottom: 20px;
+	}

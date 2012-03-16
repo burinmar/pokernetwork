@@ -7,12 +7,12 @@ error2={!spamPost}
 error9=System error!
 
 <% viewList %>
-<div id="mainBlock" class="managePostsPage">
-	<h1 class="utilityPageTitle">{!blogManager}</h1>
-	<ul class="tabs">
+<div class="widget">
+	<h1 class="pageTitle">{!blogManager}</h1>
+	<!--# ul class="tabs">
 		<li><a href="{goNew}">{!newPost}</a></li>
 		<li class="current"><a href="{goManage}">{!managePosts}</a></li>
-	</ul>
+	</ul-->
 
 	<% if {items} %>
 	<form action="{!action}" method="post" name="list-form">
@@ -69,60 +69,57 @@ $(document).ready(function(){
 var urlAjax = '{url.ajax}';
 </script>
 
-<div id="mainBlock" class="editPostPage">
-
-	<h1 class="utilityPageTitle">
+<div class="widget">
+	<h1 class="pageTitle">
 	<%if{title}%>{!editPost}: {title}<%else{title}%>{!newPost}<%end%>
 	</h1>
 
 	<%end%>
-	<ul class="tabs">
+	<!--# ul class="tabs">
 		<li <%if{id}%><%else{id}%>class="current"<%end%>><a href="{goNew}">{!newPost}</a></li>
 		<li <%if{id}%>class="current"<%end%>><a href="{goManage}">{!managePosts}</a></li>
-	</ul>
+	</ul-->
 
 	<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
 		<%if{error}%><div class="error"><span>{error}</span></div><%end%>
-		<fieldset>
+		<div class="row">
 			<input type="hidden" name="event" value="{event}" />{refresh}
 			<input type="hidden" name="id" value="{id}" />
 			<input type="hidden" name="created_on" value="{created_on}" id="i_created_on" />
 			<label for="i_title">{!title}</label>
 			<input type="text" name="title" id="i_title" value="{title}" size="60" maxlength="255" required="required" />
-		</fieldset>
+		</div>
 
-		<fieldset class="textareaRow">
+		<div class="row">
 			<label for="i_body">{!message}</label>
 			<div class="textarea">
 				{toolbar}
 				<textarea rows="25" cols="65" name="body" id="i_body" required="required">{body}</textarea>
-				<span class="tip" style="width: 750px">{!imageTip}</span>
+				<br /><div>{!imageTip}</div>
 			</div>
-		</fieldset>
+		</div>
 
-		<fieldset class="tagRow">
+		<div class="row">
 			<label for="i_tags">{!tags}</label>
 			<input type="text" name="tags" id="i_tags" value="{tags}" size="88" maxlength="255" />
 			<%if{userTags}%>
-			<p class="tagSuggestions">
+			<p class="tags">
 				<%loop{userTags}%>
-				<a href="" class="addTag">{tag}</a>
+				<a href="">{tag}</a>
 				<%end%>
 			</p>
 			<%end%>
-		</fieldset>
+		</div>
 
-		<fieldset class="checkboxRow">
+		<div class="row">
 			<span class="label">{!postSettings}</span>
 			<label><input type="checkbox" name="is_hidden" value="{is_hidden}" /> {!hidePost}</label>
 			<label><input type="checkbox" name="disable_comments" value="{disable_comments}" /> {!disableComments}</label>
 			<label><input type="checkbox" name="disable_smiles" value="{disable_smiles}" id="i_disable_smiles" /> {!disableSmiles}</label>
-		</fieldset>
-
-		<div class="form-footer">
-			<button type="submit">{!post}</button>
-			<a class="previewLink" href="">{!preview}</a>
 		</div>
+
+		<button type="submit" class="button">{!post}</button>
+		<a class="previewLink" href="">{!preview}</a>
 	</form>
 </div>
 

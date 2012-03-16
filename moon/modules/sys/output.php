@@ -38,11 +38,11 @@ class output extends moon_com {
 			}
 			$body = $t->parse('print', array('content' => $body, 'url' => $p->home_url() . ltrim($url, '/')));
 			$output = 'page';
-		}
-		elseif ($output === 'modal') {
+		}*/
+		if ($output === 'modal') {
 			$p->css('/css/modal.css');
 		}
-		*/
+		
 		$loc = & moon :: locale();
 		//title
 		$title = $p->title();

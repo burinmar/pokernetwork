@@ -51,7 +51,7 @@ titleMyBlog=My Blog
 		<a href="{url.userBlog}"><img src="{userAvatarSrc}" alt="Avatar" width="58" height="58" /></a>
 		<p>
 			<b>{userNick}</b>
-			Sydney, Australia
+			<!-- Sydney, Australia -->
 		</p>
 	</div><span class="clr"></span>
 	<a href="{url.userBlog}" class="more2">« Back to blog</a>
@@ -74,23 +74,17 @@ titleMyBlog=My Blog
 	<% if {tags} %>
 	<div class="tags">
 		<h3>Tags</h3>
-		<% if {tags} %>
-			<p class="tags">
-				<span class="tagsIntro" title="{!tags}">{!tags}:</span>
-				<% loop {tags} %>
-					<a href="{url.tag}">{tagName}</a>
-				<% end {tags} %>.
-			</p>
-		<% end %>
+		<% loop {tags} %>
+			<a href="{url.tag}">{tagName}</a> &clubs; 
+		<% end {tags} %>.
 	</div>
 	<% end %>
 
-	{share}
+	<!-- {share} -->
 
 	<div class="articleShare">
 		<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.pokernetwork.com%2F&amp;send=false&amp;layout=standard&amp;width=495&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=25" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:495px; height:25px;" allowTransparency="true"></iframe>
 	</div>
 
-	{comments}
-
 </div>
+{comments}

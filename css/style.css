@@ -1433,3 +1433,52 @@ html {
 	font-size: 11px;
 	margin-bottom: 2px;
 }
+.aform .row > label, .aform .label {
+	display: block;
+	margin-bottom: 3px
+}
+.aform button {margin-right: 20px}
+.aform .row {margin-bottom: 20px}
+.aform .previewLink {border-bottom: 1px dotted}
+/* Modal windows */
+.modalWindow {
+	background-color: #ffffff;
+	border: 1px solid #bec5c9;
+	border-radius: 5px;
+	-khtml-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	padding: 20px;
+	box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	-khtml-box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	-moz-box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	-webkit-box-shadow: 0 0 20px 0 rgba(0,0,0,0.5);
+	}
+iframe.modalWindow {
+	padding: 10px;
+}
+	.modalWindowClose {
+		background: url('/img/popupClose.png') no-repeat left top;
+		height: 0;
+		outline: 0;
+		overflow: hidden;
+		padding-top: 21px;
+		position: absolute;
+		right: 10px;
+		top: 10px;
+		width: 21px;
+		} html[dir="rtl"] .modalWindowClose {
+		left: 15px;
+		right: auto;
+		} .modalWindowClose:hover {
+		background-position: left -30px;
+	}
+	.modalWindow .article {
+		border-top: 0;
+		padding: 0;
+	}
+	.modalWindow h1 {
+		color: #373737;
+		font-size: 19px;
+		margin-bottom: 20px;
+	}
