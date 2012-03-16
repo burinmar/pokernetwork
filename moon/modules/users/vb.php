@@ -22,10 +22,10 @@ class vb extends moon_com {
 		if (!count($ids)) {
 			return array();
 		}
-		$sql='SELECT userid as id, username as nick FROM '.$this->myTable.' WHERE userid IN ('.implode(',',$ids).')';
+		$sql="SELECT userid as id, username as nick, avatarrevision as avatar FROM ".$this->myTable.' WHERE userid IN ('.implode(',',$ids).')';
 		$n=$this->db->array_query_assoc(  $sql , 'id');
 		foreach ($n as $id=>$v) {
-			$n[$id]['avatar'] = '';
+			$n[$id]['avatar'] = $v['avatar'] ? '/forums/customavatars/avatar' . $v['id'] . '_' . $v['avatar'] . '.gif' : '';
 		}
 		return $n;
 	}

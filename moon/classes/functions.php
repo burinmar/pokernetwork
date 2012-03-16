@@ -322,8 +322,10 @@ function img($dir, $name, $arg3=null) {
 		$name = $name . '-' . $arg3;
 	}
 	switch ($dir) {
-		case 'player':
 		case 'avatar':
+			list(,$name) = explode('-', $name, 2);
+			return $name;
+		case 'player':
 		case 'rw' :
 		case 'rwc' :
 		case 'rw-gallery' :
