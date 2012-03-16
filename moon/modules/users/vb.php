@@ -30,6 +30,15 @@ class vb extends moon_com {
 		return $n;
 	}
 
+
+	function getUserIdByNick($nick='') {
+		if (!$nick) return 0;
+		$sql='SELECT userid FROM '.$this->myTable.' WHERE username = "' . $this->db->escape($nick) . '"';
+		$n = $this->db->single_query($sql);
+		return (count($n) ? $n[0] : 0);
+	}
+
+
 }
 
 ?>

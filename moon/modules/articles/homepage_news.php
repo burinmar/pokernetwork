@@ -45,7 +45,7 @@ class homepage_news extends moon_com {
 				'comm_count' => $r['comm_count'],
 				'isAu' => $r['isAu']
 			);
-			$item['url.comments'] = $r['comm_count'] ? $item['url.article'].'#cl' : '';
+			$item['url.comments'] = $r['comm_count'] ? $item['url.article'].'#comm-list' : '';
 			$item['commentsWord'] = $r['comm_count'] == 1 ? 'comment' : 'comments';
 
 			if ($k < 4) {

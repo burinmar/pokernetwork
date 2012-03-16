@@ -1,0 +1,38 @@
+<% rightColumn %>
+<% if {userHasBlog} %>
+<div class="widget overBreadcrumb myBlogControl">
+	<h2 class="widgetTitle">My Blog</h2>
+	<a href="{url.newPost}" class="bigButton blueButton">New Post</a>
+</div>
+<%end%>
+{archive}
+{tags}
+
+<% tags %>
+<%if{tagItems}%>
+<h3>{!tags}</h3>
+<div class="tagCloud">
+	<%loop{tagItems}%>
+		<a href="{url.tag}" rel="tag" style="font-size: {fontSize}px;">{name}</a>
+	<%end%>
+</div>
+<%end%>
+
+<% archive %>
+<%if{years:items}%>
+<div class="widget<%if{noBlogControls}%> overBreadcrumb<%end%>">
+	<h2 class="widgetTitle">Archive</h2>
+	<ul class="yearList categories">
+		<%loop{years:items}%>
+		<li <%if{expand}%> class="expand"<%end%>>
+			<a href="{url.year}" class="archiveYear">{yName}</a><span>{yCount} posts total</span>
+			<ul<%if{expand}%><%else{expand}%> style="display:none;"<%end%>>
+				<%loop{months:items}%>
+				<li<%if{active}%> class="on"<%end%>><a href="{url.month}">{mName}</a><span>{mCount} posts total</span></li>
+				<%end%>
+			</ul>
+		</li>
+		<%end%>
+	</ul>
+</div><span class="clr"></span>
+<%end%>

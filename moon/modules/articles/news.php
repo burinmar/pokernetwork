@@ -301,7 +301,7 @@ class news extends moon_com {
 
 			foreach ($items as $k => $item) {
 				$item['url.article'] = $oShared->getArticleUri($item['id'], $item['uri'], $item['published']);
-				$item['url.comments'] = $item['comm_count'] ? $item['url.article'] . '#cl' : '';
+				$item['url.comments'] = $item['comm_count'] ? $item['url.article'] . '#comm-list' : '';
 				$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 				$item['title'] = htmlspecialchars($item['title']);
 				$item['summary'] = htmlspecialchars($item['summary']);
@@ -407,7 +407,7 @@ class news extends moon_com {
 			$m['img_alt'] = htmlspecialchars($article['img_alt']);
 		}
 		$m['url.self'] = $oShared->getArticleUri($article['id'], $article['uri'], $article['published']);
-		$m['url.comments'] = ($m['comm_count'] = $article['comm_count']) ? $m['url.self'] . '#cl' : '';
+		$m['url.comments'] = ($m['comm_count'] = $article['comm_count']) ? $m['url.self'] . '#comm-list' : '';
 		$m['commentsWord'] = $m['comm_count'] == 1 ? 'comment' : 'comments';
 
 		$tools = &moon::shared('tools');

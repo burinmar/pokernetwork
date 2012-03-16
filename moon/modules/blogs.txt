@@ -1,0 +1,54 @@
+﻿[en]
+
+createNewPost=New Post
+location=Location
+website=Website
+twitter=Twitter
+following=Following:
+followers=Followers:
+unfollow=Unfollow
+follow=Follow
+sendMsg=Send message
+subscribe=Subscribe
+tags=Tags
+archive=Archive
+followingTotal=Following <span class="totalCount">{totalCount}</span> people
+hasFollowers=Has <span class="totalCount">{totalCount}</span> followers
+blogger=Blogger
+posts=Posts
+latestPosts=Latest Blog Posts
+noPost=No posts found
+error3=As a security measure, PokerNews limits the number of posts per user. Please try to post again later.
+latestComments=Latest comments
+checkAll=Check all
+readAllComments=Read all {items_count} comments
+leaveComments=Leave Your Comment
+disableSmiles=Disable smilies
+followingDate=Following date
+actions=Action
+today=Today
+notFollowing=You are not following anyone
+noFollowers=You have no followers
+members=PokerNews Blog Members
+titleRequired=Title is required
+title=Title
+newPost=New Post
+managePosts=Manage Posts
+editPost=Edit Post
+message=Message
+imageTip=Photos, attached to the post, but not included into the text will be automatically transferred into the photo gallery which will then be displayed under the post.
+postSettings=Post settings
+hidePost=Hide this post
+disableComments=Disable comments
+post=Post
+preview=Preview
+blogManager=Blog manager
+deleteSelected=Delete selected
+hide=Hide
+unhide=Unhide
+emptyList=There are no items
+peopleiFollow=People I follow
+spamPost=Your post has been identified as spam and will not be published. If you think it's a mistake please contact our support team support@pokernews.com.
+urlSubmitForm1=If you would like to have your blog considered for the grand prize of the WBCOOP promotion, please submit your link of your blog!
+urlSubmitForm2=Submit
+urlSubmitForm3=Thank you for submitting your post

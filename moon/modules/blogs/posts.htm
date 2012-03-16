@@ -1,0 +1,96 @@
+<% info %>
+titleLatest=Latest Blog Posts
+titleMostViewed=Most Viewed Posts
+titleMyBlog=My Blog
+
+<% viewList %>
+<% if {items} %>
+<div class="widget">
+	<h1 class="pageTitle">{title}</h1>
+	<div class="filterTabs filterTabsTopLine clrfix">
+		<b>Show:</b>
+		<ul>
+			<li<%if{onLatest}%> class="on"<%end%>><a href="{url.blogs}">Latest</a></li>
+			<li<%if{onMostViewed}%> class="on"<%end%>><a href="{url.mostViewed}">Most viewed</a></li>
+			<%if{userHasBlog}%><li<%if{onMyBlog}%> class="on"<%end%>><a href="{url.myBlog}">My blog</a></li><%end%>
+			<!--#<li><a href="#">Featured</a></li>-->
+		</ul>
+		<a href="{url.rss}" class="subscribe">Subscribe</a>
+	</div><span class="clr"></span>
+	<ul class="blogsList">
+		<% loop {items} %>
+		<li>
+			<a href="#"><img src="{userAvatarSrc}" alt="Avatar" width="58" height="58" /></a>
+			<div>
+				<a href="{url.userBlog}" class="author">{userNick}</a>
+				<a href="{url.post}" class="title">{title}</a>
+				<span class="meta">
+					<% if {url.comments} %><a class="commentIco" href="{url.comments}" class="commentIco bigCommentIco">{comm_count} {commentsWord}</a> ● <% end %>
+					{date}
+				</span>
+			</div><span class="clr"></span>
+			<p>{body_short}</p>
+			<a href="{url.post}" class="readPost">Read post »</a><a href="{url.userBlog}" class="visitBlog">visit {userNick}’s blog »</a>
+			<% if {isBlogOwner} %>
+			<%if{is_hidden}%><span class="hidden" title="{!hidden}">{!hidden}</span><%end%>
+			<div class="postAction">
+				<a href="{url.edit}" class="edit">Edit Post</a>
+				<a href="{url.delete}" class="delete">Delete Post</a>
+			</div>
+			<% end %>
+		</li>
+		<% end %>
+	</ul>
+	{paging}
+</div>
+<%end%>
+
+<% viewPost %>
+<div class="widget blogPost">
+	<div class="aboutAuthor">
+		<a href="{url.userBlog}"><img src="{userAvatarSrc}" alt="Avatar" width="58" height="58" /></a>
+		<p>
+			<b>{userNick}</b>
+			Sydney, Australia
+		</p>
+	</div><span class="clr"></span>
+	<a href="{url.userBlog}" class="more2">« Back to blog</a>
+
+	<div class="article">
+		<%if{isBlogOwner}%>
+		<%if{is_hidden}%><span class="hidden" title="{!hidden}">{!hidden}</span><%end%>
+		<div class="postAction">
+			<a href="{url.edit}" class="edit">Edit Post</a>
+			<a href="{url.delete}" class="delete">Delete Post</a>
+		</div>
+		<%end%>
+		<h1>{title}</h1>
+		<span class="meta">
+			<% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} {commentsWord}</a> ● <% end {if} %>
+			{date}
+		</span>
+		{body}
+	</div>
+	<% if {tags} %>
+	<div class="tags">
+		<h3>Tags</h3>
+		<% if {tags} %>
+			<p class="tags">
+				<span class="tagsIntro" title="{!tags}">{!tags}:</span>
+				<% loop {tags} %>
+					<a href="{url.tag}">{tagName}</a>
+				<% end {tags} %>.
+			</p>
+		<% end %>
+	</div>
+	<% end %>
+
+	{share}
+
+	<div class="articleShare">
+		<iframe src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.pokernetwork.com%2F&amp;send=false&amp;layout=standard&amp;width=495&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=25" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:495px; height:25px;" allowTransparency="true"></iframe>
+	</div>
+
+	{comments}
+
+</div>

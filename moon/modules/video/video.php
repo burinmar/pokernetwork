@@ -240,7 +240,7 @@ class video extends moon_com {
 			$m['length'] = $this->miliSecToTime($featuredVideo['length']) . ' ' . $minStr;
 			$m['description'] = htmlspecialchars($featuredVideo['short_description']);
 			$m['tags'] = implode(' &clubs; ', $t);
-			$m['url.comments'] = ($m['comm_count'] = $featuredVideo['comm_count']) ? $m['uri.featured'].'#cl' : '';
+			$m['url.comments'] = ($m['comm_count'] = $featuredVideo['comm_count']) ? $m['uri.featured'].'#comm-list' : '';
 			$m['commentsWord'] = $m['comm_count'] == 1 ? 'comment' : 'comments';
 			$m['shareThis'] = $tools->toolbar(array('url'=>$m['uri.featured']));
 
@@ -261,7 +261,7 @@ class video extends moon_com {
 			$item['title'] = htmlspecialchars($item['name']);
 			$item['thumbSrc'] = $item['thumbnail_url'];
 			$item['length'] = $this->miliSecToTime($item['length']);
-			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#cl' : '';
+			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 			$m['items:latest'] .= $tpl->parse('items:latest', $item);
 		}
@@ -282,7 +282,7 @@ class video extends moon_com {
 			$item['title'] = htmlspecialchars($item['name']);
 			$item['thumbSrc'] = $item['thumbnail_url'];
 			$item['length'] = $this->miliSecToTime($item['length']);
-			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#cl' : '';
+			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 			$m['items:popularMonth'] .= $tpl->parse('items:popularMonth', $item);
 		}
@@ -337,7 +337,7 @@ class video extends moon_com {
 			$item['uri.video'] = $this->linkas('#', $uri);
 			$item['thumbSrc'] = $v['thumbnail_url'];
 			$item['length'] = $this->miliSecToTime($v['length']);
-			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#cl' : '';
+			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 			$relatedList .= $tpl->parse('related', $item);
 		}
@@ -361,7 +361,7 @@ class video extends moon_com {
 			$item['uri.video'] = $this->linkas('#', $uri);
 			$item['thumbSrc'] = $v['thumbnail_url'];
 			$item['length'] = $this->miliSecToTime($v['length']);
-			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#cl' : '';
+			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 			$latestList .= $tpl->parse('latest', $item);
 		}
@@ -441,7 +441,7 @@ class video extends moon_com {
 		if (is_object($commentsComp)) {
 			$m['comments'] = $commentsComp->show($video['id'], $iCard);
 		}
-		$m['url.comments'] = ($m['comm_count'] = $video['comm_count']) ? $m['uri.self'] . '#cl' : '';
+		$m['url.comments'] = ($m['comm_count'] = $video['comm_count']) ? $m['uri.self'] . '#comm-list' : '';
 		$m['commentsWord'] = $m['comm_count'] == 1 ? 'comment' : 'comments';
 
 		return $tpl->parse('viewVideo', $m);
@@ -556,7 +556,7 @@ class video extends moon_com {
 				$item['thumbSrc'] = $item['thumbnail_url'];
 				$item['length'] = $this->miliSecToTime($item['length']);
 
-				$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#cl' : '';
+				$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 				$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
 
 				$m['items'] .= $tpl->parse('items', $item);
