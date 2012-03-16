@@ -101,8 +101,11 @@ class posts_edit extends moon_com {
 				moon_close();
 				exit;
 			default:
-				$this->setOrdering();
-				$this->setPaging();
+				//$this->setOrdering();
+				//$this->setPaging();
+				$userNick = moon::user()->get('nick');
+				$url = $userNick ? $this->linkas('posts#') . 'user/' . $userNick . '/' : $this->linkas('posts#');
+				moon::page()->redirect($url);
 				break;
 		}
 		$this->use_page('1col');
