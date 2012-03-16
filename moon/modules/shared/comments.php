@@ -73,8 +73,10 @@ class comments extends moon_com {
 				$id = (int) $_GET['comm-quote'];
 				if (count($d = $this->getItem($id))) {
 					//$hideList = TRUE; // show comments list all the time
-					$res=$this->db->single_query('SELECT nick FROM ' .$this->table('Users') . ' WHERE id = ' . intval($d['user_id']));
-					$name = isset($res[0]) ? $res[0] : '';
+					/*$res=$this->db->single_query('SELECT nick FROM ' .$this->table('Users') . ' WHERE id = ' . intval($d['user_id']));
+					$name = isset($res[0]) ? $res[0] : '';*/
+					$res = $this->object('users.vb')->users($d['user_id']);
+					$name = isset($res[$d['user_id']]) ? $res[$d['user_id']]['nick'] : '';
 					$d['comment'] = $t->parse('quote', array('name'=>htmlspecialchars($name), 'text' => $d['comment']));
 					unset($d['id']);
 					$this->form->fill($d);
@@ -122,7 +124,7 @@ class comments extends moon_com {
 		$m['anonymous'] = $myID ? FALSE : TRUE;
 		$m['url.facebook'] = $this->link('users.signup#facebook');
 		$m['iCard'] = is_array($iCard) ? htmlspecialchars(serialize($iCard)) : '';
-		$m['fbID'] = $id ? 0 : 1;
+		//$m['fbID'] = $id ? 0 : 1;
 		
 		// add toolbar
 		/*if (is_object( $rtf = $this->object('rtf') )) {
@@ -296,13 +298,14 @@ class comments extends moon_com {
 	
 	function getUsersData($userIds = array())
 	{
-		$userIds = array_unique($userIds);
+		return $this->object('users.vb')->users($userIds);
+		/*$userIds = array_unique($userIds);
 		if (!is_array($userIds) || empty($userIds)) return array();
 		return $this->db->array_query_assoc('
 			SELECT id, nick, avatar
 			FROM ' . $this->table('Users') . '
 			WHERE id IN (' . implode(',', $userIds) . ')
-		', 'id');
+		', 'id');*/
 	}
 	
 	function saveComment() {
