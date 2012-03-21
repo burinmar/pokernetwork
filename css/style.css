@@ -789,7 +789,7 @@ html {
 	margin: -10px -10px 0;
 }
 
-#roomsIndexBox {margin-top: -10px;}
+.wHalf #roomsIndexBox {margin-top: -10px;}
 	#roomsIndexBox .roomsNav {
 		width: 200px;
 		margin-left: -10px;
@@ -1482,3 +1482,22 @@ iframe.modalWindow {
 		font-size: 19px;
 		margin-bottom: 20px;
 	}
+#roomsIndexBox.roomsSideBar > table {
+	margin: -10px -10px 0 -10px;
+	width: 244px;
+}
+	#roomsIndexBox.roomsSideBar .ico {width: 21px;}
+	#roomsIndexBox.roomsSideBar .tar {width: 30px;}
+	#roomsIndexBox.roomsSideBar .active {background: #fff}
+	#roomsIndexBox .ratings {width: 224px; margin: 0 0 10px 10px}
+	#roomsIndexBox.roomsSideBar .ratings td {
+		font-size: 11px;
+		font-weight: normal;
+		color: #515151;
+		text-transform: none;
+		padding: 0;
+		line-height: 14px;
+		vertical-align: text-top;
+	}
+	#roomsIndexBox.roomsSideBar .more2 {margin-left: 10px;}
+	#roomsIndexBox.roomsSideBar .ratingBarBackground {width: 85px}
