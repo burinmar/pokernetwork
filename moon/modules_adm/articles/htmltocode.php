@@ -531,6 +531,7 @@ class htmlToCode {
 					case 'font':
 					case 'span':
 					case 'div':
+					case 'center':
 						$tmp = strtolower($v[3]);
 						$r = $this->getStyles($tmp, array('text-decoration', 'font-weight', 'font-style'));
 						$code = $endCode = '';

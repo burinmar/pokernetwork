@@ -171,7 +171,11 @@ class blog extends moon_com {
 
 		$archiveData = $this->getArchiveData();
 
-		$activeYear = $activeYear ? $activeYear : max(array_keys($archiveData));
+		$activeYear = $activeYear 
+			? $activeYear : 
+			($archiveData
+				? max(array_keys($archiveData))
+				: 0);
 
 		$yearsList = '';
 		foreach ($archiveData as $year=>$months) {
@@ -200,7 +204,7 @@ class blog extends moon_com {
 
 	function getArchiveData()
 	{
-		$now = floor(moon::locale()->now() / 300) * 300;
+		$now = ceil(moon::locale()->now() / 300) * 300;
 		$sql = '
 			SELECT FROM_UNIXTIME(a.created_on, \'%Y-%M\') as short_date, FROM_UNIXTIME(a.created_on, \'%Y\') as year, FROM_UNIXTIME(a.created_on, \'%m\') as month, count(*) as cnt
 			FROM ' . $this->table('Posts') . ' a 

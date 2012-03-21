@@ -6,6 +6,7 @@ $cfg['articles'] = array(
 
 	'comp.rtf' => 'MoonShared.rtf',
 	'var.rtf' => 'articles',
+	'var.rtf{blogs_import}' => 'blog_post',
 	'var.rtf{authors}' => 'texts',
 
 	//News component
