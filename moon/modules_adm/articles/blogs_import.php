@@ -12,7 +12,6 @@ class blogs_import extends moon_com
 
 	paleisti importus
 
-	2. http://www.pokernetwork.dev/adm/articles-articles_import/tags
 	3. http://www.pokernetwork.dev/adm/articles-articles_import/blogs
 		reikes kelis kartus paleisti, importuoja dalimis
 
@@ -41,9 +40,6 @@ class blogs_import extends moon_com
 
 		switch($event)
 		{
-			case 'tags':
-				$msg = $this->importTags();
-				break;
 			case 'blogs':
 				$msg = $this->importBlogs();
 				break;
@@ -156,6 +152,14 @@ class blogs_import extends moon_com
 					'last' => 0,
 				);
 
+			$ptags = (isset($res3[$r['id']])) 
+					? strip_tags($res3[$r['id']]['keywords']) 
+					: '';
+			$ptags = explode(',', $ptags);
+			foreach ($ptags as $key => $value) {
+				$ptags[$key] = make_uri(trim($value));
+			}
+
 			$ins = array(
 				'id' => $r['id'],
 				'user_id' => $r['user_id'],
@@ -168,7 +172,7 @@ class blogs_import extends moon_com
 				'uri' => (isset($res2[$r['id']])) 
 					? str_replace('.htm','',$res2[$r['id']]['uri']) 
 					: md5(uniqid()),
-				'tags' => (isset($res3[$r['id']])) ? strip_tags($res3[$r['id']]['keywords']) : '',
+				'tags' => implode(',', $ptags),
 
 				'comm_count' => $comments['count'],
 				'comm_last' => $comments['last'],

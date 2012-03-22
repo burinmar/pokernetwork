@@ -16,6 +16,7 @@ class posts extends moon_com {
 		$this->uri = $uri = trim($page->requested_event('REST'), '/');
 		
 		$segments = $page->uri_segments();
+
 		$cnt = count($segments);
 		if (substr($uri, - 4) === '.htm') {
 			//single post
@@ -25,14 +26,13 @@ class posts extends moon_com {
 			
 			$this->updateViewsCount($post['id']);
 			$this->set_var('post', $post);
-			$this->set_var('view', 'post');			
+			$this->set_var('view', 'post');
 			$this->blog->set('isBlogOwner', $post['user_id'] == moon::user()->get_user_id());
 
-		} elseif ($uri === 'tag' && !empty($segments[3])) {
+		} elseif (!empty($segments[3]) && $segments[2] == 'tag') {
 			// tag
 			$tag = urldecode($segments[3]);
 			$this->set_var('tag', $tag);
-			
 		} elseif (substr($uri, - 7) === 'rss.xml') {
 			// rss
 			$feedType = $uri;
@@ -157,7 +157,7 @@ class posts extends moon_com {
 			if (!$tag) continue;
 			$t1 = array();
 			$t1['tagName'] = htmlspecialchars($tag);
-			$t1['url.tag'] = $this->linkas('/tag/' . urlencode($tag));
+			$t1['url.tag'] = $this->linkas('#tag/' . urlencode($tag));
 			$t[] .= trim($tpl->parse('tags', $t1));
 		}
 		
@@ -218,7 +218,7 @@ class posts extends moon_com {
 		
 		$tpl = $this->load_template();
 		$loc = &moon::locale();
-		
+
 		$m = array(
 			'title' => '',
 
@@ -231,6 +231,7 @@ class posts extends moon_com {
 			'onLatest' => $this->uri == '',
 			'onMostViewed' => $this->uri == $this->uriMostViewed,
 			'onMyBlog' => $blog->isBlogOwner(),
+			'notOnUserBlog' => '' == $blog->get('user_id'),
 
 			'url.blogs' => $this->linkas('#'),
 			'url.mostViewed' => $this->linkas('#' . $this->uriMostViewed),
@@ -325,6 +326,8 @@ class posts extends moon_com {
 				
 				$item['url.comments'] = $item['comm_count'] ? $item['url.post'] . '#comm-list' : '';
 				$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
+
+				$item['notOnUserBlog'] = $m['notOnUserBlog'];
 
 				$m['items'] .= $tpl->parse('items', $item);
 				

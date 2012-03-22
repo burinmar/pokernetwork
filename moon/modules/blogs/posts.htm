@@ -30,7 +30,7 @@ titleMyBlog=My Blog
 				</span>
 			</div><span class="clr"></span>
 			<p>{body_short}</p>
-			<a href="{url.post}" class="readPost">Read post »</a><a href="{url.userBlog}" class="visitBlog">visit {userNick}’s blog »</a>
+			<a href="{url.post}" class="readPost">Read post »</a><%if {notOnUserBlog} %><a href="{url.userBlog}" class="visitBlog">visit {userNick}’s blog »</a><%end%>
 			<% if {isBlogOwner} %>
 			<%if{is_hidden}%><span class="hidden" title="{!hidden}">{!hidden}</span><%end%>
 			<div class="postAction">
