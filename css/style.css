@@ -802,7 +802,7 @@ html {
 		text-transform: uppercase;
 		color: #807e70
 	}
-	#roomsIndexBox .roomsNav tr:hover td {background: #fff; color: #555240}
+	.wHalf #roomsIndexBox .roomsNav tr:hover td {background: #fff; color: #555240}
 	#roomsIndexBox .roomsNav span {color: #2f8e1f}
 	#roomsIndexBox .roomsNav .tar {font-size: 15px; width: 35px}
 	#roomsIndexBox .roomsNav .logo {width: 20px}
