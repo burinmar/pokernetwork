@@ -5,7 +5,7 @@ class search extends moon_com {
 
 
 	function events($event, $par) {
-		$this->use_page('Main');
+		$this->use_page('2col');
 		if (isset ($par[0])) {
 			$this->set_var('onTab', $par[0]);
 		}

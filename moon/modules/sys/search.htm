@@ -1,58 +1,68 @@
 <% tabs %>
-news = {!articles}
-video = {!videos}
-images = {!images}
+news = Articles
+video = Video
+images = Images
 
 
 <% main %>
-<div class="widget">
+<div class="widget searchResults">
 	<%if{word}%>
-		<h1 class="pageTitle">{!results_for} <span class="searchTerm">{word}</span></h1>
+		<h1 class="pageTitle">{countTotal} search results for: <span class="searchTerm">{word}</span></h1>
 	<%else{word}%>
 		<h1 class="pageTitle">{pageTitle}</h1>
 	<%end%>
 	<form action="{!action}" class="refineSearchTermsForm">
 		<div>
-			<label class="textField"><span class="a11y"><%if{word}%>{!define}<%else{word}%>{!search_for}<%end%> </span><input type="text" name="q" placeholder="{!search_terms}" value="{word}" /></label>
-			<button type="submit">{!find}</button>
+			<label class="textField"><input type="text" name="q" placeholder="Search terms" value="{word}" /></label>
+			<button type="submit"><span class="hide">Find</span></button>
 		</div>
 	</form>
-	<ul class="searchTypes">
-		<%loop{tab-item}%>
-			<%if{on}%>
-				<li class="current"><span>{title}</span> ({count})</li>
-			<%else{on}%>
-				<li><a href="{url}">{title}</a> ({count})</li>
+	<div class="filterTabs filterTabsTopLine clrfix">
+		<%if{tab-item}%><b>Show:</b><%end%>
+		<ul>
+			<%loop{tab-item}%>
+				<%if{on}%>
+					<li class="on"><a>{title} ({count})</a> </li>
+				<%else{on}%>
+					<li><a href="{url}">{title} ({count})</a></li>
+				<%end%>
 			<%end%>
-		<%end%>
-		<%if {clear_url} %>
-			<li><a href="{!action}">{!clear}</a></li>
-		<%end%>
+			<%if {clear_url} %>
+				<li><a href="{!action}">Clear search</a></li>
+			<%end%>
+		</ul>
+	</div>
+	<!-- 
+	gallery
+	newsList
+	videoList
+	-->
+	<ul class="{class} clrfix">
+		{results}
 	</ul>
-	{results}
 	{puslapiai}
 </div>
 
 <% itemArticle %>
-<div class="articlePreview articlePreviewWithImage">
-	<a href="{url}"><img src="{img}" alt="{img_alt}" class="fl20" /></a>
-	<h2 class="articleTitle"><a href="{url}">{title}</a></h2>
-	<%if{date}%><p class="articleMeta"><span class="date">{date}</span></p><%end%>
-	<p>{summary}&nbsp;</p>
-	<div class="cb"></div>
-</div>
+<li>
+	<a href="{url}"><img src="{img}" alt="{img_alt}" width="120px" /></a>
+	<div>
+		<a href="{url}" class="title">{title}</a>
+		<%if{date}%><span class="meta">{date}</span><%end%>
+		<p>{summary}</p>
+	</div><span class="clr"></span>
+</li>
 
 <% itemVideo %>
-<dl class="videoThumbnail" style="margin-right: 18px">
-	<dt class="image"><a href="{url.video}"><img src="{thumbSrc}" alt="{title}" /><span class="length"> {length}</span></a></dt>
-	<dd class="title"><a href="{url.video}">{title}</a></dd>
-	<dd class="meta"><span class="date">{date}</span></dd>
-</dl>
+<li>
+	<a href="{url.video}" class="thumb"><img alt="{title}" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+	<b><a href="{url.video}">{title}</a></b>
+	<span class="meta">{date}</span>
+</li>
 
 <% itemsImg %>
-<ul class="gallery">
-	{photos}
-</ul>
+{photos}
+
 <script type="text/javascript">
 /*<![CDATA[*/
 jQuery(document).ready(function(){
@@ -67,7 +77,10 @@ jQuery(document).ready(function(){
 </script>
 
 <% itemImg %>
-<li><dl><dt><a href="{src_big}" rel="lightbox" title="<%if {alt} %>{alt} | <%end%> {event_name} | {tournament_name}"><img src="{src}" alt="{alt}" width="89" /></a></dt><dd>{alt}</dd></dl></li>
+<li>
+	<a href="{src_big}" rel="lightbox" title="<%if {alt} %>{alt} | <%end%> {event_name} | {tournament_name}"><img src="{src}" alt="{alt}" width="89" /></a>
+	<span>{alt}</span>
+</li>
 
 
 <% item %>
