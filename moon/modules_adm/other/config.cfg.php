@@ -17,7 +17,10 @@ $cfg['other'] = array(
 	'tb.TwitterPlayers' => 'twitter_players',
 	'tb.TwitterMessages' => 'twitter_messages',
 	'var.twitterUsername' => 'pokernews_live',
-	'var.twitterPassword' => 'lynnpn9'
+	'var.twitterPassword' => 'lynnpn9',
+
+	'tb.Dictionary' => 'dictionary',
+	'var.rtf{dictionary}' => 'pokergame-dictionary',
 	
 );
 ?>

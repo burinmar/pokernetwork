@@ -11,6 +11,7 @@ News {ico=news, admin=content}
 	articles.categories_news = News categories
 	articles.authors = Authors
 	articles.tags = Tags
+	other.dictionary = Dictionary 
 
 Tournaments {ico=tournaments, admin=tournaments}
 	tour.special = Special Freerolls

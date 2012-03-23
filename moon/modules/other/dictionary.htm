@@ -1,0 +1,47 @@
+<% main %>
+<div class="widget terms">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h1 class="widgetTitle">{title}</h1>
+		<div class="article widgetIntro">
+			{info}
+		</div>
+		<div class="backSearchNext">
+			<%if{goPrevTerm}%><a href="{goPrevTerm}" class="prev"><span class="linkText">Previous</span><span class="ctr"></span></a><%end%>
+			<form class="liveSearch">
+				<div>
+					<input type="text" name="search" placeholder="Live_search" value="Live_search" class="ajax-suggestion url-{ajaxuri}ajax-suggest/" autocomplete="off" /><button type="reset" title="Clear" onclick="$(this).prev().val('').trigger('focus');return false;"><span class="a11y">Clear</span></button>
+					<div id="search-result-suggestions">
+						<div id="search-results"></div>
+					</div>
+
+				</div>
+			</form>
+			<%if{goNextTerm}%><a href="{goNextTerm}" class="next"><span class="linkText">Next</span><span class="ctr"></span></a><%end%>
+		</div>
+		<p class="letterFilter">{abc}</p>
+		<ul class="termsList">
+			{boxItems}
+		</ul>
+	</div>
+</div>
+
+<% letter %>
+<a href="{!action}#letter{letter}" class="letter">{letter}</a>
+
+<% term_item %>
+<li><a href="{goTerm}">{title}</a></li>
+
+<% term_box %>
+<li>
+	<span class="letter" id="letter{letter}">{letter}</span>
+	<ul>{items}</ul>
+</li>
+
+<% term_info %>
+<p>{description}</p>
+<%if{usage}%><p><b>Usage</b> {usage}</p><%end%>
+

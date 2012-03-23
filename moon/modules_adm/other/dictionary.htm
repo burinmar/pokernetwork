@@ -1,0 +1,99 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+
+404=Item not found!
+error1=Name required
+error2=Uri required
+error3=Description required
+error4=Please choose another uri, this one is in use
+error9=System error!
+
+<% main %>
+
+<% if {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new</a></div>
+</div>
+
+<!--# filter -->
+<% insert {filter} %>
+<form action="{!action}" method="post" class="filterForm{classIsOn}">
+	<input type="hidden" name="event" value="{goFilter}" />
+	<table>
+	<tr>
+		<td><label>Name: <input type="text" name="filter[name]" size="25" value="{name}" /></label></td>
+		<td><button type="submit" name="filtruok" >Filter</button></td>
+	</tr>
+	</table>
+	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+<form action="{!action}" method="post" name="list-form">
+	<input type="hidden" name="event" value="{goDelete}" />
+	<table class="list">
+		<colgroup>
+			<col style="width: 200px" />
+			<col />
+			<col style="width: 40px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th><a href="{orderby1}">Name</a></th>
+			<th>Description</th>
+			<th class="checkall"></th>
+		</tr>
+		</thead>
+		<tbody>
+		<% loop {items} %>
+		<tr>
+			<td><a href="{goEdit}">{name}</a></td>
+			<td class="explain">{description}</td>
+			<td><input type="checkbox" name="it[]" value="{id}" /></td>
+		</tr>
+		<% end {items} %>
+		</tbody>
+	</table>
+	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected"/></div>
+</form>
+
+<% insert {paging} %><% end {paging} %>
+
+<% else {items} %>
+	<p>There are no items</p>
+<% end {if} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />
+	<input type="hidden" name="id" value="{id}" />
+
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" name="save" value="Save" /></div>
+	<span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_name">Name</label></dt>
+		<dd><input type="text" name="name" id="i_name" value="{name}" size="70" maxlength="255" class="required" /></dd>
+
+		<dt><label for="i_uri">Uri</label></dt>
+		<dd>/{uriPrefix}/&nbsp;<input type="text" name="uri" id="i_uri" value="{uri}" size="70" maxlength="60" class="required" onfocus="fillUri(this,'i_name')" />&nbsp;.html</dd>
+
+		<dt><label for="i_description_raw">Description</label></dt>
+		<dd class="w100">{toolbarDesc}<textarea rows="5" cols="70" name="description_raw" id="i_description_raw" class="required" >{description_raw}</textarea></dd>
+
+		<dt><label for="i_usg_raw">Usage</label></dt>
+		<dd class="w100">{toolbarUsg}<textarea rows="5" cols="70" name="usg_raw" id="i_usg_raw">{usg_raw}</textarea></dd>
+	</dl>
+	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="button" name="cancel" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+<% end {viewList} %>
