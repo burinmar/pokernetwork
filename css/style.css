@@ -1502,3 +1502,56 @@ iframe.modalWindow {
 	}
 	#roomsIndexBox.roomsSideBar .more2 {margin-left: 10px;}
 	#roomsIndexBox.roomsSideBar .ratingBarBackground {width: 85px}
+
+/*Terms*/
+.terms .widgetIntro {
+	padding: 13px;
+}
+.terms .search {
+	margin: 20px 0;
+}
+
+	.terms .liveSearch {
+		display: block;
+		margin-bottom: 5px;
+	}
+		.terms .liveSearch input[type="text"] {
+			width: 300px;
+			margin-right: 10px;
+		}
+		#search-result-suggestions {
+			display: none;
+			background: #fff;
+			width: 300px;
+			padding: 7px;
+			border: 1px solid #0037AB;
+			margin-top: -5px;
+			border-radius: 0 0 5px 5px;
+		}
+	.letterFilter {margin-bottom: 20px}
+	.letterFilter a {
+		font-size: 16px;
+		font-weight: bold;
+		margin-right: 10px;
+	}
+.terms .termsList li {
+	display: inline-block;
+	margin: 0 9px 30px 0;
+	vertical-align: top;
+	width: 175px;
+	*display: inline; /* IE7 */
+	*zoom: 1; /* IE7 */
+}
+.terms .termsList .letter {
+	display: block;
+	font-size: 24px;
+	line-height: 35px;
+	color: #000;
+}
+.terms .termsList li ul {margin-top: 10px;}
+.terms .termsList li li {
+	display: block;
+	margin: 0;
+	padding: 0 2px;
+	width: auto;
+}

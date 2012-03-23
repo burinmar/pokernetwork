@@ -5,7 +5,7 @@ $cfg['articles'] = array(
 	//'sys.multiLang' => 3,
 	'vocabulary' => '{dir.multilang}{module}.txt;{dir.multilang}shared.txt;{dir.multilang}reviews.txt',
 
-	'page.1col' => 'xml.col1_darkright,fake',
+	'page.1col' => 'xml.1col_darkright,fake',
 	'page.2col' => 'xml.2col,fake',
 
 	'tb.Authors' => 'articles_authors',

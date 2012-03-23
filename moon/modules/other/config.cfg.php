@@ -3,9 +3,9 @@ $filesDir = 'files/';
 
 $cfg = array();
 $cfg['other'] = array(
-	'page.Main' => 'xml.col1_darkright,fake',
+	'page.Main' => 'xml.1col_darkright,fake',
 	'page.Dictionary' => 'xml.2col,fake',
-	'page.1col' => 'xml.col1,fake',
+	'page.1col' => 'xml.1col,fake',
 
 	'tb.Users' => 'users',
 	'tb.Spotlight' => 'spotlight',
