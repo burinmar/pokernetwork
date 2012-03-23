@@ -59,10 +59,10 @@ function main($vars)
 	$tpl = &$this->load_template();
 
 	$main = array();
-	$breadcrumb = $nav->breadcrumb();
-	if (count($breadcrumb)>1) {
+	//$breadcrumb = $nav->breadcrumb();
+	//if (count($breadcrumb)>1) {
 		$main['title'] = htmlspecialchars($pageData['title']);
-	}
+	//}
 	$main['content_html'] = $pageData['content_html'];
 	$page->css('/css/article.css');
 	if ($pageData['html']) {
