@@ -1,0 +1,36 @@
+﻿<% main %>
+<div class="widget roomsSideBar roomsList" id="roomsIndexBox">
+	<h2 class="widgetTitle">Online Poker Room Ratings</h2>
+	<table class="roomsNav" id="topRooms">
+		<% loop{items} %>
+		<tr class="r1 {class1}">
+			<td class="tar">{editors_rating}</td>
+			<td class="ico"><a href="{roomLink}"><img alt="{roomName}" src="{img}" /></a></td>
+			<td><a href="{roomLink}">{roomName}</a></td>
+		</tr>
+		<tr class="r2 {class2}">
+			<td colspan="3" class="active">
+				<table class="ratings">
+					<colgroup>
+						<col />
+						<col style="width: 95px" />
+						<col style="width: 20px" />
+					</colgroup>
+					<%loop{ratings}%>
+					<tr>
+						<td>{name}</td>
+						<td><span class="ratingBarBackground fl"><span style="width: {rate%}%;" class="ratingBar"></span></span></td>
+						<td><b>{rate}</b></td>
+					</tr>
+					<%end{loop-ratings}%>
+				</table>
+				<a href="{roomLink}" class="more2">Read review »</a>
+			</td>
+		</tr>
+		<%end%>
+	</table>
+	<a href="{url.rooms}" class="more">More Ratings »</a>
+</div>
+<!--#
+mouseover javascript iskeltas i /js/pokernetwork.js
+-->

@@ -145,6 +145,33 @@ function trackOutgoing(){
 	jQuery(document.body).bind('click',trackFunc);
 }
 
+/* sidebar roombox mouseover*/
+function roomsBox(e)
+{
+	var clickedEl = e.srcElement ? e.srcElement : e.target;
+	var nameEl = '';
+	var jEl;
+	while (clickedEl && clickedEl.nodeName) {
+		nameEl = clickedEl.nodeName.toUpperCase();
+		switch (nameEl) {
+			case 'TR':
+				//var id = clickedEl.id.substring(4);
+				jEl = jQuery(clickedEl);
+				if (jEl.hasClass('r1') && !jEl.hasClass('active')) {
+					jQuery('#topRooms TR.r2').hide();
+					jQuery('#topRooms TR.r1.active').removeClass('active');
+					jEl.addClass('active');
+					jEl.next().show();
+					jQuery('#topRooms').html(homepageRooms[id]);
+				}
+				break;
+			default:
+		}
+		clickedEl = clickedEl.parentNode;
+	}
+	return;
+}
+
 jQuery(document).ready(function(){
 	//showOtherSites();
 	jQuery('.article table').each(function(){
@@ -153,4 +180,5 @@ jQuery(document).ready(function(){
 	});
 	fixPlaceholders();
 	jQuery(window).bind('scroll resize',floatHeader);
+	$('#topRooms').mouseover(roomsBox);
 });

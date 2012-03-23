@@ -22,6 +22,10 @@ class column extends moon_com
 		// 		: '';
 		// 	$tplArgv['banner' . $pos] = $tpl->parse('banner');
 		// }
+
+		$oRooms = $this->object('reviews.rooms_box');
+		$tplArgv['rooms-box'] = $oRooms->main(array());
+
 		return $tpl->parse('main',$tplArgv);
 	}
 }
