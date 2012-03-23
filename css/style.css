@@ -1525,8 +1525,10 @@ iframe.modalWindow {
 			width: 300px;
 			padding: 7px;
 			border: 1px solid #0037AB;
-			margin-top: -5px;
+			border-top: 0 none;
+			margin-top: -3px;
 			border-radius: 0 0 5px 5px;
+			position: relative;
 		}
 	.letterFilter {margin-bottom: 20px}
 	.letterFilter a {
