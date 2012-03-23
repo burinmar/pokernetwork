@@ -99,7 +99,7 @@ function init()
 		'nofollow'=>FALSE,//ar ant linku uzdeti noffollow
 
         //kokius tagus bandyti atpazinti
-		'tags' => 'b|i|u|h|quote|list|url|code|sub|sup|strike|table|timer|img|video|game|twitter',
+		'tags' => 'b|i|u|h|quote|list|url|code|sub|sup|strike|table|timer|img|video|game|twitter|hand',
 		'replace'=>array(), // 'h'=>'h2'
 		'smiles'=>false, //Ijungti smiles konvertavima
 		'cards'=>true, //Ijungti kortu simboliu atpazinima
@@ -180,7 +180,11 @@ function make_urls($txt,$wordsize=50)
 }
 
 function _follow($url) {
-	if ($this->features['nofollow'] && $url!=='' && $url[0]!=='/') {
+	if (strpos($url, '/ext/') !== FALSE) {
+		//PN-2833
+		return FALSE;
+	}
+	elseif ($this->features['nofollow'] && $url!=='' && $url[0]!=='/') {
 		$our = $this->ourDomains;
 		foreach ($our as $v) {
 			if (($is = strpos($url, $v)) && $is<19) {
@@ -617,13 +621,13 @@ function _tag($tag,$param,$txt){
 		if (!$from || !($from = strtotime($from))) {
 			$from = $now;
 		}
-	$to = isset($a[1]) ? $a[1] : ($from + 86400);
+        	$to = isset($a[1]) ? $a[1] : ($from + 86400);
 		if (!$to || !($to = strtotime($to))) {
 			$to = $now;
 		}
 		$to = isset($a[0]) && !isset($a[1]) ? 1893477600 : $to; // if no 'to' - set it to 2030
 		$id = uniqid('');
-	$txt = '<!--timer:' . $id . '['. $from . '|' . $to . ']-->' . $txt . '<!--' . $id . ':timer-->';
+        	$txt = '<!--timer:' . $id . '['. $from . '|' . $to . ']-->' . $txt . '<!--' . $id . ':timer-->';
 
 		break;
 	case 'url+':
@@ -683,31 +687,66 @@ function _tag($tag,$param,$txt){
 		$txt=str_replace("\n","\r\r",trim($txt));
 		$rows=explode("\r\r", $txt);
 		$countCol = 0;
-		$s='';
+		$s=array('');
+		$tbI = 0;
 		foreach ($rows as $r) {
 			if (($r=trim($r))==='') continue;
+			if (substr($r,0,3)==='---' && trim($r,'-') === '') {
+				//split table
+				$countCol = 0;
+				$s[++$tbI] = '';
+				continue;
+			}
 			if (substr($r,0,1)==='*' && substr($r,-1)==='*') {
 				$tgR='th';
 				$r = substr($r,1,-1);
 			} else $tgR = 'td';
 			$rm=explode('|',$r);
 			if (!$countCol) $countCol = count($rm);
-			$s .= '<tr>';
+			$s[$tbI] .= '<tr>';
 			for ($i=0;$i<$countCol;$i++) {
 				$el = isset($rm[$i]) ? trim($rm[$i]) : '';
 				if (substr($el,0,1)==='*' && substr($el,-1)==='*') {
 					$tg='th';
 					$el = trim(substr($el,1,-1));
 				} else $tg = $tgR;
-				$s .= '<'.$tg.'>' . ($el==='' ? '&nbsp;' : $el) . '</'.$tg.'>';
+				$s[$tbI] .= '<'.$tg.'>' . ($el==='' ? '&nbsp;' : $el) . '</'.$tg.'>';
 			}
-			$s .= "</tr>\r\r";
+			$s[$tbI] .= "</tr>\r\r";
 		}
+		$a = explode(' ', trim($param));
+		$width = '';
+		$align = '';
+		$tbcenter = false;
+		foreach ($a as $v) {
+			if (is_numeric($v)) {
+				$v =intval($v);
+				if ($v>30 && $v<101) $width='width="'.$v.'%"';
+			}
+			else {
+				switch ($v) {
+					case 'left': $align = ' fl'; break;
+					case 'center': $tbcenter = true; break;
+				}
+			}
+		}
+		if ($tbI) {
+			$cols = $tbI+1;
+			$colW = floor(100/$cols);
+			foreach ($s as $k=>$v) {
+				$s[$k] = '<td'.($k==$tbI ? '':' width="'.$colW.'%"').' valign="top">'.($v!=='' ? '<table width="100%" class="usertable">' . $v . '</table>':'').'</td>';
+			}
+			$txt = '</p><table width="100%" class="grouptable"><tr>' . implode('', $s) . '</tr></table><p>';
+		}
+		elseif ($s[0] !== '') {
+			if ($tbcenter) {
+				$txt = '</p><div class="table-center"><table '.$width.' class="usertable">' . $s[0] . '</table></div><p>';
+			}
+			else {
+				$txt = '</p><table '.$width.' class="usertable'.$align.'">' . $s[0] . '</table><p>';
+			}
 
-		$param =intval($param);
-		if ($param>30 && $param<101) $width='width="'.$param.'%"';
-		else $width = '';
-		if ($s !== '') $txt = '</p><table '.$width.' class="usertable">' . $s . '</table><p>';
+		}
 		break;
 	case 'hand':
 		if (!isset($this->dev)) $this->dev = is_dev();

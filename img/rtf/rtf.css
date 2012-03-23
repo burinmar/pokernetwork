@@ -108,8 +108,8 @@
 					*display: inline; *zoom: 1; /* IE7 */
 				}
 				.wysiwygControls li .btnPopupsmiles .btnPopupRow li {
-					height: 26px;
-					min-width: 20px;
+					/*height: 26px;
+					min-width: 20px;*/
 					_width: 20px; /* IE6 */
 				}
 				.wysiwygControls li .btnPopup .btnPopupRow li img {
@@ -163,6 +163,7 @@
 			.wysiwygControls li .btnPopup button {
 				margin-top: 10px;
 			}
+	
 
 /* footer of textarea: attachments*/
 /***************************/
@@ -198,3 +199,5 @@
 	text-align:left;
 	text-decoration:none;
 }
+.btnPopuptable {width: 240px;}
+	.btnPopuptable input[type="radio"] {width: auto}

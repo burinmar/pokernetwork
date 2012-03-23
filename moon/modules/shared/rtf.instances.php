@@ -78,10 +78,10 @@ switch ($instance) {
 		$cfg['fileSRC'] = '/w/blogs/';
 		$cfg['parserFeatures'] =  array(
 			'replace' => array('h' => 'h2'),
-			'tags' => 'h|b|i|u|quote|list|list-1|url|video|img|sub|sup|strike|code|table',
+			'tags' => 'h|b|i|u|quote|list|list-1|url|video|img|sub|sup|strike|code|table|game',
 			'smiles' => TRUE
 		);
-		$cfg['features'] = '-timer,-preview,-spoiler';
+		$cfg['features'] = '-timer,-preview,-spoiler,-twitter,-code';
 		$cfg['tableObjects'] = 'blog_attachments';
 		$cfg['attachments'] = 'image+,video,html';
 		break;

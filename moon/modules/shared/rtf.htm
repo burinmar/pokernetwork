@@ -319,9 +319,11 @@ var uploadCompleteHandler = function () {
 	</div>
 	<p class="status">Displaying: <span>1</span> of <span>?</span></p>
 </div>
+<%if{attachJs}%>
 <script type="text/javascript">
 /*<![CDATA[*/
 $('.pnGallery').pnSlideshow();
 /*]]>*/
 </script>
+<%end%>
 <% end %>

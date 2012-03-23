@@ -239,6 +239,8 @@ function main($vars=array())
 					$p->js('/js/swfupload/swfupload.fileprogress.js');
 					$p->js('/js/swfupload/swfupload.cookies.js');
 				}
+				//pick from gallery
+				$a['galleryScript'] = ($gCat = $this->get_var('rtfAddGallery')) && is_numeric($gCat) ? '<script type="text/javascript">initMultiUpload(\'img\','.$gCat.');</script>' : '';
 
 		}
 		$a['i'] = uniqid('');
@@ -272,11 +274,26 @@ function main($vars=array())
 		}
 		$txt = & moon :: shared('text');
 		$res = $txt->check_timer($res);
+		$pages = $txt->break_pages($res);
+		if (is_array($pages) && count($pages)>1) {
+			$a = array('navPreview' => '', 'pagesPreview'=>'');
+			foreach ($pages as $k=>$v) {
+				$d['id'] = $k;
+				list($d['title'], $d['text']) = $v;
+				$a['navPreview'] .= $t->parse('navPreview', $d);
+				$d['size']= moon::file()->format_size(strlen(strip_tags($d['text'])));
+				$a['pagesPreview'] .= $t->parse('pagesPreview', $d);
+			}
+
+		}
+		else {
+			$a = array('text' => $res );
+		}
 		$err = $txt->error(FALSE);
 		if ($err !== FALSE) {
-			$res = '<div style="padding:10px;border: 1px solid red;color: red;">'.htmlspecialchars($err) .'</div>'. $res;
+			$a['error'] = htmlspecialchars($err);
 		}
-		$res=$t->parse('preview', array('text' => $res ) );
+		$res=$t->parse('preview', $a );
 		moon_close();
 		die($res);
 		break;
@@ -426,7 +443,7 @@ function admSaveItem(&$err) //updatina irasa
 			else {
 				$err = 'err.nofile';
 			}
-	        $ins['content_type'] = 0;
+			$ins['content_type'] = 0;
 			$stop = TRUE;
 		}
 		elseif (!$wasRefresh) {
@@ -438,13 +455,22 @@ function admSaveItem(&$err) //updatina irasa
 				if ($isUpload=$f->is_upload('file',$errF)) {
 					if (!$f->has_extension('jpg,jpeg,gif,png')) $err='img.extension';
 					else $f->file_name(uniqid('').'.'.$f->file_ext());
-				} elseif(isset($_POST['url']) && $_POST['url']) {
+				}
+				elseif(isset($_POST['url']) && $_POST['url']) {
 					$err = '';
 					$saveAs=$this->fileDir.uniqid('').'.'.$f->file_ext($_POST['url']);
 					if ($isUpload=$f->is_url_content ($_POST['url'],$saveAs)) {
 						if (!$f->has_extension('jpg,jpeg,gif,png')) $err='img.extension';
 					} else $err='img.404';
-				} elseif (!$id && !$err) {
+				}
+				elseif(isset($_POST['gallery_file_name']) && isset($_POST['gallery_file_name']['img'])) {
+					$err = '';
+					$saveAs=$this->fileDir.uniqid('').'.'.$f->file_ext($_POST['gallery_file_name']['img']);
+					if ($isUpload=$f->is_url_content ($_POST['gallery_file_name']['img'],$saveAs)) {
+						if (!$f->has_extension('jpg,jpeg,gif,png')) $err='img.extension';
+					} else $err='img.404';
+				}
+				elseif (!$id && !$err) {
 					$err='img.nofile';
 				}
 			//}
@@ -750,7 +776,7 @@ function parseText($parent_id, $source, $alertErrors=FALSE)
 	return array($txt->preview($source),$res);
 }
 
-function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE)
+function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE, $attachJs = true)
 {
 	$txt = &moon::shared('text');
 	$txt->features = array_merge($txt->features,$this->parserFeatures);
@@ -767,7 +793,8 @@ function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE)
 		$tpl = $this->load_template();
 		$m = array(
 			'items:images' => '',
-			'items:tabs' => ''
+			'items:tabs' => '',
+			'attachJs' => $attachJs
 		);
 		$nr = 0;
 		$images = array();

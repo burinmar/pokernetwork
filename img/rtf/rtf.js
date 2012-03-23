@@ -81,10 +81,14 @@ function rtfObject(config)
     this.button['table'] = {
         title: 'Simple table',
         image: this.imgPath + 'table.png',
-        onclick: function(wysiwyg) {
+        /*onclick: function(wysiwyg) {
             var str = '\n[TABLE]\n' + wysiwyg.selectedText() + '|\n[/TABLE]\n';
             wysiwyg.insert(str, 9, 11);
-        }
+        },*/
+		onclick: function(wysiwyg) {
+			wysiwyg.textarea.focus();
+        },
+		form: this.formTable()
     }
 
     this.button['code'] = new button('CODE', 'Code (monospaced text)');
@@ -94,6 +98,24 @@ function rtfObject(config)
 	this.button['sup'] = new button('SUP', 'Superscript');
 	this.button['spoiler'] = new button('SPOILER', 'Spoiler');
 
+	this.button['readmore'] = {
+        title: 'Read more',
+        image: this.imgPath + 'readmore.png',
+        onclick: function(wysiwyg) {
+            var str = wysiwyg.selectedText() + '\n---ReadMore---\n';
+            wysiwyg.insert(str, 0, 0);
+        },
+		hide: true
+    }
+
+	this.button['pagebreak'] = {
+        title: 'PageBreak',
+        onclick: function(wysiwyg) {
+            var str = wysiwyg.selectedText() + '\n---PageBreak---\n';
+            wysiwyg.insert(str, 0, 0);
+        },
+		hide: true
+    }
     this.button['img'] = {
         title: 'Image',
         image: this.imgPath + 'image.png',
@@ -112,7 +134,32 @@ function rtfObject(config)
             //wysiwyg.insert(str, 7, 9);
         },
 		form: this.formVideo()
-    }	
+    }
+
+	this.button['hand'] = {
+        title: 'Hand Player',
+        onclick: function(wysiwyg) {
+        	var wo=rtfObject;
+            var wid=wysiwyg.config.instance;
+			if(encodeURIComponent) wid=encodeURIComponent(wid);
+			wo.modal.openURL(wysiwyg.config.urlHands+ (wysiwyg.config.urlHands.indexOf('?')==-1 ? '?':'&') + 'wid=' + wid, 1000, 850);
+			wo.modal.resizeTo(1000,800,false);
+
+        },
+		hide: true
+    }
+
+	this.button['poll'] = {
+        title: 'Insert poll',
+        onclick: function(wysiwyg) {
+        	var wo=rtfObject;
+            var wid=wysiwyg.config.instance;
+			if(encodeURIComponent) wid=encodeURIComponent(wid);
+			wo.modal.openURL(wysiwyg.config.urlPoll+ (wysiwyg.config.urlPoll.indexOf('?')==-1 ? '?':'&') + 'wid=' + wid, 800, 450);
+			wo.modal.resizeTo(800,450,false);
+        },
+		hide: true
+    }
 	
     this.button['smiles'] = {
         title: 'Smiles',
@@ -380,27 +427,17 @@ rtfObject.prototype.buttonEvent = function(btn_type, event) {
 rtfObject.prototype.toolbar = function() {
     var res = '';
     var btCustom = new Array();
-    var btHidden = new Array();
     var b;
     var link_window = false;
     var preview_window = false;
     var defaultButtons=new Array();
-
 	if (this.config.buttons) {
 	    btCustom = this.config.buttons.split(',');
-		var a;
-		for(var i in btCustom) {
-			a=jQuery.trim(btCustom[i]);
-	        if (a.indexOf('-')==0) {
-	        	a=jQuery.trim(a.substring(1));
-	            btHidden[btHidden.length]=a;
-	        }
-		}
 	}
-
     for(var i in this.button) {
         var btn_type = i;
-        if(jQuery.inArray(btn_type,btHidden)!=-1) continue;
+        if(jQuery.inArray('-' + btn_type,btCustom)!=-1) continue;
+        else if(this.button[btn_type].hide && jQuery.inArray(btn_type,btCustom)==-1) continue;
         if(btn_type=='link' && !this.config.uriPreview) continue;
         if(btn_type=='objects' && !this.config.uriObjects) continue;
 		var add='';
@@ -500,6 +537,18 @@ rtfObject.prototype.formLink = function()
    return res;
 }
 
+rtfObject.prototype.formTable = function()
+{
+	var id = this.index;
+	top.document.rtfReturn[id] = this;
+	var res = '<p class="btnPopupTitle">Insert Table</p>' +
+				'<span class="btnPopupRow" style="color:#666">Hint: You can paste data from your excel file - &quot;|&quot; isn\'t necessary</span>'+
+				'<span class="btnPopupRow">Align: <label class="checkboxLabel"><input type="radio" name="rtf_tbalign'+id+'"  value="" checked="checked" />&nbsp;Default</label> <label class="checkboxLabel"><input type="radio" name="rtf_tbalign'+id+'"  value=" left" />&nbsp;Left</label> <label class="checkboxLabel"><input type="radio" name="rtf_tbalign'+id+'"  value=" center" />&nbsp;Center</label></span>' +
+				'<span class="btnPopupRow">Width: <label class="checkboxLabel"><input type="radio" name="rtf_tbwidth'+id+'"  value="" checked="checked" /> Auto</label> <label class="checkboxLabel"><input type="radio" name="rtf_tbwidth'+id+'"  value="50" /> 50%</label> <label class="checkboxLabel"><input type="radio" name="rtf_tbwidth'+id+'"  value="100" /> 100%</label></span>' +
+				'<button type="button" onclick="var oRTF =top.document.rtfReturn['+id+']; var str=\'\\n[TABLE=\' + oRTF.radio(this.form,\'rtf_tbwidth'+id+'\') + oRTF.radio(this.form,\'rtf_tbalign'+id+'\') + \']\' ; oRTF.insert(str+ \'\\n*heading1|heading2*\\n|\' + oRTF.selectedText() + \'\\n[/TABLE]\\n\', str.length, 8);oRTF.buttonEvent(\'table\',\'close\');">Insert</button>';
+   return res;
+}
+
 rtfObject.prototype.formTwitter = function()
 {
 	var id = this.index;
@@ -565,6 +614,7 @@ rtfObject.prototype.formSmiles = function() {
 		['(+)', 'yes.gif','Yes'],
 		['(-)', 'no.gif','No'],
 		[';(', 'crying.gif','Crying'],
+		null,
 		['(unsure)', 'unsure.gif','Unsure'],
 		['(!@#$)', 'cursing.gif','Cursing'],
 		[']:D', 'devil.gif','Devil'],
@@ -579,8 +629,9 @@ rtfObject.prototype.formSmiles = function() {
 		['|-)', 'sleep.gif','Sleep'],
 		['(sneaky)', 'sneaky.gif','Sneaky'],
 		['(n)', 'thumbdown.gif','Thumb Down'],
-		['(yy)', 'thumbsup.gif','Thumbs Up'],
 		['(y)', 'thumbup.gif','Thumb Up'],
+		null,
+		['(yy)', 'thumbsup.gif','Thumbs Up'],
 		['(drool)', 'drool.gif','Drool'],
 		['(w00t)', 'w00t.gif','W00t'],
 		['(whistling)', 'whistling.gif','Whistling'],
@@ -589,14 +640,26 @@ rtfObject.prototype.formSmiles = function() {
 		[':-/', 'ehhh.gif','Ehhh'],
 		[':G', 'drunk.gif','Drunk'],
 		[';)', 'wink.gif','Wink'],
-		['(drink)', 'drink.gif','Drink']
-
+		['(drink)', 'drink.gif','Drink'],
+		['(emo)', 'emo.gif', 'Emo'],
+		['(nuts)', 'nuts.gif', 'Nuts'],
+		['(facepalm)', 'facepalm.gif', 'Facepalm'],
+		['(pipi)', 'pipi.gif', 'Pee'],
+		null,
+		['(love_pn)', 'love_pn.gif', 'I Love PokerNews'],
+		['(lol_broke)', 'lol_broke.gif', 'LOL BROKE'],
+		['(level)', 'level.gif', 'Level'],
+		['(hu4)', 'hu4.gif', 'HU4ROLLZ'],
+		['(ontopic)', 'ontopic.gif', 'On Topic'],
+		null,
+		['(gay)', 'gay.gif', 'Thats Gay'],
+		['(rooster)', 'rooster.gif', 'Rooster']
     );
-    var inRow = Math.ceil(smiles.length/4);
     for(var i=0; i<smiles.length; i++) {
         var a = smiles[i];
-		if (i % inRow == 0 && i && i<smiles.length-1) {
+		if (a === null) {
 			res += '</ul><ul class="btnPopupRow">';
+			continue;
 		}
         res +=	'<li><img src="/img/smilies/' + a[1]  + '" alt="" ' +
 				'title="' + this.translate( a[2]) + '" '+
@@ -609,6 +672,14 @@ rtfObject.prototype.formSmiles = function() {
 rtfObject.prototype.translate = function( s)
 {
     return s;
+}
+
+rtfObject.prototype.radio= function(form,vardas){
+  var el = form.elements;
+  for(i=0;i<el.length;i++){
+  	if (el[i].name==vardas && el[i].checked) {return el[i].value}
+  }
+  return false;
 }
 
 rtfObject.prototype.getTwitterMsg = function( url)
