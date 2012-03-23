@@ -1557,3 +1557,15 @@ iframe.modalWindow {
 	padding: 0 2px;
 	width: auto;
 }
+/*Sitemap*/
+.sitemap .main {margin-left: 20px;}
+.sitemap .main > li > a {
+	font-size: 16px;
+	display: block;
+	margin-top: 20px;
+	margin-bottom: 5px;
+}
+.sitemap .main > li ul {
+	margin-left: 20px;
+	margin-bottom: 5px
+}

@@ -1,15 +1,9 @@
 <% main %>
 <div class="widget sitemap">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{pageTitle}</h1>
-		<ul>
-		<%loop{items}%>
-			<li><a href="{uri}">{title}</a><%if{child}%><ul>{child}</ul><%end%></li>
-		<%end%>
-		</ul>
-	</div>
+	<h1 class="pageTitle">{pageTitle}</h1>
+	<ul class="main">
+	<%loop{items}%>
+		<li><a href="{uri}">{title}</a><%if{child}%><ul>{child}</ul><%end%></li>
+	<%end%>
+	</ul>
 </div>

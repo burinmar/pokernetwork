@@ -53,7 +53,6 @@ function main($vars)
 	$page = &moon::page();
 	$t = &$this->load_template();
 	$page->js('/js/ajaxSuggestions.js');
-	$page->css('/css/terms.css');
 
 	$sitemap = & moon :: shared('sitemap');
 	$pageInfo = $sitemap->getPage();
