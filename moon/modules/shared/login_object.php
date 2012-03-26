@@ -44,7 +44,7 @@ function login($uName,$uPass,&$err) {
 		$this->loginUnconditional($a);
 		return true;
 	}
-	$this->vbLogin($uName, $uPass, &$err);
+	$this->vbLogin($uName, $uPass, $err);
 	$user =& moon::user();
 	if ($id = $user->id()) {
 		$code = $this->autologin_code($id, $user->get('email'));

@@ -12,7 +12,7 @@ class blogs_import extends moon_com
 
 	paleisti importus
 
-	3. http://www.pokernetwork.dev/adm/articles-articles_import/blogs
+	3. http://www.pokernetwork.dev/adm/articles-blogs_import/blogs
 		reikes kelis kartus paleisti, importuoja dalimis
 
 	4. moon/modules/articles.config.cfg.php 'var.suffixStartId' - nurodyt select max(id) + 1 from articles
@@ -36,7 +36,7 @@ class blogs_import extends moon_com
 
 	function events($event, $par)
 	{
-		$msg = 'Articles import<hr />' . $event . '<br />';
+		$msg = 'Blogs import<hr />' . $event . '<br />';
 
 		switch($event)
 		{
@@ -136,11 +136,16 @@ class blogs_import extends moon_com
 			$imgAlt = '';
 
 			// decompile html. save attachments
-			$r['body'] = preg_replace('~<xml>.*?</xml>~s', '', $r['body']);
-			$r['body'] = preg_replace('~<style>.*?</style>~s', '', $r['body']);
-			$r['body'] = preg_replace('~<!--\[if gte mso [0-9]+\]>~s', '', $r['body']);
 
-			$content = html_entity_decode($parser->parse($r['body']), ENT_QUOTES, 'UTF-8');
+			$content = $r['body'];
+			$content = preg_replace('~<xml>.*?</xml>~s', '', $content);
+			$content = preg_replace('~<style>.*?</style>~s', '', $content);
+			$content = preg_replace('~<!--\[if gte mso [0-9]+\]>~s', '', $content);
+			$content = preg_replace('~<h[345][^>]*>~s', '', $content);
+			$content = preg_replace('~<[/]?st1:[^>]*>~s', '', $content);
+			$content = str_replace(array('<wbr></wbr>', '</h3>', '</h4>', '</h5>', '<meta charset="utf-8">', '</meta>'), '', $content);
+			$content = html_entity_decode($parser->parse($content), ENT_QUOTES, 'UTF-8');
+
 			// generate summary from compiled content
 			$summary = $txt->excerpt($txt->strip_tags(htmlspecialchars_decode($content)), 125);
 
@@ -167,7 +172,7 @@ class blogs_import extends moon_com
 				'updated_on' => $r['changed'],
 
 				'title' => $r['title'],
-				'body' => $r['body'],
+				'body' => '', // will populate later $r['body'],
 				'body_short' => $summary,
 				'uri' => (isset($res2[$r['id']])) 
 					? str_replace('.htm','',$res2[$r['id']]['uri']) 
@@ -220,63 +225,16 @@ class blogs_import extends moon_com
 					// fix attachment ids
 					// replace {id:xxx} in news contents
 					$content = str_ireplace('{id:' . $prevId . '}', '{id:' . $attId . '}', $content);
-					$upd = array();
-					list(,$upd['body']) = $rtf->parseText($articleId, $content);
-					$this->db->update($upd, 'blog_posts', array('id' => $articleId));
-					$upd = array();
-					$upd['body'] = $content;
-					$this->db->update($upd, 'blog_posts_bodies', array('post_id' => $articleId));
 				}
 
-				// save image attachments and replace attachment ids in text
-				// if ($articleId && !empty($parser->images)) {
-				// 	$msg[] = 'Saving image attachments...';
-
-				// 	foreach($parser->images as $id => $data) {
-				// 		$msg[] = 'Saving attachment nr: ' . $id;
-				// 		$imageSaved = false;
-
-				// 		// insert attachment
-				// 		$ins = array();
-				// 		$ins['user_id'] = $user->get_user_id();
-				// 		$ins['parent_id'] = $articleId;
-				// 		$ins['content_type'] = 0;
-				// 		$ins['created'] = $ins['updated'] = time();
-				// 		$ins['comment'] = isset($data[1]) ? $data[1] : '';
-				// 		$prevId = $id;
-
-				// 		// download and save file
-				// 		$imgUrl = !empty($data[0]) ? $data[0] : '';
-				// 		if ($imgUrl !== '') {
-				// 			if (stripos($imgUrl, 'http://') !== 0) {
-				// 				$imgUrl = trim($homeUrl, '/') . '/' . rtrim($imgUrl, '/');
-				// 			}
-
-				// 			$files = $this->downloadAndSaveAttachment($imgUrl);
-				// 			if (is_array($files)) {
-				// 				list($ins['file'],$ins['thumbnail']) = $files;
-				// 				$imageSaved = true;
-				// 			}
-				// 		}
-
-				// 		if ($imageSaved) {
-				// 			$msg[] = 'Attachment downloaded.';
-
-				// 			$attId = $this->db->insert($ins, 'articles_attachments', 'id');
-
-				// 			// fix attachment ids
-				// 			// replace {id:xxx} in news contents
-				// 			$content = str_ireplace('{id:' . $prevId . '}', '{id:' . $attId . '}', $content);
-				// 			$upd = array();
-				// 			$upd['content'] = $content;
-				// 			list(,$upd['content_html']) = $rtf->parseText($articleId, $content);
-				// 			$this->db->update($upd, 'articles', array('id' => $articleId));
-				// 		} else {
-				// 			$msg[] = '<span style="color: #F00;">Attachment download failed...</span>';
-				// 		}
-				// 	}
-				// }
+				$upd = array();
+				$upd['body'] = $content;
+				$this->db->update($upd, 'blog_posts_bodies', array('post_id' => $articleId));
 			}
+			// compile html
+			$upd = array();
+			list(,$upd['body']) = $rtf->parseText($articleId, $content);
+			$this->db->update($upd, 'blog_posts', array('id' => $articleId));
 
 			foreach ($comments['comments'] as $comment) {
 				$content = html_entity_decode($parser->parse($comment['comment']), ENT_QUOTES, 'UTF-8');
