@@ -5,8 +5,8 @@ class login_object extends moon_com{
 function getPermissionGroups($group=false, $perm=false) {
 	// pakeitus cia, pakeisti reikia ir cms/modules_adm/user.admins
 	$roles = array(
-		'' => array('content'),
-		'administrator' => array('content','users')
+		'' => array('content', 'tournaments', 'reviews', 'ads'),
+		'administrator' => array('content','users', 'tournaments', 'reviews', 'ads')
 
 	);
 	//$roles['administrator'] = array_merge(array('users'), $roles['editor']);

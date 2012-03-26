@@ -11,7 +11,7 @@ News {ico=news, admin=content}
 	articles.categories_news = News categories
 	articles.authors = Authors
 	articles.tags = Tags
-	other.dictionary = Dictionary 
+	other.dictionary = Dictionary
 
 Tournaments {ico=tournaments, admin=tournaments}
 	tour.special = Special Freerolls
@@ -24,7 +24,7 @@ Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 		reviews.pages = Additional Pages {link=reviews.pages#|*id*}
 		reviews.statisticsRoom = Statistics {link=reviews.statistics#|*id*}
 	reviews.promotions = Promotions
-	Sorting {link=reviews.sorting#, admin=chief-editor}
+	Sorting {link=reviews.sorting#, admin=developer}
 		reviews.sorting = Sorting
 		reviews.sorting_linux = Sort Linux poker rooms
 		reviews.sorting_mac = Sort Mac poker rooms
