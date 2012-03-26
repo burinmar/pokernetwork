@@ -1,0 +1,69 @@
+<% error %>
+1=Please enter message.
+2=Please select a subject.
+3=Please enter correct email address!
+4=Please enter correct code!
+5=An error occurred. Please try again later.
+
+
+<% main %>
+<div class="widget contactUs">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		{pageIntro}
+		<form action="{!action}" method="post" name="frmContact" id="frmContact">
+			<div>
+				<% if {error} %><div class="error"><span>{error}</span></div><% end %>
+	
+				<input type="hidden" name="event" value="{event}" />
+				{refresh_field}
+				<% if {test} %><input type="hidden" name="test" value="1" /><% end %>
+				<label class="textField"><span class="labelText">Your Name </span><input type="text" name="name" value="{name}" id="fld_name" size="25" class="input-text" /></label>
+				<label class="textField"><span class="labelText">Your E-mail </span><input type="text" name="email" id="fld_email" value="{email}" size="25" class="input-text" /></label><br />
+				<label><span class="labelText">Subject </span><select name="subject" size="1" id="fld_subject"><option value="0">-- Select a subject --</option>
+						{subject}
+					</select>
+				</label><br />
+
+				<label class="captcha"><span class="labelText">Code </span><img alt="CAPTCHA image" src="/captcha.php" width="103" height="28" /><span class="tal captchaFieldContainer"><input type="text" value="" id="fld_code" name="captcha" size="4" class="captchaField input-text" /></span></label><br />
+
+				<label><span class="labelText"><span class="a11y">Your message</span> </span><textarea name="body" id="fld_body" rows="10" cols="59" class="input-textarea">{body}</textarea></label>
+				<button type="submit" name="send" class="input-submit"><% if {test} %>Test<% else {test} %>Send<% end %></button>
+			</div>
+		</form>
+	</div>
+</div>
+
+<% success %>
+<div class="widget contactUsThanks">
+	<div class="widgetInner">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<p class="contactUsThanksMsg">Thank you for your message.</p>
+		<p>We will reply to your inquiry (in case you provide your email address) in 24 hours.</p>
+	</div>
+</div>
+
+
+
+<% mail_body %>
+From: {from}
+
+{name} wrote:
+{body}
+
+<% subject %>
+1=General inquiry
+2=Feedback on design and features
+3=Partnership proposal
+4=Advertising inquiry
+5=Link exchange inquiry
+6=Bug report
+7=Mistakes and omissions report
+8=Report Piracy
+9=Submit Poker Term

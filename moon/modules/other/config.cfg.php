@@ -5,6 +5,7 @@ $cfg = array();
 $cfg['other'] = array(
 	'page.Main' => 'xml.1col_darkright,fake',
 	'page.Dictionary' => 'xml.2col,fake',
+	'page.Contact' => 'xml.2col,fake',
 	'page.1col' => 'xml.1col,fake',
 
 	'tb.Users' => 'users',
