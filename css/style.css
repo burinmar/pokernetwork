@@ -1627,3 +1627,14 @@ iframe.modalWindow {
 		top: 0;
 		left: 282px;
 	}
+
+/*ContactUs*/
+.contactUs dl {margin-top: 30px}
+.contactUs dt {float: left}
+.contactUs dd {margin: 0 0 10px 120px}
+.contactUs label {color: #000}
+.contactUs input[type="text"] {width: 280px}
+.contactUs select {width: 295px}
+.contactUs .captcha img {vertical-align: middle; margin-right: 20px}
+.contactUs .captcha input {width: 40px}
+.contactUs .error {margin-top: 20px}
