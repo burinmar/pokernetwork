@@ -65,6 +65,10 @@ class dictionary extends moon_com {
 				$this->forget();
 				break;
 
+			case 'import': 
+				$this->import('pokernetwork_old');
+				break;
+
 			default :
 				if (isset ($_GET['ord'])) {
 					$this->set_var('sort', (int) $_GET['ord']);
@@ -346,7 +350,20 @@ class dictionary extends moon_com {
 		return true;
 	}
 
-
+	function import($oldDb)
+	{
+		$this->db->query('truncate ' . $this->table('Dictionary'));
+		foreach ($this->db->array_query_assoc('SELECT * FROM ' . $oldDb . '.glossary') as $row) {
+			$ins = array(
+				'id' => $row['id'],
+				'name' => $row['title'],
+				'description' => $row['content'],
+				'description_html' => htmlspecialchars($row['content']),
+				'uri' => make_uri($row['title'])
+			);
+			$this->db->insert($ins, $this->table('Dictionary'));
+		}
+	}	
 }
 
 ?>
