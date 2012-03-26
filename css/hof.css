@@ -1,0 +1,190 @@
+#body:before {background: none}
+#body.wFull {
+	padding-bottom: 0;
+	background: #5A5A5A url('/img/hof/bg_tile.jpg');
+}
+
+.hof {
+	background: url('/img/hof/logo.png') no-repeat;
+	font-family: Georgia, Times, serif;
+	font-size: 13px;
+	color: #fff;
+	padding: 130px 20px 50px;
+	position: relative;
+} .hof a {color: #FF9D02}
+.hof p, .hof .article li, .hof .article td {color: #fff}
+
+
+.supported {
+	position: absolute;
+	width: 135px;
+	right: 150px;
+	top: 15px;
+	background: url('/img/hof/crownlogo.jpg') no-repeat top right;
+	padding-right: 115px;
+	line-height: 101px;
+}
+.intro h2 {margin-bottom: 20px}
+.intro ul {
+	list-style: square;
+	margin-left: 25px;
+	line-height: 20px;
+	margin-bottom: 20px;
+}
+
+
+
+#yearnavi {
+	margin: 40px auto;
+	background: url('/img/hof/slider.png') 0 0 no-repeat;
+	width: 480px;
+	text-align: center;
+}
+	#yearnavi li {display: inline; font-size: 21px;}
+	#yearnavi li a {
+		text-decoration: underline;
+		color: #fff;
+		line-height: 40px;
+		outline: none;
+		display: inline-block;
+		margin: 0 20px;
+	}
+	#yearnavi li.active a {
+		color: #FF9D02;
+		font-weight: bold;
+		text-decoration: none;
+	}
+
+.article ul {
+	list-style-type: square;
+	margin-bottom: 20px;
+	padding-left: 20px;
+	overflow: hidden;
+}
+.article ol {
+	margin-bottom: 20px;
+	padding-left: 30px;
+	overflow: hidden;
+}
+.article li {padding: 3px 0;}
+.article h2 {
+	font-size: 13px;
+	margin: 10px 0 15px;
+}
+.article p {margin-bottom: 10px; line-height: 18px}
+
+
+.title, .title a {
+	color: #ff9d02;
+	text-transform: uppercase;
+	font-size: 16px;
+	font-weight: normal;
+}
+
+.section {
+	margin: 40px 0;
+}
+	.section h2 {
+		margin: 30px 0;
+	}
+	h3 {
+		padding: 10px 0 0;
+		margin: 0 0 10px;
+	}
+
+.player {
+	padding: 0 0 0 170px;
+}
+	.player .picture {
+		display: inline;
+		float: left;
+		height: 160px;
+		margin: 0 0 0 -170px;
+		overflow: hidden;
+		padding: 10px;
+		position: relative;
+		width: 130px;
+	}
+	.player .picture .border {
+		background: url("/img/hof/picture.gif") repeat scroll 0 0 transparent;
+		height: 180px;
+		left: 0;
+		position: absolute;
+		top: 0;
+		width: 150px;
+	}
+
+.list {}
+	.list .player {
+		padding: 0 20px 30px 0;
+		float: left;
+		width: 450px;
+	}
+	.list .player .photo {
+		float: left;
+		border: 2px solid #DD790F;
+		margin-right: 10px;
+	}
+	.player p {margin: 10px 0;}
+		
+.hof_title{
+	color:#FF9D02 !important;
+	font-size:16px;
+	font-weight:bold;
+	text-transform:uppercase;
+}
+
+.hof_link{
+	color:#FF9D02;
+	outline: none;
+}
+
+#hof_loading{
+	display:none;
+	position:absolute;
+	top:50px;
+	left:353px;
+}
+
+#hof_page .heading {
+	font-size: 50px;
+	font-weight: normal;
+}
+
+
+.columns3 td {
+	border: 0px none;
+	padding: 0px 30px 0 0;
+	line-height: 1.5em;
+	width: 33%;
+		text-align: justify;
+}
+.columns3 ul {
+	margin-left: 30px;
+}
+.columns3 p {margin: 10px 0 !important}
+
+.hof-members {
+	list-style: none;
+	margin-top: 40px;
+	zoom: 1;
+}
+
+.hof-members img {float: left; margin-right: 30px}
+.hof-members li {display: block; margin-bottom: 15px; clear: left}
+.article table.ranking {
+	width: 100%;
+	margin-bottom: 20px;
+}
+.article table.ranking th {
+	padding: 5px;
+	color: #999;
+}
+.article table.ranking td {
+	padding: 4px 5px;
+	background: rgba(0, 0, 0, 0.4);
+	border-top: 1px solid #000;
+}
+.article table.ranking tr:nth-child(odd) td {
+	background: rgba(0, 0, 0, 0.1);
+}
