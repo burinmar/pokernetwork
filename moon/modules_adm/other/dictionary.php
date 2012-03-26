@@ -1,428 +1,352 @@
 <?php
+
+
 class dictionary extends moon_com {
 
-function onload()
-{
-	// filter
-	$this->filter = array();
-	$this->formFilter = &$this->form();
-	$this->formFilter->names('name');
 
-	// item form
-	$this->formItem = &$this->form('item');
-	$this->formItem->names('id', 'name', 'uri', 'description_raw', 'usg_raw');
+	function onload() {
 
-	//
-	$this->sqlWhere = ''; // set by filter
-	$this->sqlOrder = '';
-	$this->sqlLimit = ''; // set by paging
-}
-function events($event, $par)
-{
-	switch ($event) {
-		case 'decode-texts':
-			// !note: after import - search db for usage and description fields that contain html entity (select * from dictionary_en where usg like '%&lt;%')
-			$this->decodeDbTexts();
-			break;
-		case 'fix-uri':
-			$this->fixDbUri();
-			break;
-		case 'filter':
-			$this->setFilter();
-			break;
-		case 'edit':
-			$id = isset($par[0]) ? intval($par[0]) : 0;
-			if ($id) {
-				if (count($values = $this->getItem($id))) {
-					$this->formItem->fill($values);
+		/* form of item */
+		$this->form = & $this->form();
+		$this->form->names('id', 'name', 'uri', 'description');
+		//$this->form->fill();
+
+		/* form of filter */
+		$this->formFilter = & $this->form('name');
+
+		/* main table */
+		$this->myTable = $this->table('Dictionary');
+	}
+
+
+	function events($event, $par) {
+		$this->use_page('Common');
+		switch ($event) {
+
+			case 'edit' :
+				$id = isset ($par[0]) ? intval($par[0]) : 0;
+				if ($id) {
+					if (count($values = $this->getItem($id))) {
+						$this->form->fill($values);
+					}
+					else {
+						$this->set_var('error', '404');
+					}
+				}
+				$this->set_var('view', 'form');
+				break;
+
+			case 'save' :
+				if ($id = $this->saveItem()) {
+					if (isset ($_POST['return'])) {
+						$this->redirect('#edit', $id);
+					}
+					else {
+						$this->redirect('#');
+					}
 				}
 				else {
-					$this->set_var('error', '404');
+					$this->set_var('view', 'form');
 				}
-			}
-			$this->set_var('view', 'form');
-			break;
-		case 'save':
-			if ($id = $this->saveItem()) {
-				if (isset($_POST['return']) ) {
-					$this->redirect('#edit', $id);
-				} else {
-					$this->redirect('#');
+				break;
+
+			case 'delete' :
+				if (isset ($_POST['it'])) {
+					$this->deleteItem($_POST['it']);
 				}
-			} else {
-				$this->set_var('view', 'form');
-			}
-			break;
-		case 'delete':
-			if (isset($_POST['it'])) $this->deleteItem($_POST['it']);
-			$this->redirect('#');
-			break;
-		case 'deleteall':
-			$this->deleteItemsByFilter();
-			$this->redirect('#');
-			break;
-		default:
-			$this->setOrdering();
-			$this->setPaging();
-			break;
-	}
-	$this->use_page('Common');
-}
-function properties()
-{
-	$vars = array();
-	$vars['view'] = 'list';
-	$vars['currPage'] = '1';
-	$vars['listLimit'] = '50';
-	$vars['error'] = FALSE;
-	return $vars;
-}
-function main($vars)
-{
-	$page = &moon::page();
-	$win = &moon::shared('admin');
-	$win->active($this->my('fullname'));
-	$title = $win->current_info('title');
-	$page->title($title);
+				$this->redirect('#');
+				break;
 
-	$currPage = $page->get_global($this->my('fullname') . '.currPage');
-	if (!empty($currPage)) {
-		$vars['currPage'] = $currPage;
-	}
+			case 'filter' :
+				$filter = isset ($_POST['filter']) ? $_POST['filter'] : '';
+				$this->set_var('filter', $filter);
+				$this->set_var('psl', 1);
+				//forget reikia kai nuimti filtra
+				$this->forget();
+				break;
 
-	if ($vars['view'] == 'form') {
-		return $this->renderForm($vars);
-	} else {
-		return $this->renderList($vars);
-	}
-}
-function renderList($vars)
-{
-	$tpl = &$this->load_template();
-	$win = &moon::shared('admin');
-	$page = &moon::page();
-
-	$ordering = $this->getOrdering();
-	$filter = $this->getFilter();
-	$paging = $this->getPaging($vars['currPage'], $this->getItemsCount(), $vars['listLimit']);
-
-	$goEdit = $this->linkas('#edit','{id}');
-	$tpl->save_parsed('items',array('goEdit' => $goEdit));
-
-	$items = $this->getItems();
-	$itemsList = '';
-	$maxLen = 100;
-	foreach ($items as $item) {
-		$desc = $item['description_html'];
-		if (strlen($desc) > $maxLen) {
-			$short = substr($desc, 0, $maxLen);
-			if (($offset = strrpos($short, ' ')) !== FALSE) {
-				$item['description'] = substr($short, 0, $offset) . '...';
-			} else {
-				$item['description'] = substr($short, 0, $maxLen) . '...';
-			}
-		} else {
-			$item['description'] = $desc;
-		}
-
-		$itemsList .= $tpl->parse('items', $item);
-	}
-
-	$main = array();
-	$main['viewList'] = TRUE;
-	$main['filter'] = $tpl->parse('filter', $filter);
-	$main['items'] = $itemsList;
-	$main['paging'] = $paging;
-	$main['pageTitle'] = $win->current_info('title');
-	$main['goNew'] = $this->linkas('#edit');
-	$main['goDelete'] = $this->my('fullname') . '#delete';
-	$main['goClear'] = $this->my('fullname') . '#deleteall';
-	$main += $ordering;
-
-	return $tpl->parse('main', $main);
-}
-function renderForm($vars)
-{
-	$tpl = &$this->load_template();
-	$win = &moon::shared('admin');
-	$page = &moon::page();
-	$info = $tpl->parse_array('info');
-
-	$err = ($vars['error'] !== FALSE) ? $vars['error'] : FALSE;
-
-	$form = $this->formItem;
-	$title = $form->get('id') ? $info['titleEdit'] . ' :: ' . $form->get('name') : $info['titleNew'];
-
-	$main = array();
-	$main['viewList'] = FALSE;
-	$main['error'] = ($err !== FALSE) ? $info['error' . $err] : '';
-	$main['event'] = $this->my('fullname') . '#save';
-	$main['id'] = $form->get('id');
-	$main['goBack'] = $this->linkas('#') . '?page=' . $vars['currPage'];
-	$main['pageTitle'] = $win->current_info('title');
-	$main['formTitle'] = htmlspecialchars($title);
-	$main['uriPrefix'] = $this->get_var('uriPrefixDictionary');
-	$main['refresh'] = $page->refresh_field();
-	$main['toolbar'] = '';
-	$main += $form->html_values();
-
-	// add toolbar
-	if (is_object( $rtf = $this->object('rtf') )) {
-		$rtf->setInstance( $this->get_var('rtf') );
-		$main['toolbarDesc'] = $rtf->toolbar('i_description_raw',(int)$main['id']);
-		$main['toolbarUsg'] = $rtf->toolbar('i_usg_raw',(int)$main['id']);
-	}
-
-	return $tpl->parse('main', $main);
-}
-function getItems()
-{
-	$sql = 'SELECT id, name, description_html, uri
-		FROM ' . $this->table('Dictionary') . ' ' .
-		$this->sqlWhere . ' ' .
-		$this->sqlOrder . ' ' .
-		$this->sqlLimit;
-	$result = $this->db->array_query_assoc($sql);
-	return $result;
-}
-function getItemsCount()
-{
-	$sql = 'SELECT count(*) as cnt
-		FROM ' . $this->table('Dictionary') . ' ' .
-		$this->sqlWhere;
-	$result = $this->db->single_query_assoc($sql);
-	return $result['cnt'];
-}
-function getItem($id)
-{
-	$sql = 'SELECT *
-		FROM ' . $this->table('Dictionary') . '
-		WHERE id = ' . intval($id);
-	return $this->db->single_query_assoc($sql);
-}
-function saveItem()
-{
-	$form = &$this->formItem;
-	$form->fill($_POST);
-	$values = $form->get_values();
-
-	// Filtering
-	$data['id'] = intval($values['id']);
-	$data['name'] = strip_tags($values['name']);
-	$data['uri'] = $values['uri'];
-	$data['description_raw'] = $values['description_raw'];
-	$data['usg_raw'] = $values['usg_raw'];
-	$id = $data['id'];
-
-	// Validation
-	$errorMsg = 0;
-	// name
-	if ($data['name'] == '') {
-		$errorMsg = 1;
-	// uri
-	} elseif ($data['uri'] == '') {
-		$errorMsg = 2;
-	// description
-	} elseif ($data['description_raw'] == '') {
-		$errorMsg = 3;
-	} elseif (!is_object($rtf = $this->object('rtf'))) {
-		$errorMsg = 9;
-	} else {
-		//check for uri duplicates
-		$sql = 'SELECT count(*) as cnt
-			FROM ' . $this->table('Dictionary') . '
-			WHERE uri = \'' . $this->db->escape($data['uri']) . '\' AND id <> ' . $id;
-		$result = $this->db->single_query_assoc($sql);
-		if ($result['cnt'] != 0) {
-			$errorMsg = 4;
+			default :
+				if (isset ($_GET['ord'])) {
+					$this->set_var('sort', (int) $_GET['ord']);
+					$this->set_var('psl', 1);
+					$this->forget();
+				}
+				if (isset ($_GET['page'])) {
+					$this->set_var('psl', (int) $_GET['page']);
+				}
 		}
 	}
 
- 	if ($errorMsg) {
-		$this->set_var('error', $errorMsg);
-		return FALSE;
+
+	function properties() {
+		return array('psl' => 1, 'filter' => '', 'sort' => '', 'view' => 'list');
 	}
 
-	// if was refresh skip other steps and return
-	if ($wasRefresh = $form->was_refresh()) {
+
+	function main($vars) {
+		$win = & moon :: shared('admin');
+		$win->active($this->my('fullname'));
+		$vars['pageTitle'] = $win->getTitle();
+		if ($vars['view'] == 'form') {
+			return $this->viewForm($vars);
+		}
+		else {
+			return $this->viewList($vars);
+		}
+	}
+
+
+	function viewList($vars) {
+		$t = & $this->load_template();
+
+		/******* LIST **********/
+		$m = array('items' => '');
+		$pn = & moon :: shared('paginate');
+
+		/* rusiavimui */
+		$ord = & $pn->ordering();
+		$ord->set_values(array('name' => 1), 1);
+		//gauna linkus orderby{nr}
+		$m += $ord->get_links($this->linkas('#', '', array('ord' => '{pg}')), $vars['sort']);
+
+		/* Filtras */
+		$f = & $this->formFilter;
+		$f->fill($vars['filter']);
+		$filter = $f->get_values();
+		$fm = array();
+		$fm['name'] = $f->html_values('name');
+		//$fm['rooms'] = $f->options('room_id', $selRooms);
+		$fm['hidden'] = $f->checked('hidden', 1);
+		$fm['goFilter'] = $this->my('fullname') . '#filter';
+		$fm['noFilter'] = $this->linkas('#filter');
+		$fm['isOn'] = '';
+		foreach ($filter as $k => $v) {
+			if ($v) {
+				$fm['isOn'] = 1;
+				break;
+			}
+		}
+		$fm['classIsOn'] = $fm['isOn'] ? ' filter-on' : '';
+		$m['filtras'] = $t->parse('filtras', $fm);
+
+		/* generuojam sarasa */
+		if ($count = $this->getListCount()) {
+
+			/* puslapiavimui */
+			if (!isset ($vars['psl'])) {
+				$vars['psl'] = 1;
+			}
+			$pn->set_curent_all_limit($vars['psl'], $count, 30);
+			$pn->set_url($this->linkas('#', '', array('page' => '{pg}')));
+			$m['puslapiai'] = $pn->show_nav();
+			$psl = $pn->get_info();
+			$dat = $this->getList($psl['sqllimit'], $ord->sql_order());
+
+			/* sarasas */
+			$goEdit = $this->linkas('#edit', '{id}');
+			$t->save_parsed('items', array('goEdit' => $goEdit));
+			$locale = & moon :: locale();
+			$now = $locale->now();
+			$txt = moon::shared('text');
+			foreach ($dat as $d) {
+				//kita
+				$d['name'] = htmlspecialchars($d['name']);
+				$d['description'] = htmlspecialchars($txt->excerpt($d['description'],100));
+				$m['items'] .= $t->parse('items', $d);
+			}
+		}
+		else {
+			//filtras nerodomas kai tuscias sarasas
+			if (!$fm['isOn']) {
+				//	$m['filtras'] = '';
+			}
+		}
+		$m['goNew'] = $this->linkas('#edit');
+		$m['goDelete'] = $this->my('fullname') . '#delete';
+		$m['pageTitle'] = htmlspecialchars($vars['pageTitle']);
+		$res = $t->parse('viewList', $m);
+		$save = array('psl' => $vars['psl'], 'sort' => (int) $vars['sort']);
+		foreach ($filter as $k => $v) {
+			if ($v !== '') {
+				$save['filter'] = $filter;
+				break;
+			}
+		}
+		$this->save_vars($save);
+		return $res;
+	}
+
+
+	function viewForm($vars) {
+		$t = & $this->load_template();
+		$info = $t->parse_array('info');
+		$page = & moon :: page();
+
+		/******* FORM **********/
+		$err = (isset ($vars['error'])) ? $vars['error'] : 0;
+		$f = $this->form;
+		$title = $f->get('id') ? $info['titleEdit'] . ' :: ' . $f->get('name') : $info['titleNew'];
+		$page->title($title);
+		// main settings
+		$m = array();
+		$m['error'] = $err ? $info['error' . $err] : '';
+		$m['event'] = $this->my('fullname') . '#save';
+		$m['refresh'] = $page->refresh_field();
+		$m['id'] = ($id = $f->get('id'));
+		$m['goBack'] = $this->linkas('#');
+		$m['pageTitle'] = $vars['pageTitle'];
+		$m['formTitle'] = htmlspecialchars($title);
+		$m['toolbar'] = '';
+		$m['hide'] = $f->checked('hide', 1);
+		$m += $f->html_values();
+		// Other settings
+		$m['uriPrefix'] = moon::shared('sitemap')->getLink('terms');
+		if ($f->get('hide') > 0) {
+			$f->fill(array('hide' => 1));
+		}
+		$m['hide'] = $f->checked('hide', 1);
+
+		/* pridedam attachmentus ir toolbara */
+		if (is_object( $rtf = $this->object('rtf') )) {
+			$rtf->setInstance( $this->get_var('rtf') );
+			$m['toolbar'] = $rtf->toolbar('i_description',(int)$m['id']);
+		}
+		$res = $t->parse('viewForm', $m);
+
+		/* resave vars for list */
+		$save = array('psl' => $vars['psl'], 'sort' => $vars['sort'], 'filter' => $vars['filter']);
+		$this->save_vars($save);
+		return $res;
+	}
+
+
+	//***************************************
+	//           --- DB AND OTHER ---
+	//***************************************
+	function getListCount() {
+		$sql = 'SELECT count(*) FROM ' . $this->myTable . $this->_where();
+		$m = $this->db->single_query($sql);
+		return (count($m) ? $m[0] : 0);
+	}
+
+
+	function getList($limit = '', $order = '') {
+		if ($order) {
+			$order = ' ORDER BY ' . $order;
+		}
+		$sql = 'SELECT * FROM ' . $this->myTable . $this->_where() . $order . $limit;
+		return $this->db->array_query_assoc($sql);
+	}
+
+
+	function _where() {
+		if (isset ($this->tmpWhere)) {
+			return $this->tmpWhere;
+		}
+		$a = $this->formFilter->get_values();
+		$w = array();
+		if ($a['name'] !== '') {
+			$w[] = "name like '%" . $this->db->escape($a['name'], TRUE) . "%'";
+		}
+		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
+		return ($this->tmpWhere = $where);
+	}
+
+
+	function getItem($id) {
+		return $this->db->single_query_assoc('
+			SELECT * FROM ' . $this->myTable . ' WHERE
+			id = ' . intval($id));
+	}
+
+
+	function saveItem() {
+		$form = & $this->form;
+		$form->fill($_POST);
+		$d = $form->get_values();
+		$id = intval($d['id']);
+
+		/* gautu duomenu apdorojimas */
+		if ($d['uri'] === '') {
+			$d['uri'] = make_uri($d['name']);
+		}
+		//jei bus klaida
+		$form->fill($d, false);
+
+		/* validacija */
+		$err = 0;
+		if ($d['name'] === '') {
+			$err = 1;
+		}
+		elseif ($d['uri'] === '') {
+			$err = 2;
+		}
+		elseif ($d['description'] === '') {
+			$err = 3;
+		}
+		elseif (!is_object($rtf = $this->object('rtf'))) {
+			$err = 9;
+		}
+		else {
+			//check for uri duplicates
+			$sql = "SELECT id	FROM " . $this->myTable . "
+					WHERE uri = '" . $this->db->escape($d['uri']) . "' AND id <> " . $id;
+			if (count($a = $this->db->single_query($sql))) {
+				$err = 4;
+			}
+		}
+		if ($err) {
+			$form->fill($d, false);
+			$this->set_var('error', $err);
+			return false;
+		}
+
+		/* jei refresh, nesivarginam */
+		if ($wasRefresh = $form->was_refresh()) {
+			return $id;
+		}
+
+		/* save to database */
+		$ins = $form->get_values('name', 'uri', 'description');
+
+		/* iskarpa ir kompiliuojam i html */
+		$rtf->setInstance($this->get_var('rtf'));
+		list(, $ins['description_html']) = $rtf->parseText($id, $ins['description']);
+		if ($id) {
+			$this->db->update_query($ins, $this->myTable, array('id' => $id));
+			// log this action
+			blame($this->my('fullname'), 'Updated', $id);
+		}
+		else {
+			$id = $this->db->insert_query($ins, $this->myTable, 'id');
+			// log this action
+			blame($this->my('fullname'), 'Created', $id);
+		}
+		if ($id) {
+			//"prisegam" objektus
+			//$rtf->assignObjects($id);
+		}
 		return $id;
 	}
 
-	$ins = $form->get_values('name', 'uri', 'description_raw', 'usg_raw');
 
-	//iskarpa ir kompiliuojam i html
-	$rtf->setInstance( $this->get_var('rtf') );
-	list(, $ins['description_html']) = $rtf->parseText($id, $ins['description_raw'], TRUE);
-	list(, $ins['usg_html']) = $rtf->parseText($id, $ins['usg_raw'], TRUE);
 
-	if ($id) {
-		$this->db->update($ins, $this->table('Dictionary'), array('id' => $id));
-
-		// log this action
-		blame($this->my('fullname'), 'Updated', $id);
-	} else {
-		$id = $this->db->insert($ins, $this->table('Dictionary'), 'id');
-
-		// log this action
-		blame($this->my('fullname'), 'Created', $id);
-	}
-
-	$form->fill(array('id' => $id));
-	return $id;
-}
-function deleteItem($ids)
-{
-	if (!is_array($ids) || !count($ids)) return;
-	foreach ($ids as $k => $v) {
-		$ids[$k] = intval($v);
-	}
-	$this->db->query('DELETE FROM ' . $this->table('Dictionary') . ' WHERE id IN (' . implode(',', $ids) . ')');
-
-	// log this action
-	blame($this->my('fullname'), 'Deleted', $ids);
-	
-	return TRUE;
-}
-function deleteItemsByFilter()
-{
-	$filter = $this->getFilter(); // sets $this->sqlWhere
-	$this->db->query('DELETE FROM ' . $this->table('Dictionary') . $this->sqlWhere);
-	//$this->db->query('UPDATE ' . $this->table('Dictionary') . ' SET is_hidden = 1 ' . $this->sqlWhere);
-}
-function setSqlWhere()
-{
-	$where = array();
-	if (!empty($this->filter)) {
-		$where[] = 'WHERE 1';
-		if ($this->filter['name'] != '') {
-			$where[] = 'name LIKE \'%' . $this->db->escape($this->filter['name']) . '%\'';
+	function deleteItem($ids) {
+		if (!is_array($ids) || !count($ids)) {
+			return;
 		}
-	}
-	$this->sqlWhere = implode(' AND ', $where);
-}
-function setFilter()
-{
-	$page = &moon::page();
-	if (isset($_POST['filter'])) {
-		$this->filter = $_POST['filter'];
-		$page->set_global($this->my('fullname') . '.filter', $this->filter);
-	} else {
-		$page->set_global($this->my('fullname') . '.filter', '');
-	}
-}
-function getFilter()
-{
-	$page = &moon::page();
-	$savedFilter = $page->get_global($this->my('fullname') . '.filter');
-	if (!empty($savedFilter)) {
-		$this->filter = $savedFilter;
-	}
-	$this->formFilter->fill($this->filter);
-
-	$filter = $this->formFilter->html_values();
-
-	$filter['goFilter'] = $this->my('fullname').'#filter';
-	$filter['noFilter'] = $this->linkas('#filter');
-	$filter['isOn'] = '';
-
-	// custom fields
-	$filter['name'] = $this->formFilter->get('name');
-
-	foreach ($this->filter as $k => $v) {
-		if ($v) {
-			$filter['isOn'] = 1;
-			break;
+		foreach ($ids as $k => $v) {
+			$ids[$k] = intval($v);
 		}
-	}
-	$filter['classIsOn'] = $filter['isOn'] ? ' filter-on' : '';
-
-	$this->setSqlWhere();
-
-	return $filter;
-}
-function setPaging()
-{
-	$page = &moon::page();
-	if (isset($_GET['page']) && is_numeric($_GET['page'])) {
-		$currPage = $_GET['page'];
-		$page->set_global($this->my('fullname') . '.currPage', $currPage);
-	} else {
-		$page->set_global($this->my('fullname') . '.currPage', 1);
-	}
-}
-function getPaging($currPage, $itemsCnt, $listLimit)
-{
-	$pn = &moon::shared('paginate');
-	$pn->set_curent_all_limit($currPage, $itemsCnt, $listLimit);
-	$pn->set_url($this->linkas('#', '', array('page' => '{pg}')), $this->linkas('#'));
-	$pnInfo = $pn->get_info();
-
-	$this->sqlLimit = $pnInfo['sqllimit'];
-	return $pn->show_nav();
-}
-function setOrdering()
-{
-	if (isset($_GET['ord'])) {
-		$sort = (int)$_GET['ord'];
-		$page = &moon::page();
-		$page->set_global($this->my('fullname') . '.sort', $sort);
-	}
-}
-function getOrdering()
-{
-	$page = &moon::page();
-	$sort = $page->get_global($this->my('fullname') . '.sort');
-	if (empty($sort)) {
-		$sort = 11;
+		$this->db->query('
+			DELETE FROM ' . $this->myTable . ' WHERE id IN (' . implode(',', $ids) . ')
+		');
+		// log this action
+		blame($this->my('fullname'), 'Deleted', $ids);
+		return true;
 	}
 
-	$links = array();
-	$pn = &moon::shared('paginate');
-	$ord = &$pn->ordering();
-	$ord->set_values(
-		//laukai, ir ju defaultine kryptis
-		array('name' => 1) ,
-		//antras parametras kuris lauko numeris defaultinis.
-		0
-	);
-
-	$links = $ord->get_links(
-		$this->linkas('#', '', array('ord' => '{pg}')),
-		$sort
-	);
-	$this->sqlOrder = 'ORDER BY ' . $ord->sql_order();
-	//gauna linkus orderby{nr}
-	return $links;
-}
-function decodeDbTexts()
-{
-	$sql = 'SELECT id, description, usg
-		FROM ' . $this->table('Dictionary');
-	$result = $this->db->array_query_assoc($sql);
-
-	$spec = &moon::shared('spec_symbols');
-
-	foreach ($result as $item) {
-		$upd = array();
-		$upd['description_raw'] = $spec->decode($item['description']);
-		$upd['description_html'] = $spec->urlToAHref($spec->encode($item['description'], $make_urls=0, $kiek=80, $specChars=0, $keiks=0));
-		$upd['usg_raw'] = $spec->decode($item['usg']);
-		$upd['usg_html'] = $spec->urlToAHref($spec->encode($item['usg'], $make_urls=0, $kiek=80, $specChars=0, $keiks=0));
-
-		$this->db->update($upd, $this->table('Dictionary'), array('id' => $item['id']));
-	}
-}
-function fixDbUri() {
-	$sql = 'SELECT id, uri
-		FROM ' . $this->table('Dictionary');
-	$result = $this->db->array_query_assoc($sql);
-
-	foreach ($result as $item) {
-		$upd = array();
-		$upd['uri_new'] = preg_replace('/.*\/(.*)\.html?/', '$1', $item['uri']);
-		$this->db->update($upd, $this->table('Dictionary'), array('id' => $item['id']));
-	}
-}
 
 }
+
 ?>
