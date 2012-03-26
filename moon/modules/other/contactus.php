@@ -116,7 +116,7 @@ class contactus extends moon_com {
 		$mail->subject($subjects[$d['subject']]);
 		$txt = $t->parse('mail_body', array('name' => $d['name'], 'from' => $d['email'], 'body' => $d['body']));
 		$mail->body($txt);
-		$to = 'marius.burinskas@gmail.com';
+		$to = 'info@pokernetwork.com';
 		$ok = $mail->to($to);
 		if (!$mail->send()) {
 			$this->set_var('error', 5);
