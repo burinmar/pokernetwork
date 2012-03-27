@@ -1180,8 +1180,8 @@ html {
 		line-height: 14px;
 		margin-bottom: 5px
 	}
-.video .videoInfo {width: 260px;}
-.video .videoPlayer {width: 455px;}
+.video .videoInfo {width: 255px;}
+.video .videoPlayer {width: 460px;}
 .video .tags {color: #515151;}
 .video .socialIcons {margin-bottom: 15px;}
 .video .videoList {
