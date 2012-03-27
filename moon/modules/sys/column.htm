@@ -1,4 +1,12 @@
 <% main %>
+<%if{menu}%>
+<div class="widget overBreadcrumb relatedSites">
+<h2 class="widgetTitle">Related pages</h2>
+<ul class="leftMenu">
+	<%loop{menu}%><li><a href="{url}"{classActive}>{title}</a></li><%end%>
+</ul>
+</div>
+<%end%>
 {rooms-box}
 <div class="widget relatedSites hide">
 	<div class="widgetInner">
@@ -26,13 +34,3 @@
 	/*]]>*/
 </script>
 <%end%>
-
-
-
-
-<% main2222 %>
-<ul class="leftMenu">
-	<li><a href="#" class="active">{!c1}</a></li>
-	<li><a href="#">{!c2}</a></li>
-	<li><a href="#">{!c3}</a></li>
-</ul>
