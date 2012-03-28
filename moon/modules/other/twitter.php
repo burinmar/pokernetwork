@@ -47,7 +47,7 @@ class twitter extends moon_com {
 		}
 
 		$this->setPaging();
-		$this->use_page('Main');
+		$this->use_page('twitter');
 	}
 
 	function properties()

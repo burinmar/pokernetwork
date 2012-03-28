@@ -1,32 +1,25 @@
 <% list_messages %>
 <div class="widget twitterListPage">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{!poker_tweets}<% if {playerName} %> - {playerName}<% else {playerName} %> <% end %></h1>
-		<p class="widgetIntro"><%if{playerName}%>{!keep_track_player}<%else{playerName}%>{!keep_track}<%end%></p>
-		<ul class="navigationButtons">
-			<li><a href="{uri.messages}" class="current">{!tweets_by}<span class="cbr"></span></a></li><li><a href="{uri.players}">{!tweeters}<span class="cbr"></span></a></li>
+	<h1 class="pageTitle">Poker Tweets<% if {playerName} %> - {playerName}<% else {playerName} %> <% end %></h1>
+	<p class="widgetIntro"><%if{playerName}%>{!keep_track_player}<%else{playerName}%>Keep track of all your favorite poker players right here at PokerNetwork.<%end%></p>
+	<!--# div class="filterTabs filterTabsTopLine clrfix">
+		<b>Show:</b>
+		<ul>
+			<li><a href="{uri.messages}" class="current">{!tweets_by}</a></li>
+			<li><a href="{uri.players}">{!tweeters}</a></li>
 		</ul>
-		<% if {items:messages} %>
-		<div class="twitterTracker">
-			<% loop {items:messages} %>
-			<div class="tweet">
-				<a href="{url.author}" class="tweetAuthorPhoto fl10"><img src="{avatarSrc}" width="48" height="48" alt="{author}" /></a>
-				<dl class="tweetContent fl">
-					<dt class="tweetAuthor"><a href="{url.author}">{author}</a></dt>
-					<dd class="tweetContent">{message}</dd>
-					<% if {date} %><dd class="tweetDate">{date}</dd><% end %>
-				</dl>
-				<div class="cb"></div>
-			</div>
-			<% end %>
-		</div>
-		{paging}
+	</div-->
+	<% if {items:messages} %><br />
+	<ul class="tweets clrfix">
+		<% loop {items:messages} %>
+		<li>
+			<a href="{url.author}"><img src="{avatarSrc}" alt="{author}" width="48" height="48" /></a>
+			<p><b>{name}</b> <a href="{url.twitter}" target="_blank">@{screen_name}</a><br />{message}</p>
+		</li>
 		<% end %>
-	</div>
+	</ul>
+	{paging}
+	<% end %>
 </div>
 
 
