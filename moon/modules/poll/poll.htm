@@ -27,7 +27,7 @@
 
 <h2 class="widgetTitle"><%if {trivia} %>{!trivia}<%else {trivia} %>{!poll}<%end%></h2>
 <form action="{!action}" method="post" id="poll-{question-id}" class="poll">
-	<p>{question}</p>
+	<p><b>{question}</b></p>
 	{list.answers}
 	<div class="hide vote-loading"><img src="/img/loading_small.gif" alt="" /></div>
 	<div class="vote-submit vote">
@@ -43,7 +43,7 @@
 <% default:asked %>
 <h2 class="widgetTitle"><%if {trivia} %>{!triviaResults}<%else {trivia} %>{!pollResults}<%end%></h2>
 <form action="javascript:;" method="post" id="poll-{question-id}" class="poll">
-	<p>{question}</p>
+	<p><b>{question}</b></p>
 	{list.answers}
 	<p class="totalVotes">
 		{!totalVotes}: {total-voted}
