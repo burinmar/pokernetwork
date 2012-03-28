@@ -122,7 +122,7 @@ class roomtrackers extends moon_com {
 		foreach ($url as $id => $value) {
 			$marCode = isset ($marketingCode[$id]) ? trim($marketingCode[$id]) : '';
 			$bonCode = isset ($bonusCode[$id]) ? trim($bonusCode[$id]) : '';
-			$ins['alias'] = $id;
+			$ins['alias'] = $id ? $id : '';
 			$ins['uri'] = trim($value);
 			$ins['uri_download'] = isset ($urlDownload[$id]) ? trim($urlDownload[$id]) : '';
 			$ins['bonus_code'] = ($marCode != '') ? $bonCode . '|' . $marCode : $bonCode;

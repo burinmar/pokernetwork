@@ -7,7 +7,7 @@ function onload()
 {
 	//form of item
 	$this->form = &$this->form();
-	$this->form->names(	'id','name','alias', 'meta_title', 'meta_description', 'logo','bonus_text','bonus_terms','intro_text','bonus_int','bonus_percent','currency', 'is_hidden', 'review_summary', 'review','editors_rating','ratings');
+	$this->form->names(	'id','name','alias', 'meta_title', 'meta_description', 'logo','bonus_text','bonus_terms','intro_text','bonus_int','bonus_percent','currency', 'is_hidden', 'review','editors_rating','ratings');
 	$this->form->fill( array('date'=>date('Y-m-d'), 'hide'=>1) );
 
 	//form of filter
@@ -398,8 +398,7 @@ function saveItem()
     if ($wasRefresh=$form->was_refresh()) return $id;
 
     //save to database
-	$ins=$form->get_values(/*'name',*/'alias', 'bonus_text',/*'bonus_terms',*/'intro_text', 'review_summary'/*, 'review_type'*/, 'editors_rating', 'ratings', 'is_hidden');
-	$ins['review_type'] = 1;
+	$ins=$form->get_values(/*'name',*/'alias', 'bonus_text',/*'bonus_terms',*/'intro_text'/*, 'review_summary', 'review_type'*/, 'editors_rating', 'ratings', 'is_hidden');
 	$ins['updated'] = time();
 	$db=&$this->db();
 	$db->update_query($ins, $this->myTable, array('id'=>$id));
