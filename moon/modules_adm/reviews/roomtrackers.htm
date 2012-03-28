@@ -41,17 +41,21 @@ jQuery(document).ready(function(){
 	<dl class="uri-list">
 
 		<%loop{rows += uri_row} %>
-		<dt><label>{title}</label></dt>
-		<dd class="w100">
+		<dt style="width:90px"><label>{title}</label></dt>
+		<dd class="w100" style="padding-left:90px">
 			<table class="trackersTable">
 				<tr>
 					<th>Visit</th>
 					<td><input name="uri[{id}]" value="{uri}" size="90" maxlength="200" type="text" /></td>
-					<td><label><input type="checkbox" name="iframe[{id}]"  value="{iframe}" />iframe</label></td>
+					<td><!--#<label>
+<input type="checkbox" name="iframe[{id}]"  value="{iframe}" />iframe</label>
+--></td>
 				</tr>
 				<tr>
 					<th>Download</th>
-					<td><input name="uri_download[{id}]" value="{urid}" size="90" maxlength="200" type="text" /></td>
+					<td><input name="uri_download[{id}]" value="{urid}" size="90" maxlength="200" type="text" />
+					<div class="explain"><i>Visit</i> and <i>Download</i> links should be started with <b>http://</b></div>
+					</td>
 					<td></td>
 				</tr>
 				<tr>

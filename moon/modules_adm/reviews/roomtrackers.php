@@ -42,7 +42,7 @@ class roomtrackers extends moon_com {
 		$roomName = $this->getRoomName($this->roomId);
 		if ($roomName === FALSE) {
 			$page->alert($info['404']);
-			$this->redirect('rooms#');
+			$this->redirect('reviews#');
 		}
 		$win->subMenu(array('*id*' => $parentID));
 
