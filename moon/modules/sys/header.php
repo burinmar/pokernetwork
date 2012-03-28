@@ -120,8 +120,12 @@ class header extends moon_com
 
 	private function childrenLast($a, $b)
 	{
-		if ($a['parent'] == $b['parent'])
+		if ($a['parent'] == $b['parent']) {
+			if ($a['sort'] == $b['sort']) {
+				return strcmp($a['title'], $b['title']);
+			}
 			return $a['sort'] > $b['sort'];
+		}
 		return $a['parent'] > $b['parent'];
 	}
 
