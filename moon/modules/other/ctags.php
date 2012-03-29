@@ -350,7 +350,7 @@ class ctags extends moon_com
 		$entriesR = $this->db->query('
 			SELECT id, name, LEFT(published_date, LENGTH(published_date) - 3) published, short_description, thumbnail_url
 			FROM videos
-			WHERE is_hidden=0 AND is_deleted=0 AND id IN(' . implode(',', $ids) . ')
+			WHERE is_hidden=0 AND id IN(' . implode(',', $ids) . ')
 		');
 		$video = $this->object('video.video');
 		while ($entry = $this->db->fetch_row_assoc($entriesR)) {
