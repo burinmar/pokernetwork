@@ -13,7 +13,7 @@ function FileProgress(file, targetID) {
 
 	this.opacity = 100;
 	this.height = 0;
-	
+
 
 	this.fileProgressWrapper = document.getElementById(this.fileProgressID);
 	if (!this.fileProgressWrapper) {
@@ -72,11 +72,11 @@ FileProgress.prototype.reset = function () {
 
 	this.fileProgressElement.childNodes[2].innerHTML = "&nbsp;";
 	this.fileProgressElement.childNodes[2].className = "progressBarStatus";
-	
+
 	this.fileProgressElement.childNodes[3].className = "progressBarInProgress";
 	this.fileProgressElement.childNodes[3].style.width = "0%";
-	
-	this.appear();	
+
+	this.appear();
 };
 
 FileProgress.prototype.setProgress = function (percentage) {
@@ -84,7 +84,7 @@ FileProgress.prototype.setProgress = function (percentage) {
 	this.fileProgressElement.childNodes[3].className = "progressBarInProgress";
 	this.fileProgressElement.childNodes[3].style.width = percentage + "%";
 
-	this.appear();	
+	this.appear();
 };
 FileProgress.prototype.setComplete = function () {
 	this.fileProgressElement.className = "progressContainer blue";
@@ -137,7 +137,7 @@ FileProgress.prototype.appear = function () {
 		clearTimeout(this.getTimer());
 		this.setTimer(null);
 	}
-	
+
 	if (this.fileProgressWrapper.filters) {
 		try {
 			this.fileProgressWrapper.filters.item("DXImageTransform.Microsoft.Alpha").opacity = 100;
@@ -148,13 +148,13 @@ FileProgress.prototype.appear = function () {
 	} else {
 		this.fileProgressWrapper.style.opacity = 1;
 	}
-		
+
 	this.fileProgressWrapper.style.height = "";
-	
+
 	this.height = this.fileProgressWrapper.offsetHeight;
 	this.opacity = 100;
 	this.fileProgressWrapper.style.display = "";
-	
+
 };
 
 // Fades out and clips away the FileProgress box.
