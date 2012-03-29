@@ -60,6 +60,7 @@ class articles_import extends moon_com
 				$msg = $this->importTags();
 				break;
 			case 'news':
+				set_time_limit(600);
 				$msg = $this->importNews();
 				break;
 			case 'recompile':
@@ -107,17 +108,22 @@ class articles_import extends moon_com
 		$msg[] = count($res);
 		$ids = array_keys($res);
 
+		$idsString = array();
+		foreach ($ids as $id) {
+			$idsString[] = '"node/' . $id . '"';
+		}
+
 		// get uri
 		$sql2 = '
 			SELECT SUBSTRING_INDEX(dst,\'/\',-1) AS uri, SUBSTRING_INDEX(src,\'/\',-1) AS id FROM ' . $this->oldDB . '.url_alias
-			WHERE src REGEXP "node/('.implode('|',$ids).'){1}$"
+			WHERE src IN (' . implode(',', $idsString) . ')
 		';
 		$res2 = $this->db->array_query_assoc($sql2, 'id');
 
 		// get meta data
 		$sql3 = '
 			SELECT keywords, description, SUBSTRING_INDEX(link,\'/\',-1) AS id FROM ' . $this->oldDB . '.metatags_all
-			WHERE link REGEXP "node/('.implode('|',$ids).'){1}$"
+			WHERE link IN (' . implode(',', $idsString) . ')
 		';
 		$res3 = $this->db->array_query_assoc($sql3, 'id');
 

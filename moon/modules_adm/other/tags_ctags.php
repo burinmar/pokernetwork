@@ -29,11 +29,9 @@ class tags_ctags extends moon_com
 
 		foreach (array(
 			array('livereporting', 'live-reporting'),
-			// array('news', 'news'),
-			// array('interviews', 'interviews'),
-			// array('strategy', 'strategy'),
-			// array('sps', 'spanish-poker-show'),
-			// array('videos', 'videos'),
+			array('news', 'news'),
+			array('strategy', 'strategy'),
+			array('videos', 'videos'),
 		) as $src) {
 			$t1 = microtime(true);
 			$obj = 'tags_core_batch_updater_' . $src[0];
@@ -347,7 +345,7 @@ class tags_core_batch_updater_articles_abstr extends tags_core_batch_updater
 	protected function getEntriesResource($sinceTs, $limit)
 	{
 		return $this->db->query('
-			SELECT id, is_hidden, is_deleted, published, tags FROM `articles`
+			SELECT id, is_hidden, published, tags FROM `articles`
 			WHERE (created>' . $sinceTs . ' OR updated>' . $sinceTs . ')
 			  AND article_type=' . $this->typeId . '
 			ORDER BY id ' . 
@@ -357,7 +355,7 @@ class tags_core_batch_updater_articles_abstr extends tags_core_batch_updater
 
 	protected function getEntryTags($entry)
 	{
-		if ($entry['is_hidden'] != '0' || $entry['is_deleted'] != '0') {
+		if ($entry['is_hidden'] != '0') {
 			return array();
 		}
 
@@ -431,7 +429,7 @@ class tags_core_batch_updater_videos extends tags_core_batch_updater
 	protected function getEntriesResource($sinceTs, $limit)
 	{
 		return $this->db->query('
-			SELECT id, is_hidden, is_deleted, LEFT(published_date, LENGTH(published_date) - 3) published, tags
+			SELECT id, is_hidden, LEFT(published_date, LENGTH(published_date) - 3) published, tags
 			FROM `videos`
 			WHERE (last_modified_date>' . $sinceTs . '*1000)
 			ORDER BY id'
@@ -440,7 +438,7 @@ class tags_core_batch_updater_videos extends tags_core_batch_updater
 
 	protected function getEntryTags($entry)
 	{
-		if ($entry['is_hidden'] != '0' || $entry['is_deleted'] != '0') {
+		if ($entry['is_hidden'] != '0') {
 			return array();
 		}
 
