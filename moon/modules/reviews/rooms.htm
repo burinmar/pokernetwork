@@ -6,13 +6,13 @@ rooms-linux=Linux compatible
 
 <% viewList %>
 <div class="widget">
-	<div class="filterTabs clrfix">
-		<b>Show:</b>
-		<ul><%loop{tab-item}%><li{class-on}><a href="{url}">{name}</a></li><%end%></ul>
-	</div><span class="clr"></span>
 	<div class="pageIntro">
 		<h1 class="pageTitle">{str_header}</h1>
 		{intro}
+	</div>
+	<div class="filterTabs filterTabsTopLine clrfix">
+		<b>Show:</b>
+		<ul><%loop{tab-item}%><li{class-on}><a href="{url}">{name}</a></li><%end%></ul>
 	</div>
 	
 	<ul class="twoColsList roomsList">
