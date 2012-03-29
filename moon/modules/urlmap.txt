@@ -21,5 +21,5 @@ users.signup#logout = logout
 #users.forgot* = forgot-password/
 users.profile* = /forums/profile.php
 
-blogs.posts* = blogs/
-blogs.posts_edit* = blogs/manage/
+blogs.posts* = blog/
+blogs.posts_edit* = blog/manage/
