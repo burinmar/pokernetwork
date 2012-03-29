@@ -436,7 +436,7 @@ function currency($num, $currency)
 function import_siteinfo()
 {
 	//is adm.pokernews importuoja koki uri kokiam saite turi koks roomsas
-    if (callPnEvent('adm','reviews.export#siteinfo',array(),&$answer,FALSE)) {
+    if (callPnEvent('adm','reviews.export#siteinfo',array(),$answer,FALSE)) {
     	if (is_array($answer)) {
     		$this->db->query('TRUNCATE TABLE ' . $this->table('SiteInfo'));
     		$ins = array();
