@@ -157,6 +157,7 @@ class twitter extends moon_com {
 			foreach ($items as $item) {
 				$item['url.author'] = $m['uri.messages'] . $item['screen_name'] . '/';
 				$item['avatarSrc'] = $item['image_url'];
+				$item['url.twitter'] = 'http://twitter.com/'.$item['screen_name'];
 				$item['author'] = htmlspecialchars($item['name']);
 				$item['message'] = $item['message'];
 				$ago = $txt->ago($item['created']);

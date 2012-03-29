@@ -10,7 +10,7 @@
 		</ul>
 	</div-->
 	<% if {items:messages} %><br />
-	<ul class="tweets clrfix">
+	<ul class="tweets clrfix" style="margin-bottom: 30px">
 		<% loop {items:messages} %>
 		<li>
 			<a href="{url.author}"><img src="{avatarSrc}" alt="{author}" width="48" height="48" /></a>
@@ -37,7 +37,7 @@
 		</ul>
 		{searchBox}
 		<% if {items:players} %>
-		<ul class="twitterList">
+		<ul class="twitterList" style="margin-bottom: 30px">
 			<% loop {items:players} %>
 			<li>
 				<a href="{url.author}">
