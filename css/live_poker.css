@@ -283,7 +283,7 @@ div.meta {margin-bottom: 1.5em}
 /* Tournament Archive button */
 .livePokerArchiveButton,
 .livePokerArchiveButton:visited {
-	background: url('/img/forms/buttons_flat.png') no-repeat left top;
+	background: url('/img/buttons_flat.png') no-repeat left top;
 	color: #0050bd;
 	display: inline-block;
 	font-size: 14px;
@@ -299,7 +299,7 @@ div.meta {margin-bottom: 1.5em}
 	text-decoration: none;
 }
 .livePokerArchiveButton .cbr {
-	background: url('/img/forms/buttons_flat.png') no-repeat right top;
+	background: url('/img/buttons_flat.png') no-repeat right top;
 	display: block;
 	height: 31px;
 	position: absolute;
@@ -714,7 +714,7 @@ div.meta {margin-bottom: 1.5em}
 }
 .eventListTournamentListButtons .eventListButton,
 .eventListTournamentListButtons .tournamentListButton {
-	background: url('/img/forms/buttons_flat.png') no-repeat left -40px;
+	background: url('/img/buttons_flat.png') no-repeat left -40px;
 	color: #0050bd;
 	display: inline-block;
 	float: left;
@@ -762,7 +762,7 @@ div.meta {margin-bottom: 1.5em}
 }
 .eventListTournamentListButtons .eventListButton .cbr,
 .eventListTournamentListButtons .tournamentListButton .cbr {
-	background: url('/img/forms/buttons_flat.png') no-repeat right -40px;
+	background: url('/img/buttons_flat.png') no-repeat right -40px;
 	display: block;
 	height: 38px;
 	position: absolute;
