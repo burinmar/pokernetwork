@@ -162,7 +162,6 @@ function roomsBox(e)
 					jQuery('#topRooms TR.r1.active').removeClass('active');
 					jEl.addClass('active');
 					jEl.next().show();
-					jQuery('#topRooms').html(homepageRooms[id]);
 				}
 				break;
 			default:
