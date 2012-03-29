@@ -772,7 +772,7 @@ class media extends moon_com
 				$ext = $file->file_ext();
 				$filename = str_replace('.' . $ext, '', $file->file_name());
 				$siteIds = array();
-				if (($pos = strrpos($filename, '_')) !== FALSE) {
+				/*if (($pos = strrpos($filename, '_')) !== FALSE) {
 					if (($s = substr($filename, $pos + 1)) !== false) {
 						if ($this->env == 'casino') {
 							$s .= '-c';
@@ -788,7 +788,8 @@ class media extends moon_com
 							$siteIds = (strcasecmp($s, $en) === 0) ? $enAliases : array($s);
 						}
 					}
-				}
+				}*/
+				$siteIds = array('www.pokernetwork.com');
 				
 				
 				//print_r($allSiteIds);
