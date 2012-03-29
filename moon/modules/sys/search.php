@@ -86,6 +86,7 @@ class search extends moon_com {
 				$get = array('q' => $q);
 				$pn->set_url($this->linkas("#", $onTab, $get + array('pg' => '{pg}')), $this->linkas("#", $onTab, $get));
 				$m['puslapiai'] = $pn->show_nav();
+				$m['tabId'] = $onTab;
 				$psl = $pn->get_info();
 				//results
 				$func = 'getResults' . ucfirst($onTab);
