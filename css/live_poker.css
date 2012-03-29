@@ -618,9 +618,8 @@ div.meta {margin-bottom: 1.5em}
 .chipsCount .busted .numeric {
 	color: #4d4d4d;
 }
-.chipsCount tr:nth-child(odd) td {
-	background: #ecebe4;
-}
+.chipsCount tr:nth-child(odd) td {background: #ecebe4 !important;}
+.chipsCount tr:nth-child(even) td {background: transparent !important;}
 .chipsCount td {
 	padding: 0 5px;
 	line-height: 28px;
