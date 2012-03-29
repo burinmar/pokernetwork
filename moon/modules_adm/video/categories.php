@@ -112,7 +112,7 @@ function renderList($vars)
 	$sitemap = &moon::shared('sitemap');
 	$page = &moon::page();
 
-	$page->js('/js/jquery/tablednd_0_5.js');
+	$page->js('/js/tablednd_0_5.js');
 
 	$submenu = $win->subMenu();
 
