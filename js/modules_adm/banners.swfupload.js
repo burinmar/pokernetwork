@@ -3,10 +3,11 @@ $(document).ready(function () {
 	var phpSessionId = $('#sessionId').val();
 	//alert(phpSessionId);
 	var settings_object = {
-		upload_url : 'media.php', // flash session cookie fix
-		flash_url : '/img/adm/swfupload.swf',
-		post_params: {'files-upload':1, 'swfupload':1,'banner_id':bannerId,'SI':phpSessionId},
-		
+		upload_url : '/adm.php', // flash session cookie fix
+		flash_url : '/js/swfupload/swfupload.swf',
+		file_post_name: 'Filedata',
+		post_params: {'swfupload':1, 'event': 'banners.media#','files-upload':1 ,'banner_id':bannerId},
+
 		// File Upload Settings
 		file_size_limit : '20 MB',
 		file_types : '*.jpg;*.jpeg;*.gif;*.png;*.swf',//"*.*",
@@ -15,15 +16,16 @@ $(document).ready(function () {
 		file_queue_limit : '60',
 		
 		// Event Handler Settings (all my handlers are in the Handler.js file)
-		file_dialog_start_handler : fileDialogStart,
+		//file_dialog_start_handler : fileDialogStart,
 		file_queued_handler : fileQueued,
 		file_queue_error_handler : fileQueueError,
 		file_dialog_complete_handler : fileDialogComplete,
 		upload_start_handler : uploadStart,
 		upload_progress_handler : uploadProgress,
-		upload_error_handler : uploadErrorHandler,
-		upload_success_handler : uploadSuccessHandler,
+		upload_error_handler : uploadError,
+		upload_success_handler : uploadSuccess,
 		upload_complete_handler : uploadCompleteHandler,
+		queue_complete_handler : queueComplete,	// Queue plugin event
 		
 		// Button Settings
 		button_image_url : "/img/adm/button_browse.png",
@@ -54,7 +56,7 @@ var uploadCompleteHandler = function () {
 		document.location.href = document.location.href;
 	}
 };
-var uploadSuccessHandler = function (file, server_data, receivedResponse) {
+/*var uploadSuccessHandler = function (file, server_data, receivedResponse) {
 	if (server_data) {
 		alert('Error uploading files. Server response: ' + server_data);
 	}
@@ -63,8 +65,8 @@ var uploadSuccessHandler = function (file, server_data, receivedResponse) {
 };
 var uploadErrorHandler = function (file, server_data, receivedResponse) {
 	if (server_data) {
-		alert('Error uploading files. Server response: ' + server_data);
+		alert('Error uploading files. Server response: ' + receivedResponse);
 	}
 	//uploadSuccess(file, server_data, 'fsUploadProgress1');
 	//alert("The file " + file.name + " has been delivered to the server. The server responded with " + server_data);
-};
+};*/
