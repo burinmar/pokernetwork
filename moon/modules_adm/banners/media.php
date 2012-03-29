@@ -10,7 +10,7 @@ class media extends moon_com
         
 	function events($event, $par)
 	{
-		if (isset($_POST['files-upload'])) {
+		if (isset($_POST['swfupload'])) {
 			$this->uploadFile();exit;
 		}
 		

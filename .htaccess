@@ -1,4 +1,4 @@
-#Options -MultiViews
+Options -MultiViews
 php_flag magic_quotes_gpc off
 php_flag register_globals off
 php_flag session.use_trans_sid off
@@ -13,13 +13,13 @@ RewriteEngine on
 RewriteBase    /
 
 # kad apache nesiustu Vary: Host headerio
-#RewriteRule .*  - [E=MY_HTTP_HOST:%{HTTP_HOST}]
+RewriteRule .*  - [E=MY_HTTP_HOST:%{HTTP_HOST}]
 
-#RewriteCond {ENV:MY_HTTP_HOST} ^pokernetwork.com [NC]
+RewriteCond {ENV:MY_HTTP_HOST} ^pokernetwork.com [NC]
+RewriteRule ^(.*) http://www.pokernetwork.com/$1 [L,R=301]
+
+#RewriteCond %{HTTP_HOST} ^pokernetwork.com [NC]
 #RewriteRule ^(.*) http://www.pokernetwork.com/$1 [L,R=301]
-
-RewriteCond %{HTTP_HOST} ^pokernetwork.com [NC]
-RewriteRule ^(.*) http://pokernetwork.com/$1 [L,R=301]
 
 RewriteRule ^adm$ adm/ [L,R=301]
 RewriteRule ^adm/ adm.php [QSA,L]
