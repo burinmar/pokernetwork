@@ -1347,7 +1347,7 @@ class livereporting_event extends moon_com
 
 		$error = false;
 
-		if ($sessStarted < time() - 1 || empty($sid[$key])) {
+		if ($sessStarted < time() - 10 || empty($sid[$key])) {
 			$realSid = '';
 			$sendData = array(
 				'ns' => 'lrep',
