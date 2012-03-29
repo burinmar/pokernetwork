@@ -5,20 +5,18 @@ err1 = Wrong username or password.
 
 <% viewLogin %>
 <!--# LOGIN form -->
-<div class="widget simpleWidget forms">
+<div class="widget">
+	<h1 class="widgetTitle">Sign In</h1>
 	<form action="{!action}" method="post">
-		<%if{error}%><p class="error">{error}</p><%end%>
+		<%if{error}%><p class="error">{error}</p><br /><%end%>
 		<input type="hidden" name="event" value="{eventLogin}" />
-		<p><b>Sign In</b></p>
-		<div class="col fl">
-			<label for="name">Username</label>
-			<input type="text" name="nick" value="{nick}" id="name" />
-		</div>
-		<div class="col fr">
-			<label for="password">Password</label>
-			<input type="password"  name="password"  value="{password}" id="password" />
-		</div><span class="clr"></span>
-		<a href="{url.forgot}" id="urlForgot">Forgot password</a>
-		<button type="submit" class="actionButton">Sign In</button>
+		<dl class="userForm">
+			<dt><label for="name">Username</label></dt>
+			<dd><input type="text" name="nick" value="{nick}" id="name" /></dd>
+			<dt><label for="password">Password</label></dt>
+			<dd><input type="password"  name="password"  value="{password}" id="password" /></dd>
+			<dt></dt><dd><a href="{url.forgot}" id="urlForgot">Forgot password</a></dt>
+			<dt></dt><dd><button type="submit" class="button">Sign In</button></dt>
+		</dl>
 	</form>
 </div>
