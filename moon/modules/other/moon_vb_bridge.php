@@ -2,6 +2,11 @@
 
 class moon_vb_bridge extends moon_com
 {
+	function onload()
+	{
+		$this->dbvb = & moon::db('database-vb');
+	}
+
 	function properties()
 	{
 		return array(
@@ -35,12 +40,12 @@ class moon_vb_bridge extends moon_com
 			'list.threads' => '',
 		);
 
-		$threads = $this->db->array_query_assoc('
+		$threads = $this->dbvb->array_query_assoc('
 			SELECT thread.threadid, thread.title, 
 				thread.lastposter AS postusername, thread.lastpost AS dateline,
 				thread.replycount, forum.forumid
-			FROM pokernetwork_forum.vb_thread AS thread
-			INNER JOIN pokernetwork_forum.vb_forum AS forum ON(forum.forumid = thread.forumid)
+			FROM vb_thread AS thread
+			INNER JOIN vb_forum AS forum ON(forum.forumid = thread.forumid)
 			WHERE 1=1
 				AND thread.forumid IN(1,8,12,13,14,10,11,15,2,3,4,9,7,6)
 				AND thread.visible = 1
