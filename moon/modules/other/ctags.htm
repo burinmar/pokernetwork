@@ -12,7 +12,7 @@
 
 
 <% list:main %>
-<div class="widget">
+<div class="widget searchResults">
 	<h1 class="pageTitle">Tag: {tag} <%if {filter} %> @ {filter}<%end%></h1>
 
 	<div class="filterTabs filterTabsTopLine clrfix">
@@ -31,11 +31,12 @@
 	<ul class="newsList">
 	<%loop {list.items += list:items.item}%>
 		<li>
-			<a href="{url}" class="tagReportingImage fl20" style="background: url('{img}') no-repeat 50% 25%;"></a>
-			<h2 class="articleTitle"><a href="{url}">{title}</a></h2>
-			<p class="articleMeta"><span class="date">{date}</span></p>
-			<div>{excerpt}</div>
-			<div class="cb"></div>
+			<a href="{url}"><img src="{img}" alt="{img_alt}" width="120" /></a>
+			<div>
+				<a href="{url}" class="title">{title}</a>
+				<%if{date}%><span class="meta">{date}</span><%end%>
+				<p>{excerpt}</p>
+			</div><span class="clr"></span>
 		</li>
 	<%end%>
 	</ul>
