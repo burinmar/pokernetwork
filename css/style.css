@@ -1480,7 +1480,7 @@ iframe.modalWindow {
 		font-size: 19px;
 		margin-bottom: 20px;
 	}
-.wysiwygControls {position: relative; z-index: 999}
+.wysiwygControls {position: relative; z-index: 100}
 #roomsIndexBox.roomsSideBar > table {
 	margin: -10px -10px 0 -10px;
 	width: 244px;
