@@ -66,7 +66,7 @@ class dictionary extends moon_com {
 				break;
 
 			case 'import': 
-				$this->import('pokernetwork_old');
+				$this->import('pokerne2043');
 				break;
 
 			default :

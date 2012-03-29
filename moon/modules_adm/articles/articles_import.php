@@ -34,7 +34,7 @@ class articles_import extends moon_com
 
 	function onload()
 	{
-		$this->oldDB = 'pokernetwork_old';
+		$this->oldDB = 'pokerne2043';
 
 		$this->homeUrl = 'http://www.pokernetwork.com';
 		$this->siteDomain = 'www.pokernetwork.com';

@@ -21,10 +21,10 @@ class blogs_import extends moon_com
 
 	function onload()
 	{
-		$this->oldDB = 'pokernetwork_old';
+		$this->oldDB = 'pokerne2043';
 
-		$this->homeUrl = 'http://www.pokernetwork.dev';
-		$this->siteDomain = 'www.pokernetwork.dev';
+		$this->homeUrl = 'http://www.pokernetwork.com';
+		$this->siteDomain = 'www.pokernetwork.com';
 
 		$this->leadingImgWidth = 460;
 		$this->leadingImgHeight = 305;
