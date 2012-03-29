@@ -13,7 +13,7 @@
 			</div>
 		</div>
 		<div class="fr">
-			<a href="{visitURL}" rel="nofollow" class="bigButton whiteButton bigButtonIcon">Visit Website</a><a href="{downloadURL}" rel="nofollow" class="bigButton blueButton bigButtonIcon">Download</a>
+			<a href="{visitURL}" rel="nofollow" class="bigButton whiteButton bigButtonIcon" target="_blank">Visit Website</a><a href="{downloadURL}" rel="nofollow" class="bigButton blueButton bigButtonIcon" target="_blank">Download</a>
 			<% if {osText} %><div><span class="meta">OS: {osText}</span></div><% end %>
 			<div class="bonusCode">Bonus code<br /><span><% if {bonusCode} %>{bonusCode}<% else {bonusCode} %>Use our link<% end %></span></div>
 			<% if {marketingCode} %><div class="bonusCode">Marketing code<br /><span>{marketingCode}</span></div><% end %>
@@ -34,7 +34,7 @@
 			{review}
 
 			<div class="reviewFooter">
-				<a href="{downloadURL}" rel="nofollow" class="bigButton blueButton">Start playing at {roomName}</a>
+				<a href="{downloadURL}" rel="nofollow" class="bigButton blueButton" target="_blank">Start playing at {roomName}</a>
 				<% if {osText} %><div><span class="meta">OS: {osText}</span></div><% end %>
 				<div class="bonusCode">Bonus code<br /><span><% if {bonusCode} %>{bonusCode}<% else {bonusCode} %>Use our link<% end %></span></div>
 				<% if {marketingCode} %><div class="bonusCode">Marketing code<br /><span>{marketingCode}</span></div><% end %>
