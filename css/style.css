@@ -1584,13 +1584,13 @@ iframe.modalWindow {
 	}
 .searchResults .newsList li {width: auto}
 	.searchResults .newsList li p {font-size: 12px}
-	.searchResults .gallery li {
+	.searchResults .imagesList li {
 		float: left;
 		width: 89px;
 		margin: 0 15px 20px 0;
 	}
-	.searchResults .gallery li img {display: block; margin-bottom: 3px;}
-	.searchResults .gallery li span {
+	.searchResults .imagesList li img {display: block; margin-bottom: 3px;}
+	.searchResults .imagesList li span {
 		white-space: nowrap;
 		overflow: hidden;
 		text-overflow: ellipsis;
