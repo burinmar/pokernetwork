@@ -367,11 +367,7 @@ class shoutbox extends moon_com {
 		$res = array();
 		$usersUrl = moon::shared('sitemap')->getLink('users');
 		if(count($ids)) {
-			$res = $this->db->array_query_assoc('
-				SELECT id, nick
-				FROM '.$this->table('Users').'
-				WHERE id IN('.implode(',', $ids).')'
-				, 'id');
+			$res = $this->object('users.vb')->users($ids);
 			foreach ($res as $k=>$v) {
 				$res[$k]['uri'] = $usersUrl . rawurlencode($v['nick']) . '/';
 			}

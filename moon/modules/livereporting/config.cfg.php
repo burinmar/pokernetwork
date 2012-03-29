@@ -5,8 +5,6 @@ $cfg['livereporting'] = array(
 	'page.LiveReporting1col' => 'xml.livereporting1col,fake',
 	'page.LiveReporting2col' => 'xml.livereporting2col,fake',
 
-	'tb.Users' => 'users',
-	'tb.Permissions' => 'users_levels',
 	'tb.Tournaments' => 'reporting_ng_tournaments',
 	'tb.Events'      => 'reporting_ng_events',
 	'tb.Days'        => 'reporting_ng_days',

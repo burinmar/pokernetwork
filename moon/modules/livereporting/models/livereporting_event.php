@@ -196,13 +196,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		$authors = array();
 		if (0 !== count($authorIds)) {
-			$rAuthors = $this->db->query('
-				SELECT id,nick FROM ' . $this->table('Users') . '
-				WHERE id IN(' . implode(',', array_unique($authorIds)) . ')
-			');
-			while ($author = $this->db->fetch_row_assoc($rAuthors)) {
-				$authors[$author['id']] = $author['nick'];
-			}
+			$authors = array(); // no users table
 		}
 		foreach ($entries as $k => $entry) {
 			if (isset($authors[$entry['author_id']])) {
@@ -231,10 +225,8 @@ class livereporting_model_event extends livereporting_model_pylon
 			? '1'
 			: 'is_hidden=0';
 		$entry = $this->db->single_query_assoc('
-			SELECT l.*, u.nick author_name
+			SELECT l.*, "" author_name
 			FROM ' . $this->table('Log') . ' l
-			LEFT JOIN ' . $this->table('Users') . ' u
-				ON u.id=l.author_id
 			WHERE l.id=' . getInteger($id) . '
 				AND l.type="' . addslashes($type) . '"
 				AND l.event_id=' . getInteger($eventId) . '
