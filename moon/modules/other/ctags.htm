@@ -1,53 +1,46 @@
 <% cloud:main %>
-<div class="widget tagCloud newsList">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">Tags</h1>
-		<div>{description}</div>
-		
-		<%loop {list.tags += cloud:tag} %>
-			<a href="{url.tag}" rel="tag" style="font-size: {fontSize}px;" class="cloud">{name}</a>
-		<%end%>
-	</div>
+<div class="widget newsList">
+	<h1 class="widgetTitle">Tags</h1>
+	<div class="widgetIntro">{description}</div>
+	
+	<%loop {list.tags += cloud:tag} %>
+		<a href="{url.tag}" rel="tag" style="font-size: {fontSize}px;" class="cloud">{name}</a>
+	<%end%>
 </div>
 
 
 
 
 <% list:main %>
-<div class="widget tagCloud newsList">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">Tag: {tag} <%if {filter} %> @ {filter}<%end%></h1>
+<div class="widget">
+	<h1 class="pageTitle">Tag: {tag} <%if {filter} %> @ {filter}<%end%></h1>
 
-		<ul class="navigationButtons">
-		<%loop{list.tabs += list:tabs.item}%>
-			<%if{on}%>
-			<li class="fl"><a href="{url}" class="current">{title}<span class="cbr"></span></a></li>
-			<%else{on}%>
-			<li class="fl"><a href="{url}">{title}<span class="cbr"></span></a></li>
+	<div class="filterTabs filterTabsTopLine clrfix">
+		<b>Show:</b>
+		<ul>
+			<%loop{list.tabs += list:tabs.item}%>
+				<%if{on}%>
+				<li class="on"><a href="{url}">{title}</a></li>
+				<%else{on}%>
+				<li><a href="{url}">{title}</a></li>
+				<%end%>
 			<%end%>
-		<%end%>
 		</ul>
-
-		<%loop {list.items += list:items.item}%>
-			<div class="articlePreview articlePreviewWithImage">
-				<a href="{url}" class="tagReportingImage fl20" style="background: url('{img}') no-repeat 50% 25%;"></a>
-				<h2 class="articleTitle"><a href="{url}">{title}</a></h2>
-				<p class="articleMeta"><span class="date">{date}</span></p>
-				<div>{excerpt}</div>
-				<div class="cb"></div>
-			</div>
-		<%end%>
-
-		{pagination}
 	</div>
+
+	<ul class="newsList">
+	<%loop {list.items += list:items.item}%>
+		<li>
+			<a href="{url}" class="tagReportingImage fl20" style="background: url('{img}') no-repeat 50% 25%;"></a>
+			<h2 class="articleTitle"><a href="{url}">{title}</a></h2>
+			<p class="articleMeta"><span class="date">{date}</span></p>
+			<div>{excerpt}</div>
+			<div class="cb"></div>
+		</li>
+	<%end%>
+	</ul>
+
+	{pagination}
 </div>
 
 <% list:tabs %>

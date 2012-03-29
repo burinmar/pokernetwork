@@ -7,6 +7,7 @@ $cfg['other'] = array(
 	'page.Dictionary' => 'xml.2col,fake',
 	'page.Contact' => 'xml.2col,fake',
 	'page.twitter' => 'xml.2col,fake',
+	'page.ctags' => 'xml.2col,fake',
 	'page.1col' => 'xml.1col,fake',
 
 	'tb.Users' => 'users',

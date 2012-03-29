@@ -29,7 +29,7 @@ class ctags extends moon_com
 			? $_GET['page']
 			: 1);
 
-		$this->use_page('Main');
+		$this->use_page('ctags');
 	}
 
 	function main($argv) 
