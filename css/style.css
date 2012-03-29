@@ -681,9 +681,8 @@ html {
 		margin-left: 60px;
 	}
 
-.forumIndexBox th {
-	padding: 0 15px 10px 0;
-}
+.forumIndexBox {width: 100%}
+.forumIndexBox th {padding: 0 15px 10px 0;}
 	.forumIndexBox a {
 		display: block;
 		text-transform: uppercase;
