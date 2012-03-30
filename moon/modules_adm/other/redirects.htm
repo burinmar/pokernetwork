@@ -1,0 +1,83 @@
+<% info %>
+addNew=New redirect
+error1=From field is empty or incorrect
+error2=Please choose another uri (FROM), this one is already in use
+
+
+<% viewList %>
+
+<div class="tabzoneHeader clrfix">
+	<h1 class="pagetitle fl">{title}</h1>
+	<div class="fr"><a href="{!action}" onclick="jQuery('#frm').toggle();return false" class="button buttonAddNew">Add item</a></div>
+</div>
+
+	{form}
+	<!--# items list -->
+	<% if {items} %>
+	<form action="{!action}" method="post" name="list-form" class="aform">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<table class="list">
+			<colgroup>
+				<col />
+				<col style="width: 20px" />
+				<col />
+				<col style="width: 40px" />
+			</colgroup>
+			<thead>
+			<tr>
+				<th><span>FROM</span></th>
+				<th></th>
+				<th><span>TO</span></th>
+				<th class="checkall"></th>
+			</tr>
+			</thead>
+			<tbody>
+			<% loop {items} %>
+			<tr>
+				<td class="w100"><input type="text" name="uri_from[{id}]" value="{uri_from}" maxlength="150" /></td>
+				<td>&rarr;</td>
+				<td class="w100"><input type="text" name="uri_to[{id}]" value="{uri_to}" maxlength="255"/></td>
+				<td><input type="checkbox" name="it[]" value="{id}" /></td>
+			</tr>
+			<% end {items} %>
+			</tbody>
+		</table>
+		<!--# delete items -->
+		<div class="formButton fl" style="margin: 0"><input type="submit" value="Save" onclick="this.form.elements['event'].value='{evSave}';this.form.submit()" style="margin: 0"/></div>
+		<div class="list-footer fr">
+			<input type="button" class="button fr btDel" value="Delete selected" />
+		</div><span class="clr"></span>
+	</form>
+	<p class="explain" style="margin-top:20px">
+		<b>Hints:</b><br />
+		'TO' field must start with '/' or with 'http://' if link is external<br />
+		If 'TO' field is empty - 404 page will be shown<br />
+		Add * at the end of 'FROM' uri to cover all sub-uris (eg.: /news/* will cover all sub uris like /news/online-poker/ etc.)
+	</p>
+	<% end {items} %>
+
+
+
+<% viewForm %>
+<!--# item form -->
+<form action="{!action}" name="frm" id="frm" method="post" class="aform{hide}" style="margin-bottom: 40px">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<input type="hidden" name="id" value="{id}" />
+	<h2 class="formTitle">New redirect</h2><span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_uri_from">FROM</label></dt>
+		<dd class="w100">
+			<input type="text" name="uri_from" id="i_uri_from" value="{uri_from}" size="80" maxlength="150" class="required" />
+			<div class="explain">Add * at the end of 'FROM' uri to cover all sub-uris (eg.: /news/* will cover all sub uris like /news/online-poker/ etc.)</div>
+		</dd>
+
+		<dt><label for="i_uri_to">TO</label></dt>
+		<dd class="w100">
+			<input type="text" name="uri_to" id="i_uri_to" value="{uri_to}" size="80" maxlength="255" class="required" />
+			<div class="explain">'TO' field must start with '/' or with 'http://' if link is external. If 'TO' field is empty - 404 page will be shown</div>
+		</dd>
+	</dl>
+	<div class="formButton"><input type="submit" value="Save" /><input type="button" value="Cancel" onclick="jQuery('#frm').toggle();" /></div>
+</form>

@@ -5,6 +5,7 @@ $cfg['other'] = array(
 	'comp.rtf' => 'MoonShared.rtf',
 	// sitemap
 	'tb.Pages' => 'sitemap',
+	'tb.Redirects'			=> 'sitemap_redirects',
 	'var.rtf{sitemap}' => 'sitemap',
 	//
 	'page.Common' => 'sys.adm, fake',
