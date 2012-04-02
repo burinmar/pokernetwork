@@ -15,9 +15,10 @@ class google extends moon_com {
 
 		case 'cron':
 			$r = '';
-			//$r .= "\n<br />" . $this->sitemapNews();
+			$r .= "\n<br />" . $this->sitemapNews();
+			$r .= "\n<br />" . $this->sitemapVideo();
 			$r .= "\n<br />" . $this->sitemapMain();
-			//$r .= "\n<br />" . $this->sitemapIndex();
+			$r .= "\n<br />" . $this->sitemapIndex();
 
 			$page = &moon::page();
 			$page->set_local('cron', $r);
@@ -44,7 +45,7 @@ class google extends moon_com {
 	}
 
 
-	/*function sitemapIndex() {
+	function sitemapIndex() {
 		//init
         if (empty($this->dirFiles)) {
 			return 'Error: not writable directory';
@@ -66,11 +67,15 @@ class google extends moon_com {
 
 		$s = '
 		<sitemap>
-	      <loc>' . $homeURL . 'sitemap-main.xml</loc>
+	      <loc>' . $homeURL . 'google-sitemap-main.xml</loc>
 	      <lastmod>' . $now . '</lastmod>
 	   </sitemap>
 	   <sitemap>
-	      <loc>' . $homeURL . 'sitemap-news.xml</loc>
+	      <loc>' . $homeURL . 'google-sitemap-news.xml</loc>
+	      <lastmod>' . $now . '</lastmod>
+	   </sitemap>
+	   <sitemap>
+	      <loc>' . $homeURL . 'google-sitemap-video.xml</loc>
 	      <lastmod>' . $now . '</lastmod>
 	   </sitemap>';
 		fwrite($gz, $s);
@@ -84,10 +89,10 @@ class google extends moon_com {
 		fclose($gz);
 		@chmod($fname, 0666);
 		return 'OK: sitemap index updated';
-	}*/
+	}
 
 
-	/*function sitemapNews() {
+	function sitemapNews() {
 		//init
         if (empty($this->dirFiles)) {
 			return 'Error: not writable directory';
@@ -108,7 +113,7 @@ class google extends moon_com {
 
 		//kategorijos
 		fwrite($gz, "\n\n<!-- News Categories -->\n");
-		$r = $this->db->query('SELECT uri FROM news_categories WHERE hide=0');
+		$r = $this->db->query('SELECT uri FROM articles_categories WHERE is_hidden=0 AND category_type = 1');
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
 	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . '/</loc>
@@ -122,12 +127,12 @@ class google extends moon_com {
 		fwrite($gz, "\n\n<!-- News -->\n");
 		$locale = & moon :: locale();
 		$now = floor($locale->now() / 300) * 300;
-		$r = $this->db->query('SELECT uri, updated, date FROM news WHERE hide=0 AND date<' . $now);
+		$r = $this->db->query('SELECT id, uri, updated, published FROM articles WHERE is_hidden=0 AND article_type = 1 AND published<' . $now);
 		$count = $this->db->num_rows($r);
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
-	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . '.htm</loc>
-		<lastmod>' . date('c', max($d['date'], $d['updated'])) . '</lastmod>
+	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . ($d['id']>26550 ? '-' . (1000+$d['id']) : '') . '.htm</loc>
+		<lastmod>' . date('c', max($d['published'], $d['updated'])) . '</lastmod>
 		<changefreq>never</changefreq>
 	</url>';
 			fwrite($gz, $s);
@@ -141,7 +146,66 @@ class google extends moon_com {
 		fclose($gz);
 		@chmod($fname, 0666);
 		return 'OK: sitemap-news.xml updated (indexed ' . $count . ' files)';
-	}*/
+	}
+
+
+	function sitemapVideo() {
+		//init
+        if (empty($this->dirFiles)) {
+			return 'Error: not writable directory';
+		}
+		$fname = $this->dirFiles . 'sitemap-video.xml';
+		$gz = fopen($fname, 'w9');
+		flock($gz, LOCK_EX);
+		$s = '<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+';
+		fwrite($gz, $s);
+
+		// *begin Items
+		$page = & moon :: page();
+		$homeURL = $page->home_url();
+        $sitemap = & moon :: shared('sitemap');
+		$homeURL .= ltrim($sitemap->getLink('video'), '/');
+
+		//kategorijos
+		fwrite($gz, "\n\n<!-- videos Categories -->\n");
+		$r = $this->db->query('SELECT uri FROM videos_playlists WHERE is_hidden = 0');
+		while ($d = $this->db->fetch_row_assoc($r)) {
+			$s = '
+	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . '/</loc>
+		<changefreq>never</changefreq>
+		<priority>0.3</priority>
+	</url>';
+			fwrite($gz, $s);
+		}
+
+		//naujienos
+		fwrite($gz, "\n\n<!-- videos -->\n");
+		$sql = 'SELECT id, LEFT(published_date,10) as lastmod, name, published_date
+			FROM videos
+			WHERE 	is_hidden = 0
+			ORDER BY published_date DESC';
+		$r = $this->db->query($sql);
+		$count = $this->db->num_rows($r);
+		while ($d = $this->db->fetch_row_assoc($r)) {
+			$s = '
+	<url><loc>' . $homeURL .  make_uri($d['name']) . '-' . $d['id'] . '.htm</loc>
+		<lastmod>' . date('c', $d['lastmod']) . '</lastmod>
+		<changefreq>never</changefreq>
+	</url>';
+			fwrite($gz, $s);
+		}
+		// *end Items
+
+		// Close
+		$s = '</urlset>';
+		fwrite($gz, $s);
+        flock($gz, LOCK_UN);
+		fclose($gz);
+		@chmod($fname, 0666);
+		return 'OK: sitemap-video.xml updated (indexed ' . $count . ' items)';
+	}
 
 
 	function sitemapMain() {
@@ -150,7 +214,6 @@ class google extends moon_com {
 			return 'Error: not writable directory';
 		}
 		$fname = $this->dirFiles . 'sitemap-main.xml';
-		$fname = $this->dirFiles . 'sitemap.xml';
 		$gz = fopen($fname, 'w9');
 		flock($gz, LOCK_EX);
 		$s = '<?xml version="1.0" encoding="UTF-8"?>
@@ -166,7 +229,7 @@ class google extends moon_com {
 		// structure
 		$priorities = array('sitemap' => '0.6', 'faq' => '0.6', 'news' => '0.6' );
 		fwrite($gz, "\n\n<!-- Site Structure -->\n");
-		$r = $this->db->query('SELECT uri, parent_id,page_id FROM pages WHERE is_deleted = 0 AND hide = 0 AND (options & 1 = 0)');
+		$r = $this->db->query('SELECT uri, parent_id,page_id FROM sitemap WHERE is_deleted = 0 AND hide = 0');
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			if (isset($priorities[$d['page_id']])) {
 				$priority = $priorities[$d['page_id']];
@@ -182,69 +245,27 @@ class google extends moon_com {
 			fwrite($gz, $s);
 		}
 
-		// Networks
-		$rootURL = $homeURL . ltrim($sitemap->getLink('networks'), '/');
-		fwrite($gz, "\n\n<!-- Networks -->\n");
-		$r = $this->db->query('SELECT uri FROM rw2_networks WHERE hide=0');
+		// FAQ
+		/*$rootURL = $homeURL . ltrim($sitemap->getLink('faq'), '/');
+		fwrite($gz, "\n\n<!-- FAQ -->\n");
+		$r = $this->db->query('SELECT uri FROM faq2_categories WHERE hide=0');
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
-	<url><loc>' . $rootURL . htmlspecialchars($d['uri']) . '/</loc>
-		<changefreq>monthly</changefreq>
-		<priority>0.4</priority>
+	<url><loc>' . $rootURL . htmlspecialchars($d['uri']) . '.htm</loc>
+		<changefreq>never</changefreq>
+		<priority>0.6</priority>
 	</url>';
 			fwrite($gz, $s);
-		}
+		}*/
 
 		// Reviews
-		fwrite($gz, "\n\n<!-- Reviews -->\n");
+		fwrite($gz, "\n\n<!-- FAQ -->\n");
 		$r = $this->db->query('SELECT alias as uri FROM rw2_rooms WHERE is_hidden=0');
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
 	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . '/</loc>
 		<changefreq>weekly</changefreq>
 		<priority>1.0</priority>
-	</url>';
-			fwrite($gz, $s);
-		}
-
-
-		// Rules
-		$rootURL = $homeURL . ltrim($sitemap->getLink('rules'), '/');
-		fwrite($gz, "\n\n<!-- Rules -->\n");
-		$r = $this->db->query('SELECT uri FROM games WHERE hide=0');
-		while ($d = $this->db->fetch_row_assoc($r)) {
-			$s = '
-	<url><loc>' . $rootURL . htmlspecialchars($d['uri']) . '.htm</loc>
-		<changefreq>monthly</changefreq>
-		<priority>0.6</priority>
-	</url>';
-			fwrite($gz, $s);
-		}
-
-
-		// FreeGames
-		$rootURL = $homeURL . ltrim($sitemap->getLink('free-games'), '/');
-		fwrite($gz, "\n\n<!-- FreeGames -->\n");
-		$r = $this->db->query('SELECT uri FROM games WHERE hide=0');
-		while ($d = $this->db->fetch_row_assoc($r)) {
-			$s = '
-	<url><loc>' . $rootURL . htmlspecialchars($d['uri']) . '.htm</loc>
-		<changefreq>monthly</changefreq>
-		<priority>0.2</priority>
-	</url>';
-			fwrite($gz, $s);
-		}
-
-		// News
-		$rootURL = $homeURL . ltrim($sitemap->getLink('news'), '/');
-		fwrite($gz, "\n\n<!-- News -->\n");
-		$r = $this->db->query('SELECT id,published,uri FROM articles WHERE is_hidden=0');
-		while ($d = $this->db->fetch_row_assoc($r)) {
-			$d['uri'] = date('Y', $d['published']) . '/' . date('m', $d['published']) . '/' . $d['uri'] . '-' . (1000 + $d['id']);
-			$s = '
-	<url><loc>' . $rootURL . htmlspecialchars($d['uri']) . '.htm</loc>
-		<changefreq>never</changefreq>
-		<priority>0.5</priority>
 	</url>';
 			fwrite($gz, $s);
 		}
@@ -256,7 +277,7 @@ class google extends moon_com {
         flock($gz, LOCK_UN);
 		fclose($gz);
 		@chmod($fname, 0666);
-		return 'OK: ' . basename($fname) . ' updated';
+		return 'OK: sitemap-main.xml updated';
 	}
 
 }
