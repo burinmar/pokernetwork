@@ -321,6 +321,9 @@ class tour_list extends moon_com
 		}
 
 		$tours = poker_tours();
+		usort($tours, function ($a, $b) {
+			return strcmp($a['title'], $b['title']);
+		});
 		$mainArgv['list.tours'] = '';
 		foreach ($tours as $id => $tour) {
 			$mainArgv['list.tours'] .= $tpl->parse('tours.item', array(
