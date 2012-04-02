@@ -8,8 +8,8 @@
 	padding: 40px 65px 65px;
 }
 	#landing .article, #landing .article p {color: #fff}
-	#landing .article a {color: #8feaf5}
-	#landing .article a:hover {color: #fff}
+	#landing a {color: #8feaf5}
+	#landing a:hover {color: #fff}
 	#landing .head {
 		padding: 0 0 0 420px;
 		height: 400px;
@@ -42,6 +42,17 @@
 	#landing .head tr td:first-child {padding-right: 50px;}
 	#landing .head tr:first-child td {padding-bottom: 10px;}
 	#landing .head td {color: #fff; text-transform: uppercase}
+	#landing .bonusCode span {
+			display: inline-block;
+			background: #fff9c4;
+			border: 1px dashed #999576;
+			color: #c00;
+			text-transform: uppercase;
+			line-height: 27px;
+			padding: 0 10px;
+			margin-bottom: 15px;
+			font-size: 18px;
+		}
 		#landing .bonusCode span {margin-top: 5px}
 	#landing .head td b {
 		display: block;
@@ -58,3 +69,39 @@
 		font-weight: bold;
 		padding-left: 16px;
 	}
+	#landing .article table th {color: #fff}
+	#landing .article table tr.even, #landing .article table th {background: none}
+	#landing .article table tr.odd {
+		background: rgba(255, 255, 255, 0.2);
+		background: transparent\9;
+	}
+
+	#upcomingFreerolls {margin-top: 40px;}
+		#upcomingFreerolls h2 {
+			font-size: 14px;
+			font-weight: bold;
+			margin: 0 0 10px 10px;
+		}
+		#upcomingFreerolls table {
+			border-collapse: collapse;
+			width: 100%;
+		}
+		#upcomingFreerolls table .odd td, #upcomingFreerolls table .odd th {background: rgba(255, 255, 255, 0.2)}
+		#upcomingFreerolls td {
+			padding: 0 10px 10px;
+			vertical-align: top;
+		}
+		#upcomingFreerolls .title {padding-top: 10px;}
+		#upcomingFreerolls .expandable {font-size: 14px}
+		#upcomingFreerolls th {
+			font-weight: normal;
+			line-height: 14px;
+			padding: 10px 10px 3px;
+			text-align: left;
+			vertical-align: bottom;
+		} #upcomingFreerolls th span {color: #fff; opacity: 0.5}
+
+
+/*SKINS*/
+#landing.pokerstars5k {background-image: url('/img/landing/pokerstars5k/intro.jpg?1'); padding: 40px 35px 65px 65px}
+#landing.pokerstars5k .download {background-image: url('/img/landing/pokerstars5k/download.png?1'); line-height: 60px; width: 306px; height: 60px; font-size: 29px; text-transform: none; font-weight: normal}
