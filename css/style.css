@@ -669,6 +669,11 @@ html {
 	}
 	.banner200 {margin: 10px 0}
 	.banner200 img {margin: 0 10px;}
+	.banner728x90 {
+		margin: -15px 0 10px;
+		text-align: center;
+		padding: 5px;
+	}
 
 /*Homepage*/
 .tweets li {clear: both}
