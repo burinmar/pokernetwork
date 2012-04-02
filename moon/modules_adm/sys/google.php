@@ -227,7 +227,7 @@ class google extends moon_com {
         $sitemap = & moon :: shared('sitemap');
 
 		// structure
-		$priorities = array('sitemap' => '0.6', 'faq' => '0.6', 'news' => '0.6' );
+		$priorities = array('sitemap' => '0.6', 'news' => '0.6' );
 		fwrite($gz, "\n\n<!-- Site Structure -->\n");
 		$r = $this->db->query('SELECT uri, parent_id,page_id FROM sitemap WHERE is_deleted = 0 AND hide = 0');
 		while ($d = $this->db->fetch_row_assoc($r)) {
@@ -244,19 +244,6 @@ class google extends moon_com {
 	</url>';
 			fwrite($gz, $s);
 		}
-
-		// FAQ
-		/*$rootURL = $homeURL . ltrim($sitemap->getLink('faq'), '/');
-		fwrite($gz, "\n\n<!-- FAQ -->\n");
-		$r = $this->db->query('SELECT uri FROM faq2_categories WHERE hide=0');
-		while ($d = $this->db->fetch_row_assoc($r)) {
-			$s = '
-	<url><loc>' . $rootURL . htmlspecialchars($d['uri']) . '.htm</loc>
-		<changefreq>never</changefreq>
-		<priority>0.6</priority>
-	</url>';
-			fwrite($gz, $s);
-		}*/
 
 		// Reviews
 		fwrite($gz, "\n\n<!-- FAQ -->\n");
@@ -279,6 +266,7 @@ class google extends moon_com {
 		@chmod($fname, 0666);
 		return 'OK: sitemap-main.xml updated';
 	}
+
 
 }
 ?>
