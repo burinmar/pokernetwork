@@ -4,7 +4,7 @@
 	<h2 class="widgetTitle"><a href="#">Online poker room ratings and promotions</a></h2>
 	<div id="spotlightSlider">
 		<% loop {items:spotlight:home} %>
-		<div class="slider pnSliderTab" <% if {notCurrent} %>style="display:none;"<% end %>><a href="{url.item}"><img src="{imgSrc}" alt="{imgAlt}" width="517" height="175" /></a></div>
+		<div class="slider pnSliderTab" <% if {notCurrent} %>style="display:none;"<% end %>><a href="{url.item}" target="_blank"><img src="{imgSrc}" alt="{imgAlt}" width="517" height="175" /></a></div>
 		<% end %>
 		<div class="stepper">
 			<b class="fl"><span class="pnSliderTabN">1</span>/{itemsTotal}</b>
