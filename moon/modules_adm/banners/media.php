@@ -44,7 +44,7 @@ class media extends moon_com
 					if (isset($_POST['return']) ) {
 						$this->redirect('#', $id);
 					} else {
-						$this->redirect('banners-' . $this->env);
+						$this->redirect('banners-banners');
 					}
 				} //else {}
 				break;
