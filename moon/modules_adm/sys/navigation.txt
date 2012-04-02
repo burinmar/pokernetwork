@@ -1,10 +1,4 @@
 
-Sitemap {ico=sitemap, link=other.sitemap, admin=content}
-	other.sitemap = Sitemap
-	other.sitemap_sort = Menu sorting {admin=developer}
-#navigation.links = Useful links {admin=chief-editor}
-	other.redirects = 301 redirects {admin=developer}
-
 News {ico=news, admin=content}
 	articles.news = News
 	articles.turbo = Turbo
@@ -30,6 +24,12 @@ Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 		reviews.sorting_mac = Sort Mac poker rooms
 	reviews.deposits = Deposits
 	reviews.statistics = Statistics
+
+Sitemap {ico=sitemap, link=other.sitemap, admin=content}
+	other.sitemap = Sitemap
+	other.sitemap_sort = Menu sorting {admin=developer}
+#navigation.links = Useful links {admin=chief-editor}
+	other.redirects = 301 redirects {admin=developer}
 
 Spotlight {ico=banners, admin=content, hide=0, sites=}
 	other.spotlight=Spotlight
