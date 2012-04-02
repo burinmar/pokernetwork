@@ -133,7 +133,7 @@ class output extends moon_com {
 		$m = array('localeID' => $loc->current_locale(), 'common_header' => $head, 'foot.scripts' => $footScripts, 'content' => $body);
 
 		// banners
-		if (is_object($obj = $this->object('sys.banners')) && !$p->get_global('adminView') && !$p->get_local('nobanners')) {
+		if (is_object($obj = $this->object('sys.banners')) && !$p->get_local('nobanners')) {
 			$bannerRoomId = $p->get_local('banner.roomID');
 			$m += array(
 				'bannersOn' => 1,

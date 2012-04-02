@@ -25,39 +25,33 @@ $cfg['banners'] = array(
 			'title' => 'Top wide (728x90)',
 			'bn' => 'TopWide'
 		),
-		'home:wide:1' => array(
-			'title' => 'Homepage wide (728x90)',
-			'bn' => 'HomeWide'
+		'home:2col:1' => array(
+			'title' => 'Homepage below Twitter (468x80)',
+			'bn' => 'Home2Col'
 		),
 		'std:right:1' => array(
 			'title' => 'Right column (200x*)',
 			'bn' => 'RightColumn'
-		),
-		'std:right:2' => array(
-			'title' => 'Right column 2 (200x*)',
-			'bn' => 'RightColumn2'
-		),
+		)
 	),
 	'var.urlTargets' => array(
+		'video' => array(
+			'Videos' => array()
+		),
+		'rooms' => array(
+			'Online Poker' => array()
+		),
 		'news' => array(
-			'News' => array(
-				'video'        	=> 'Video',
-				'poker-players'	=> 'Players'
-			)
+			'News' => array()
 		),
-		'learn-poker' => array(
-			'Learn Poker' => array(
-				'rules'	=> 'Rules',
-				'strategy' => 'Strategy'
-			)
-		),
-		'online-poker' => array(
-			'Play Poker' => array(
-				'rooms'	=> 'Poker Rooms'
-			)
+		'freerolls-special' => array(
+			'Freerolls' => array()
 		),
 		'reporting' => array(
 			'Live Reporting' => array()
+		),
+		'blogs' => array(
+			'Blogs' => array()
 		)
 	),
 	'var.sitesNames' => array(

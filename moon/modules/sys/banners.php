@@ -71,14 +71,22 @@ class banners extends moon_com
 	{
 		return array('view' => '');
 	}
-	
+
 	function main($vars) {
 		$output = '';
 		switch ($vars['view']) {
-			/*case 'home-mid':
+			case 'home-2col':
 				$tpl = $this->load_template();
-				$output = $tpl->parse('viewBanner:home-mid');
-				break;*/
+				$output = $tpl->parse('viewBanner:home-2col');
+				break;
+			case 'right1':
+				$tpl = $this->load_template();
+				$output = $tpl->parse('viewBanner:right1');
+				break;
+			case 'right2':
+				$tpl = $this->load_template();
+				$output = $tpl->parse('viewBanner:right2');
+				break;
 			default:
 				break;
 		}

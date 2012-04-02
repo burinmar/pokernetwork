@@ -4,5 +4,7 @@
 	<com><part>center</part><name>fake</name></com>
 	<com><part>header</part><name>sys.header</name></com>
 	<com><part>column</part><name>sys.column</name></com>
+	<com><part>column</part><name>sys.banners</name><var name="view">right1</var></com>
+	<com><part>column</part><name>sys.banners</name><var name="view">right2</var></com>
 	<com><part>footer</part><name>sys.footer</name></com>
 </page>
