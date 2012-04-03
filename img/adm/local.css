@@ -76,3 +76,16 @@ span.sync1, span.sync2 {
 .uri-list dt {width: 35px}
 	.uri-list dt label {font-size: 16px; color: #000}
 .uri-list dd {padding-left: 75px}
+
+/*Edit user's permissions*/
+.aboutUser {
+	margin-bottom: 20px;
+	min-height: 50px;
+}
+	.aboutUser img {
+		float: left;
+		margin-right: 10px;
+	}
+		.aboutUser tr td:first-child {padding-right: 10px; color: #999; font-style: italic}
+		.aboutUser tr td {line-height: 14px}
+		.aboutPlayer td {padding-bottom: 5px}
