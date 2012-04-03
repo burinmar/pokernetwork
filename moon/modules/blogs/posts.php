@@ -188,7 +188,8 @@ class posts extends moon_com {
 			'notPrint' => !$print,
 			'comments' => '',
 			
-			'share' => $tools->toolbar()
+			//'share' => $tools->toolbar(),
+			'fbLike' => $tools->facebookLike()
 		);
 
 		$m['url.comments'] = ($m['comm_count'] = $post['comm_count']) ? $m['url.post'] . '#comm-list' : '';
