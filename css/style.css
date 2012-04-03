@@ -674,7 +674,7 @@ html {
 		text-align: center;
 		padding: 5px;
 	}
-	.twoBanners .banner {float: left}
+	.twoBanners .banner {float: left; width: 220px}
 
 /*Homepage*/
 .tweets li {clear: both}
