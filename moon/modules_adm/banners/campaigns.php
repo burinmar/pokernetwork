@@ -419,6 +419,7 @@ class campaigns extends moon_com
 			}
 
 			// sites
+			/*
 			$assignedSites = explode(',', $b['sites']);
 			foreach($sites as $siteId=>$site) {
 				$s = array(
@@ -431,6 +432,7 @@ class campaigns extends moon_com
 				);
 				$item['sites'] .= $tpl->parse('sites', $s);
 			}
+			*/
 
 			// url target helpers
 			foreach($urlTargets as $pageId => $target) {
@@ -733,15 +735,16 @@ class campaigns extends moon_com
 		$campaignId = intval($postData['campaign_id']);
 
 		$zones = (isset($_POST['zones']) && is_array($_POST['zones'])) ? $_POST['zones'] : array();
-		$sites = (isset($_POST['sites']) && is_array($_POST['sites'])) ? $_POST['sites'] : array();
 		$uriTargets = (isset($_POST['uri_target']) && is_array($_POST['uri_target'])) ? $_POST['uri_target'] : array();
 		$viewsLimit = (isset($_POST['views_limit']) && is_array($_POST['views_limit'])) ? $_POST['views_limit'] : array();
 		$hidden = (isset($_POST['is_hidden']) && is_array($_POST['is_hidden'])) ? $_POST['is_hidden'] : array();
 
+		$sites = $this->get_var('sitesNames');
+		$siteId = isset($sites[1]) ? $sites[1]['id'] : 0;
 		foreach ($uriTargets as $id => $value) {
 			$upd = array(
 				'zone_target' => isset($zones[$id]) ? implode(',', $zones[$id]) : '',
-				'sites' => isset($sites[$id]) ? implode(',', $sites[$id]) : '',
+				'sites' => $siteId,
 				'uri_target' => $value,
 				'views_limit' => isset($viewsLimit[$id]) ? $viewsLimit[$id] : 0,
 				'is_hidden' => isset($hidden[$id]) ? 1 : 0

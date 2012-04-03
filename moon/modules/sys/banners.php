@@ -210,6 +210,7 @@ class banners extends moon_com
 			     	AND cb.is_hidden = 0
 			     	AND b.is_hidden = 0
 			     	AND bm.is_hidden = 0
+			     	AND bm.site_id != 0
 			GROUP BY cb.id;';
 		$result = $this->db->array_query_assoc($sql);
 		

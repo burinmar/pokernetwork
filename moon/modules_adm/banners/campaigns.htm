@@ -57,7 +57,6 @@ errorBn2=Technical error
 				<td>{active}</td>
 				<td>
 					<a href="{goEdit}">{title}</a>
-					<% if {sites} %><div style="margin: 5px 0">{sites}</div><% end %>
 					<% if {date_ranges} %><div class="explain">{date_ranges}</div><% end %>
 				</td>
 				<td><% if {geo_target} %><span class="geo" title="{geo_target}"></span><% end %></td>
@@ -179,14 +178,6 @@ errorBn2=Technical error
 									<label style="float: left; width: 49%"><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="zones[{id}][]" value="{value}"  /> {name}</label>
 								<% end %>
 								<span class="clr"></span>
-							</dd>
-							<dt><label>Sites:</label></dt>
-							<dd><ul style="list-style: none">
-								<% loop {sites} %>
-									<li style="float: left; width: 12%"><label class="item-site"><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="sites[{id}][]" value="{value}" /> <span <%if{unavailable}%>class="site-inactive"<%end%>>{name}</span></label></li>
-								<% end %>
-								</ul><span class="clr"></span><br />
-								<a class="check-all-sites checkall2" href="#"> Check all</a>
 							</dd>
 							<dt><label>Url targeting</label></dt>
 							<dd>
