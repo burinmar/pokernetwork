@@ -22,7 +22,7 @@ $cfg['blogs'] = array(
 	'vocabulary{rtf}' => '{dir.multilang}shared.txt',
 
 	// Comments
-	'comp.comments' => 'MoonShared.comments',
+	'comp.blogcomments' => 'MoonShared.comments',
 	'tb.Comments' => 'blog_comments',
 	'tb.CommentsParent' => 'blog_posts',
 	'tb.Users' => 'users'

@@ -56,7 +56,7 @@ class comments extends moon_com {
 		$info = $t->parse_array('info');
 		$myID = $u->get_user_id();
 		//ar as adminas
-		$iAdmin = $u->i_admin();
+		$iAdmin = $this->iAdmin($parentID);
 		$hideList = FALSE;
 		if (!$this->forum) {
 			//dabar gal kas nors daroma su vienu komentaru
@@ -352,7 +352,7 @@ class comments extends moon_com {
 		else {
 			if ($id) {
 				$d = $this->getItem($id);
-				$iAdmin = $user->i_admin();
+				$iAdmin = $this->iAdmin($d['obj_id']);
 				if (empty ($d['user_id']) || ($d['user_id'] != $myID && !$iAdmin)) {
 					$err = 2;
 				}
@@ -431,14 +431,18 @@ class comments extends moon_com {
 		}
 		$where = ' WHERE id IN (' . implode(',', $ids) . ')';
 		$user = & moon :: user();
-		if (!$user->i_admin()) {
-			//jei ne adminas, tai gali trinti tik savo
-			$where .= ' AND user_id = ' . $user->get_user_id();
-		}
 		//gaunam, kokie parent objektai
 		$parentID = $this->db->array_query('
 			SELECT DISTINCT obj_id, obj_id
 			FROM ' . $this->myTable . $where, TRUE);
+		//dar patikrinam parent teises
+		foreach ($parentID as $pId) {
+			if (!$this->iAdmin($pId)) {
+				//jei ne adminas, tai gali trinti tik savo
+				$where .= ' AND user_id = ' . $user->get_user_id();
+				break;
+			}
+		}
 		$this->db->query('DELETE FROM ' . $this->myTable . $where);
 		$this->recountComments($parentID);
 	}
@@ -453,8 +457,6 @@ class comments extends moon_com {
 	//___________________________________________________________________________
 	// statistiniu duomenu perskaiciavimas
 	function recountComments($ids) {
-		if($this->table('Parent') == 'audition_videos') return; //laikinai
-
 		if (!is_array($ids)) {
 			$ids = array(sprintf("%.0f",$ids));
 		}
@@ -473,6 +475,20 @@ class comments extends moon_com {
 			$ins['comm_last'] = isset($stats[$id]) ? $stats[$id]['max'] : 0;
 			$this->db->update($ins, $this->table("CommentsParent"), $id);
 		}
+	}
+
+	function iAdmin($parentID) {
+		if (moon::user()->i_admin()) {
+			return TRUE;
+		}
+		//blogu komentarams
+		if ($parentID && 'blogcomments' == $this->my('name') && ($myID = moon::user()->id())) {
+			$a =$this->db->single_query('SELECT user_id FROM ' .$this->table("CommentsParent") . ' WHERE id='. sprintf("%.0f", $parentID));
+			if (!empty($a[0]) && $myID == $a[0]) {
+				return TRUE;
+			}
+		}
+		return FALSE;
 	}
 
 	function isCommentSpam($text = '')
@@ -530,6 +546,7 @@ class comments extends moon_com {
 		}
 		$board->instArticles()->notifyUpdatedArticle($id);
 	}
+
 
 }
 

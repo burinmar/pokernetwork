@@ -194,7 +194,7 @@ class posts extends moon_com {
 		$m['url.comments'] = ($m['comm_count'] = $post['comm_count']) ? $m['url.post'] . '#comm-list' : '';
 		$m['commentsWord'] = $m['comm_count'] == 1 ? 'comment' : 'comments';
 
-		$commentsComp = &$this->object('comments');
+		$commentsComp = &$this->object('blogcomments');
 		if (!$post['disable_comments'] && is_object($commentsComp)) $m['comments'] = $commentsComp->show($post['id']);
 		else $m['comments'] = '';
 
