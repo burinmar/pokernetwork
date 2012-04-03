@@ -3,7 +3,6 @@ $cfg=array();
 $cfg['blogs'] = array(
 	'tb.Posts' => 'blog_posts',
 	'tb.Bodies' => 'blog_posts_bodies',
-	'tb.Users' => 'users',
 	
 	'page.Common' => 'sys.adm,fake',
 
