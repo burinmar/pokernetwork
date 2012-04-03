@@ -187,7 +187,7 @@ class news extends moon_com {
 			'category' => array(),
 			'tag' => array(),
 			'currPage' => 1,
-			'listLimit' => 8,
+			'listLimit' => 20,
 			'year' => 0,
 			'month' => 0
 		);
