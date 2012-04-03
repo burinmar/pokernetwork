@@ -149,7 +149,18 @@ function getModules() {
 	return $mod;
 }
 function getUsers() {
-	return array('-1'=>'admin');
+	$sql = 'SELECT DISTINCT user_id, user_id FROM ' . $this->table('Blame');
+	$ids = $this->db->array_query($sql, TRUE);
+	$ids = array_values($ids);
+	if (!count($ids)) {
+		return array();
+	}
+	$vbdb = & moon::db('database-vb');
+	$sql='SELECT userid, username FROM vb_user WHERE userid IN ('.implode(',',$ids).')';
+	$a = $vbdb->array_query(  $sql , TRUE);
+	return $a;
+
+	/*return array('-1'=>'admin');
 	$sql = 'SELECT u.nick, u.id
 		FROM ' . $this->table('Blame') . ' b LEFT JOIN ' . $this->table('Users') . ' u ON b.user_id=u.id
 		GROUP BY b.user_id
@@ -160,7 +171,7 @@ function getUsers() {
 	foreach ($result as $r) {
 		$items[$r['id']] = $r['nick'];
 	}
-	return $items;
+	return $items;*/
 }
 function getActions() {
 	$actions = array();
