@@ -1,4 +1,4 @@
-/*Reset*/
+	/*Reset*/
 p, body, html, form, ul, li, ol, h1, h2, h3, dt, dd, dl, td, tr, table, input, select, fieldset, legend, blockquote {margin: 0; padding: 0}
 a {text-decoration: none; outline: none; color: #0050bd}
 a:hover {color: #000}
@@ -955,7 +955,7 @@ html {
 		}
 
 /*Rooms - Reviews*/
-.roomsList .download {text-align: center}
+.roomsList .download {text-align: center; margin-right: 60px}
 	.roomsList .download .button {
 		margin-bottom: 10px;
 		padding: 0 45px 0 35px;
@@ -1430,6 +1430,7 @@ html {
 .blogPost .more2 {margin-top: 15px}
 .blogPost .article {margin-top: 15px; position: relative}
 	.blogPost .article .postAction {top: -20px}
+	.blogPost .article img {max-width: 700px}
 .blogPost .tags {margin: 20px 0}
 .tags h3 {
 	color: #515151;

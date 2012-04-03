@@ -175,7 +175,7 @@ errorBn2=Technical error
 							<dt><label>Zones:</label></dt>
 							<dd>
 								<% loop {zones} %>
-									<label style="float: left; width: 49%"><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="zones[{id}][]" value="{value}"  /> {name}</label>
+									<label><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="zones[{id}][]" value="{value}"  /> {name}</label><br />
 								<% end %>
 								<span class="clr"></span>
 							</dd>
