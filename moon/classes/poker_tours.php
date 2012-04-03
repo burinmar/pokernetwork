@@ -355,5 +355,14 @@ function poker_tours_backend()
 			'key' => 'cercle-cadet-paris',
 			'playlist_id' => 72326519001
 		),
+		38 => array(
+			'uri'	=> 'anzpt',
+			'title'	=> 'Australia New Zealand Poker Tour',
+			'title_pre'	=> 'Australia New Zealand Poker Tour',
+			'img1'	=> $iDir . 'anzpt.png',
+			'img2'	=> $iDir . 'anzpt-big.png',
+			'key' => 'anzpt',
+			'playlist_id' => 72326519001
+		),
 	);
 }
