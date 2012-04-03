@@ -1,0 +1,96 @@
+<% info %>
+titleNew=New
+titleEdit=Edit
+
+error404=Item not found!
+error9=System error!
+
+<% main %>
+
+<% if {viewList} %>
+<div class="tabzoneHeader">
+	<h1>{pageTitle}</h1>
+</div>
+<!--# filter -->
+<% insert {filter} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
+		<input type="hidden" name="event" value="{goFilter}" />
+		<table>
+		<tr>
+			<td><label>Title:<input type="text" name="filter[title]" size="25" value="{title}" /></label></td>
+			<td><button type="submit" name="filtruok" class="btOK">Filter</button></td>
+		</tr>
+		</table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	</form>
+<% end {filter} %>
+
+<!--# items list -->
+<% if {items} %>
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<table class="list">
+			<colgroup>
+				<col style="width: 150px" />
+				<col style="width: 200px" />
+				<col />
+				<col style="width: 20px" />
+			</colgroup>
+			<thead>
+				<tr>
+					<th><a href="{orderby1}">Created</a></th>
+					<th>Nick</th>
+					<th>Title</th>
+					<th class="checkall"></th>
+				</tr>
+			</thead>
+			<tbody>
+			<% loop {items} %>
+				<tr <%if{is_hidden}%>class="item-hidden"<%end%>>
+					<td>{created}</td>
+					<td>{nick}<small> (id:{id})</small></td>
+					<td><a href="{goEdit}">{title}</a></td>
+					<td><input type="checkbox" name="it[]" value="{id}" /></td>
+				</tr>
+			<% end {items} %>
+			</tbody>
+		</table>
+		<div class="list-footer">
+			<input type="button" class="button fr btDel" value="Delete selected" />
+		</div>
+	</form>
+	<br />
+	{paging}
+
+<% else {items} %>
+	<div class="explain">There are no items</div>
+<% end {if} %>
+
+<% else {viewList} %>
+<div class="tabzoneHeader">
+	<h1>{pageTitle}</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+<!--# item form -->
+	<script type="text/javascript">
+	var refreshUrl = '{selfUrl}';
+	</script>
+	<form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
+		<input type="hidden" name="id" value="{id}" />
+		<input type="hidden" name="event" value="{event}" />{refresh}
+		<h2 class="formTitle">{formTitle}</h2><span class="clr"></span>
+		
+		<dl>
+			<dt><label>Title</label></dt>
+			<dd>{title}</dd>
+			
+			<dt><label>Body</label></dt>
+			<dd class="w100">
+				{toolbar}
+				<textarea rows="25" cols="65" name="body" id="i_body">{body}</textarea>
+			</dd>
+		</dl>
+
+		<div class="formButton"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	</form>
+<% end {viewList} %>

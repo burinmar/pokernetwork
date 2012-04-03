@@ -43,7 +43,6 @@ Banners {ico=banners, admin=ads,hide=0}
 		banners.statistics#zones = Zones
 		banners.statistics#banners = Banners
 
-
 Poker Players {ico=players, admin=content}
 	Twitter {link=other.twitter_players, admin=content,sites=}
 		other.twitter_players = Poker Twitters
@@ -73,7 +72,10 @@ Video {ico=video, admin=content, hide=0}
 	video.video_import = Video import
 	video.video = Videos
 	video.categories = Video Categories
-	
+
+Blogs {ico=news, admin=content, hide=0}
+	blogs.posts=Posts {admin=}
+
 Users {ico=users, admin=users}
 	users.users=Users
 	users.admins=Administrators

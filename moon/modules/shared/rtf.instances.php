@@ -86,6 +86,19 @@ switch ($instance) {
 		$cfg['attachments'] = 'image+,video,html';
 		break;
 
+	case 'blog_post_adm':
+		$cfg['fileDir'] = 'w/blogs/';
+		$cfg['fileSRC'] = '/w/blogs/';
+		$cfg['parserFeatures'] =  array(
+			'replace' => array('h' => 'h2'),
+			'tags' => 'h|b|i|u|quote|list|list-1|url|video|img|sub|sup|strike|code|table|game',
+			'smiles' => TRUE
+		);
+		$cfg['features'] = '-timer,-spoiler,-twitter,-code';
+		$cfg['tableObjects'] = 'blog_attachments';
+		$cfg['attachments'] = 'image+,video,html';
+		break;
+
 	case 'blog_post_comment' :
 		$cfg['features'] = '-sub,-sup,-strike,-list,-olist,-code,-heading,-table,-timer,-link,-img,-video,-spoiler';
 		$cfg['parserFeatures'] =  array(
