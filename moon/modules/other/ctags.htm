@@ -1,8 +1,7 @@
 <% cloud:main %>
-<div class="widget newsList">
-	<h1 class="widgetTitle">Tags</h1>
+<div class="widget tagCloud">
+	<h1 class="pageTitle">Tags</h1>
 	<div class="widgetIntro">{description}</div>
-	
 	<%loop {list.tags += cloud:tag} %>
 		<a href="{url.tag}" rel="tag" style="font-size: {fontSize}px;" class="cloud">{name}</a>
 	<%end%>

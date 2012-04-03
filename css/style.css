@@ -1646,3 +1646,6 @@ iframe.modalWindow {
 
 .leftMenu .active {color: #000}
 .leftMenu a {display: block; margin-bottom: 3px}
+
+.tagCloud h1 {margin-bottom: 10px}
+.tagCloud .cloud {display: inline-block; margin: 0 10px 10px 0; line-height: 100%}
