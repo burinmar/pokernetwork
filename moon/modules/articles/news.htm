@@ -144,11 +144,6 @@ $(document).ready(function () {
 	</div>
 	<% end %>
 
-	<div class="banner banner200">
-		<a href="#"><img src="http://placekitten.com/200/200" alt="" /></a>
-		<a href="#"><img src="http://placekitten.com/200/200" alt="" /></a>
-	</div>
-
 	<% if {relatedArticles} %>
 	<div class="widget noMarginBottom">
 		<h2 class="widgetTitle">Related Articles</h2>
@@ -177,19 +172,21 @@ $(document).ready(function () {
 	</div>
 	<% end %>
 
-	<div id="std_right_1" class="banner" style="display:none;"></div>
-	<script type="text/javascript">
-		/*<![CDATA[*/
-		addBanner('std_right_1', 'std:right:1');
-		/*]]>*/
-	</script>
+	<div class="twoBanners">
+		<div id="std_right_1" class="banner" style="display:none;"></div>
+		<script type="text/javascript">
+			/*<![CDATA[*/
+			addBanner('std_right_1', 'std:right:1');
+			/*]]>*/
+		</script>
 
-	<div id="std_right_2" class="banner" style="display:none;"></div>
-	<script type="text/javascript">
-		/*<![CDATA[*/
-		addBanner('std_right_2', 'std:right:1');
-		/*]]>*/
-	</script>
+		<div id="std_right_2" class="banner" style="display:none;"></div>
+		<script type="text/javascript">
+			/*<![CDATA[*/
+			addBanner('std_right_2', 'std:right:1');
+			/*]]>*/
+		</script>
+	</div><span class="clr"></span>
 
 </div>
 
