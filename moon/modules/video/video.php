@@ -143,7 +143,7 @@ class video extends moon_com {
 			'video' => array(),
 			'tag' => '',
 			'currPage' => 1,
-			'listLimit' => 20,
+			'listLimit' => 40,
 			'year' => 0,
 			'month' => 0
 		);
