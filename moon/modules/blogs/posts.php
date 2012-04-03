@@ -170,7 +170,7 @@ class posts extends moon_com {
 		$m = array(
 			'title' => $postTitle,
 			'body' => $post['body'],
-			'tags' => implode(', ', $t),
+			'tags' => implode(' &clubs; ', $t),
 			'date' => $loc->datef($post['created_on'], 'BlogPostList'),
 			'commentsCount' => $post['disable_comments'] ? 0 : $post['comm_count'],
 			'is_hidden' => $post['is_hidden'],
