@@ -17,7 +17,6 @@ class promos extends base_inplace_syncable
 			$this->importData();
 		}
 		parent::events($event, $argv);
-		moon::page()->js('/js/modules_adm/promo.js');
 		if (isset($_GET['sync']) || isset($_POST['sync'])) {
 			$this->sync();
 			moon_close();exit;

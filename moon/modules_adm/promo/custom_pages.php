@@ -16,8 +16,6 @@ class custom_pages extends base_inplace_syncable
 		}
 		$this->promoId = intval($promoId);
 		parent::events($event, $argv);
-
-		moon::page()->js('/js/modules_adm/promo.js');
 	}
 
 	private function getPromo($id)
