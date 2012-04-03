@@ -5,7 +5,7 @@ class posts extends moon_com {
 	{
 		$this->filter = array();
 		$this->formFilter = &$this->form();
-		$this->formFilter->names('title');
+		$this->formFilter->names('nick', 'title');
 		
 		$this->formItem = &$this->form('item');
 		$this->formItem->names('id', 'title', 'body', 'tags', 'is_hidden', 'created_on', 'disable_smiles');
@@ -268,6 +268,13 @@ class posts extends moon_com {
 		$where[] = 'WHERE p.is_hidden < 2';
 		
 		if (!empty($this->filter)) {
+			if ($this->filter['nick'] != '') {
+				$vbdb = & moon::db('database-vb');
+				$sql="SELECT userid FROM vb_user WHERE username='".$vbdb->escape($this->filter['nick'])."'";
+				$n = $vbdb->single_query($sql);
+				$userId = (count($n) ? $n[0] : 0);
+				$where[] = 'p.user_id = ' . intval($userId);
+			}
 			if ($this->filter['title'] != '') {
 				$where[] = 'p.title LIKE \'%' . $this->db->escape($this->filter['title']) . '%\'';
 			}
