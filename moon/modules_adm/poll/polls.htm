@@ -208,13 +208,13 @@ function enablePollIsTrivia()
 	<%if {allow_add_answers} %><a href="javascript:;" class="deleteControl remove-item"></a><%end%>
 
 	<% if {is_trivia} %>
-	<input type="radio" name="is_correct_answer" value="{correctAnsVal}" <% if {correct} %>checked="checked"<% end {correct} %> /> <% if {correct} %><span id="correct-answ">Correct answer</span><% end {correct} %> 
+	<label><input type="radio" name="is_correct_answer" value="{correctAnsVal}" <% if {correct} %>checked="checked"<% end {correct} %> /> <% if {correct} %><span id="correct-answ">Correct answer</span><% end {correct} %></label> 
 	<% end {is_trivia} %>
 </div>
 
 
 <% restrictions.item %>
-<input type="radio" name="restrictions" value="{value}" <% if {selected}%> checked="checked"<%end%> /> {name} <br />
+<label><input type="radio" name="restrictions" value="{value}" <% if {selected}%> checked="checked"<%end%> /> {name}</label> <br />
 
 <% stats.item %>
 <tr><td>{answer}</td><td style="text-align:right;">{percent}%</td></tr>
