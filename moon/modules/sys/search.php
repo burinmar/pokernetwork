@@ -179,7 +179,6 @@ class search extends moon_com {
 		$locale = & moon :: locale();
 		$page = moon::page();
 		$oVideo = $this->object('video.video');
-		$page->css('/css/video.css');
 		$s = '';
 		foreach ($dat as $d) {
 			$uri = $oVideo->getVideoUri($d['id'], $d['name']);
