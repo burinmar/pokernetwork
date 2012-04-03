@@ -127,7 +127,7 @@ function getItems()
 		foreach ($result as $r) {
 				$tours[$r['id']]['is_hidden'] = (isset($tours[$r['id']])) ? $r['is_hidden'] : 1;
 		}
-		usort($tours, array($this, 'cmpItems'));
+		uasort($tours, array($this, 'cmpItems'));
 		return $tours;
 }
 private function cmpItems($a, $b) {
