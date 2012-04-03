@@ -955,7 +955,7 @@ html {
 		}
 
 /*Rooms - Reviews*/
-.roomsList .download {text-align: center; margin-right: 60px}
+.roomsList .download {text-align: center}
 	.roomsList .download .button {
 		margin-bottom: 10px;
 		padding: 0 45px 0 35px;
