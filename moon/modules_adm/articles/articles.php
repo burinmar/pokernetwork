@@ -273,7 +273,7 @@ function renderForm($vars)
 		'geo_zones' => '',
 		'uriNumericSuffix' => '',
 
-		'showPromo' => true,
+		'showPromo' => false,
 		'showHomepageSlider' => true,
 		'showViewArticleLink' => $form->get('id'),
 		'showTwitter' => false,//$this->my('name') == 'news',
