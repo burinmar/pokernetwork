@@ -37,13 +37,13 @@ function logout()
 }
 
 function login($uName,$uPass,&$err) {
-	if ($uName==='admin' && $uPass==='admin') {
+	/*if ($uName==='admin' && $uPass==='admin') {
 		//laikinos galines durys
 		$err = 0;
 		$a = array('userid'=>-1,'username'=>'admin','admin'=>1,'email'=>'audrius.naslenas@ibus.lt');
 		$this->loginUnconditional($a);
 		return true;
-	}
+	}*/
 	$this->vbLogin($uName, $uPass, $err);
 	$user =& moon::user();
 	if ($id = $user->id()) {
