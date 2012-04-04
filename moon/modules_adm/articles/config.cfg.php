@@ -34,5 +34,5 @@ $cfg['articles'] = array(
 	'var.imagesSrc' => '/w/editors/',
 	'dir.imagesDir' => _W_DIR_ . 'editors/',
 
-	'var.articlesSuffixStartId' => 1
+	'var.articlesSuffixStartId' => is_dev() ? 26550 : 26696
 );
