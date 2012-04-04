@@ -65,6 +65,13 @@ class articles_import extends moon_com
 				break;
 			case 'recompile':
 				$msg = $this->recompile();
+				break;
+			case 'check-broken-links':
+				//die('disabled');
+				//$this->displayResults();exit;
+				set_time_limit(1800);
+				$this->articlesBrokenLinks();
+				exit;
 		}
 
 		print $msg;exit;
@@ -634,6 +641,97 @@ class articles_import extends moon_com
 		}
 
 		print implode('<br />', $msgs);
+	}
+
+	function articlesBrokenLinks()
+	{
+		$oArticles = $this->object('articles');
+		$page = moon::page();
+		$homeUrl = $page->home_url();
+		
+		$lastId = 0;
+		$data = file('tmp/broken-links-ids.log');
+		$lastId = intval($data[count($data)-1]);
+		
+		$res = array();
+		$sql = 'SELECT id, content_html
+			FROM ' . $this->table('Articles') . '
+			WHERE 
+				(content_html LIKE "%<img %" OR content_html LIKE "%<a %") AND
+				id > ' . $lastId . '
+			ORDER BY id ASC';
+		$result = $this->db->array_query_assoc($sql);
+		foreach ($result as $r) {
+			$html = $r['content_html'];
+			$a = $oArticles->checkBrokenLinks($html);
+			
+			if (!empty($a)) {
+				$url = $homeUrl . 'adm/articles-news/edit/' . $r['id'] . '.htm';
+				$a['url'] = $url;
+				$res[$r['id']] = $a;
+				
+				//$this->displayResults(array($r['id'] => $a));
+				$this->saveResults(array($r['id'] => $a));
+			}
+		}
+		print 'Done';
+		$this->displayResults();
+		exit;
+	}
+
+	function saveResults($res)
+	{
+		//log checked articles ids
+		if ($f=fopen('tmp/broken-links-ids.log','ab')) {
+			$s = key($res)."\n";
+			$r=fputs($f,$s);
+			fclose($f);
+		}
+		if ($f=fopen('tmp/broken-links.log','ab')) {
+			$s = '====='.serialize($res);
+			$r=fputs($f,$s);
+			fclose($f);
+		}
+		
+		$this->db->update(array('has_broken_links' => 1), $this->table('Articles'), array('id' => key($res)));
+	}
+
+	function displayResults()
+	{
+		$s = file_get_contents('tmp/broken-links.log');
+		$data = explode('=====', $s);
+		
+		$page = moon::page();
+		$homeUrl = $page->home_url();
+		
+		$s = '';//'Broken links found: <br /><br />';
+		$items = array();
+		foreach ($data as $d) {
+			if (!is_array($d) && empty($d)) continue;
+			$res = unserialize($d);
+			$items[key($res)] = $res[key($res)];
+		}
+		ksort($items);
+		foreach ($items as $k=>$r) {
+			$url = '<a href="' . $r['url'] . '">' . $k . '</a>';
+			$s .= 'article id: <b style="color:#FF0000;">' . $url . '</b>';
+			$s .= '<hr />';
+			
+			if (!empty($r['img'])) {
+				foreach ($r['img'] as $url=>$v) {
+					$url = strpos($url, 'http://') === false ? $homeUrl . ltrim($url, '/') : $url;
+					$s .= '<a href="'.$url.'">'.$url.'</a> status code: ' . $v . '<br />';
+				}
+			}
+			if (!empty($r['a'])) {
+				foreach ($r['a'] as $url=>$v) {
+					$url = strpos($url, 'http://') === false ? $homeUrl . ltrim($url, '/') : $url;
+					$s .= '<a href="'.$url.'">'.$url.'</a> status code: ' . $v . '<br />';
+				}
+			}
+			$s .= '<br /><br />';
+		}
+		print $s;
 	}
 
 }
