@@ -5,7 +5,7 @@ if (is_dev()) {
 	ini_set('display_errors', TRUE);
 	ini_set('error_reporting', E_ALL);
 }
-elseif (isset ($_SERVER['HTTP_HOST'])) {
+/*elseif (isset ($_SERVER['HTTP_HOST'])) {
 	//	DEMO SECURITY
 	if(isset($_POST['demopass']) && $_POST['demopass']=='welcome'){
 		setcookie('demoin',1,time()+3600*6,'/');
@@ -14,7 +14,7 @@ elseif (isset ($_SERVER['HTTP_HOST'])) {
 		<?	die();
 	}
 	//DEMO SECURITY
-}
+}*/
 moon_init('ini/moon.ini', 'engine');
 moon_reconfig();
 $all = moon_process();
