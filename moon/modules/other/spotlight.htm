@@ -1,7 +1,7 @@
 <% view:home %>
 <% if {items:spotlight:home} %>
 <div class="widget noMarginBottom">
-	<h2 class="widgetTitle"><a href="#">Online poker room ratings and promotions</a></h2>
+	<h2 class="widgetTitle"><a href="/online-poker/">Online poker room ratings and promotions</a></h2>
 	<div id="spotlightSlider">
 		<% loop {items:spotlight:home} %>
 		<div class="slider pnSliderTab" <% if {notCurrent} %>style="display:none;"<% end %>><a href="{url.item}" target="_blank"><img src="{imgSrc}" alt="{imgAlt}" width="517" height="175" /></a></div>
