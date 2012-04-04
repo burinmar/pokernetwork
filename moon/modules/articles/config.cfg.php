@@ -19,7 +19,7 @@ $cfg['articles'] = array(
 
 	'comp.rtf' => 'MoonShared.rtf',
 
-	'var.suffixStartId' => is_dev() ? 26550 : 1,
+	'var.suffixStartId' => is_dev() ? 26550 : 26696,
 	'var.addToSuffix' => 1000,
 	'var.imagesSrcArticlesStd' => '/w/articles/img/',
 	'var.typeNews' => 1,
