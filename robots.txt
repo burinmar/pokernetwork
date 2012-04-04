@@ -1,0 +1,3 @@
+USER-AGENT: *
+Allow: /
+Sitemap: http://www.pokernetwork.com/google-sitemap.xml
