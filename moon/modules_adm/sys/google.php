@@ -131,7 +131,7 @@ class google extends moon_com {
 		$count = $this->db->num_rows($r);
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
-	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . ($d['id']>26696 ? '-' . (1000+$d['id']) : '') . '.htm</loc>
+	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . (FALSE && $d['id']>26696 ? '-' . (1000+$d['id']) : '') . '.htm</loc>
 		<lastmod>' . date('c', max($d['published'], $d['updated'])) . '</lastmod>
 		<changefreq>never</changefreq>
 	</url>';
