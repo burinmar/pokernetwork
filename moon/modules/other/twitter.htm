@@ -5,7 +5,7 @@
 	<div class="filterTabs filterTabsTopLine clrfix">
 		<b>Show:</b>
 		<ul>
-			<li><a href="{uri.messages}" class="current">Tweets by date</a></li>
+			<li class="on"><a href="{uri.messages}">Tweets by date</a></li>
 			<li><a href="{uri.players}">Tweeters</a></li>
 		</ul>
 	</div>
@@ -30,7 +30,8 @@
 	<div class="filterTabs filterTabsTopLine clrfix">
 		<b>Show:</b>
 		<ul>
-			<li><a href="{uri.messages}">Tweets by date<span class="cbr"></span></a></li><li><a href="{uri.players}" class="current">Tweeters<span class="cbr"></span></a></li>
+			<li><a href="{uri.messages}">Tweets by date</a></li>
+			<li class="on"><a href="{uri.players}">Tweeters</a></li>
 		</ul>
 	</div>
 	<% if {items:players} %>
