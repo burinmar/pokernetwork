@@ -698,13 +698,13 @@ html {
 	display: inline-block;
 	font-size: 14px;
 	vertical-align: top;
-	width: 240px;
+	width: 244px;
 }
 .twitterList li:nth-child(3n) {
 	border-left: 0;
-	border-right: 0;
-	width: 246px;
+	width: 243px;
 }
+.twitterList li img {float: left; margin-right: 20px}
 .twitterList a {
 	display: block;
 	height: 70px;
