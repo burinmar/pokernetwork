@@ -2,13 +2,13 @@
 <div class="widget twitterListPage">
 	<h1 class="pageTitle">Poker Tweets<% if {playerName} %> - {playerName}<% else {playerName} %> <% end %></h1>
 	<p class="widgetIntro"><%if{playerName}%>Keep track of {playerName} tweets right here at PokerNetwork.<%else{playerName}%>Keep track of all your favorite poker players right here at PokerNetwork.<%end%></p>
-	<!--# div class="filterTabs filterTabsTopLine clrfix">
+	<div class="filterTabs filterTabsTopLine clrfix">
 		<b>Show:</b>
 		<ul>
-			<li><a href="{uri.messages}" class="current">{!tweets_by}</a></li>
-			<li><a href="{uri.players}">{!tweeters}</a></li>
+			<li><a href="{uri.messages}" class="current">Tweets by date</a></li>
+			<li><a href="{uri.players}">Tweeters</a></li>
 		</ul>
-	</div-->
+	</div>
 	<% if {items:messages} %><br />
 	<ul class="tweets clrfix" style="margin-bottom: 30px">
 		<% loop {items:messages} %>
@@ -25,32 +25,28 @@
 
 <% list_players %>
 <div class="widget twitterListPage">
-	<div class="widgetInner">
-		<div class="ctl"></div>
-		<div class="ctr"></div>
-		<div class="cbl"></div>
-		<div class="cbr"></div>
-		<h1 class="widgetTitle">{!poker_tweeters}</h1>
-		<p class="widgetIntro">{!keep_track}</p>
-		<ul class="navigationButtons">
-			<li><a href="{uri.messages}">{!tweets_by}<span class="cbr"></span></a></li><li><a href="{uri.players}" class="current">{!tweeters}<span class="cbr"></span></a></li>
+	<h1 class="pageTitle">Poker Tweeters</h1>
+	<p class="widgetIntro">Keep track of all your favorite poker players right here at PokerNetwork.</p>
+	<div class="filterTabs filterTabsTopLine clrfix">
+		<b>Show:</b>
+		<ul>
+			<li><a href="{uri.messages}">Tweets by date<span class="cbr"></span></a></li><li><a href="{uri.players}" class="current">Tweeters<span class="cbr"></span></a></li>
 		</ul>
-		{searchBox}
-		<% if {items:players} %>
-		<ul class="twitterList" style="margin-bottom: 30px">
-			<% loop {items:players} %>
-			<li>
-				<a href="{url.author}">
-					<img class="fl20" src="{avatarSrc}" width="48" height="48" alt="{author}" />
-					{author}<br />
-					<% if {date} %><span class="date">{!last_post} {date}</span><% end %>
-				</a>
-			</li>
-			<% end %>
-		</ul>
-		{paging}
-		<% end %>
 	</div>
+	<% if {items:players} %>
+	<ul class="twitterList" style="margin-bottom: 30px">
+		<% loop {items:players} %>
+		<li>
+			<a href="{url.author}">
+				<img class="fl20" src="{avatarSrc}" width="48" height="48" alt="{author}" />
+				{author}<br />
+				<% if {date} %><span class="date">Last post: {date}</span><% end %>
+			</a>
+		</li>
+		<% end %>
+	</ul>
+	{paging}
+	<% end %>
 </div>
 
 
