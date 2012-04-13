@@ -57,6 +57,7 @@ class review extends moon_com {
 
 
 						default :
+							$p->redirect('/'.$d[1].'/');
                             $this->use_page('Index');
                             $this->set_var('view', $d[2]);
 							/*if (!isset ($d[3]))
