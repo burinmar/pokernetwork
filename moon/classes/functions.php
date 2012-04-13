@@ -512,5 +512,48 @@ function make_uri($s) {
 	return $txt->make_uri($s);
 }
 
+include_class('moon_mail');
+class smtpMail extends moon_mail {
+
+	function send() {
+		if (!$this->to) {
+			$this->_error('noto', 'W');
+			return FALSE;
+		}
+		list($headers, $msg) = explode($this->eol . $this->eol, $this->construct_mail(), 2);
+		$ok = FALSE;
+		include_class('class.smtp');
+
+		$cfg = array();
+		$cfg['host'] = 'ssl://smtp.gmail.com';
+		$cfg['port'] = '465';
+		$cfg['username'] = 'info@pokernetwork.com';
+		$cfg['password'] = '4AHpXtsa';
+
+		//$cfg['debug'] = '0';
+		$cfg['hostname'] = 'pokernews.com';
+		if($this->smtp_connect($cfg)) {
+			$ok = $this->smtp_send();
+			$this->smtp_close();
+		}
+		if (!$ok) {
+			$this->_error('mail_send', 'F', array('email' => $this->to));
+			if ($f=fopen('tmp/errors-smtp-notsent.log','ab')){
+				$s = "=====\n".$this->to."\n-----\n".$this->subject."\n-----\n".$msg."\n-----\n".trim($headers)."\n";
+				$r=fputs($f,$s);
+				fclose($f);
+			}
+		}
+		return $ok;
+	}
+}
+
+class moon extends moon_core {
+function &mail() {
+	$a=new smtpMail;
+	return $a;
+}
+}
+
 
 ?>
