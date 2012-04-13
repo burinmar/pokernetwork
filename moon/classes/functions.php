@@ -118,6 +118,10 @@ function url_logic($ev = false, $par = false) {
 					$d['mask'] = $d['uri'];
 					$found = $d;
 				}
+				elseif ($uri . '/' === $d['uri'] && $d['uri'] !== '/') {
+					// truksta slasho
+					$p->redirect($d['uri']);
+				}
 			}
 		}
 		//replace original urlmap
