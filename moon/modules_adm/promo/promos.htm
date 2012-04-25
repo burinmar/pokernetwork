@@ -274,17 +274,17 @@ $(document).ready(function(){
 			<textarea name="lb_descr" cols="105" rows="3">{entry.lb_descr}</textarea>
 		</dd>
 
-		<%if {form.not_lb_auto} %>
 		<dt><label>Leaderboard Results Columns</label></dt>
 		<dd class="w100">
 			<div class="forSlaveOriginalText">{form.origin_lb_columns}</div>
 			<input type="text" maxlength="50" size="50" class="width60" name="lb_columns" value="{entry.lb_columns}" />
 			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
 				"*" at the beginning of column name marks Player Name, "+" marks Player Points.
-			</div></dd>
-		<%else {form.not_lb_auto} %>
-		<input type="hidden" name="lb_columns" value="{entry.lb_columns}" />
-		<%end%>
+			</div>
+			<%if {form.not_lb_auto} %><%else {form.not_lb_auto} %>
+			<div class="explain">For automatic leaderboard (current default), you should have a localised counterpart of &quot;*Player; +Points&quot; as value of this field (key point: only 2 fields).</div>
+			<%end%>
+		</dd>
 	</dl>
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
 </form>

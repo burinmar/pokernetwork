@@ -83,7 +83,7 @@ class promo extends moon_com
 		$entry = $this->getPromo($argv['promo-alias']);
 		$this->partialRenderCommon($mainArgv, $entry, 'index');
 		$contentArgv = array(
-			'description' => $entry['descr_prize'],
+			'description' => $this->parseRoomTemplate($entry['descr_prize'], $entry['room_id']),
 			'schedule' => '',
 			'leaderboard' => ''
 		);
@@ -119,6 +119,8 @@ class promo extends moon_com
 
 	private function partialRenderIndexEvents($entry, $events, $evtRemain, $pwdCol, $roomsInfo, $tzName, $tzShift)
 	{
+		if (0 == count($events))
+			return ;
 		$locale = moon::locale();
 		$tpl = $this->load_template();
 		$currencies = array('USD' => '$', 'EUR' => '€');
@@ -336,6 +338,16 @@ class promo extends moon_com
 			SELECT 1 FROM promos_events
 			WHERE is_hidden=0 AND promo_id=' . intval($promoId) . '
 				AND start_date<FROM_UNIXTIME(' . (floor((time()-86400)/60)*60) . ')
+			LIMIT 1
+		');
+		return !empty($events_);
+	}
+
+	private function eventsExist($promoId)
+	{
+		$events_ = $this->db->array_query_assoc('
+			SELECT 1 FROM promos_events
+			WHERE is_hidden=0 AND promo_id=' . intval($promoId) . '
 			LIMIT 1
 		');
 		return !empty($events_);
@@ -561,7 +573,7 @@ class promo extends moon_com
 		$this->partialRenderCommon($mainArgv, $entry, 'terms-and-conditions');
 		$mainArgv = array_merge($mainArgv, array(
 			'class' => ' terms',
-			'content' => $entry['terms_conditions']
+			'content' => $this->parseRoomTemplate($entry['terms_conditions'], $entry['room_id'])
 		));
 
 		return $tpl->parse('all:main', $mainArgv);
@@ -602,7 +614,7 @@ class promo extends moon_com
 			'title' => htmlspecialchars($entry['title']),
 			'menu' => '',
 			'class' => '',
-			'intro' => $entry['descr_intro'],
+			'intro' => $this->parseRoomTemplate($entry['descr_intro'], $entry['room_id']),
 		);
 
 		// tab menu
@@ -620,6 +632,9 @@ class promo extends moon_com
 		if ('' == $entry['terms_conditions']) {
 			unset($menu['terms-and-conditions']);
 		}
+		if (!$this->eventsExist($entry['id'])) {
+			unset($menu['schedule']);
+		}
 		foreach ($this->getCustomPages($entry['id']) as $row) {
 			$menu[$row['alias']] = array($row['alias'] . '/', $row['title']);
 		}
@@ -635,6 +650,29 @@ class promo extends moon_com
 			moon::page()->css('/img/promo/' . rawurlencode($entry['skin_dir']) . '/style.css');
 		}
 		moon::page()->title($entry['title']);
+	}
+
+	private $parseRoomTemplateArgs = array();
+	private function parseRoomTemplate($text, $roomId)
+	{
+		if (!isset($this->parseRoomTemplateArgs[$roomId])) {
+			$room = $this->db->single_query_assoc('
+				SELECT r.alias, t.bonus_code FROM ' . $this->table('Rooms') . ' r
+				INNER JOIN ' . $this->table('Trackers') . ' t
+					ON t.parent_id=r.id AND t.alias=""
+				WHERE id=' . intval($roomId) . '
+			');
+			if (!isset($room['alias'])) 
+				return $text;
+			list($tplArgs['bonus_code'], $tplArgs['marketing_code']) = explode('|', $room['bonus_code'] . '|');
+			$tplArgs['visit']    = '/' . $room['alias'] . '/ext/'/*.$trackerURI*/.'?BN=Review';
+			$tplArgs['download'] = '/' . $room['alias'] . '/download/'/*.$trackerURI*/.'?BN=Review';
+			$this->parseRoomTemplateArgs[$roomId] = $tplArgs;
+		}
+		foreach ($this->parseRoomTemplateArgs[$roomId] as $key => $value) {
+			$text = str_replace('{' . $key . '}', htmlspecialchars($value), $text);
+		}
+		return $text;
 	}
 
 	private function parseResults($results, $columns)

@@ -17,6 +17,7 @@ class promos extends base_inplace_syncable
 			$this->importData();
 		}
 		parent::events($event, $argv);
+		moon::page()->js('/js/modules_adm/promo.js');
 		if (isset($_GET['sync']) || isset($_POST['sync'])) {
 			$this->sync();
 			moon_close();exit;
@@ -100,12 +101,13 @@ class promos extends base_inplace_syncable
 			}
 			foreach ($sites as $site) {
 				switch ($site) {
-				case 'com':
-					$domain = 'www.pokernews';
-					break;
-				case _SITE_ID_:
+				case 'pnw:com': // _SITE_ID_
 					$domain = 'www.pokernetwork';
 					break;
+				default:
+					$domain = 'com' == $site
+						? 'www.pokernews'
+						: $site . '.pokernews';
 				}
 				$domain .= is_dev()
 					? '.dev'
@@ -113,6 +115,8 @@ class promos extends base_inplace_syncable
 				$redirect = '';
 				if ('com' == $site && !empty($row['remote_id'])) { // from slave synced promo to master
 					$redirect = '?promo_id_redirect=' . $row['remote_id'];
+				} elseif ('com' != $site && 'com' == _SITE_ID_) { // from master to slave synced promo
+					$redirect = '?promo_id_redirect_master=' . $row['id'];
 				} else { // from slave or master original promo to self
 					$redirect = '?promo_id_redirect=' . $row['id'];
 				}
@@ -445,8 +449,6 @@ class promos extends base_inplace_syncable
 			callPnEvent($siteId, 'promo.promo_sync#sync', array(
 			 	'data' => $siteData
 			), $answer,FALSE);
-			header('content-type: text/plain');
-			print_R($answer);
 		}
 	}
 
@@ -463,7 +465,7 @@ class promos extends base_inplace_syncable
 
 	public function updates()
 	{
-		if ('com'==_SITE_ID_) {
+		if ('com'==_SITE_ID_ ) {
 			return array();
 		}
 		// index
