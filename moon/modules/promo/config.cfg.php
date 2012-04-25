@@ -9,6 +9,7 @@ $cfg['promo'] = array(
 	'tb.PromosEvents' => 'promos_events',
 	'tb.PromosEventsMaster' => 'promos_events_push',
 	'tb.Rooms' => 'rw2_rooms',
+	'tb.Trackers' => 'rw2_trackers',
 	'tb.CustomRooms'=>'promos_rooms',
 
 	'dir.fs:Css' => (is_dev() ? getenv("CMS_PATH") . 'img/' : 'img/') . 'promo/',
