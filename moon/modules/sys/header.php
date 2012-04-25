@@ -26,7 +26,19 @@ class header extends moon_com
 		}
 		$tplArgv['url.search'] = $navi->getLink('search');
 
-		return $tpl->parse('main', $tplArgv);
+		$res = $tpl->parse('main', $tplArgv);
+
+		$isHomepage = 'home' == $navi->on();
+		if (!$isHomepage) {
+			return $res;
+		}
+		//wallpaper
+		$bgURL = '/leagues/pkr-daily-dollar-wsop-rake-chase/';
+		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
+		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000 url(\'/img/pkr_wsop_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+
+
+		return $res;
 	}
 
 	private function partialRenderUserBlock($tpl)

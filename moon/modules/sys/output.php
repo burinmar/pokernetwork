@@ -71,6 +71,10 @@ class output extends moon_com {
 		if (is_array($css)) {
 			$garbage = '';
 			foreach ($css as $v) {
+				if (strpos($v, '<style') !== false) {
+					$m['head.tags'] .= $v . "\n";
+					continue;
+				}
 				if (strpos($v, "?"))
 					list($v, $garbage) = explode("?", $v);
 				$mt = $this->getFileModTime($v, $garbage);
