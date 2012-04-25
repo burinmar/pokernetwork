@@ -180,5 +180,5 @@ jQuery(document).ready(function(){
 	fixPlaceholders();
 	jQuery(window).bind('scroll resize',floatHeader);
 	$('#topRooms').mouseover(roomsBox);
-	if (bgURL) trackOutgoing();
+	if (typeof bgURL != "undefined") trackOutgoing();
 });
