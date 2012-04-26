@@ -103,5 +103,6 @@
 
 
 /*SKINS*/
-#landing.pokerstars5k {background-image: url('/img/landing/pokerstars5k/intro.jpg?1'); padding: 40px 35px 65px 65px}
-#landing.pokerstars5k .download {background-image: url('/img/landing/pokerstars5k/download.png?1'); line-height: 60px; width: 306px; height: 60px; font-size: 29px; text-transform: none; font-weight: normal}
+#landing.scoop2012 {background-image: url('/img/landing/scoop-2012/intro.jpg?1')}
+#landing.scoop2012 .download {background-image: url('/img/landing/scoop-2012/download.png'); color: #900; position: relative}
+#landing.scoop2012 .download:after {position: absolute; top: 7px; right: -180px; content: ''; background: url('/img/landing/scoop-2012/stars-logo.png'); width: 149px; height: 22px}
