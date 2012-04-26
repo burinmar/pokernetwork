@@ -11,14 +11,15 @@ class promos extends moon_com
 			} else {
 				moon::page()->page404();
 			}
-		}
-		if (isset($_GET['promo_id_redirect_master'])) {
+		} elseif (isset($_GET['promo_id_redirect_master'])) {
 			if (null != ($url = $this->getPromoMasterAlias($_GET['promo_id_redirect_master']))) {
 				$url = moon::shared('sitemap')->getLink('promotions') . $url . '/';
 				moon::page()->redirect($url, 301);
 			} else {
 				moon::page()->page404();
 			}
+		} elseif ($event == 'get-active-promos') {
+			return moon::page()->set_local('transporter', ($this->getActivePromosExport()));
 		}
 		$segments = explode('/', moon::page()->requested_event('REST'));
 		switch ($segments[0]) {
@@ -111,5 +112,16 @@ class promos extends moon_com
 		return !empty($alias['alias'])
 			? $alias['alias']
 			: null;
+	}
+
+	private function getActivePromosExport()
+	{
+		$time = time();
+		return array_keys($this->db->array_query_assoc('
+			SELECT ' . (_SITE_ID_ == 'com' ? 'id' : 'remote_id') . ' id FROM promos
+			WHERE is_hidden = 0 
+			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) 
+			  AND ' . (_SITE_ID_ == 'com' ? '1' : 'remote_id>0') . '
+		', 'id'));
 	}
 }
