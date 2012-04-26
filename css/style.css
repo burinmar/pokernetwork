@@ -267,6 +267,7 @@ html {
 	#wrapper {
 		width: 1000px;
 		margin: 0 auto;
+		cursor: default
 	}
 	#body {
 		margin-bottom: 25px;
