@@ -12,6 +12,10 @@ var livePoker = function() {
 		if (typeof jQuery('#widgetEL .pgga').attr('class') == 'undefined') {
 			return;
 		}
+		if (jQuery('#widgetEL .pg1').length == 0) {
+			jQuery('#widgetEL .paging').hide();
+			return ;
+		}
 		ELPageNr = parseInt(jQuery('#widgetEL .pgga').attr('class').match(/pgg([0-9]+)/)[1], 10);
 		showELPage(ELPageNr);
 		jQuery('#widgetELShow').click(function(e) {
