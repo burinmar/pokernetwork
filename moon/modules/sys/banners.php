@@ -92,7 +92,7 @@ class banners extends moon_com
 		}
 		return $output;
 	}
-	
+
 	function getUriList()
 	{
 		$sitemap = moon::shared('sitemap');
@@ -163,7 +163,7 @@ class banners extends moon_com
 	function setBannersViewed($data)
 	{
 		foreach ($data as $d) {
-			print $sql = '
+			$sql = '
 				INSERT DELAYED INTO ' . $this->table('BannersStats') . '
 				(banner_id, campaign_id, site_id, zone, date, views, clicks)
 				VALUES (' . intval($d['gid']) . ', ' . intval($d['cid']) . ', ' . intval($d['sid']) . ', "' . $this->db->escape($d['zone']) . '", ' . floor(time() / 3600)*3600 . ', 1, 0)
@@ -213,7 +213,7 @@ class banners extends moon_com
 			     	AND bm.site_id != 0
 			GROUP BY cb.id;';
 		$result = $this->db->array_query_assoc($sql);
-		
+
 		$locale = &moon::locale();
 		$nowDay = floor($locale->now() / 86400) * 86400;
 
