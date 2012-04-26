@@ -1109,7 +1109,7 @@ class sync_reporting_v2 extends moon_com
 				'day_id'    => $logRow['day_id'],
 				'event_id'  => $logRow['event_id'],
 				'created_on' => $logRow['created_on'],
-				'is_hidden' => 1
+				'is_hidden' => empty($this->lAutopublish)
 			);
 			$id = $this->db->insert($photo, 'reporting_ng_photos', 'id');
 			/* if ($id && isset($row['tags'][$oldId])) {
