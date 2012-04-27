@@ -9,6 +9,8 @@ function onload()
 
 	$this->formItem = &$this->form('item');
 	$this->formItem->names('id', 'category_id', 'title', 'uri', 'meta_keywords', 'meta_description', 'summary', 'content', 'authors', 'img', 'img_alt', 'tags', 'published', 'is_hidden', 'is_promo', 'room_id', 'double_banner', 'content_type', 'geo_target', 'promo_text', 'promo_box_on', 'homepage_promo', 'short_title', 'facebook_summary', 'twitter_text');
+	$this->formItemImport = &$this->form('itemImport');
+	$this->formItemImport->names('url');
 
 	$this->sqlWhere = ''; // set by filter
 	$this->sqlOrder = '';
@@ -53,6 +55,16 @@ function events($event, $par)
 		case 'delete':
 			if (isset($_POST['it'])) $this->deleteItem($_POST['it']);
 			$this->redirect('#');
+			break;
+		case 'import-item-form':
+			$this->set_var('view', 'formImport');
+			break;
+		case 'import-item':
+			if ($id = $this->importItem()) {
+				$this->redirect('#edit', $id);
+			} else {
+				$this->set_var('view', 'formImport');
+			}
 			break;
 		case 'imgtool':
 			if (is_object($tool = & moon::shared('imgtool'))) {
@@ -180,7 +192,8 @@ function properties()
 		'view' => 'list',
 		'currPage' => '1',
 		'listLimit' => '50',
-		'error' => FALSE
+		'error' => FALSE,
+		'errorImport' => FALSE
 	);
 }
 function main($vars)
@@ -196,6 +209,8 @@ function main($vars)
 
 	if ($vars['view'] == 'form') {
 		return $this->renderForm($vars);
+	} elseif ($vars['view'] == 'formImport') {
+		return $this->renderFormImport($vars);
 	} else {
 		return $this->renderList($vars);
 	}
@@ -238,7 +253,9 @@ function renderList($vars)
 		'paging' => $paging,
 		'pageTitle' => $win->current_info('title'),
 		'goNew' => $this->linkas('#edit'),
-		'goDelete' => $this->my('fullname') . '#delete'
+		'goDelete' => $this->my('fullname') . '#delete',
+		'allowImport' => true,
+		'goImport' => $this->linkas('#import-item-form')
 	) + $ordering;
 	return $tpl->parse('main', $m);
 }
@@ -339,7 +356,7 @@ function renderForm($vars)
 
 	$optContentType = $this->getContentTypes($form->get('content_type'));
 	$m['optContentType'] = $form->options('content_type', $optContentType);
-	
+
 	/*
 	//geo target
 	$m['showGeoTarget'] = true;
@@ -378,6 +395,30 @@ function renderForm($vars)
 	}
 
 	return $tpl->parse('main', $m);
+}
+function renderFormImport($vars)
+{
+	$tpl = &$this->load_template();
+	$win = &moon::shared('admin');
+	$page = &moon::page();
+	$sitemap = moon::shared('sitemap');
+	$info = $tpl->parse_array('info');
+
+	$err = ($vars['errorImport'] !== FALSE) ? $vars['errorImport'] : FALSE;
+
+	$form = $this->formItemImport;
+	$title = $info['titleNew'];
+
+	$m = array(
+		'error' => ($err !== FALSE) ? $info['errorImport' . $err] : '',
+		'event' => $this->my('fullname') . '#import-item',
+		'goBack' => $this->linkas('#') . '?page=' . $vars['currPage'],
+		'pageTitle' => $win->current_info('title'),
+		'formTitle' => htmlspecialchars($title),
+		'refresh' => $page->refresh_field()
+	) + $form->html_values();
+
+	return $tpl->parse('viewFormImport', $m);
 }
 function saveItem()
 {
@@ -660,7 +701,48 @@ function saveImage($id , $name, &$err, $del = FALSE) //insertina irasa
 
 	return $newPhoto;
 }
+function importItem()
+{
+	$postData = $_POST;
+	$form = &$this->formItemImport;
+	$form->fill($postData);
+	$values = $form->get_values();
 
+	// Validation
+	$errorMsg = 0;
+	if ($values['url'] == '') {
+		$errorMsg = 1;
+	} elseif (strpos($values['url'], 'http://www.pokernews.dev/') !== 0) {
+		$errorMsg = 2;
+	}
+
+	if ($errorMsg) {
+		$this->set_var('errorImport', $errorMsg);
+		return FALSE;
+	}
+
+	// if was refresh skip other steps and return
+	if ($form->was_refresh()) {
+		return;
+	}
+
+	$url = $form->get('url');
+
+	// perform import
+	$page = moon::page();
+	$page->call_event('import_news#import-news-by-url', array($url));
+	$id = $page->get_local('lastImportedNewsId');
+
+	if ($id) {
+		// log this action
+		blame($this->my('fullname'), 'Article imported', $id);
+	} else {
+		$this->set_var('errorImport', 3);
+		return FALSE;
+	}
+
+	return $id;
+}
 //pakeiciam paveiksliuka gauta su crop toolsu
 function imgReplace($id) //insertina irasa
 {

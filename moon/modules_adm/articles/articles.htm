@@ -15,11 +15,15 @@ errorImage1=Image error: Incorrect extension!
 errorImage2=Image error: Techical error!
 errorImage3=Article will remain hidden until you upload leading picture!
 
+errorImport1=Url required
+errorImport2=Url must start with http://www.pokernews.com/
+errorImport3=No such article or article already imported
+
 <% main %>
 <% if {viewList} %>
 <div class="tabzoneHeader clrfix">
 	<h1>{pageTitle}</h1>
-	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
+	<div class="fr"><%if{allowImport}%><a href="{goImport}" class="button buttonImport">Import article</a><%end%><a href="{goNew}" class="button buttonAddNew">Add item</a></div>
 </div>
 
 <!--# filter -->
@@ -78,7 +82,7 @@ errorImage3=Article will remain hidden until you upload leading picture!
 		<tr {classHidden}>
 			<td {styleImported}>{date} <span class="explain">{time}</span></td>
 			<td>
-				<a href="{goEdit}">{title}</a> 
+				<a href="{goEdit}">{title}</a>
 				<%if{categoryTitle}%><div class="explain">{categoryTitle}</div><%end%>
 			</td>
 			<td class="tac"><%if{classHiddenTd}%><span class="scheduledIco" title="Scheduled"></span><%else{classHiddenTd}%>{status}<%end%></td>
@@ -134,7 +138,7 @@ errorImage3=Article will remain hidden until you upload leading picture!
 	<dl>
 		<dt><label for="i_title">Title</label></dt>
 		<dd class="w100">
-			<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required" /> 
+			<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="count_chars_59 required" />
 			<% if {id} %>
 			<div><a href="{uriPrefix}{uri}{uriNumericSuffix}.htm" onclick="window.open(this.href);return false;" class="newwindow">View this article in new window</a></div>
 			<% end {id} %>
@@ -288,3 +292,38 @@ errorImage3=Article will remain hidden until you upload leading picture!
 <%end%>
 
 <% end {viewList} %>
+
+<% viewFormImport %>
+<div class="tabzoneHeader clrfix">
+	<h1>{pageTitle} : Import</h1>
+	<a href="{goBack}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" name="frm" id="frmImport" method="post" class="aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event}" />{refresh}
+	<h2 class="formTitle">{formTitle}</h2><span class="clr"></span>
+	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<dl>
+		<dt><label for="i_url">URL</label></dt>
+		<dd class="w100">
+			<input type="text" name="url" id="i_url" value="{url}" size="80" maxlength="128" class="required" />
+			<div class="explain">URL must start with http://www.pokernews.com/</div>
+		</dd>
+	</dl>
+
+	<div class="formButton clrfix"><input type="submit" value="Import" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+</form>
+
+
+<script type="text/javascript">
+/*<![CDATA[*/
+var refreshUrl = '{selfUrl}';
+var form = $('#frmImport');
+form.bind('submit', function(e){
+	if(form.find('#i_url').val()!= '') {
+		form.find("input[type='submit']").attr('disabled', 'TRUE').css('width', '250px').val('Importing. Please wait...').next().remove();
+	}
+});
+/*]]>*/
+</script>

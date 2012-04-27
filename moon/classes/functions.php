@@ -20,7 +20,7 @@ function moon_reconfig() {
 function is_dev() {
 	static $_isDev = NULL;
 	if (NULL === $_isDev) {
-		return $_isDev = 
+		return $_isDev =
 			(isset ($_SERVER['HTTP_HOST']) && strpos($_SERVER['HTTP_HOST'], '.dev')
 			|| isset($_SERVER['WINDIR'])) ;
 	}
@@ -309,7 +309,8 @@ function callPnEvent($siteID,$event,$data,&$answer,$usePassword=TRUE)
 	$t->add_event($event, $data);
 	$t->send($url);
 	if(!$t->was_error()) {
-		$answer = $t->get_event_answer();
+		if ($answer!=='') $answer=$t->trans_response();
+		else $answer=$t->get_event_answer();
 		//print_r($t->trans_response());
 		return true;
 	} else {
@@ -452,7 +453,7 @@ function array_get_del(&$array, $key)
 {
 	$value = $array[$key];
 	unset($array[$key]);
-	return $value;	
+	return $value;
 }
 
 function diff($old, $new){
