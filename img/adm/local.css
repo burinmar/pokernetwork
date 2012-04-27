@@ -89,3 +89,9 @@ span.sync1, span.sync2 {
 		.aboutUser tr td:first-child {padding-right: 10px; color: #999; font-style: italic}
 		.aboutUser tr td {line-height: 14px}
 		.aboutPlayer td {padding-bottom: 5px}
+.buttonImport {
+	background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAACsUlEQVR4nGJkwAQcW0IZvkuzMzAwMEIxAwPD098MDD7LGTgZGBh+ICsGAAAA//9iwWKAgDQHA4NOzmKG/39/MzD8/sHA8PsbA8PSEgYGBgYBBgaGF8iKAQAAAP//wmYABwMTA8P/398ZGP79YWD4+5Ph/99fDAxMUDk0AAAAAP//wmYABPz+zsDw7zdE898fMAMwAAAAAP//wm4AEwPD/19fGBj+/WVg+PeLgeHvT3hYoAMAAAAA///CagAnCwMDw68vDAz//zL8h3qDkw27AQAAAAD//4IZwLE6jOG7AhcDAy8LA4MQG9QF//8y/P/1meH/l5cMQuwMDDfyGe5//svA8Og7A0PwXEiMAAAAAP//ghnA8+ADwwpTXaMIUQU9Bqbfnxj+PTnD8P/Lc4b/314z/P/9lYGTlYFBgpWBgfU3A8PpNwy7GRgYeBkYGH4AAAAA//+CGfC3dBfD9J//zolFfXriJMTwlYH531dIwDFCwuQvIwPDu98MDNseMZzNXc3QwcDA8JeBgYEBAAAA//+CGfCFgYHhTs0ehjZm5lesoaoMtiLsDAzMSJrf/2Vg2PGE4ULuaoZqBgaG2wwMDJ8ZGBgYAAAAAP//gkXObwYGhtcMDAw3KncyNG24z3D8zW+IRpjm7Y8ZLmetYKhkYGC4xgBJTL8ZGBgYAAAAAP//QkesDAwM0gwMDG4TAhhO3y5k+H+nhOH/jAiGSwwMDJ4MDAxyDAwMKPEBAAAA///CZYgMAwOD+8pohrNr4hku4tMMAAAA//9iZGBg4NgSzfBdmgsRYAzMDAxsLAwMPGwQ/pf/DAy/YBkLqubpDwYGn14GTgAAAAD//2JhgGQQDPDrHwPDu18Qw2CGMjCiYQYGAQAAAAD//2JkYGCQYGBgMIDSpIAXDAwMFwAAAAD//wMACUavrkefMscAAAAASUVORK5CYII=');
+	background-repeat: no-repeat;
+	background-position: 5px 4px;
+	bottom: 6px;
+} .button.buttonImport:active {bottom: 5px; top: -5px;}
