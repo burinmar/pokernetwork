@@ -280,7 +280,7 @@ function getAttachmentImage($fileName)
 {
 	$url = !is_dev()
 		? 'http://www.pokernews.com/files/cnt/'
-		: 'http://beta.pokernews.dev/files/cnt/';
+		: 'http://www.pokernews.dev/files/cnt/';
 	$path = _W_DIR_ . 'articles/att/';
 
 	$url .= $fileName;

@@ -712,7 +712,7 @@ function importItem()
 	$errorMsg = 0;
 	if ($values['url'] == '') {
 		$errorMsg = 1;
-	} elseif (strpos($values['url'], 'http://www.pokernews.dev/') !== 0) {
+	} elseif (strpos($values['url'], 'http://www.pokernews.com/') !== 0) {
 		$errorMsg = 2;
 	}
 
