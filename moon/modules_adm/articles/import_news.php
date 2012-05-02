@@ -122,7 +122,7 @@ function insertNews($newsData)
 		moon::page()->set_local('lastImportedNewsId', $newsId);
 
 		// download and save images
-		$fileName = $ins['img'];
+		$fileName = $fileNameFull = $ins['img'];
 
 		if ($fileName) {
 			// leading image
@@ -131,6 +131,17 @@ function insertNews($newsData)
 			$this->getLeadingImage($fileName, 'thumb_');
 			// original
 			$this->getLeadingImage($fileName, 'orig/');
+
+			$path = _W_DIR_ . 'articles/img/';
+			$subdir_ = substr($fileName, 0, 4);
+			$fileName = substr($fileName, 4);
+			$filePathOrig = $path . $subdir_ . '/orig/' . $fileName;
+
+			$f = new moon_file;
+			if ($f->is_file($filePathOrig)) {
+				$img = &moon::shared('img');
+				$img->resize_exact($f, $path . $subdir_ . '/mid_' . $fileName, 223,147);
+			}
 		}
 
 		// insert news attachments
