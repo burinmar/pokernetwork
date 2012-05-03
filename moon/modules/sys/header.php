@@ -33,6 +33,15 @@ class header extends moon_com
 			return $res;
 		}
 		//wallpaper
+		//banner
+		$psb =$tpl->parse('pokerstars', array('siteID'=>'EN'));
+		$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px;">' .$psb. '</div>';
+		//moon::page()->set_local('topbanner', $tb);
+		//background
+		$bgURL = 'http://pokerstars.com/EN/ad/11216421/1000x150scoop.gif.click?rq=noscript&vs=';
+		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $tb . $res;
+		$page->css('<style type="text/css">/*<!CDATA*/ body {background: #000 url(\'/img/ps_scoop2012_wallpaper.jpg\') no-repeat fixed top} html {background: #000; cursor: pointer} #bodyBlock, #footerBlock {cursor: default} /*>*/</style>');
+		return $res;
 		
 		$bgURL = '/pokerstars/freerolls/?upcoming';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
