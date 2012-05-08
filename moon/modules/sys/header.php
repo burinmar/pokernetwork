@@ -32,6 +32,19 @@ class header extends moon_com
 		if (!$isHomepage) {
 			return $res;
 		}
+
+		$bgURL = '/leagues/pkr-daily-dollar-wsop-rake-chase/';
+		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
+		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000 url(\'/img/pkr_wsop_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+
+		return $res;
+
+
+
+
+
+		/************* SLAMSTAS *************/
+
 		//wallpaper
 		//banner
 		$psb =$tpl->parse('pokerstars', array('siteID'=>'EN'));
@@ -41,18 +54,8 @@ class header extends moon_com
 		$bgURL = 'http://pokerstars.com/EN/ad/11216421/1000x150scoop.gif.click?rq=noscript&vs=';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $tb . $res;
 		$page->css('<style type="text/css">/*<!CDATA*/ body {background: #000 url(\'/img/ps_scoop2012_wallpaper.jpg\') no-repeat fixed top} html {background: #000; cursor: pointer} #bodyBlock, #footerBlock {cursor: default} /*>*/</style>');
-		return $res;
-		
-		$bgURL = '/pokerstars/freerolls/?upcoming';
-		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
-		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000 url(\'/img/ps_scoop2012_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
-		return $res;
 
-		$bgURL = '/leagues/pkr-daily-dollar-wsop-rake-chase/';
-		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
-		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000 url(\'/img/pkr_wsop_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
 
-		return $res;
 	}
 
 	private function partialRenderUserBlock($tpl)
