@@ -33,14 +33,15 @@ class header extends moon_com
 			return $res;
 		}
 
+		$bgURL = '/leagues/30k-winner-wednesday-dozen/';
+		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
+		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #1e0000 url(\'/img/winner_30k_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+
+		return $res;
+		
 		$bgURL = '/leagues/pkr-daily-dollar-wsop-rake-chase/';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
 		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000 url(\'/img/pkr_wsop_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
-
-		return $res;
-
-
-
 
 
 		/************* SLAMSTAS *************/
