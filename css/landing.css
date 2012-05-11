@@ -12,7 +12,7 @@
 	#landing a:hover {color: #fff}
 	#landing .head {
 		padding: 0 0 0 420px;
-		height: 400px;
+		margin-bottom: 40px;
 	}
 	#landing h1 {
 		font-weight: normal;
@@ -108,7 +108,6 @@
 #landing.scoop2012 .download:after {position: absolute; top: 7px; right: -180px; content: ''; background: url('/img/landing/scoop-2012/stars-logo.png'); width: 149px; height: 22px}
 
 #landing.winner-dozen {background-image: url('/img/landing/winner-dozen/intro.jpg?1'); background-color: #200000}
-#landing.winner-dozen .head {height: 360px}
 #landing.winner-dozen .download {background-image: url('/img/landing/winner-dozen/download.png'); color: #fff; position: relative; }
 #landing.winner-dozen .download:hover {background-position: bottom left}
 #landing.winner-dozen .download:after {position: absolute; top: 7px; right: -120px; content: ''; background: url('/img/landing/winner-dozen/logo.png'); width: 102px; height: 24px}
