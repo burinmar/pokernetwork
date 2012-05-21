@@ -37,7 +37,7 @@ class header extends moon_com
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
 		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000000 url(\'/img/p770_wonders_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
 		/* Toliau baneris */
-		$cookieVar = 'b0521xx';
+		$cookieVar = 'b0521';
 		if (!isset($_COOKIE[$cookieVar]) || $_COOKIE[$cookieVar] !='h') {
 			if(isset($_GET['bps']) && $_GET['bps'] == 'hide') {
 				setcookie($cookieVar, 'h', time()+2592000);
