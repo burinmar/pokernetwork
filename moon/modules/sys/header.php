@@ -33,6 +33,18 @@ class header extends moon_com
 			return $res;
 		}
 
+		// PokerStars SCOOP 2012
+		//banner
+		$psb =$tpl->parse('pokerstars', array('siteID'=>'EN'));
+		$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px;">' .$psb. '</div>';
+		//moon::page()->set_local('topbanner', $tb);
+		//background
+		$bgURL = 'http://pokerstars.com/EN/ad/11216421/1000x150zoomtakeover.gif.click?rq=noscript&vs=';
+		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $tb . $res;
+		$page->css('<style type="text/css">/*<!CDATA*/ body {background: #000 url(\'/img/zoom_wallpaper_2000x1200.jpg\') no-repeat fixed top} html {background: #000; cursor: pointer} #bodyBlock, #footerBlock {cursor: default} /*>*/</style>');
+		return $res;
+
+
 		$bgURL = 'http://www.pokernetwork.com/leagues/10-500-poker770-weekend-wonders/';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
 		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000000 url(\'/img/p770_wonders_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
