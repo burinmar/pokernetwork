@@ -14,11 +14,12 @@ class reporting_hotels extends moon_com
 	const remoteRoomList = 5;
 	const remoteHotelInfo = 6;
 	
-	function events()
+	function events($event)
 	{
-		if (_SITE_ID_ != 'com') {
+		if (_SITE_ID_ == 'com' && $event == 'active-tournaments.json')
+			return $this->renderActiveTournamentsExport('json');
+		if (!$this->languageSupported())
 			moon::page()->page404();
-		}
 		$this->use_page('LiveReporting1col');
 		if (isset($_GET['cancelationPolicy'])) {
 			header('content-type: text/html; charset=utf-8');
@@ -36,8 +37,42 @@ class reporting_hotels extends moon_com
 		}
 	}
 	
+	private $configArray;
+	private function config($key)
+	{
+		if (!$this->configArray)
+			$this->configArray = $this->get_var('hotelsLanguageConfig');
+		switch ($key) {
+			case 'locale':
+				return $this->configArray[_SITE_ID_][0];
+
+			case 'distanceUnit':
+				return in_array(geo_my_country(), array('us', 'uk'))
+					? 'mi'
+					: 'km';
+			
+			default:
+				return null;
+		}
+	}
+
+	private function languageSupported()
+	{
+		if (!$this->configArray)
+			$this->configArray = $this->get_var('hotelsLanguageConfig');
+		return isset($this->configArray[_SITE_ID_]);		
+	}
+	
 	function main($argv)
 	{
+		if (!$this->languageSupported()) {
+			switch ($argv['render']) {
+			case 'widget':
+				return '';
+			default:
+				moon::page()->page404();
+			}
+		}
 		switch ($argv['render']) {
 		case 'entry':
 			return $this->renderHotel($argv);
@@ -286,11 +321,9 @@ class reporting_hotels extends moon_com
 			$tournament['geolocation'] = explode(',', $tournament['geolocation']);
 			$tournament['geolocation'][0]  = floatval($tournament['geolocation'][0]);
 			$tournament['geolocation'][1]  = floatval($tournament['geolocation'][1]);
-			$distance = sqrt(
-				($summary->latitude - $tournament['geolocation'][0]) * ($summary->latitude - $tournament['geolocation'][0])
-				+ 
-				($summary->longitude - $tournament['geolocation'][1]) * ($summary->longitude - $tournament['geolocation'][1]));
-			$mainArgv['tournamentDistance'] = sprintf('%.1f', $distance * 65);
+			$mainArgv['tournamentDistance'] = $this->helperDistanceFormat(
+				$this->helperLatlongDistanceMi($summary->latitude, $summary->longitude, $tournament['geolocation'][0], $tournament['geolocation'][1]),
+				'MI');
 		}
 
 		if (isset($data->PropertyAmenities)) {
@@ -432,6 +465,40 @@ class reporting_hotels extends moon_com
 		}
 
 		return $tpl->parse('hotel:main', $mainArgv);
+	}
+	
+	private function helperLatlongDistanceMi($lat1, $lon1, $lat2, $lon2)
+	{
+		$theta = $lon1 - $lon2; 
+		$dist = sin(deg2rad($lat1)) * sin(deg2rad($lat2)) +  cos(deg2rad($lat1)) * cos(deg2rad($lat2)) * cos(deg2rad($theta)); 
+		$dist = acos($dist); 
+		$dist = rad2deg($dist); 
+		$miles = $dist * 60 * 1.1515;
+
+		return $miles;
+	}
+
+	private function helperDistanceFormat($distance, $distanceUnit)
+	{
+		switch ($this->config('distanceUnit')) {
+		case 'km': // local
+			switch ($distanceUnit) {
+			case 'MI': // remote
+				$distance *= 1.609344;
+				$distanceUnit = 'KM';
+				break;
+			}
+			break;
+		case 'mi': // local
+			switch ($distanceUnit) {
+			case 'KM': // remote
+				$distance /= 1.609344;
+				$distanceUnit = 'MI';
+				break;
+			}
+			break;
+		}
+		return number_format($distance, 1) . ' ' . $distanceUnit;
 	}
 	
 	private function renderRoomDetails($hotelId, $rateCode, $roomTypeId, $supplierType)
@@ -676,6 +743,13 @@ class reporting_hotels extends moon_com
 
 		return $tpl->parse('list:block.rooms', $mainArgv);
 	}
+	
+	private function renderActiveTournamentsExport()
+	{
+		// if ($_SERVER['HTTP_USER_AGENT'] != 'Pokernews CURL')
+		// 	moon::page()->page404();
+		moon::page()->set_local('transporter', $this->getActiveTournamentsForExport());
+	}	
 	
 	private function helperRequestArgvTimed(&$requestArgv, $searchArgv)
 	{
@@ -969,6 +1043,7 @@ class reporting_hotels extends moon_com
 			'type' => 'json',
 			'customerUserAgent' => $_SERVER['HTTP_USER_AGENT'],
 			'customerIpAddress' => moon::user()->get_ip(),
+			'locale' => $this->config('locale'),
 		);
 		if (is_dev()) {
 			$requestArgvBase = array_merge($requestArgvBase, array(
@@ -1017,12 +1092,16 @@ class reporting_hotels extends moon_com
 		return $requestUrl;
 	}
 	
-	private function helperCurlGet($requestUrl)
+	private function helperCurlGet($requestUrl, $timeout = null, $connectTimeout = null)
 	{
 		$ch = curl_init($requestUrl);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_ENCODING, ''); // auto
 		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+		if ($connectTimeout !== null)
+			curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, $connectTimeout);
+		if ($timeout !== null)
+			curl_setopt($ch, CURLOPT_TIMEOUT, $timeout);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
 			'User-Agent: Pokernews CURL',
 			'Accept: application/json',
@@ -1051,11 +1130,36 @@ class reporting_hotels extends moon_com
 	
 	private function getActiveTournaments()
 	{
-		return $this->db->array_query_assoc('
-			SELECT id, name, from_date, tour FROM ' . $this->table('Tournaments') . '
+		$data = $this->db->array_query_assoc('
+			SELECT id, name, from_date, tour, sync_id FROM ' . $this->table('Tournaments') . '
 			WHERE state IN(0,1) AND geolocation IS NOT NULL AND is_live=1
 			ORDER BY id DESC
 		');
+		if (_SITE_ID_ != 'com' && NULL !== ($remoteData = $this->getActiveMasterTournaments('com'))) {
+			$syncIds = array();
+			foreach ($data as $tournament) {
+				$syncId = $tournament['sync_id'];
+				$syncId = intval(str_replace('com:', '', $syncId));
+				if ($syncId)
+					$syncIds[] = $syncId;
+			}
+			foreach ($remoteData as $tournamentId => $tournament) {
+				if (in_array($tournamentId, $syncIds)) 
+					continue;
+				$data[] = $tournament;
+			}
+		}
+
+		return $data;
+	}
+
+	private function getActiveTournamentsForExport()
+	{
+		return $this->db->array_query_assoc('
+			SELECT id, name, from_date, tour, geolocation FROM ' . $this->table('Tournaments') . '
+			WHERE state IN(0,1) AND geolocation IS NOT NULL AND is_live=1
+			ORDER BY id DESC
+		', 'id');
 	}
 	
 	private function getActiveTournament($id)
@@ -1064,11 +1168,48 @@ class reporting_hotels extends moon_com
 			SELECT geolocation FROM ' . $this->table('Tournaments') . '
 			WHERE id=' . intval($id) . ' AND state IN(0,1) AND geolocation IS NOT NULL
 		');
+		if (_SITE_ID_ != 'com' && empty($return) && NULL !== ($remoteData = $this->getActiveMasterTournaments('com'))) {
+			if (isset($remoteData[$id]))
+				$return = $remoteData[$id];
+		}
+
 		return empty($return)
 			? NULL
 			: $return;
 	}
 	
+	/**
+	 * Gets remote tournament list
+	 * Caches for 5 minutes. If remote list is invalid, caches empty result for 30 seconds to prevent hammering.
+	 */
+	private $activeMasterTournaments = false;
+	private function getActiveMasterTournaments($domainPrefix = 'com')
+	{
+		if ($this->activeMasterTournaments !== false)
+			return $this->activeMasterTournaments;
+		$memcObj = moon_memcache::getInstance();
+		$memcObjPrefix = moon_memcache::getRecommendedPrefix();
+		if (
+			// 1 || 
+			FALSE == ($cachedResult = $memcObj->get($memcObjPrefix . 'active-tournaments-remote')) ||
+			!is_array($cachedResult) ||
+			($cachedResult[1] === null && time() - $cachedResult[0] > 30)
+		) { 
+			// fetch remote data
+			callPnEvent($domainPrefix, 'livereporting.reporting_hotels#active-tournaments.json', '', $remoteData);
+			if (!is_array($remoteData)) {
+				$remoteData = null;
+			}
+
+			$memcObj->set($memcObjPrefix . 'active-tournaments-remote', array(time(), $remoteData), MEMCACHE_COMPRESSED, 300);
+		} else {
+			// cache
+			list (, $remoteData) = $cachedResult;
+		}
+		$this->activeMasterTournaments = $remoteData;
+		return $remoteData;
+	}
+
 	private function helperDataSort(&$data, $searchArgv)
 	{
 		switch ($searchArgv['sort']) {

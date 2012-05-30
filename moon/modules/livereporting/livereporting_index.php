@@ -393,7 +393,7 @@ class livereporting_index extends moon_com
 		$lrep = $this->object('livereporting');
 		$lrepTools = $lrep->instTools();
 		
-		$running = $lrep->instTournamentModel('_src_index')->getRunningTournaments(TRUE, FALSE, FALSE);
+		$running = $lrep->instTournamentModel('_src_index')->getRunningTournaments(TRUE, FALSE, FALSE, FALSE);
 		if (empty($running)) {
 			return ;
 		}
@@ -554,7 +554,7 @@ class livereporting_index extends moon_com
 		$lrep = $this->object('livereporting');
 		$locale = &moon::locale();
 		$text   = &moon::shared('text');
-		$running = $lrep->instTournamentModel('_src_index')->getRunningTournaments(TRUE, FALSE, FALSE);
+		$running = $lrep->instTournamentModel('_src_index')->getRunningTournaments(TRUE, FALSE, FALSE, FALSE);
 		if (empty($running)) {
 			return ;
 		}

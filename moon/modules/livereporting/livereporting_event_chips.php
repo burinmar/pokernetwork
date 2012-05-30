@@ -45,7 +45,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			
 			case 'save-chips': // chips post
 				$data = $this->helperEventGetData(array(
-					'day_id', 'import_id', 'column_order', 'is_full_listing', 'published', 'import_textarea', 'title', 'intro', 'tags', 'is_exportable', 'datetime_options'
+					'day_id', 'import_id', 'column_order', 'is_full_listing', 'published', 'import_textarea', 'title', 'intro', 'tags', 'is_exportable', 'is_keyhand', 'datetime_options'
 				));
 				$this->helperEventGetLeadingImage($data);
 				$this->helperEventGetChipsData($data);
@@ -91,6 +91,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			return $this->renderControl(array_merge($data, array(
 				'wsopimport' => in_array($data['tournament_id'], $this->get_var('wsopxml')),
 				'unhide' => (!empty($_GET['master']) && $_GET['master'] == 'chips'),
+				'is_keyhand' => 0,
 				'is_exportable' => 1
 			)));
 
@@ -196,6 +197,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'created_on'=> $entry['created_on'],
 				'published' => empty($entry['is_hidden']),
 				'is_exportable' => $entry['is_exportable'],
+				'is_keyhand' => $entry['is_keyhand'],
 				'fulllist'  => !empty($entry['is_full_import']),
 				'tzName' => $data['tzName'],
 				'tzOffset' => $data['tzOffset'],
@@ -537,6 +539,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.fulllist'  => !empty($argv['fulllist']),
 			'cc.published' => !empty($argv['published']),
 			'cc.is_exportable' => !empty($argv['is_exportable']),
+			'cc.show_keyhand' => _SITE_ID_ == 'com', // may be temporary
+			'cc.is_keyhand' => $argv['is_keyhand'],
 			'cc.datetime_options' => '',
 			'cc.custom_datetime' => $lrep->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M +S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
 			'cc.custom_tz' => $argv['tzName'],
@@ -1221,6 +1225,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'title' => $data['title'],
 			'contents' => $data['intro'],
 			'is_exportable' => $data['is_exportable'],
+			'is_keyhand' => $data['is_keyhand'],
 			'image_misc' => (!empty($data['image']))
 				? implode(',', array(
 					$data['image']['id'], $data['image']['misc']
@@ -1239,6 +1244,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'is_full_import' => $data['is_full_listing']
 			);
 		}
+		if (_SITE_ID_ != 'com')
+			unset($saveDataChips['is_keyhand']); // may be temporary
 		$saveDataLog = array(
 			'type' => 'chips',
 			'is_hidden' => $data['published'] != '1',

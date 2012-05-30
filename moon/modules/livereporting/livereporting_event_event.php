@@ -567,6 +567,12 @@ class livereporting_event_event extends livereporting_event_pylon
 		return $this->getPayouts($eventId, TRUE);
 	}
 
+	// used in mobile app
+	public function getPayoutsForMobileapp($eventId)
+	{
+		return $this->getPayouts($eventId, FALSE);
+	}
+
 	private function getPlayerNames($eventId)
 	{
 		$names = array();
@@ -1125,6 +1131,7 @@ class livereporting_event_event extends livereporting_event_pylon
 			SET state=2, updated_on=' . time() . '
 			WHERE id=' . intval($location['event_id']) . ' AND state=1
 		');
+		$this->lrep()->altLog($location['tournament_id'], $location['event_id'], 0, 'update', 'events', $location['event_id'], 'evClosed:state=2');
 
 		// if all events completed, then skip
 		$check = $this->db->single_query_assoc('
@@ -1142,6 +1149,7 @@ class livereporting_event_event extends livereporting_event_pylon
 			SET state=2, updated_on=' . time() . '
 			WHERE id=' . intval($location['tournament_id']) . '
 		');
+		$this->lrep()->altLog($location['tournament_id'], 0, 0, 'update', 'tournaments', $location['tournament_id'], 'evClosed:state=2');
 	}
 
 	// not a notify in fact, but a plain "save"
@@ -1152,6 +1160,7 @@ class livereporting_event_event extends livereporting_event_pylon
 			SET state=1, updated_on=' . time() . '
 			WHERE id=' . intval($location['event_id']) . ' AND state=2
 		');
+		$this->lrep()->altLog($location['tournament_id'], $location['event_id'], 0, 'update', 'events', $location['event_id'], 'evReopened:state=1');
 		
 		// if at least one event is started
 		$check = $this->db->single_query_assoc('
@@ -1169,5 +1178,6 @@ class livereporting_event_event extends livereporting_event_pylon
 			SET state=1, updated_on=' . time() . '
 			WHERE id=' . intval($location['tournament_id']) . '
 		');
+		$this->lrep()->altLog($location['tournament_id'], 0, 0, 'update', 'tournaments', $location['tournament_id'], 'evReopened:state=1');
 	}
 }

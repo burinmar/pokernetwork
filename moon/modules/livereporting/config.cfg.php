@@ -54,6 +54,8 @@ $cfg['livereporting'] = array(
 	'dir.web:LogosSmall' => '/w/lrep/ls/',
 	'dir.web:LogosMid'   => '/w/lrep/lm/',
 	'dir.web:LogosIdx'   => '/w/lrep/li/',
+	'dir.web:LogosM1'    => '/w/lrep/m1/',
+	'dir.web:LogosM2'    => '/w/lrep/m2/',
 	'dir.fs:LogosBigBg' => _W_DIR_ . 'lrep/lbbg/',
 	'dir.fs:LogosSmall' => _W_DIR_ . 'lrep/ls/',
 	'dir.fs:LogosMid'   => _W_DIR_ . 'lrep/lm/',
@@ -111,10 +113,15 @@ $cfg['livereporting'] = array(
 	),
 
 	'var.wsopxml' => array(
-		148, 167, 194
+		148, 167, 194, 253
 	),
 	
 	'var.twitter' => array('Kj7Hvj3E1UjaZt6Da05Ow', 'GJxqUgimQtejlTkWEj7Vge7DiKfdYutjOLkzf5i96as', '41773339-QZA2n0GYQZjWYolmw6nRxr6fBeF6wRQL9qs1V1n9k', 'i6jMUTJ5KbX6xpCicVujkjUjbzfQNXhxXPnGcMRkqDo'),
+
+	'var.hotelsLanguageConfig' => array(
+		'com' => array('en_US'),
+		'pt' => array('pt_PT')
+	)
 );
 
 if (is_dev()) {

@@ -283,6 +283,11 @@ class livereporting_event extends moon_com
 		return self::$requestArgv;
 	}
 	
+	public function setRequestArgv($key, $value)
+	{
+		self::$requestArgv[$key] = $value;
+	}
+	
 	private function lrep()
 	{
 		static $lrepObj;
@@ -608,10 +613,11 @@ class livereporting_event extends moon_com
 		$page->css('/css/article.css');
 		$page->js('/js/live-poker.js');
 		$page->js('/js/jquery/lightbox-0.5.js');
+		$page->js('/js/modules/lrslider.js');
 		$page->css('/css/jquery/lightbox-0.5.css');
 		if ($page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent')) {
 			$page->js('/js/jquery/livequery.js');
-			$page->js('/js/jquery/form-2.28-unowen.js');
+			$page->js('/js/jquery/form.js');
 			$page->js('/js/jquery/postmessage.js');
 			$page->js('/js/jquery/cookie.js');
 			$page->js('/js/modules/live_reporting.js');
@@ -640,6 +646,8 @@ class livereporting_event extends moon_com
 			$mainArgv_['eventlist.paged'],
 			$mainArgv_['eventlist.singleevent']) = $this->partialRenderSidewidgetEventsList($argv, $page, $lrep, $tpl);
 		
+		$mainArgv_['widget.key_hands'] = $this->partialRenderTopwidgetKeyHands($eventInfo, $argv, $lrep, $tpl);
+
 		list (
 			$playersLeft,
 			$winner,
@@ -724,6 +732,35 @@ class livereporting_event extends moon_com
 		$mainArgv += $mainArgv_;
 	}
 	
+	private function partialRenderTopwidgetKeyHands(&$eventInfo, &$argv, &$lrep, &$tpl)
+	{
+		if (_SITE_ID_ != 'com')
+			return ;
+
+		$keyHands = $this->lrepEv()->getKeyHandEntries($argv['event_id']);
+		if (count($keyHands) < 4)
+			return ;
+		
+		$tplArgv = array(
+			'list.entries' => '',
+		);
+		$text = moon::shared('text');
+		foreach ($keyHands as $entry) {
+			$tplArgv['list.entries'] .= $tpl->parse('sidebar:key_hands.item', array(
+				'url' => $lrep->makeUri('event#view', array(
+					'event_id' => $entry['event_id'],
+					'path' => $this->getUriPath(),
+					'type' => $entry['type'],
+					'id' => $entry['id']
+				), $this->getUriFilter(NULL)),
+				'title' => htmlspecialchars($entry['title']),
+				'created_on' => $text->ago($entry['created_on']), // no y-m-d format date
+				'author_name' => htmlspecialchars($entry['author_name']),
+			));
+		}
+		return $tpl->parse('sidebar:key_hands', $tplArgv);
+	}
+
 	private function partialRenderSidewidgetEventsList($argv, $page, $lrep, $tpl)
 	{
 		$return = array();

@@ -15,7 +15,7 @@ class livereporting_event_post extends livereporting_event_pylon
 		switch ($event) {
 			case 'save-post':
 				$data = $this->helperEventGetData(array(
-					'post_id', 'day_id', 'title', 'body', 'tags', 'published', 'is_exportable', 'round_id', 'datetime_options'
+					'post_id', 'day_id', 'title', 'body', 'tags', 'published', 'is_exportable', 'is_keyhand', 'round_id', 'datetime_options'
 				));
 				$this->helperEventGetLeadingImage($data);
 
@@ -41,6 +41,7 @@ class livereporting_event_post extends livereporting_event_pylon
 				'contents' => '',
 				'tags' => '',
 				'is_exportable' => 1,
+				'is_keyhand' => 0,
 				'unhide' => (!empty($_GET['master']) && $_GET['master'] == 'post')
 			)));
 		}
@@ -100,6 +101,8 @@ class livereporting_event_post extends livereporting_event_pylon
 			'cp.body' => htmlspecialchars($argv['contents']),
 			'cp.tags' => htmlspecialchars($argv['tags']),
 			'cp.is_exportable' => $argv['is_exportable'],
+			'cp.show_keyhand' => _SITE_ID_ == 'com', // may be temporary
+			'cp.is_keyhand' => $argv['is_keyhand'],
 			'cp.day_id' => $argv['day_id'],
 			'cp.unhide' => !empty($argv['unhide']),
 			'cp.bundled_control' => !empty($argv['bundled_control']),
@@ -155,12 +158,15 @@ class livereporting_event_post extends livereporting_event_pylon
 			'title' => $data['title'],
 			'contents' => $data['body'],
 			'is_exportable' => $data['is_exportable'],
+			'is_keyhand' => $data['is_keyhand'],
 			'image_misc' => (!empty($data['image']))
 				? $data['image']['id'] . ',' . $data['image']['misc']
 				: NULL,
 			'image_src' => @$data['image']['src'],
 			'image_alt' => @$data['image']['title'],
 		);
+		if (_SITE_ID_ != 'com')
+			unset($saveDataPost['is_keyhand']); // may be temporary
 		$saveDataLog = array(
 			'type' => 'post',
 			'is_hidden' => $data['published'] != '1',

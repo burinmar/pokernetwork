@@ -11,14 +11,13 @@
 	{body}
 
 	<table class="chipsCount tal chipstable" summary="{!chip_statistics}">
-	<col class="position" />
 	<col class="player" />
 	<col class="sponsor" />
 	<col class="chipsTotal" />
 	<col class="chipsDelta" />
 	<thead>
 		<tr>
-			<th colspan="5">{!chipcounts}</th>
+			<th colspan="4">{!chipcounts}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -39,7 +38,6 @@
 
 <% logEntry:chips.chips.item %>
 <tr class="{evenodd}<%if {is_busted} %> busted<%end%>">
-	<td><%if {place} %>{place}<%end%></td>
 	<td><%if {player_url} %><a href="{player_url}">{player}</a>
 		<%else {player_url} %>{player}<%end%>
 	</td>
@@ -75,14 +73,13 @@
 		<%end%>.</p>
 	<%end%>
 	<table class="chipsCount tal chipstable" summary="{!chip_statistics}">
-	<col class="position" />
 	<col class="player" />
 	<col class="sponsor" />
 	<col class="chipsTotal" />
 	<col class="chipsDelta" />
 	<thead>
 		<tr>
-			<th colspan="5">{!chipcounts}</th>
+			<th colspan="4">{!chipcounts}</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -96,7 +93,6 @@
 
 <% entry:chips.chips.item %>
 <tr class="{evenodd}<%if {is_busted} %> busted<%end%>">
-	<td><%if {place} %>{place}<%end%></td>
 	<td><%if {player_url} %><a href="{player_url}">{player}</a>
 		<%else {player_url} %>{player}<%end%>
 	</td>
@@ -202,6 +198,7 @@
 			</span>
 		</p>
 		<p><label>Published:</label> <input type="checkbox" name="published" value="1" class="checkbox" <%if {cc.published} %> checked="checked" <%end%> /></p>
+		<%if {cc.show_keyhand} %><p><label>Is Key Hand:</label> <input type="checkbox" name="is_keyhand" value="1" class="checkbox"<%if {cc.is_keyhand} %> checked="checked"<%end%> /></p><%end%>
 		<p><label>Exportable:</label> <input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cc.is_exportable} %> checked="checked"<%end%> /><span class="small gray"> &nbsp; (WSOP xml)</span></p>
 		<%if {cc.skip_must_preview} %>
 		<p class="blocky" id="rq-wc-sect-batch-submitarea"><input type="submit" name="save" value="Save" /></p>

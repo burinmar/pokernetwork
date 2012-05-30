@@ -341,7 +341,7 @@ hotelname=Hotel Name
 						<p>{description}</p>
 						<%end%>
 						<%if {list.amenitiesColumns} %>
-						<p class="sectionMiniTitle"><b>Room details</b></p>
+						<p class="sectionMiniTitle"><b>{!roomDetails}</b></p>
 						<div class="roomDetails">
 							<%loop {list.amenitiesColumns += hotel:availableRooms.amenitiesColumns.item} %><ul>
 								<%loop {list.amenities += hotel:availableRooms.amenities.item} %>

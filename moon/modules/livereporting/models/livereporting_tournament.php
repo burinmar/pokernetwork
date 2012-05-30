@@ -163,12 +163,14 @@ class livereporting_model_tournament extends livereporting_model_pylon
 	/**
 	 * Get the currently running tournaments, by default including the running events and post snippets. 
 	 * 
+	 * @todo kill this with fire, review
 	 * @param <bool> $fetchRuningEvents Include the running events info
 	 * @param <bool> $onEmptyUseLast If set to false, will only return the tournaments which are actually running. Else, the last completed tournament will also be considered.
+	 * @param <bool> $onEmptyEventUseLast If set to false, will only return events which are actually running. Else, the last completed event will also be used for otherwise empty tournaments
 	 * @param <bool> $fetchPostSnippets Return post snippets. Depends on $fetchRuningEvents=true
 	 * @return <array> 
 	 */
-	protected function getRunningTournaments($fetchRuningEvents = TRUE, $onEmptyUseLast = TRUE, $fetchPostSnippets = TRUE)
+	protected function getRunningTournaments($fetchRuningEvents = TRUE, $onEmptyUseLast = TRUE, $onEmptyEventUseLast = TRUE, $fetchPostSnippets = TRUE)
 	{
 		$tours = $this->db->array_query_assoc('
 			SELECT id, sync_id, name, logo_idx, logo_small, logo_bgcolor, logo_is_dark, logo_big_bg bg, skin, tour, 1 livecov, timezone
@@ -192,10 +194,17 @@ class livereporting_model_tournament extends livereporting_model_pylon
 			$tours[$k]['running_events'] = array();
 		}
 		if ($fetchRuningEvents) {
-			$runningEvents = $this->helperRunningTournamentEx(array_keys($tours), !$fetchPostSnippets);
+			$runningEvents = $this->helperRunningTournamentEx(array_keys($tours), $onEmptyEventUseLast, !$fetchPostSnippets);
 			foreach ($runningEvents as $event) {
 				if (count($tours[$event['tid']]['running_events']) < 8) {
 					$tours[$event['tid']]['running_events'][] = $event;
+				}
+			}
+			if (!$onEmptyEventUseLast) {
+				foreach ($tours as $k => $tournament) {
+					if (0 == count($tours[$k]['running_events'])) {
+						unset($tours[$k]);
+					}
 				}
 			}
 		}
@@ -208,7 +217,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 	 * @param <bool> $skipPost
 	 * @return <array>
 	 */
-	private function helperRunningTournamentEx($tournamentIds, $skipPost = false)
+	private function helperRunningTournamentEx($tournamentIds, $onEmptyEventUseLast, $skipPost = false)
 	{
 		if (empty($tournamentIds)) {
 			return array();
@@ -238,7 +247,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 			}
 		}
 		$emptyTournaments = array_flip($emptyTournaments);
-		if (0 != count($emptyTournaments)) {
+		if (0 != count($emptyTournaments) && $onEmptyEventUseLast) {
 			$mEvents = $this->db->array_query_assoc('
 				SELECT * FROM (
 					SELECT e.id, e.tournament_id tid, e.name, e.players_left, e.players_total, e.chipspool
@@ -406,6 +415,89 @@ class livereporting_model_tournament extends livereporting_model_pylon
 		');
 	}
 	
+	protected function getRunningMobileappTree()
+	{
+		$tree = array();
+		$tournaments = $this->db->array_query_assoc('
+			SELECT id, name title, "" img, 1 live, timezone, logo_mobile_1 img1, logo_mobile_2 img2
+			FROM ' . $this->table('Tournaments') . '
+			WHERE is_live=1 AND state=1
+			ORDER BY priority DESC, from_date DESC'
+		, 'id');
+		$tournaments += $this->db->array_query_assoc('
+			SELECT id, name title, "" img, 0 live, timezone, logo_mobile_1 img1, logo_mobile_2 img2
+			FROM ' . $this->table('Tournaments') . '
+			WHERE is_live=1 AND state=2
+			ORDER BY from_date DESC
+			LIMIT 1'
+		, 'id');
+
+		$pathM1 = $this->get_dir('web:LogosM1');
+		$pathM2 = $this->get_dir('web:LogosM2');
+		foreach ($tournaments as $key => $_) {
+			$tournaments[$key]['events'] = array();
+			if ('' != $tournaments[$key]['img1'])
+				$tournaments[$key]['img1'] = $pathM1 . $tournaments[$key]['img1'];
+			if ('' != $tournaments[$key]['img2'])
+				$tournaments[$key]['img2'] = $pathM2 . $tournaments[$key]['img2'];
+
+		}
+		$events = $this->getRunningMobileappTreeEvents(array_keys($tournaments));
+		foreach ($events as $_ => $event) {
+			$_ = $event['tid'];
+			unset($event['tid']);
+			$tournaments[$_]['events'][] = $event;
+		}
+
+		return $tournaments;
+	}
+
+	private function getRunningMobileappTreeEvents($tournamentIds)
+	{
+		if (empty($tournamentIds)) {
+			return array();
+		}
+		$events = $this->db->array_query_assoc('
+			SELECT e.tournament_id tid, e.id, e.name title, e.state=1 live, e.state=0 upcomming, e.from_date, e.to_date, "" date
+			FROM ' . $this->table('Events') . ' e
+			INNER JOIN  ' . $this->table('Days') . ' d
+				ON d.event_id=e.id
+			WHERE e.tournament_id IN (' . implode(',', $tournamentIds) . ')
+				AND e.is_live=1
+				AND d.is_live=1
+			GROUP BY e.id
+			ORDER BY e.from_date DESC, e.id DESC',
+		'id');
+
+		foreach ($events as $key => $_) {
+			$events[$key]['days'] = array();
+		}
+		$days = $this->getRunningMobileappTreeDays(array_keys($events));
+		foreach ($days as $_ => $day) {
+			$_ = $day['eid'];
+			unset($day['eid']);
+			$events[$_]['days'][] = $day;
+		}
+
+		return $events;
+	}
+
+	private function getRunningMobileappTreeDays($eventIds)
+	{
+		if (empty($eventIds)) {
+			return array();
+		}
+		$days = $this->db->array_query_assoc('
+			SELECT event_id eid, id, name title, day_date `date`, state=1 live, state=0 upcomming, is_empty=0 has_posts
+			FROM ' . $this->table('Days') . '
+			WHERE event_id IN (' . implode(',', $eventIds) . ')
+				AND is_live=1
+			ORDER BY day_date DESC, id DESC',
+		'id');
+
+		return $days;
+	}
+
 	private function getInteger_($i)
 	{
 		if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
@@ -422,8 +514,8 @@ class livereporting_model_tournament extends livereporting_model_pylon
  * @subpackage models
  */
 class livereporting_model_tournament_src_index extends livereporting_model_tournament {
-	function getRunningTournaments($fetchRuningEvents = TRUE, $onEmptyUseLast = TRUE, $fetchPostSnippets = TRUE)
-		{ return parent::getRunningTournaments($fetchRuningEvents, $onEmptyUseLast, $fetchPostSnippets); }
+	function getRunningTournaments($fetchRuningEvents = TRUE, $onEmptyUseLast = TRUE, $onEmptyEventUseLast = TRUE, $fetchPostSnippets = TRUE)
+		{ return parent::getRunningTournaments($fetchRuningEvents, $onEmptyUseLast, $onEmptyEventUseLast, $fetchPostSnippets); }
 
 	function getUpcomingTournaments($limit = 4) 
 		{ return parent::getUpcomingTournaments($limit); }
@@ -459,8 +551,8 @@ class livereporting_model_tournament_src_index extends livereporting_model_tourn
  * @subpackage models
  */
 class livereporting_model_tournament_src_tour extends livereporting_model_tournament {
-	function getRunningTournaments($fetchRuningEvents = TRUE, $onEmptyUseLast = TRUE, $fetchPostSnippets = TRUE)
-		{ return parent::getRunningTournaments($fetchRuningEvents, $onEmptyUseLast, $fetchPostSnippets); }
+	function getRunningTournaments($fetchRuningEvents = TRUE, $onEmptyUseLast = TRUE, $onEmptyEventUseLast = TRUE, $fetchPostSnippets = TRUE)
+		{ return parent::getRunningTournaments($fetchRuningEvents, $onEmptyUseLast, $onEmptyEventUseLast, $fetchPostSnippets); }
 }
 
 /**
@@ -489,4 +581,15 @@ class livereporting_model_tournament_src_bluff extends livereporting_model_tourn
 {
 	function getEvents($tournamentId)
 		{ return parent::getEventsWithBluff($tournamentId); }
+}
+
+/**
+ * livereporting_model_tournament methods, accessed from other.mobileapp
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_tournament_src_mobileapp extends livereporting_model_tournament
+{
+	function getTree()
+		{ return parent::getRunningMobileappTree(); }
 }

@@ -170,6 +170,9 @@ class livereporting_model_event extends livereporting_model_pylon
 				$where[] = 'l.type IN (' . implode(',', $typeFilter) . ')';
 			}
 		}
+		if (!empty($filter['newerThan'])) {
+			$where[] = 'l.created_on>' . getInteger($filter['newerThan']) . '';
+		}
 		return $where;
 	}
 
@@ -188,6 +191,12 @@ class livereporting_model_event extends livereporting_model_pylon
 		if (0 == count($entries)) {
 			return array();
 		}
+		$this->helperLogEntriesAttachAuthors($entries);
+		return $entries;
+	}
+
+	private function helperLogEntriesAttachAuthors(&$entries)
+	{
 		$authorIds = array();
 		foreach ($entries as $entry) {
 			if ($entry['author_id'] != 0) {
@@ -205,7 +214,6 @@ class livereporting_model_event extends livereporting_model_pylon
 				$entries[$k]['author_name'] = NULL;
 			}
 		}
-		return $entries;
 	}
 
 	protected function getLogEntriesCount($eventId, $dayId, $filter = NULL)
@@ -237,6 +245,27 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		return $entry;
 	}
+	
+	protected function getKeyHandEntries($eventId)
+	{
+		$entries = $this->db->array_query_assoc('
+			SELECT l.id, l.event_id, l.type, l.created_on, l.author_id, COALESCE(p.title, c.title) title
+			FROM ' . $this->table('Log') . ' l 
+			LEFT JOIN ' . $this->table('tPosts') . ' p
+				ON p.is_keyhand=1 AND p.id=l.id AND l.type="post"
+			LEFT JOIN ' . $this->table('tChips') . ' c
+				ON c.is_keyhand=1 AND c.id=l.id AND l.type="chips"
+			WHERE l.event_id=' . getInteger($eventId) . ' AND l.is_hidden=0
+				AND COALESCE(p.id, c.id) IS NOT NULL 
+			ORDER BY l.created_on DESC 
+			LIMIT 20'
+		);
+		if (0 == count($entries)) {
+			return array();
+		}
+		$this->helperLogEntriesAttachAuthors($entries);
+		return $entries;
+	} 
 	
 	private function daysSortCmp($a, $b)
 	{
@@ -408,6 +437,16 @@ class livereporting_model_event extends livereporting_model_pylon
 			LIMIT 9');
 	}
 	
+	protected function getMobileappPhotos($dayId)
+	{
+		return $this->db->array_query_assoc('
+			SELECT id, image_src, image_alt title
+			FROM ' . $this->table('Photos') . '
+			WHERE day_id=' . getInteger($dayId) . ' AND is_hidden=0
+			ORDER BY created_on DESC
+			LIMIT 30');
+	}
+
 	/**
 	 * Returns previous days, except parallel
 	 * @todo check (1)
@@ -770,12 +809,16 @@ class livereporting_model_event extends livereporting_model_pylon
 			SET state=1, updated_on=' . time() . '
 			WHERE id=' . intval($tournamentId) . ' AND state=0
 		');
+		if ($this->db->affected_rows())
+			$this->object('livereporting')->altLog($tournamentId, 0, 0, 'update', 'tournaments', $tournamentId, 'entryAdded:state=1');
 		$this->db->query('
 			UPDATE ' . $this->table('Events') . '
 			SET state=1, updated_on=' . time() . '
 			WHERE id=' . intval($eventId) . ' AND state=0
 		');
-		// not changing day state, just emptiness (or else should insert entry to log)
+		if ($this->db->affected_rows())
+			$this->object('livereporting')->altLog($tournamentId, $eventId, 0, 'update', 'events', $eventId, 'entryAdded:state=1');
+		// not changing day state, just emptyness (or else should insert entry to log)
 		$this->db->query('
 			UPDATE ' . $this->table('Days') . '
 			SET is_empty=0, updated_on=' . time() . '
@@ -818,6 +861,8 @@ class livereporting_model_event extends livereporting_model_pylon
 			SET state=0, updated_on=' . time() . '
 			WHERE id=' . intval($eventId) . ' AND state=1
 		');
+		if ($this->db->affected_rows())
+			$this->object('livereporting')->altLog($tournamentId, $eventId, 0, 'update', 'events', $eventId, 'entryRemoved:state=0');
 
 		// if all events scheduled (in tournament)
 		$check = $this->db->single_query_assoc('
@@ -834,6 +879,8 @@ class livereporting_model_event extends livereporting_model_pylon
 			SET state=0, updated_on=' . time() . '
 			WHERE id=' . intval($tournamentId) . ' AND state!=0
 		');
+		if ($this->db->affected_rows())
+			$this->object('livereporting')->altLog($tournamentId, 0, 0, 'update', 'tournaments', $tournamentId, 'entryRemoved:state=0');
 	}
 }
 
@@ -907,6 +954,8 @@ class livereporting_model_event_src_event extends livereporting_model_event
 		{ return parent::getSponsorsById($ids); }
 	function getSponsors()
 		{ return parent::getSponsors(); }
+	function getKeyHandEntries($eventId)
+		{ return parent::getKeyHandEntries($eventId); }
 }
 
 /**
@@ -986,10 +1035,14 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 			WHERE l.is_hidden=0 AND (' . implode(' OR ', $where) . ')
 			  AND d.is_live=1
 		');
+		$eBase = $this->parent->instHierarchyModel()->getEventsUris();
 
 		while ($entry = $this->db->fetch_row_assoc($entriesR)) {
 			$entry['contents'] = unserialize($entry['contents']);
 			if (!is_array($entry['contents'])) {
+				continue;
+			}
+			if (!isset($eBase[$entry['event_id']])) {
 				continue;
 			}
 			$entry_ = array(
@@ -1031,4 +1084,34 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 			return $pt[$map[$tId]['tour']]['img1'];
 		}
 	}	
+}
+
+/**
+ * livereporting_model_event methods, accessed from other.mobileapp
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_event_src_mobileapp extends livereporting_model_event
+{
+	function getPhotos($dayId)
+		{ return parent::getMobileappPhotos($dayId); }
+	function getEventData($eventId)
+		{ return parent::getEventData($eventId); }
+	function getLogEntries($eventId, $dayId, $filter, $limit)
+		{ return parent::getLogEntries($eventId, $dayId, $filter, 'LIMIT ' . intval($limit)); }
+	function getChips($eventId, $dayId)
+		{ return parent::getLastChips($eventId, $dayId, FALSE, TRUE); }
+
+	function getDayEvent($dayId)
+	{
+		$data = $this->db->single_query_assoc('
+			SELECT event_id FROM ' . $this->table('Days') . '
+			WHERE id=' . getInteger($dayId) . '
+			    AND is_live>=0
+		');
+		if (empty($data)) {
+			return NULL;
+		}
+		return $data['event_id'];
+	}
 }

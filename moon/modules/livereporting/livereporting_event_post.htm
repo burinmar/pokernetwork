@@ -61,7 +61,7 @@
 		</p>
 		{cp.toolbar}
 		Text:
-		<p><textarea name="body" id="rq-wp-body" cols="55" rows="10">{cp.body}</textarea></p>
+		<p><textarea name="body" id="rq-wp-body" cols="55" rows="15">{cp.body}</textarea></p>
 		<%if{hl}%><a href="/h/?a={hl}" onclick="var w=window.open('/h/?a={hl}', 'hb', 'width=840,height=645,toolbar=no,scrollbars=yes,resizable=yes');w.focus();return false;">Add hand log</a><%end%>
 		<p><label>Tags:</label> <input type="text" name="tags" maxlength="255" class="full-width" value="{cp.tags}" /></p>
 		<p>
@@ -83,6 +83,7 @@
 			</span>
 		</p>
 		<p><label>Published:</label> <input type="checkbox" name="published" value="1" class="checkbox"<%if {cp.published} %> checked="checked"<%end%> /></p>
+		<%if {cp.show_keyhand} %><p><label>Is Key Hand:</label> <input type="checkbox" name="is_keyhand" value="1" class="checkbox"<%if {cp.is_keyhand} %> checked="checked"<%end%> /></p><%end%>
 		<p><label>Exportable:</label> <input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cp.is_exportable} %> checked="checked"<%end%> /><span class="small gray"> &nbsp; (WSOP xml)</span></p>
 		<p><label>&nbsp;</label>
 			<input type="submit" value="Save"/>

@@ -374,3 +374,25 @@ evt.scheduled=Scheduled
 
 <% tour:cards.item %>
 <span class="card card{color}" title="{value}-{suit}"><img src="/img/suits/suit-{isuit}.png" width="13" height="13" alt="{valueRaw}" /><span class="cardValue">{value}</span></span>
+
+
+<% sidebar:key_hands %>
+<div id="reportingSlider">
+	<div class="eChoise">{!eventHighlights}</div>
+	<div id="slides">
+		<a class="prev" href="#prev">»</a>
+		<a class="next" href="#next">«</a>
+		<div class="hidden">
+			<ul>
+				<%loop {list.entries += sidebar:key_hands.item} %>
+				<li>
+					<a href="{url}">
+						<b>{title}</b>
+						<%if {created_on} %><em>{!posted} {created_on}</em><%end%>
+					</a>
+				</li>
+				<%end%>
+			</ul>
+		</div>
+	</div>
+</div>

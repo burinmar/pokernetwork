@@ -375,6 +375,11 @@ class livereporting_event_pylon extends livereporting_event
 		return $rArgv;
 	}
 	
+	public function helperRenderCommonArgvMobileapp(&$data, $argv, $tpl)
+	{
+		return $this->helperRenderCommonArgv($data, $argv, $tpl);
+	}
+
 	/**
 	 * Pre-save location check macro
 	 * @param int $dayId 
