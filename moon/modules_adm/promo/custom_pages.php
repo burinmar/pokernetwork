@@ -139,6 +139,9 @@ class custom_pages extends base_inplace_syncable
 		if ('0' != $uriDupe['cid']) {
 			$errors[] = 'e.dupe_alias';
 		}
+		if (in_array($saveData['alias'], array('results', 'schedule', 'terms-and-conditions'))) {
+			$errors[] = 'e.reserved_alias';
+		}
 		return $errors;
 	}
 }

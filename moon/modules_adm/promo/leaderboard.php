@@ -99,6 +99,8 @@ class leaderboard extends moon_com
 
 	private function saveEntry($data)
 	{
+		if (strpos($data['lb_data'], "\t") === false)
+			$data['lb_data'] = str_replace(';', "\t", $data['lb_data']);
 		$this->db->update(array(
 			'lb_data' => $data['lb_data']
 			// updated_on must be automatic in-db

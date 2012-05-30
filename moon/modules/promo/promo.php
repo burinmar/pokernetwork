@@ -23,6 +23,7 @@ class promo extends moon_com
 				$this->set_var('render', $sub . '-archive');
 				break;
 			}
+			// no break
 		case 'results':
 			if (isset($_GET['searchName']) && 'results' == $sub) {
 				$this->set_var('render', $sub . '-search');
@@ -34,6 +35,7 @@ class promo extends moon_com
 				$this->set_var('event-id', $argv[3]);
 				break;
 			}
+			// no break
 		case 'terms-and-conditions':
 			$this->set_var('render', $sub);
 			break;
