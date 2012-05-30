@@ -26,7 +26,8 @@ class tour_list extends moon_com
 				    'currency', 'intro', 'tour', 'is_live', 'alias', 'logo_bgcolor', 'logo_is_dark',
 				    'delete_logo_big_bg', 'delete_logo_small', 'timezone', 'place', 'address', 'geolocation',
 				    'sync_id','is_syncable','autopublish',
-				    'delete_logo_mid', 'delete_logo_idx', 'skin', 'ad_rooms', 'priority', 'stayhere');
+				    'delete_logo_mid', 'delete_logo_idx', 'delete_logo_mobile_1', 'delete_logo_mobile_2',
+				    'skin', 'ad_rooms', 'priority', 'stayhere');
 				$form->fill($_POST);
 				$data = $form->get_values();
 
@@ -34,7 +35,9 @@ class tour_list extends moon_com
 					'logo_mid',
 					'logo_big_bg',
 					'logo_small',
-					'logo_idx'
+					'logo_idx',
+					'logo_mobile_1',
+					'logo_mobile_2',
 				) as $k) {
 					$file[$k] = new moon_file;
 					$data[$k] = $file[$k]->is_upload($k, $fe = NULL)
@@ -58,7 +61,9 @@ class tour_list extends moon_com
 						'logo_mid',
 						'logo_big_bg',
 						'logo_small',
-						'logo_idx'
+						'logo_idx',
+						'logo_mobile_1',
+						'logo_mobile_2'
 					) as $k) {
 						if (isset($data[$k])) {
 							unset($data[$k]);
@@ -236,6 +241,8 @@ class tour_list extends moon_com
 				'logo_idx' => '',
 				'logo_small' => '',
 				'logo_is_dark' => '',
+				'logo_mobile_1' => '',
+				'logo_mobile_2' => '',
 				'timezone' => '',
 				'skin' => '',
 				'currency' => 'USD',
@@ -280,6 +287,12 @@ class tour_list extends moon_com
 				'logo_idx' => !empty($entryData['logo_idx'])
 					? $this->get_dir('web:LogosIdx') . $entryData['logo_idx']
 					: '',
+				'logo_mobile_1' => !empty($entryData['logo_mobile_1'])
+					? $this->get_dir('web:LogosM1') . $entryData['logo_mobile_1']
+					: '',
+				'logo_mobile_2' => !empty($entryData['logo_mobile_2'])
+					? $this->get_dir('web:LogosM2') . $entryData['logo_mobile_2']
+					: '',
 			));
 			$mainArgv['title'] = htmlspecialchars($entryData['name']);
 			$mainArgv['url.schedule'] = $this->linkas('event_list#', 'by-tour.' . $entryData['id']);
@@ -295,6 +308,8 @@ class tour_list extends moon_com
 		}
 
 		$timezones = $locale->select_timezones();
+
+		$mainArgv['mobile_provider'] = _SITE_ID_ == 'com';
 
 		$mainArgv['list.timezones'] = '';
 		foreach ($timezones as $timezoneId => $timezoneName) {
@@ -488,10 +503,12 @@ class tour_list extends moon_com
 		}
 
 		foreach (array(
-			array('logo_mid',   'fs:LogosMid'),
-			array('logo_big_bg','fs:LogosBigBg'),
-			array('logo_small', 'fs:LogosSmall'),
-			array('logo_idx',   'fs:LogosIdx'),
+			array('logo_mid',      'fs:LogosMid'),
+			array('logo_big_bg',   'fs:LogosBigBg'),
+			array('logo_small',    'fs:LogosSmall'),
+			array('logo_idx',      'fs:LogosIdx'),
+			array('logo_mobile_1', 'fs:LogosM1'),
+			array('logo_mobile_2', 'fs:LogosM2'),
 		) as $k) {
 			if (NULL !== ($file[$k[0]] = $data[$k[0]]) && !$file[$k[0]]->has_extension('jpg,gif,png')) {
 				$page->alert($messages['e.invalid_file']);

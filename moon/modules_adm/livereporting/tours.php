@@ -105,16 +105,16 @@ function renderForm($vars)
 	$main['pageTitle'] = $win->current_info('title');
 	$main['formTitle'] = htmlspecialchars($title);
 	$main['refresh'] = $page->refresh_field();
-        $main['toolbar'] = '';
+		$main['toolbar'] = '';
 	$main += $form->html_values();
 	$main['is_hidden'] = $form->checked('is_hidden', 1);
-        
-        // add toolbar
+		
+		// add toolbar
 	if (is_object( $rtf = $this->object('rtf') )) {
 		$rtf->setInstance( $this->get_var('rtf') );
 		$main['toolbar'] = $rtf->toolbar('i_about',(int)$main['id']);
 	}
-        
+		
 	return $tpl->parse('main', $main);
 }
 function getItems()
@@ -135,37 +135,37 @@ private function cmpItems($a, $b) {
 }
 function getItemsCount()
 {
-        // functions.php
-    return count(poker_tours());
+		// functions.php
+	return count(poker_tours());
 }
 function getItem($id)
 {
-        $tours = poker_tours();
-        if (empty($tours[$id])) {
-                return array();
-        }
-        
-        // adjust for empty records and stored array
-        $sql = 'SELECT *
-        FROM ' . $this->table('Tours') . '
-        WHERE id = ' . intval($id);
-        $result = $this->db->single_query_assoc($sql);
-        if (!empty($result)) {
-                $data = $result;
-        } else {
-                $data = array(
-                        'id' => $id,
-                        'meta_title' => '',
-                        'meta_keywords' => '',
-                        'meta_description' => '',
-                        'about' => '',
-                        'news_tag' => '',
-                        'is_hidden' => 1
-                );
-        }
-        
-    if (empty($data['playlist_id'])) unset($data['playlist_id']);
-        return array_merge($tours[$id], $data);
+		$tours = poker_tours();
+		if (empty($tours[$id])) {
+				return array();
+		}
+		
+		// adjust for empty records and stored array
+		$sql = 'SELECT *
+		FROM ' . $this->table('Tours') . '
+		WHERE id = ' . intval($id);
+		$result = $this->db->single_query_assoc($sql);
+		if (!empty($result)) {
+				$data = $result;
+		} else {
+				$data = array(
+						'id' => $id,
+						'meta_title' => '',
+						'meta_keywords' => '',
+						'meta_description' => '',
+						'about' => '',
+						'news_tag' => '',
+						'is_hidden' => 1
+				);
+		}
+		
+	if (empty($data['playlist_id'])) unset($data['playlist_id']);
+		return array_merge($tours[$id], $data);
 }
 /**
  * strip multiple slashes at the end of uri field
@@ -208,11 +208,11 @@ function saveItem()
 	$rtf->setInstance( $this->get_var('rtf') );
 	list(,$ins['about_html']) = $rtf->parseText($id, $ins['about'], TRUE);
 	
-        // if row exists
-        $result = $this->db->single_query_assoc('
-                SELECT count(*) as cnt from ' . $this->table('Tours') . '
-                WHERE id = ' . $id
-        );
+		// if row exists
+		$result = $this->db->single_query_assoc('
+				SELECT count(*) as cnt from ' . $this->table('Tours') . '
+				WHERE id = ' . $id
+		);
 		if ($result['cnt']) {
 			$this->db->update($ins, $this->table('Tours'), array('id' => $id));
 

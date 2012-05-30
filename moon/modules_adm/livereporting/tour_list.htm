@@ -212,7 +212,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 
 		<dt class="is_live_dep"><label>Index page image:</label></dt>
 		<dd class="is_live_dep"><input type="file" name="logo_idx" />
-			<%if {entry.logo_idx} %><br />><label><input type="checkbox" name="delete_logo_idx" />
+			<%if {entry.logo_idx} %><br /><label><input type="checkbox" name="delete_logo_idx" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_idx}" alt="" /><%end%>
 			<div class="explain">w: 440px<br />h: 106px</div>
@@ -226,6 +226,23 @@ e.ncommdupe=There is already subforum assigned to display news comments
 			<div id="entry-skin-preview" style="width:100px; height:50px; display:none; margin-top: 10px"></div>
 		</dd>
 
+		<%if {mobile_provider} %>
+		<dt class="is_live_dep"><label>Mobile app image 1:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_mobile_1" />
+			<%if {entry.logo_mobile_1} %><br /><label><input type="checkbox" name="delete_logo_mobile_1" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_mobile_1}" alt="" /><%end%>
+			<div class="explain">w: 440px<br />h: 160px</div>
+		</dd>
+
+		<dt class="is_live_dep"><label>Mobile app image 2:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_mobile_2" />
+			<%if {entry.logo_mobile_2} %><br /><label><input type="checkbox" name="delete_logo_mobile_2" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_mobile_2}" alt="" /><%end%>
+			<div class="explain">w: 480px<br />h: 210px</div>
+		</dd>
+		<%end%>
 		
 	</dl>
 

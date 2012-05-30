@@ -100,7 +100,7 @@ class tour_import extends moon_com
 
 		if (FALSE == ($data = $mcd->get($mcdKey))) {
 			$url = is_dev()
-				? 'http://pokernews.dev/live-reporting/export.tournaments-homerun.xml'
+				? 'http://www.pokernews.dev/live-reporting/export.tournaments-homerun.xml'
 				: 'http://www.pokernews.com/live-reporting/export.tournaments-homerun.xml';
 			$ch = curl_init($url);
 			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
