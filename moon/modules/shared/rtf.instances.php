@@ -36,7 +36,6 @@ if (strpos($instance, '~')) {
 } else {
 	$par = '';
 }
-
 //custom settings
 switch ($instance) {
 
@@ -71,6 +70,11 @@ switch ($instance) {
 
 	case 'freeroll' :
 		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'), 'allowScript' => TRUE);
+		break;
+
+	case 'promos':
+		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'));
+		$cfg['features'] = '-sub,-sup,-underline,-strike,-quote,-code,-timer,-cards,-video,-smiles,-spoiler,-game,-twitter';
 		break;
 
 	case 'blog_post':
