@@ -406,7 +406,7 @@ class livereporting_index extends moon_com
 			'tournaments' => 0,
 			'events' => 0,
 		);
-
+		
 		// {{ wsop11
 		/*
 		$runningSpecial = array();
@@ -488,7 +488,8 @@ class livereporting_index extends moon_com
 	{
 		$tpl = $this->load_template();
 		$tplArgv = array(
-			'list' => ''
+			'list' => '',
+			'list.live' => '',
 		);
 		$lrep = $this->object('livereporting');
 		$lrepTools = $lrep->instTools();

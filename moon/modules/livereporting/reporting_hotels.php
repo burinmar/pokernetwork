@@ -36,7 +36,7 @@ class reporting_hotels extends moon_com
 			$this->set_var('render', 'list');
 		}
 	}
-	
+
 	private $configArray;
 	private function config($key)
 	{
@@ -466,7 +466,7 @@ class reporting_hotels extends moon_com
 
 		return $tpl->parse('hotel:main', $mainArgv);
 	}
-	
+
 	private function helperLatlongDistanceMi($lat1, $lon1, $lat2, $lon2)
 	{
 		$theta = $lon1 - $lon2; 
@@ -629,7 +629,7 @@ class reporting_hotels extends moon_com
 					? $this->helperCurrencyWrite(intval($hotel->lowRate), $hotel->rateCurrencyCode)
 					: '',
 				'distance' => 'tournament' == $searchArgv['active_tab'] && $hotel->proximityDistance > 0
-					? number_format($hotel->proximityDistance, 1) . ' ' . $hotel->proximityUnit
+					? $this->helperDistanceFormat($hotel->proximityDistance, $hotel->proximityUnit)
 					: '',
 			);
 			if (isset($hotel->RoomRateDetailsList->RoomRateDetails->RateInfos->RateInfo)) { // searched with availability
@@ -743,7 +743,7 @@ class reporting_hotels extends moon_com
 
 		return $tpl->parse('list:block.rooms', $mainArgv);
 	}
-	
+
 	private function renderActiveTournamentsExport()
 	{
 		// if ($_SERVER['HTTP_USER_AGENT'] != 'Pokernews CURL')
@@ -1127,7 +1127,7 @@ class reporting_hotels extends moon_com
 	{
 		return moon::page()->get_global($this->my('fullaname').'.sessid');
 	}
-	
+
 	private function getActiveTournaments()
 	{
 		$data = $this->db->array_query_assoc('

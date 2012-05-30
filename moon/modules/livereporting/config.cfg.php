@@ -49,6 +49,7 @@ $cfg['livereporting'] = array(
 	'vocabulary{livereporting_tournament}'    => '{dir.multilang}{module}/livereporting_tour.txt',
 	'vocabulary{livereporting_tour}'          => '{dir.multilang}{module}/livereporting_category.txt',
 	'vocabulary{reporting_news}'    => '{dir.multilang}{module}/livereporting_index.txt',
+	'vocabulary{reporting_hotels}'    => '{dir.multilang}/hotels.txt',
 
 	'dir.web:LogosBigBg' => '/w/lrep/lbbg/',
 	'dir.web:LogosSmall' => '/w/lrep/ls/',
@@ -126,11 +127,9 @@ $cfg['livereporting'] = array(
 
 if (is_dev()) {
 	$cfg['livereporting']['var.wsopxml'] = array(150, 156, 154);
-}
-
-if (is_dev()) {
 	$cfg['livereporting']['var.twitter'] = array('oqY0t7uKsjyTN4Vb6nQ', 'XdyKYe9MyrfWE9247x5E4KQ49ClY6JUXbyzJvRZr30', '297837556-nlHyQvRt2Klc4E8DkS1XNYKQtAZp7PhYo2ZdFR5j', 'yQcn7FWiFtaK6eQu8JvP9nA5v98tvvitVOIJfCF1sU');
+} else {
+	unset($cfg['livereporting']['var.hotelsLanguageConfig']['pt']);
 }
-
 if (moon::user()->i_admin())
 	moon::page()->set_global('adminView', 1);
