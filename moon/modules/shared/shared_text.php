@@ -721,7 +721,7 @@ function _tag($tag,$param,$txt){
 		foreach ($a as $v) {
 			if (is_numeric($v)) {
 				$v =intval($v);
-				if ($v>30 && $v<101) $width='style="width:'.$v.'" width="'.$v.'%"';
+				if ($v>30 && $v<101) $width='style="width:'.$v.'%" width="'.$v.'%"';
 			}
 			else {
 				switch ($v) {
