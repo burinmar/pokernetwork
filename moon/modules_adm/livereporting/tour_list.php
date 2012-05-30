@@ -397,6 +397,7 @@ class tour_list extends moon_com
 		return strcmp($a['title'], $b['title']);
 	}
 
+
 	function getEntry_($id)
 	{
 		if (NULL === $this->getInteger_($id)) {
