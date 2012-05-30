@@ -276,7 +276,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 		if (0 == count($events) || $skipPost) {
 			return $events;
 		}
-		
+
 		$posts = $this->db->array_query_assoc('
 			SELECT l.id, l.type, l.event_id, l.created_on, l.contents, d.name dname, d.state dstate FROM (
 				SELECT event_id, MAX(created_on) mincreated

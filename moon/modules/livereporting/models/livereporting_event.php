@@ -245,7 +245,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		return $entry;
 	}
-	
+
 	protected function getKeyHandEntries($eventId)
 	{
 		$entries = $this->db->array_query_assoc('
@@ -326,7 +326,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	}
 	
 	/**
-	 * @todo cache, query looks bad
+	 * @todo cache, query looks not-so-good
 	 */
 	protected function getLastRound($eventId, $dayId)
 	{
@@ -1083,7 +1083,7 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 		if (isset($pt[$map[$tId]['tour']])) {
 			return $pt[$map[$tId]['tour']]['img1'];
 		}
-	}	
+	}
 }
 
 /**
