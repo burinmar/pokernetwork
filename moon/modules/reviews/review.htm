@@ -24,6 +24,19 @@
 	<div class="left fl">
 		<div class="widget article">
 			<h1>{roomName}</h1>
+			<%if{isPKR}%>
+			<div id="additionalCodes">
+				<div class="label">{!additionalCodes}</div>
+				<div class="code">
+					<b>{!pkrupto}</b>
+					<p>PNPKR150 <a href="{downloadURL}" target="_blank">{!start}</a></p>
+				</div>
+				<div class="code">
+					<b>{!pkrupto_2}</b>
+					<p>PNPKR500 <a href="{downloadURL}" target="_blank">{!start}</a></p>
+				</div>
+			</div>
+			<%end{isPKR}%>
 			{intro}
 			<!--# fieldset class="commingPromos">
 				<legend>Ongoing promotions</legend>
