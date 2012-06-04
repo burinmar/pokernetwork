@@ -36,6 +36,7 @@ class header extends moon_com
 		$bgURL = 'http://www.pokernetwork.com/leagues/10-500-poker770-weekend-wonders/';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
 		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #000000 url(\'/img/p770_wonders_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+		return $res;
 		/* Toliau baneris */
 		$cookieVar = 'b0521';
 		if (!isset($_COOKIE[$cookieVar]) || $_COOKIE[$cookieVar] !='h') {
@@ -44,7 +45,7 @@ class header extends moon_com
 			}
 			$res = '<script type="text/javascript">function closeFlashLayer(){var d=new Date();d.setTime(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59,999)+d.getTimezoneOffset()*60000+1);document.cookie=\''.$cookieVar.'=h; expires=\'+d.toGMTString()+\'; path=/\';document.getElementById(\'bn0902\').style.display=\'none\'}</script><div style="position: fixed; top: 0; right: 50%; margin-right: -508px; width: 1012px; height: 611px; z-index: 9999;" id="bn0902" onclick="closeFlashLayer()"><object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="1012" height="611" id="mymoviename""><param name="movie" value="/img/p770_wonders_layer_banner.swf?clickTAG='.$bgURL.'" /><param name="quality" value="high" /><param name="allowscriptaccess" value="always"><param name="quality" value="high" /><param name="wmode" value="transparent" /><param name="bgcolor" value="transparent" /><embed src="/img/p770_wonders_layer_banner.swf?clickTAG='.$bgURL.'" wmode="transparent" quality="high" bgcolor="transparent" width="1012" height="611" name="mymoviename" allowscriptaccess="always" align="" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed></object></div>' . $res;
 		}
-		return $res;
+		
 
 
 		$bgURL = '/leagues/30k-winner-wednesday-dozen/';
