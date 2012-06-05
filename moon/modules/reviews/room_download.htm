@@ -4,8 +4,8 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 	<meta name="robots" content="noindex, nofollow">
-   	<meta http-equiv="refresh" content="100; url={downloadURL}" />
-	<title>{!download.1}</title>
+	<meta http-equiv="refresh" content="1; url={downloadURL}" />
+	<title>Thank you for downloading {roomName}!</title>
 	<style type="text/css">
 	* {
 		margin: 0;
@@ -65,32 +65,32 @@
 </head>
 <body onload="doRedirect()">
 	<!--# ********** start of body ****************-->
-	<a href="{home_url}" class="logo" title="PokerNews Home"><img src="/img/ext/redirect-logo.png" alt="PokerNews" /></a><br />
+	<a href="{home_url}" class="logo" title="PokerNetwork Home"><img src="/img/redirectLogo.png" alt="PokerNetwork" /></a><br />
 	<%if{isDownload}%>
-	<strong>{!redirect1}</strong><br/>
-	<p class="reload">{!redirect2}<br />
- 	{!redirect3}</p><br /><br />
+	<strong>Your {roomName} download will start in few seconds.</strong><br/>
+	<p class="reload">Problems with the download?<br />
+ 	Please use this <a href="{downloadURL}">direct</a> link, or try <a href="{url.self}">reload page</a>.</p><br /><br />
     <% if {bonus} %>
 			<dl>
-				<dt><b>{!download.3}</b>:</dt>
-				<dd><%if {bonus_percent} %>{bonus_percent}% {!upto} <%end%>{bonus}</dd>
+				<dt><b>PokerNetwork special bonus</b>:</dt>
+				<dd><%if {bonus_percent} %>{bonus_percent}% up to <%end%>{bonus}</dd>
 			</dl>
 	<% end {bonus} %>
 	<% if {bonus_code} %>
 			<dl>
-				<dt><b>{!download.5}</b>:</dt>
+				<dt><b>Use PokerNetwork bonus code</b>:</dt>
 				<dd>{bonus_code}</dd>
 			</dl>
 	<% end {bonus_code} %>
 	<% if {marketing_code} %>
 			<dl>
-				<dt><b>{!download.4}</b>:</dt>
+				<dt><b>Use PokerNetwork marketing code</b>:</dt>
 				<dd>{marketing_code}</dd>
 			</dl>
 	<% end {marketing_code} %>
 	<%else{isDownload}%>
-	<strong>{!redirect4}</strong><br/>
- 	<p class="justRedirect">{!redirect5}</p>
+	<strong>Redirecting... Please Wait</strong><br/>
+ 	<p class="justRedirect">If you are not redirected shortly, click <a href="{downloadURL}">direct link</a>.</p>
 	<%end{isDownload}%>
 	<!--# ********** end of body ****************-->
 
