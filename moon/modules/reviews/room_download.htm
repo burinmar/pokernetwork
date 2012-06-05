@@ -1,0 +1,98 @@
+<% redirect %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="{lang}" xml:lang="{lang}">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<meta name="robots" content="noindex, nofollow">
+   	<meta http-equiv="refresh" content="100; url={downloadURL}" />
+	<title>{!download.1}</title>
+	<style type="text/css">
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	img {border: 0}
+	body {
+		background: #f2f2f2;
+		text-align: center;
+		padding: 40px 0;
+		margin: 0;
+		font: 12px/18px Arial,Helvetica,sans-serif;
+	}
+	.logo {margin-bottom: 40px; display: block;}
+	strong {font-size: 24px; font-weight: normal; display: block; margin-bottom: 10px}
+	p, dl {font-size: 16px; line-height: 28px}
+	p a {
+		display: inline-block;
+		padding: 0 8px 0 28px;
+		line-height: 30px;
+		text-decoration: none;
+		color: #000;
+		background: #e1e1e1 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAANCAYAAACZ3F9/AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAE9JREFUeNq0kkEOACAIwxjx/19GvaJsxMSdKWsIiAhTAXAMuT0GuXFvX4Fq965aW1XBW4kOZG2q2mmWYHWoUakwiDYyqAQVdH2A7y83BRgA+LcoE3Ovp6AAAAAASUVORK5CYII=') no-repeat 5px 9px;
+	}
+	.reload a:last-child {
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAATZJREFUeNqMUjsKg0AQnUSsrEUQBEkaL2Bj4QEkYCU5gReRQECsLK0sBGttxM5UIoRAmhBRPEKuMMlucImokIEB13lvPm8GEBGWvCgKvF6vuBTbwop1XQeHwwHyPMdZ8DfDMAwYhiHato2KohAw8jyP5/N5UpF9XC4X3O12FLjkSZLghNQ0DYqiOAFxHMcqBUEwr2RZFgPruo5lWdI2SaIsy2ZiQF3XjKCqKrZtS0EETGJL6gEpPZJOpxOurWAi+ev1Ykp+KsE/tv30zR7P5/MvElVuVEqWZbzf77MW0zSl83qeh4/H4/vTcRw2l6ZpdCdEkL7v0fd9FASBxaMo+pJutxvNtLbY0cmlTC6CyGsYxirBdV0kZ0awG8r8sTiOsaoq+MwGkiTBfr+H4/EIpmluRsxbgAEANw9g2kol6DMAAAAASUVORK5CYII=');
+		background-position: 8px 7px;
+	}
+	p a:hover {background-color: #ccc}
+	dl b {font-weight: normal}
+	dl dd {margin-bottom: 10px; font-weight: bold}
+	.reload {margin-bottom: 40px}
+	</style>
+	<script type="text/javascript">
+	function doRedirect() {
+		//setTimeout(function (){document.location.href="{downloadURL-js}";},100);
+	}
+	</script>
+	<% if {googleID} %>
+		<script type="text/javascript">
+		var _gaq = _gaq || [];
+		_gaq.push(['_setAccount', '{googleID}']);
+		_gaq.push(['_trackPageview']);
+		_gaq.push(['_trackPageLoadTime']);
+
+		_gaq.push(['_addTrans', '{pgTrackerOrderID}', 'PokerNetwork', 1]);
+		_gaq.push(['_addItem', '{pgTrackerOrderID}', 'rw{roomID}', '{roomUri}', '{category}', 1, 1]);
+		_gaq.push(['_trackTrans']);
+
+		(function() {
+		var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		})();
+		</script>
+	<% end %>
+</head>
+<body onload="doRedirect()">
+	<!--# ********** start of body ****************-->
+	<a href="{home_url}" class="logo" title="PokerNews Home"><img src="/img/ext/redirect-logo.png" alt="PokerNews" /></a><br />
+	<%if{isDownload}%>
+	<strong>{!redirect1}</strong><br/>
+	<p class="reload">{!redirect2}<br />
+ 	{!redirect3}</p><br /><br />
+    <% if {bonus} %>
+			<dl>
+				<dt><b>{!download.3}</b>:</dt>
+				<dd><%if {bonus_percent} %>{bonus_percent}% {!upto} <%end%>{bonus}</dd>
+			</dl>
+	<% end {bonus} %>
+	<% if {bonus_code} %>
+			<dl>
+				<dt><b>{!download.5}</b>:</dt>
+				<dd>{bonus_code}</dd>
+			</dl>
+	<% end {bonus_code} %>
+	<% if {marketing_code} %>
+			<dl>
+				<dt><b>{!download.4}</b>:</dt>
+				<dd>{marketing_code}</dd>
+			</dl>
+	<% end {marketing_code} %>
+	<%else{isDownload}%>
+	<strong>{!redirect4}</strong><br/>
+ 	<p class="justRedirect">{!redirect5}</p>
+	<%end{isDownload}%>
+	<!--# ********** end of body ****************-->
+
+</body>
+</html>

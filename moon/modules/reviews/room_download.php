@@ -7,10 +7,60 @@ class room_download extends moon_com {
 		$oReview = & $this->object('review');
 		$oReview->id($roomID);
 		$roomData = $oReview->getRoom();
-		list($url, $inFrame, $bonusCode) = $this->getRedirectUrl($roomID, $alias, $uri);
+		list($url, $inFrame, $bonusCode, $extType) = $this->getRedirectUrl($roomID, $alias, $uri);
 		$param = isset ($_GET['p']) ? trim(substr($_GET['p'], 0, 40)):'';
 		$this->updateStats($roomID, $alias, $param, $uri);
-		$page->redirect($url);
+		//$page->redirect($url);
+
+		/* HTML */
+		$tpl = & $this->load_template('room_download');
+		$m = array();
+		$m['home_url'] = $page->home_url();
+		if (count($hist = $page->get_history(-1))) {
+			$m['home_url'] = $hist['url'];
+		}
+		$this->forget();
+		$m['isDownload'] = $extType === 'download';
+		$m['url.self'] = $page->uri_segments(0) . '?reload=1';
+		$m['roomName'] = htmlspecialchars($roomData['name']);
+		$m['downloadURL'] = htmlspecialchars($url);
+		$m['downloadURL-js'] = $url;
+		list($m['bonus_code'], $m['marketing_code']) = explode('|', $bonusCode . '|');
+		$m['bonus_code'] = htmlspecialchars($m['bonus_code']);
+		$m['marketing_code'] = htmlspecialchars($m['marketing_code']);
+		$m['bonus'] = '';
+		if ($roomData['bonus_int']) {
+			$m['bonus'] = str_replace('&nbsp;', '', $this->currency($roomData['bonus_int'], $roomData['currency']));
+			if ($roomData['bonus_percent']) {
+				$m['bonus_percent'] = $roomData['bonus_percent'];
+			}
+		}
+
+		if (!is_dev()) {
+			$ini = & moon :: moon_ini();
+			$m['googleID'] = $ini->get('other', 'googleStatsID');
+			$user = & moon :: user();
+			$tID = $user->id();
+			$m['pgTrackerOrderID'] = 'PNW-' . $roomID . '-' .($tID ? $tID : $user->cookie_id()) . '-' . gmdate('ymd');
+			$m['roomID'] = $roomID;
+			$m['roomUri'] = $roomData['alias'];
+			$m['category'] = empty($_GET['EL']) ? '' : $tpl->ready_js($_GET['EL']);
+		}
+
+		/* Finalize */
+		echo $tpl->parse('redirect', $m);
+		moon_close();
+		exit;
+	}
+
+	function currency($num, $currency) {
+		$codes = array('USD' => '$', 'EUR' => '&euro;', 'GBP' => '&pound;');
+		if (isset ($codes[$currency])) {
+			return $codes[$currency] . '&nbsp;' . $num;
+		}
+		else {
+			return $num . '&nbsp;' . $currency;
+		}
 	}
 
 	function updateStats($roomId, $alias, $p, $uri = 'ext') {
@@ -71,7 +121,7 @@ class room_download extends moon_com {
 				}
 			}
 		}
-		return array($result[$field], $result['iframe'], $result['bonus_code']);
+		return array($result[$field], $result['iframe'], $result['bonus_code'], ($field==='uri' ? 'visit':'download'));
 	}
 
 }
