@@ -18,12 +18,14 @@
 	</div>
 	{user_block}
 </div>
+<%if{isHome}%>
 <div id="home_top_1" class="js-adset wFullDark banner728x90" style="display:none;"></div>
 <script type="text/javascript">
 /*<![CDATA[*/
 addBanner('home_top_1', 'home:top:1');
 /*]]>*/
 </script>
+<%end%>
 
 <% user_block.nouser %>
 <ul class="userControl">
