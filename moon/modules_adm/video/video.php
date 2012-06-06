@@ -730,7 +730,7 @@ class video extends moon_com {
 			$ins[$v] = $item[$v];
 		}
 		//$autopublish = 'com' == _SITE_ID_ ? TRUE : FALSE;
-		$autopublish = FALSE;
+		$autopublish = TRUE;
 		if (empty($exist['updated']) || $autopublish) {
 			$ins['title'] = $item['title'];
 			$ins['description'] = $item['description'];
