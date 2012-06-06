@@ -301,6 +301,9 @@ function callPnEvent($siteID,$event,$data,&$answer,$usePassword=TRUE)
 			}
 			$url = 'http://' . $url . $domain . '';
 	}
+	if (!is_string($answer) || $answer!=='response') {
+		$answer='';
+	}
 	include_class('transporter');
 	$t = new transporter();
 	if ($usePassword) $t->set_key($password);
