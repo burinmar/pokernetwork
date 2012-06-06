@@ -1,80 +1,85 @@
 <% info %>
-titleNew=New
-titleEdit=Edit
+titleNew=New video
+titleEdit=Edit video
+titleUpload=Upload video
 
-error404=Item not found!
-error1=Name required
-error2=Short description required
+404=Item not found!
+error1=Title required
+error2=Description required
+error3=Please choose another uri, this one is in use
 error9=System error!
 
-<% main %>
-<% if {viewList} %>
+
+<% viewList %>
 <div class="tabzoneHeader clrfix">
 	<h1>{pageTitle}</h1>
+	<!--#
+<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add video</a></div>
+-->
 </div>
 
-<!--# filter -->
-<% insert {filter} %>
-<form action="{!action}" method="post" class="filterForm{classIsOn}">
+<!--# Filtro forma -->
+<% insert {filtras} %>
+	<form action="{!action}" method="post" class="filterForm{classIsOn}">
 	<input type="hidden" name="event" value="{goFilter}" />
-	<table>
-	<tr>
-		<td><label>Name: <input type="text" name="filter[name]" size="25" value="{name}" /></label></td>
-		<td><label>
-			Category:
-			<select name="filter[playlist]">
-				<option value="">All</option>
-				{playlists}
-			</select></label>
-		</td>
-		<td><button type="submit" name="filtruok" >Filter</button></td>
-	</tr>
-	</table>
-	<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
+	<table><tr>
+		<td><label>Title: <input name="filter[text]" value="{text}" size="20" type="text" maxlength="30"/></label></td>
+		<td><label>Tag: <input name="filter[tag]" value="{tag}" size="20" type="text" maxlength="30"/></label></td>
+		<td><label><input type="checkbox" name="filter[hidden]" value="{hidden}" /> Show deleted</label></td>
+		<td><input type="submit" value="Filter" class="btFilter"/></td>
+		</tr></table>
+		<%if{isOn}%><a href="{noFilter}" class="reset" title="Turn off filter">Turn off filter</a><%end%>
 	</form>
-<% end {filter} %>
+<% end {filtras}%>
 
-<!--# items list -->
+
+<!--# sarasas -->
 <% if {items} %>
-<form action="{!action}" method="post" name="list-form">
-	<input type="hidden" name="event" value="{goDelete}" />
-	<table class="list">
+	<form action="{!action}" method="post" name="list-form">
+		<input type="hidden" name="event" value="{goDelete}" />
+		<table class="list">
 		<colgroup>
-			<col style="width: 120px" />
+			<col style="width: 130px" />
 			<col />
-			<col style="width: 120px" />
-			<col style="width: 40px" />
+			<col style="width: 100px" />
+			<col style="width: 100px" />
 		</colgroup>
 		<thead>
 		<tr>
-			<th><a href="{orderby1}">Date</a></th>
-			<th><a href="{orderby2}">Name</a></th>
-			<th><a href="{orderby3}">Length</a></th>
-			<th class="checkall"></th>
+			<th><span>Screenshot</span></th>
+			<th><span>Title, Summary, Tags</span></th>
+			<th><span>Updated</span></th>
+			<th><a href="{orderby1}">Created</a></th>
 		</tr>
 		</thead>
 		<tbody>
-		<% loop {items} %>
-		<tr {classHidden}>
-			<td>{date}</td>
-			<td><a href="{goEdit}">{name}</a></td>
-			<td style="color:#666666;"> {length} min</td>
-			<td><input type="checkbox" name="it[]" value="{id}" /></td>
-		</tr>
-		<% end {items} %>
+			<% loop{items} %>
+				<tr class="{class}">
+					<td><img src="{img}" width="120" height="80" alt="screenshot" /><%if{duration}%><div class="video-duration"><b>{duration}</b></div><%end%></td>
+					<td class="title">
+						<a href="{goEdit}">{title}</a>
+						<div class="explain">{description}</div>
+						<%if{tags}%><div class="explain"><i>Tags:</i> {tags}</div><%end%>
+						<%if{category}%><div class="explain"><i>Playlist:</i> {category}</div><%end%>
+					</td>
+					<td{styleTD}>{updated}</td>
+					<td>{created}</td>
+				</tr>
+			<% end{items} %>
 		</tbody>
-	</table>
-
-	<div class="list-footer clrfix"><input type="button" class="button fr btDel" value="Delete selected" /></div>
-</form>
-{paging}
-
+		</table>
+		<div class="list-footer clrfix"><!--#
+<input type="button" class="button fr btDel" value="Delete selected" />
+--></div>
+	</form>
+	{puslapiai}
 <% else {items} %>
-	<p>There are no items</p>
+	<p class="explain">There are no items</p>
 <% end {if} %>
 
-<% else {viewList} %>
-<!--# item form -->
+
+
+<% viewForm %>
 <div class="tabzoneHeader clrfix">
 	<h1>{pageTitle}</h1>
 	<a href="{goBack}" class="goBack">Back to list</a>
@@ -83,45 +88,56 @@ error9=System error!
 <form action="{!action}" name="frm" id="frm" method="post" class="aform" enctype="multipart/form-data">
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<input type="hidden" name="id" value="{id}" />
-	<input type="hidden" name="published_date" value="{published_date}" />
-	<h2 class="formTitle">{formTitle}</h2><span class="clr"></span>
-	<div class="aboutUser fl">
-		<a href="{uriVideo}" onclick="window.open('{uriVideo}');return false;" title="Click to watch this video in new window"><img src="{thumbnail_url}?{timestamp}" width="120" alt="" class="fl" /></a>
-		<span class="explain">(click to view video)</span><br />
-		<a href="{reloadThumbUri}">Reload image</a><br />
-		<a href="{reimportDataUri}">Reimport data</a>
-	</div>
-	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div><span class="clr"></span>
+	<h2 class="formTitle">{formTitle}</h2>
+	<div class="formButton fr"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /></div>
+	<span class="clr"></span>
 	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+
+	<!--# forma -->
 	<dl>
-		<dt><label>Published On</label></dt>
-		<dd>{published_on}</dd>
 
-		<dt><label for="i_name">Name</label></dt>
-		<dd><input type="text" name="name" id="i_name" value="{name}" size="83" maxlength="255" class="required" /></dd>
+	<dt><label for="i_title">Title</label></dt>
+	<dd class="dd100 w100">
+		<div class="forSlaveOriginalText">{master_title}</div>
 
-		<dt><label for="i_short_description">Short description</label></dt>
-		<dd><textarea rows="3" cols="80" name="short_description" id="i_short_description" class="required">{short_description}</textarea></dd>
+		<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="required"/>
+		<% if {id2} %>
+		<div class="explain">View this article in <a href="{uriPrefix}{uri}.htm" onclick="window.open(this.href);return false;">new window</a></div>
+		<% end {id2} %>
+	</dd>
+	<dd class="dd100">
+	 <input type="checkbox" name="hide" id="i_hide" value="{hide}" /> <label for="i_hide">Hide</label>
+	</dd>
 
-		<dt><label for="i_long_description">Long description</label></dt>
-		<dd class="w100"><textarea rows="6" cols="80" name="long_description" id="i_long_description">{long_description}</textarea></dd>
 
-		<dt><label for="i_tags">Tags</label></dt>
-		<dd>
-			<input type="text" name="tags" id="i_tags" value="{tags}" size="83" maxlength="255" />
-			<div class="explain">Separate multiple tags with comma.</div>
-		</dd>
+	<dt><label for="i_description">Description</label></dt>
+	<dd class="dd100 w100">
+		<div class="forSlaveOriginalText">{master_description}</div>
+		{toolbar}<textarea rows="15" cols="70" name="description" id="i_description"  class="required">{description}</textarea>
+	</dd>
 
-		<dt><label>Categories</label></dt>
-		<dd>
-			<% loop {playlists} %>
-			<label style="float: left; width: 30%"><input type="checkbox" <%if {checked} %>checked="checked"<%end%> name="playlists[]" value="{value}" /> {name}</label>
-			<%end%><span class="clr"></span>
-		 </dd>
 
-		<dt></dt>
-		<dd><label><input type="checkbox" name="is_hidden" id="i_is_hidden" value="{is_hidden}" /> Hide this video</label></dd>
+
+	<dt><label for="i_tags">Tags</label></dt>
+	<dd class="w100">
+		<div class="forSlaveOriginalText">{master_tags}</div>
+		<input type="text" name="tags" id="i_tags" value="{tags}" size="80" maxlength="255" />
+		<div class="explain">Separate multiple tags with comma.</div>
+	</dd>
+
+
+	<dt><label>Category</label></dt>
+	<dd>
+	<table width="100%">
+		<tr valign="top">
+			<td width="33%"><%loop{td1+=check:category}%><label><input type="checkbox" name="category[]" value="{0}" />&nbsp;{1}</label><br/><%end%></td><td width="33%">{td2}</td><td>{td3}</td>
+		</tr>
+	</table>
+	</dd>
+
+
+	<dt><label>Thumbnail</label></dt>
+	<dd class="dd100 w100"><%if{thumbnail}%><img src="{thumbnail}" width="120" height="90" alt="screenshot"/><%end%></dd>
 	</dl>
-	<div class="formButton clrfix"><input type="submit" value="Save" /><input type="submit" name="return" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	<div class="formButton clrfix"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /> <input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
 </form>
-<% end {viewList} %>
