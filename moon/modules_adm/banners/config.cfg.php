@@ -11,7 +11,7 @@ $cfg['banners'] = array(
 	'tb.BannersStats' => 'banners_stats',
 	'tb.Rooms' => 'rw2_rooms',
 	'tb.Servers' => 'servers',
- 
+
 	'var.env' => '',
 
 	'var.srcBanners' => '/w/ads/',
@@ -32,7 +32,11 @@ $cfg['banners'] = array(
 		'std:right:1' => array(
 			'title' => 'Right column (200x*)',
 			'bn' => 'RightColumn'
-		)
+		),
+		'home:top:1' => array(
+			'title' => '728x* - Homepage top',
+			'bn' => 'HomeTop'
+		),
 	),
 	'var.urlTargets' => array(
 		'video' => array(
