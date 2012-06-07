@@ -162,6 +162,7 @@ class ctags extends moon_com
 				'url' => $entry['url'],
 				'title' => htmlspecialchars($entry['title']),
 				'img' => $entry['img'],
+				'img_alt' => htmlspecialchars($entry['title']),
 				'date'=> $locale->datef($entry['date'], 'Date'),
 				'excerpt' => $entry['excerpt']
 			));
