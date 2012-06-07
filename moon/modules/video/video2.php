@@ -1033,5 +1033,19 @@ class video2 extends moon_com {
 	{
 		return date('i:s',mktime(0,0,($miliseconds),0,0,0));
 	}
+
+	// used from other.ctags
+	public function getVideoCtagsItems($ids)
+	{
+		if (0 == count($ids))
+			return array();
+		foreach ($ids as $key => $value)
+			$ids[$key] = intval($value);
+		return $this->db->query('
+			SELECT id, title name,CONCAT(uri, "-", id) as uri, created published, description, thumbnail_url
+			FROM ' . $this->tblVideos . '
+			WHERE hide=0 AND id IN(' . implode(',', $ids) . ')
+		');
+	}	
 }
 

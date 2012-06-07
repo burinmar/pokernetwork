@@ -47,6 +47,7 @@ class tags_ctags extends moon_com
 	const strategy = 'strategy';
 	const videos = 'videos';
 	const sps = 'spanish-poker-show';
+	// update *single* entry
 	public function update($srcId, $src, $tags, $activeSince = NULL)
 	{
 		foreach ($tags as $key => $title) {
@@ -411,34 +412,30 @@ class tags_core_batch_updater_sps extends tags_core_batch_updater_articles_abstr
 
 class tags_core_batch_updater_videos extends tags_core_batch_updater
 {
-	public function update($src)
-	{
-		$sinceTs = intval($this->getLatestTagTs($src));
+	protected $typeId;
 
-		$entries = $this->getEntriesResource(
-			$sinceTs, ''
-		);
-		while ($entry = $this->db->fetch_row_assoc($entries)) {
-			$this->processEntry($entry, $src);
-		}
-	}
-	
 	protected function getEntriesCnt($sinceTs)
-	{}
+	{
+		$cnt = $this->db->single_query_assoc('
+			SELECT COUNT(*) cnt FROM `video2`
+			WHERE (created>' . $sinceTs . ' OR updated>' . $sinceTs . ')
+		');
+		return $cnt['cnt'];
+	}
 
 	protected function getEntriesResource($sinceTs, $limit)
 	{
 		return $this->db->query('
-			SELECT id, is_hidden, LEFT(published_date, LENGTH(published_date) - 3) published, tags
-			FROM `videos`
-			WHERE (last_modified_date>' . $sinceTs . '*1000)
-			ORDER BY id'
+			SELECT id, created, hide, tags FROM `video2`
+			WHERE (created>' . $sinceTs . ' OR updated>' . $sinceTs . ')
+			ORDER BY id ' . 
+			$limit
 		);
 	}
 
 	protected function getEntryTags($entry)
 	{
-		if ($entry['is_hidden'] != '0') {
+		if ($entry['hide'] != '0') {
 			return array();
 		}
 
@@ -452,7 +449,7 @@ class tags_core_batch_updater_videos extends tags_core_batch_updater
 
 	protected function extractActiveSinceTs($entry)
 	{
-		return $entry['published'];
+		return $entry['created'];
 	}
 }
 

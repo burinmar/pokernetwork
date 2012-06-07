@@ -1,5 +1,4 @@
 <?php
-
 class ctags extends moon_com 
 {
 	function events($event,$par)
@@ -169,7 +168,7 @@ class ctags extends moon_com
 		}
 
 		$page->title($this->getReadableTag($argv['tag']) . ' | ' . $page->title());
-		if (!empty($argv['filter'])) {
+		if (!empty($argv['filter']) || $pnInfo['curPage']>1) {
 			$page->head_link($this->linkas('#' . $argv['tag']), 'canonical', '', array());
 			//$tplArgv['filter'] = htmlspecialchars($tabs[$argv['filter']]);
 			moon::shared('sitemap')->breadcrumb(array(
@@ -346,19 +345,27 @@ class ctags extends moon_com
 
 	private function getVideosEntries($src, $ids)
 	{
-		$entries = array();
-		$entriesR = $this->db->query('
-			SELECT id, name, LEFT(published_date, LENGTH(published_date) - 3) published, short_description, thumbnail_url
-			FROM videos
-			WHERE is_hidden=0 AND id IN(' . implode(',', $ids) . ')
-		');
 		$video = $this->object('video.video');
+		$entries = array();
+		if (method_exists($video, 'getVideoUri')) { // deprecated, temporary
+			$entriesR = $this->db->query('
+				SELECT id, name, LEFT(published_date, LENGTH(published_date) - 3) published, short_description, thumbnail_url
+				FROM videos
+				WHERE is_hidden=0 AND is_deleted=0 AND id IN(' . implode(',', $ids) . ')
+			');
+		} else {
+			$entriesR = $video->getVideoCtagsItems($ids);
+		}
 		while ($entry = $this->db->fetch_row_assoc($entriesR)) {
 			$entry_ = array(
 				'title' => $entry['name'],
-				'excerpt' => $entry['short_description'],
+				'excerpt' => isset($entry['description'])
+					? $entry['description']
+					: $entry['short_description'],
 				'date' => $entry['published'],
-				'url' => $video->linkas('#', $video->getVideoUri($entry['id'], $entry['name'])),
+				'url' => isset($entry['uri'])
+					? $video->linkas('#', $entry['uri'])
+					: $video->linkas('#', $video->getVideoUri($entry['id'], $entry['name'])),
 				'img' => $entry['thumbnail_url'],
 			);
 			$entries[$entry['id']] = $entry_;
