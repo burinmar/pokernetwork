@@ -1,0 +1,48 @@
+<% player %>
+<div class="{class}">
+<div class="pnVideoContainer" style="width: {width};">
+	<div style="height: {height};" class="pnHeightControl">
+		<%if {ad} %><a <%loop {adArgs += player:adArgs.item} %>data-{name}="{value}" <%end%>href="javascript:;" class="pnPreroll"></a><%end%>
+		<a data-video-uri="{videoUri}" data-video-length="{videoLength}" class="pnVideo"></a>
+	</div>
+	<div class="toolbar"></div>
+	<%if {playlist} %>
+	<div class="playlist">
+		<a href="#" class="prev"></a>
+		<a href="#" class="next"></a>
+		<div class="thumbContainer">
+			<ul>
+				<%loop {playlist += player:playlist.item} %>
+				<li><a href="#" data-video-uri="{videoUri}" data-video-length="{videoLength}"><img src="http://i.ytimg.com/vi/{videoUri}/default.jpg" alt="" /></a></li>
+				<%end%>
+			</ul>
+		</div>
+	</div>
+	<%end%>
+</div>
+</div>
+
+<% preset:default %>
+width=100px
+height=100px
+class=
+
+<% preset:w480 %>
+width=478px
+height=269px
+class=w480
+
+<% preset:w230 %>
+width=228px
+height=129px
+class=w230 progressTop
+
+<% preset:w300 %>
+width=298px
+height=166px
+class=w300 progressTop
+
+<% preset:videoPage %>
+width=455px
+height=340px
+class=videoPageVideo

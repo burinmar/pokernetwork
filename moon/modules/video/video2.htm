@@ -1,0 +1,202 @@
+<% info %>
+rssDescription= 
+latestVideos=Latest Videos
+
+<% viewBox %>
+<% if {box:items} %>
+<div class="widget archiveNavi overBreadcrumb">
+	<h2 class="widgetTitle">Categories</h2>
+	<ul class="categories">
+		<% loop {box:items} %>
+			<% if {current} %>
+				<li class="on"><a href="{url}">{title}</a></li>
+			<% else {current} %>
+				<li><a href="{url}">{title}</a></li>
+			<% end %>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+
+<% archive %>
+<%if{years:items}%>
+<div class="widget">
+	<h2 class="widgetTitle">Archive</h2>
+	<ul class="yearList categories">
+		<%loop{years:items}%>
+		<li <%if{expand}%> class="expand"<%end%>>
+			<a href="{url.year}" class="archiveYear">{yName}</a><span>{yCount} videos total</span>
+			<ul<%if{expand}%><%else{expand}%> style="display:none;"<%end%>>
+				<%loop{months:items}%>
+				<li<%if{active}%> class="on"<%end%>><a href="{url.month}">{mName}</a><span>{mCount} videos total</span></li>
+				<%end%>
+			</ul>
+		</li>
+		<%end%>
+	</ul>
+</div><span class="clr"></span>
+<%end%>
+
+<% viewMain %>
+<div class="widget video">
+	<h1 class="pageTitle">Our Latest Videos</h1>
+	<% if {uri.rss} %><a href="{uri.rss}" class="subscribe">Subscribe</a><% end %>
+
+	<div class="videoInfo article fl">
+		<h1><a href="{uri.featured}">{name}</a></h1>
+		<span class="meta"><% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} {commentsWord}</a> ● <% end %> {publishedDate}</span>
+		<% if {description} %><p>{description}</p><% end %>
+		<% if {shareThis} %>
+		<h3>Share this video</h3>
+		{shareThis}
+		<% end %>
+		<% if {tags} %>
+		<div class="tags">
+			<h3>Tags</h3>
+			{tags}
+		</div>
+		<% end %>
+	</div>
+
+	<div class="videoPlayer fr">
+		{video}
+	</div>
+	<span class="clr"></span>
+
+	<% if {items:latest} %>
+	<ul class="videoList">
+		<% loop {items:latest} %>
+		<li>
+			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<b><a href="{url.video}">{title}</a></b>
+			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
+		</li>
+		<% end %>
+	</ul>
+	<a href="{uri.latest}" class="more">More Videos »</a>
+	<% end %>
+
+</div>
+
+<% if {items:popularMonth} %>
+<div class="widget">
+	<h2 class="widgetTitle">Most popular this month</h2>
+	<ul class="videoList">
+		<% loop {items:popularMonth} %>
+		<li>
+			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<b><a href="{url.video}">{title}</a></b>
+			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+
+
+<% viewVideo %>
+<div class="widget video">
+	<div class="videoInfo article fl">
+		<h1><a href="{uri.self}">{name}</a></h1>
+		<span class="meta"><% if {url.comments} %><a href="{url.comments}" class="commentIco bigCommentIco">{comm_count} {commentsWord}</a> ● <% end %> {publishedDate}</span>
+		<% if {description} %><p>{description}</p><% end %>
+		<% if {shareThis} %>
+		<h3>Share this video</h3>
+		{shareThis}
+		<% end %>
+		<% if {tags} %>
+		<div class="tags">
+			<h3>Tags</h3>
+			<% loop {tags} %>
+				<% if {uri.tag} %>
+				<a href="{uri.tag}">{tagName}</a>
+				<% else {uri.tag} %>
+				{tagName}
+				<% end {uri.tag} %>
+			<% end {tags} %>
+		</div>
+		<% end %>
+	</div>
+	<div class="videoPlayer fr">
+		{video}
+	</div>
+	<span class="clr"></span>
+</div>
+
+{comments}
+
+<% if {related} %>
+<div class="widget">
+	<h2 class="widgetTitle">Related Videos</h2>
+	<ul class="videoList">
+		<% loop {related} %>
+		<li>
+			<a href="{uri.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<b><a href="{uri.video}">{title}</a></b>
+			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+
+<% if {latest} %>
+<div class="widget">
+	<h2 class="widgetTitle">Latest Videos</h2>
+	<ul class="videoList">
+		<% loop {latest} %>
+		<li>
+			<a href="{uri.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<b><a href="{uri.video}">{title}</a></b>
+			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+
+<% viewList %>
+<div class="widget">
+	<h1 class="pageTitle">{title}</h1>
+	<% if {uri.rss} %><a href="{uri.rss}" class="subscribe">Subscribe</a><% end %>
+
+	<ul class="videoList">
+		<% loop {items} %>
+		<li>
+			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<b><a href="{url.video}">{title}</a></b>
+			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
+		</li>
+		<% end %>
+	</ul>
+	<% if {paging} %>{paging}<% end %>
+</div>
+
+<% homepageBox %>
+<div class="widget widgetBlack homePageVideo widgetWithMoreLink">
+	<div class="widgetInner" style="position: relative">
+		<div class="ctl"></div>
+		<div class="ctr"></div>
+		<div class="cbl"></div>
+		<div class="cbr"></div>
+		<h2 class="widgetTitle">Videos</h2>
+		{video}
+		<% if {url.more} %><p class="more tar"><a class="shoutContent" href="{url.more}">{!more}</a></p><% end %>
+	</div>
+</div>
+
+<% reportingBox %>
+	<%if{cil}%><div style="margin-top: 20px"><a href="http://www.pokernews.com/cover-it-live/"><img src="/i/cover-it-live-3.jpg" width="300" height="100" alt="WSOP Main Event" /></a></div><%end%>
+	<%if{wsopeBanner}%><div style="margin-top: 20px"><a href="http://www.coveritlive.com/mobile.php/option=com_mobile/task=viewaltcast/altcast_code=5c8a29619e" onclick="var winb=window.open('http://www.coveritlive.com/index2.php/option=com_altcaster/task=viewaltcast/altcast_code=5c8a29619e/height=800/width=700', 'banner','toolbar=no,scrollbars=no,resizable=no,width=700,height=800');winb.focus();return false"><img src="/i/cover-it-live-2.jpg" width="300" height="100" alt="WSOP Main Event - Heads Up" /></a></div>
+	<%end{wsopeBanner}%>
+<div class="widget widgetWithMoreLink widgetBlack widgetVideo">
+	<div class="widgetInner">
+		<span class="ctl"></span>
+		<span class="ctr"></span>
+		<span class="cbl"></span>
+		<span class="cbr"></span>
+		<h3 class="widgetTitle">{!video}</h3>
+		{video}
+		<% if {url.more} %><p class="more tar"><a class="shoutContent" href="{url.more}">{!more}</a></p><% end %>
+	</div>
+</div>

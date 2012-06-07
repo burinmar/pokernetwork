@@ -22,18 +22,15 @@ class moon_memcache extends Memcache
 		
 		self::$instance = new moon_memcache;
 		
-		if (defined('MEMCACHE_PREFER_IGNORE')) {
-			// do nothing, log nothing
-			$connected = true;
-		} elseif (is_dev()) {
-			$connected = @self::$instance->pconnect('192.168.0.12', 11211);
-		} elseif (in_array(_SITE_ID_, array('com', 'br', 'china', 'kr', 'nj', 'tw', 'jp', 'asia'))) {
-			$connected = self::$instance->pconnect('memcache-ha', 11211);
-		} else {
-			$connected = self::$instance->pconnect('euweb-2-ha', 11211);
+		$ini = moon::moon_ini();
+		if (!$ini->has('memcache')
+		 || false == ($server = $ini->get('memcache', 'server'))
+		 || false == ($port   = $ini->get('memcache', 'port'))) {
+			list($server, $port) = self::getDefaultConnection();
 		}
-		
-		if (false == $connected) {
+		$connected = self::$instance->pconnect($server, $port);
+
+		if (false == $connected && !defined('MEMCACHE_PREFER_IGNORE')) {
 			moon::error('Memcached inaccessible');
 		}
 
@@ -43,7 +40,17 @@ class moon_memcache extends Memcache
 
 		return self::$instance;
 	}
-	
+
+	public static function getDefaultConnection() {
+		if (is_dev()) {
+			return array('192.168.0.12', 11211);
+		} elseif (in_array(_SITE_ID_, array('com', 'br', 'china', 'kr', 'nj', 'tw', 'jp', 'asia'))) {
+			return array('memcache-ha', 11211);
+		} else {
+			return array('euweb-2-ha', 11211);
+		}
+	}
+
 	public static function getRecommendedPrefix()
 	{
 		static $prefix;
