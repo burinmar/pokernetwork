@@ -4,6 +4,7 @@
 .pnVideoContainer {
 	background: #000;
 	overflow: hidden;
+	margin-bottom: 10px;
 }
 .pnVideoContainer object {display: block}
 .pnVideoContainer .play,

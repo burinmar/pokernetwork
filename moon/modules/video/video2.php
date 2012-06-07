@@ -659,7 +659,7 @@ class video2 extends moon_com {
 			
 			case '478x320':
 			default:
-				$preset = 'w480';
+				$preset = 'homePage';
 				break;
 		}
 
