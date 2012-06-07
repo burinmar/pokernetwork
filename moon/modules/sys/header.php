@@ -32,6 +32,13 @@ class header extends moon_com
 		if (!$isHomepage) {
 			return $res;
 		}
+		
+
+		/*skrill: june 7-8*/
+		$bgURL = 'http://www.moneybookers.com/ads/score-with-skrill/?rid=6930492&promo_id=16258191';
+		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
+		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #730b46 url(\'/img/skrill_score_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+		return $res;
 
 		$bgURL = 'http://www.pokernetwork.com/leagues/10-500-poker770-weekend-wonders/';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
