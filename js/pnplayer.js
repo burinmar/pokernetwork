@@ -647,8 +647,12 @@ $.fn.pnVideo = function(args)
 		return methods[args].apply(this, Array.prototype.slice.call(arguments, 1));
 	} else if ( typeof args === 'object' || ! args ) {
 		this.each(function(){
-			attach.call($(this), args);
-			$('.playlist', this).pnVideoSlider();
+			var $this = $(this);
+			if (!$this.data('pnvideo-initialized')) {
+				$this.data('pnvideo-initialized', true);
+				attach.call($this, args);
+				$('.playlist', this).pnVideoSlider();
+			}
 		});
 	}
 
@@ -769,5 +773,6 @@ $.fn.pnVideoSlider = function(args)
 /*! end flowplayer */
 
 jQuery(function(){
+	$('.pnVideoContainer').pnVideo();
 	$('.pnVideoContainer').pnVideo();
 });
