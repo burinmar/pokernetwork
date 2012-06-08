@@ -108,9 +108,9 @@ class search extends moon_com {
 		$a[] = "(SELECT 'news', count(*)  FROM articles
 			WHERE  is_hidden=0 AND published<$now
 				" . $this->_where($q, array('title', 'img_alt')) . ')';
-		$a[] = "(SELECT 'video', count(*)  FROM videos
-			WHERE is_hidden=0 
-				" . $this->_where($q, array('name', 'tags', 'short_description')) . ')';
+		$a[] = "(SELECT 'video', count(*)  FROM video2
+			WHERE hide=0
+				" . $this->_where($q, array('title', 'tags', 'description')) . ')';
 		$a[] = "(SELECT 'images', count(*)  FROM reporting_ng_photos
 			WHERE is_hidden=0
 				" . $this->_where($q, array('image_alt')) . ')';
@@ -169,25 +169,26 @@ class search extends moon_com {
 
 	function getResultsVideo($q, $limit) {
 		$sql = "
-			SELECT id,name,published_date,thumbnail_url,length
-			FROM videos
-			WHERE is_hidden=0
-				" . $this->_where($q, array('name', 'tags', 'short_description')) . '
-			ORDER BY creation_date DESC' . $limit;
+			SELECT id,title,uri,created,thumbnail_url,duration
+			FROM video2
+			WHERE hide=0
+				" . $this->_where($q, array('title', 'tags', 'description')) . '
+			ORDER BY created DESC' . $limit;
 		$dat = $this->db->array_query_assoc($sql);
 		$tpl = & $this->load_template();
 		$locale = & moon :: locale();
 		$page = moon::page();
 		$oVideo = $this->object('video.video');
+		$page->css('/css/video.css');
 		$s = '';
+		$linkBase = moon::shared('sitemap')->getLink('video');
 		foreach ($dat as $d) {
-			$uri = $oVideo->getVideoUri($d['id'], $d['name']);
-			$time = substr($d['published_date'], 0, 10);
+			$time = substr($d['created'], 0, 10);
 			$d['date'] = $locale->datef($time, 'News');
-			$d['url.video'] = $this->linkas('video.video#', $uri);
-			$d['title'] = htmlspecialchars($d['name']);
+			$d['url.video'] = $linkBase . $d['uri'] . '-' . $d['id'] . '.htm';
+			$d['title'] = htmlspecialchars($d['title']);
 			$d['thumbSrc'] = $d['thumbnail_url'];
-			$d['length'] = $oVideo->miliSecToTime($d['length']);
+			$d['length'] = $oVideo->secToTime($d['duration']);
 			$s .= $tpl->parse('itemVideo', $d);
 		}
 		return $s;

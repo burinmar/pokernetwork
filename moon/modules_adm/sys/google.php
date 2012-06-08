@@ -170,7 +170,7 @@ class google extends moon_com {
 
 		//kategorijos
 		fwrite($gz, "\n\n<!-- videos Categories -->\n");
-		$r = $this->db->query('SELECT uri FROM videos_playlists WHERE is_hidden = 0');
+		$r = $this->db->query('SELECT uri FROM video2_categories WHERE hide = 0');
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
 	<url><loc>' . $homeURL . htmlspecialchars($d['uri']) . '/</loc>
@@ -182,16 +182,16 @@ class google extends moon_com {
 
 		//naujienos
 		fwrite($gz, "\n\n<!-- videos -->\n");
-		$sql = 'SELECT id, LEFT(published_date,10) as lastmod, name, published_date
-			FROM videos
-			WHERE 	is_hidden = 0
-			ORDER BY published_date DESC';
+		$sql = 'SELECT id, created, uri
+			FROM video2
+			WHERE 	hide = 0
+			ORDER BY created DESC';
 		$r = $this->db->query($sql);
 		$count = $this->db->num_rows($r);
 		while ($d = $this->db->fetch_row_assoc($r)) {
 			$s = '
-	<url><loc>' . $homeURL .  make_uri($d['name']) . '-' . $d['id'] . '.htm</loc>
-		<lastmod>' . date('c', $d['lastmod']) . '</lastmod>
+	<url><loc>' . $homeURL .  $d['uri'] . '-' . $d['id'] . '.htm</loc>
+		<lastmod>' . date('c', $d['created']) . '</lastmod>
 		<changefreq>never</changefreq>
 	</url>';
 			fwrite($gz, $s);
