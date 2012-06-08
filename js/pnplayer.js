@@ -774,5 +774,4 @@ $.fn.pnVideoSlider = function(args)
 
 jQuery(function(){
 	$('.pnVideoContainer').pnVideo();
-	$('.pnVideoContainer').pnVideo();
 });
