@@ -33,7 +33,7 @@
 		<thead>
 		<tr>
 			<th><span>Title</span></th>
-			<th><a href="{orderby1}">Views</a></th>
+			<th><a href="{orderby1}">Impressions</a></th>
 			<th><a href="{orderby2}">Clicks</a></th>
 			<th><a href="{orderby3}">CTR</a></th>
 		</tr>
@@ -63,7 +63,7 @@
 
 <% else {viewList} %>
 
-	Views: {viewsTotal} ({clicksTotal} clicks ~ {percent}%)<br />
+	Impressions: {viewsTotal} ({clicksTotal} clicks ~ {percent}%)<br />
 	<%if{bannersMode}%>
 		<% if {imgInfo} %>
 		<img src="{mediaSrc}?{timestamp}" width="{media_width}" height="{media_height}" alt="{alternative}" border="0" />
@@ -102,7 +102,7 @@
 		<thead>
 		<tr>
 			<th><span>Campaigns</span></th>
-			<th><span>Views</span></th>
+			<th><span>Impressions</span></th>
 			<th><span>Clicks</span></th>
 			<th><span>CTR</span></th>
 		</tr>
@@ -132,7 +132,7 @@
 		<thead>
 		<tr>
 			<th><span>Zones</span></th>
-			<th><span>Views</span></th>
+			<th><span>Impressions</span></th>
 			<th><span>Clicks</span></th>
 			<th><span>CTR</span></th>
 		</tr>
@@ -162,7 +162,7 @@
 		<thead>
 		<tr>
 			<th><span>Banners</span></th>
-			<th><span>Views</span></th>
+			<th><span>Impressions</span></th>
 			<th><span>Clicks</span></th>
 			<th><span>CTR</span></th>
 		</tr>
@@ -225,7 +225,7 @@
 						dataType: 'json',
 						success: function(resp) {
 							$('#charts').toggle();
-							if (resp.views) renderJQplot('stats-views', resp.views, 'Views');
+							if (resp.views) renderJQplot('stats-views', resp.views, 'Impressions');
 							if (resp.clicks) renderJQplot('stats-clicks', resp.clicks, 'Clicks');
 							$('#ajaxloading').hide();
 						},
@@ -255,5 +255,5 @@ e_404=Item not found!
 step_day=Day
 step_week=Week
 step_month=Month
-label_views=Views
+label_views=Impressions
 label_clicks=Clicks
