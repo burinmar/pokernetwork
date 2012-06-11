@@ -34,10 +34,10 @@ class header extends moon_com
 		}
 		
 
-		/*skrill: june 7-8*/
-		$bgURL = 'http://www.moneybookers.com/ads/score-with-skrill/?rid=6930492&promo_id=16258191';
+		$bgURL = '/leagues/30k-winner-wednesday-dozen/';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
-		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #730b46 url(\'/img/skrill_score_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #1e0000 url(\'/img/winner_30k_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
+
 		return $res;
 
 		$bgURL = 'http://www.pokernetwork.com/leagues/10-500-poker770-weekend-wonders/';
@@ -55,11 +55,7 @@ class header extends moon_com
 		
 
 
-		$bgURL = '/leagues/30k-winner-wednesday-dozen/';
-		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
-		$page->css('<style type="text/css">/*<![CDATA[*/ html { background: #1e0000 url(\'/img/winner_30k_wallpaper.jpg\') no-repeat fixed top center; cursor: pointer;} /*]]>*/</style>');
-
-		return $res;
+		
 		
 		$bgURL = '/leagues/pkr-daily-dollar-wsop-rake-chase/';
 		$res = '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>' . $res;
