@@ -31,6 +31,23 @@ class video2 extends moon_com {
 				if (empty($video)) {
 					$page->page404();
 				}
+				elseif (isset($_GET['embed'])) {
+					$preset = $_GET['embed'] ? $_GET['embed'] : 'PokerNetwork';
+					$tpl = $this->load_template();
+					$a = array();
+					$pnPlayer = moon::shared('pnplayer');
+					$flv = $video['youtube_video_id'] ? $video['youtube_video_id'] : $video['flv_url'];
+					$a['video'] = $pnPlayer->getHtml($flv, $video['length'], $preset, null, $pnPlayer->getDefaultAdsConfig());
+					$a['video'] = $tpl->ready_js($a['video']);
+					$a['into'] = !empty($_GET['into']) ? $tpl->ready_js($_GET['into']) : '';
+					header('Content-type: text/javascript; charset=UTF-8');
+					header('Expires: ' .   gmdate('r', time()+3600) , TRUE);
+					header('Cache-Control: max-age=' . 3600 , TRUE);
+					header('Pragma: public', TRUE);
+					echo $tpl->parse('embed', $a);
+					moon_close();
+					exit;
+				}
 				$this->updateViewsCount($video['id']);
 				$this->set_var('video', $video);
 				$this->set_var('view', 'video');

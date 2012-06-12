@@ -42,7 +42,7 @@ switch ($instance) {
 	//news
 	case 'articles' :
 		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'), 'allowScript' => TRUE);
-		$cfg['features'] = '-code,-smiles,-underline,-img,-video,-spoiler,-game,twitter';
+		$cfg['features'] = '-code,-smiles,-underline,-img,-spoiler,-game,twitter';
 		$cfg['tableObjects'] = 'articles_attachments';
 		$cfg['fileDir'] = _W_DIR_ . 'articles/att/';
 		$cfg['fileSRC'] = '/' . _W_DIR_ . 'articles/att/';
@@ -51,7 +51,7 @@ switch ($instance) {
 
 	case 'sitemap' :
 		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'));
-		$cfg['features'] = '-code,-smiles,-underline,-timer,-img,-video,-spoiler,-cards,-game,-twitter';
+		$cfg['features'] = '-code,-smiles,-underline,-timer,-img,-spoiler,-cards,-game,-twitter';
 		$cfg['tableObjects'] = 'sitemap_attachments';
 		$cfg['fileDir'] = 'w/sitemap/';
 		$cfg['fileSRC'] = '/w/sitemap/';
@@ -60,7 +60,7 @@ switch ($instance) {
 
 	case 'reviews' :
 		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'));
-		$cfg['features'] = '-quote,-code,-smiles,-underline,-cards,-img,-video,-spoiler,-game,-twitter';
+		$cfg['features'] = '-quote,-code,-smiles,-underline,-cards,-img,-spoiler,-game,-twitter';
 		$cfg['tableObjects'] = 'rw2_attachments';
 		$cfg['fileDir'] = _W_DIR_ . 'rw-attachments/';
 		$cfg['fileSRC'] = '/w/rw-attachments/';

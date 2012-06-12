@@ -520,7 +520,7 @@ rtfObject.prototype.formVideo = function()
 	var lang_ = typeof lang != 'undefined' ? lang : '';
 	var res = '<p class="btnPopupTitle">Insert&nbsp;Video</p>' +
 				'<span class="btnPopupRow"><label for="videoURLField'+id+'">Video&nbsp;URL: </label><input type="text"  name="rtf_videourl'+id+'" value="http://" id="videoURLField'+id+'"/  onfocus="this.select()"></span>' +
-				'<span class="btnPopupRow">Only <i>YouTube, Vimeo, Daylimotion, myHands, PokerHandReplays, PokerReplay' + (lang_=='si' ? ', 24ur.com' : '') + (lang_=='bg' ? ', Vbox7' : '') + ', Pokertube (embed code), Brightcove (embed code)</i> video-sharing websites are supported.</span>' +
+				'<span class="btnPopupRow">Only <i>PokerNetwork, PokerNews, YouTube, Vimeo, Daylimotion, myHands, PokerHandReplays, PokerReplay' + (lang_=='si' ? ', 24ur.com' : '') + (lang_=='bg' ? ', Vbox7' : '') + ', Pokertube (embed code), Brightcove (embed code)</i> video-sharing websites are supported.</span>' +
 				'<button type="button" onclick="var str=\'[VIDEO]\' + this.form.rtf_videourl'+id+'.value + \'[/VIDEO]\'; top.document.rtfReturn['+id+'].insert(str, 7,8);top.document.rtfReturn['+id+'].buttonEvent(\'video\',\'close\');">Insert</button>';
    return res;
 }

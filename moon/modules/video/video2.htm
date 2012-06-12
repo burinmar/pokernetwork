@@ -200,3 +200,36 @@ latestVideos=Latest Videos
 		<% if {url.more} %><p class="more tar"><a class="shoutContent" href="{url.more}">More Videos »</a></p><% end %>
 	</div>
 </div>
+
+
+<% embed %>
+<%if{into}%>
+jQuery('#{into}').html('{video}');
+<%else{into}%>
+document.write('{video}');
+<% end %>
+if (typeof($.fn.pnVideo) == "undefined" && typeof(pnVideoEmbeded) == "undefined") {
+	var pnVideoEmbeded = true;
+	var s = document.getElementsByTagName('script')[0];
+	//
+	var ga = document.createElement('script');
+	ga.type = 'text/javascript';
+	ga.src = 'http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js';
+	s.parentNode.insertBefore(ga, s);
+	//
+	ga = document.createElement('script');
+	ga.type = 'text/javascript';
+	ga.src = 'http://www.pokernews.com/js/pnplayer.js';
+	s.parentNode.insertBefore(ga, s);
+	//
+	var ga = document.createElement('link');
+	ga.type = 'text/css';
+	ga.rel = 'stylesheet';
+	ga.href = 'http://www.pokernews.com/css/pnplayer.css';
+	s.parentNode.insertBefore(ga, s);
+}
+else {
+	if (typeof($('.pnVideoContainer').pnVideo) != "undefined") {
+		$('.pnVideoContainer').pnVideo();
+	}
+}

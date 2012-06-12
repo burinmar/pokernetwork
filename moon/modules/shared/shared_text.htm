@@ -30,7 +30,8 @@ li=<li>{txt}</li>
 smile=<img src="/img/smilies/{0}.gif" alt="{1}" />
 file=<div style="margin: 10px 0;border:1px solid;padding: 10px;padding-left:42px;background: url(/img/fico/i32_{fico}.gif) no-repeat 5px 5px"><div><b>{fname}</b> ({fsize}) <a href="{url}">Download</a></div><div>{comment}&nbsp;</div></div>
 html = <div>{html}</div>
-video = <div class="video-object">{html}</div>
+video = </p><div class="video-object">{html}</div><p>
+pnvideo = </p><div class="video-object" id="{id}"></div><script src="{url}?embed=PokerNetwork&amp;into={id}" type="text/javascript"></script><noscript>Video: <a href="{url}">{url}</a></noscript><p>
 game = </p><div class="game"><p>{txt}</p></div><p>
 twitter = </p><div class="twitter-quote">{txt}</div><p>
 

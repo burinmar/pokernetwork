@@ -535,9 +535,16 @@ function _tag($tag,$param,$txt){
 		$txt = '<img src="' . htmlspecialchars($txt) . '" class="simple-embed" alt="" />';
 		break;
 	case 'video':
+		// gal pokernews video embed
 		$txt = trim($txt);
-		//$txt = htmlspecialchars($txt);
+		if (preg_match("#.*?(:?pokernews|pokernetwork)\.(:?com|dev)/.+([0-9]+)\.htm$#is", $txt)) {
+			$txt = str_replace('{url}', htmlspecialchars($txt), $tags['pnvideo']);
+			$txt = str_replace('{id}', uniqid('x'), $txt);
+			break;
+		}
+		//cia ne pokernews video, einam toliau
 
+		//$txt = htmlspecialchars($txt);
 		$patterns = array();
 		$replacements = array();
 
