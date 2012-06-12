@@ -746,9 +746,9 @@ html {
 } .liveReportingIndexBox .widgetTitle a {*color: #fff;}
 	.liveReportingIndexBox .tourBanner {
 		position: relative;
-		width: 497px;
+		width: 440px;
 		height: 106px;
-		margin-bottom: 5px;
+		margin: 0 auto 10px;
 		display: block;
 		border-radius: 5px;
 		-webkit-border-radius: 5px;
