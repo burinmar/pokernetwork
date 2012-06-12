@@ -46,7 +46,6 @@ function attach(args) {
 		videoUri: args.videoUri,
 		videoLength: args.videoLength,
 		videoDuration: args.videoDuration,
-		videoAutostart: false,
 		videoIsLocal: args.videoIsLocal
 	};
 	var context = contexts[args.instanceId];
@@ -99,9 +98,9 @@ function setupAndShowPreroll(context) {
 	// http://www.longtailvideo.com/support/open-video-ads/13048/ova-configuration-guide
 	var prerollArgs = {
 		position: "pre-roll",
-		loadOnDemand: true,
-		refreshOnReplay: true,
 		notice: {
+			region: "mpreroll-notice",
+			show: true,
 			message: "This preroll runs for _countdown_ seconds"
 		}
 	};
@@ -111,30 +110,29 @@ function setupAndShowPreroll(context) {
 	}
 
 	flowplayer(prerollContainerId, {
-			src: "/img/flowplayer-3.2.11.swf",
+			src: "http://www.pokernetwork.com/img/flowplayer-3.2.11.swf",
 			wmode: "transparent"
 		}, {
 		key: '#$2336fbed5a1577710de',
 		clip: {
-			autoPlay: false,
+			autoPlay: true,
 			scaling: 'fit',
 			onFinish: function(clip) {
 				if (clip.ovaAd) {
-					flowplayer(context.prerollContainer.attr('id')).getClip(1).update({
-						autoPlay: context.videoIsLocal
-					});
-					finishedPreroll(context, true);
+					finishedPreroll(context);
 					// no localVideoPlayerStateChange(0) for ad, as long as just the play button is triggered
 				} else {
 					localVideoPlayerStateChange(context, 0);
 				}
 			},
 			onBeforeBegin: function(clip) {
+				if (!clip.ovaAd) {
+					finishedPreroll(context);
+				}
 				if (clip.originalUrl == "javascript:;") {
-					// finishedPreroll(context, realWatchedPreroll);
-					// intercept stub video, if somehow we got here
 					return false;
 				}
+				// blank.mp4 ?
 			},
 			onBegin: function() { localVideoPlayerStateChange(context, 1); },
 			onResume: function() { localVideoPlayerStateChange(context, 1); },
@@ -142,14 +140,13 @@ function setupAndShowPreroll(context) {
 			onStop: function() { localVideoPlayerStateChange(context, 0); }
 		},
 		onError: function(errorCode, errorMessage) {
-			finishedPreroll(context, false);
+			finishedPreroll(context);
 		},
 		onLoad: function() {
 			context.prerollContainer = $('#' + prerollContainerId);
 			prerollPlayerReady(context);
-			var clip = flowplayer(prerollContainerId).getClip(0);
-			if (!(clip.ovaAd || clip.originalUrl.match(/video_prerolls/))) {
-				finishedPreroll(context, false);
+			if (!(clip.ovaAd || clip.originalUrl.match(/video_prerolls/)/* || clip.originalUrl.match(/blank.mp4/)*/)) {
+				finishedPreroll(context);
 			}
 		},
 		onBeforeFullscreen: function() {
@@ -164,8 +161,18 @@ function setupAndShowPreroll(context) {
 		plugins: {
 			controls: null,
 			ova: {
-				url: "/img/flowplayer-ova.swf",
-				delayAdRequestUntilPlay: false, // !important
+				url: "http://www.pokernetwork.com/img/flowplayer-ova.swf",
+				autoPlay: true,
+				overlays: {
+					regions: [{
+						id: "mpreroll-notice",
+						"verticalAlign": "bottom",
+						"height": "30",
+						"backgroundColor": "transparent",
+						"horizontalAlign": "left",
+						"width": "100pct"
+					}]
+				},
 				ads: {
 					linearScaling: "fit",
 					clickSign: {
@@ -179,21 +186,43 @@ function setupAndShowPreroll(context) {
 					schedule: [
 						prerollArgs
 					]
-				},
-				debug: { "levels": "none" }
+				}, debug: { "levels": "none" }
 			}
 		},
 		play: {
-			// url: '/img/muck-head.png'
+			url: 'http://www.pokernetwork.com/img/playButton.png',
+			width: '60',
+			height: '60'
 		}
+	});
+	prerollPlayerMiniReady(context);
+}
+
+function prerollPlayerMiniReady(context) {
+	// play/pause - gui update on event
+	var $controls = context.prerollToolbar;
+	$('.play', $controls).click(function(){
+		var player = flowplayer(context.prerollContainer.attr('id')); // handicapped version
+		player.play();
+	});
+
+	$controls.addClass('unmuted').removeClass('muted');
+	$('.mute', $controls).click(function(){
+		$controls.addClass('muted').removeClass('unmuted');
+	});
+	$('.unmute', $controls).click(function(){
+		$controls.addClass('unmuted').removeClass('muted');
 	});
 }
 
 function prerollPlayerReady(context) {
 	var player = flowplayer(context.prerollContainer.attr('id'));
 	var $controls = context.prerollToolbar;
-	$controls.addClass('unmuted').removeClass('muted');
-	player.unmute();
+	if ($controls.hasClass('muted')) {
+		player.mute();
+	} else {
+		player.unmute();
+	}
 
 	if (context.prerollInitializedOnce) {
 		return ;
@@ -201,9 +230,6 @@ function prerollPlayerReady(context) {
 	context.prerollInitializedOnce = true;
 
 	// play/pause - gui update on event
-	$('.play', $controls).click(function(){
-		player.play();
-	});
 	$('.pause', $controls).click(function(){
 		player.stop();
 	});
@@ -211,15 +237,13 @@ function prerollPlayerReady(context) {
 	// mute - there are no mute events, update in-place
 	$('.mute', $controls).click(function(){
 		player.mute();
-		$controls.addClass('muted').removeClass('unmuted');
 	});
 	$('.unmute', $controls).click(function(){
 		player.unmute();
-		$controls.addClass('unmuted').removeClass('muted');
 	});
 }
 
-function finishedPreroll(context, autostartVideo) {
+function finishedPreroll(context) {
 	if (context.videoIsLocal) {
 		// play everything in flowplayer
 		localVideoPlayerReady(context);
@@ -227,6 +251,9 @@ function finishedPreroll(context, autostartVideo) {
 	}
 	// switchToVideo not entirely sufficient
 	context.prerollContainer.hide();
+	$('.pnHeightControl', context.self).css({
+		background: 'none'
+	});
 	if (context.videoInitializedOnce === true) {
 		// should be coming from playlist.
 		return ;
@@ -244,7 +271,6 @@ function finishedPreroll(context, autostartVideo) {
 			id: videoContainerId
 		}, function() {
 			context.videoContainer = $('#' + videoContainerId);
-			context.videoAutostart = autostartVideo;
 		}
 	);
 }
@@ -412,10 +438,6 @@ function videoPlayerReady() {
 
 	// load video
 	player.loadVideoById(context.videoUri);
-	if (!context.videoAutostart) {
-		player.stopVideo();
-		player.clearVideo();
-	}
 
 	// play/pause - gui update on event
 	$('.play', $controls).click(function(){
@@ -549,6 +571,7 @@ function videoPlayerStateChange(newState) {
 	var context = contexts[instanceId];
 	var player = context.videoContainer[0];
 	var $controls = context.videoToolbar;
+	context.self.removeClass('hideVideoTitle').removeClass('stickedTitle');
 	switch(newState) {
 		case -1: // unstarted
 		case 0: // ended
@@ -560,8 +583,12 @@ function videoPlayerStateChange(newState) {
 				$('.time .total', $controls).html(context.videoLength
 					? timeFormat(context.videoLength)
 					: '- --');
-			} else if (newState === 0)
+			} else if (newState === 0) {
 				$('.timeProgress', $controls).slider('value', 100);
+				context.self.addClass('hideVideoTitle');
+			} else if (newState === 2) {
+				context.self.addClass('stickedTitle');
+			}
 			$controls.addClass('paused').removeClass('playing');
 			clearInterval(context.timer);
 			break;
@@ -586,9 +613,15 @@ function videoPlayerStateChange(newState) {
 function setupPlaylist(context) {
 	function markItem(videoUri) {
 		$('.playlist a[data-video-uri]', context.self).each(function(){
-			if (videoUri == $(this).data('video-uri'))
+			if (videoUri == $(this).data('video-uri')) {
 				$(this).parent().addClass('active');
-			else
+				$('.videoTitle', context.self).remove();
+				$('<a>',{
+					text: $('img', this).attr('title'),
+					href: $(this).attr('href'),
+					'class': 'videoTitle'
+				}).appendTo($('.pnHeightControl', context.self));
+			} else
 				$(this).parent().removeClass('active');
 		});
 
@@ -612,12 +645,12 @@ function setupPlaylist(context) {
 			$('.time .total', $controls).html(videoLength
 				? timeFormat(videoLength)
 				: '- --');
-			if (context.prerollInitializedOnce) {
+			try {
 				var player = flowplayer(context.prerollContainer.attr('id'));
-				if (player.isPlaying())
+				if (player.isPlaying() === true) // splascreen'd returns object (?!); do not restart
 					return;
 				player.play();
-			}
+			} catch (e) {}
 			return ;
 		}
 
@@ -633,7 +666,6 @@ function setupPlaylist(context) {
 		player.stopVideo();
 		player.loadVideoById(context.videoUri);
 		return ;
-
 	});
 }
 

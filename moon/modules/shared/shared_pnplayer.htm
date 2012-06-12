@@ -1,8 +1,13 @@
 <% player %>
 <div class="{class}">
 <div class="pnVideoContainer" style="width: {width};">
-	<div style="height: {height};" class="pnHeightControl">
-		<%if {ad} %><a <%loop {adArgs += player:adArgs.item} %>data-{name}="{value}" <%end%>href="javascript:;" class="pnPreroll"></a><%end%>
+	<div style="height: {height}; <%if {videoThumb} %>background: url({videoThumb}) no-repeat center center; background-size: cover<%end%>" class="pnHeightControl">
+		<%if {ad} %><a <%loop {adArgs += player:adArgs.item} %>data-{name}="{value}" <%end%>href="javascript:;" class="pnPreroll">
+			<div>
+				<img src="http://www.pokernews.com/img/spc.gif" height="{height}" width="{width}" alt="" />
+			</div>
+		</a>
+		<%end%>
 		<a data-video-uri="{videoUri}" data-video-length="{videoLength}" class="pnVideo"></a>
 	</div>
 	<div class="toolbar"></div>
@@ -13,7 +18,7 @@
 		<div class="thumbContainer">
 			<ul>
 				<%loop {playlist += player:playlist.item} %>
-				<li><a href="#" data-video-uri="{videoUri}" data-video-length="{videoLength}"><img src="http://i.ytimg.com/vi/{videoUri}/default.jpg" alt="" /></a></li>
+				<li><a href="{videoPageUri}" data-video-uri="{videoUri}" data-video-length="{videoLength}"><img src="http://i.ytimg.com/vi/{videoUri}/default.jpg" alt="" title="{videoTitle}" /></a></li>
 				<%end%>
 			</ul>
 		</div>

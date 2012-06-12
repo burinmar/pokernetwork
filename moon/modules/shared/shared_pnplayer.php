@@ -17,18 +17,21 @@ class shared_pnplayer
 		);
 	}
 
-	public function getHtml($videoUri, $videoLength = 0, $preset = 'default', $playlist = null, $ad = array()) 
+	public function getHtml($videoUri, $videoLength = 0, $preset = 'default', $playlist = null, $ad = array(), $thumbnailSrc = null) 
 	{
 		$this->setHtmlEnv();
 
 		$tplArgs = $this->loadPreset($preset);
 		$tplArgs['videoUri'] = htmlspecialchars($videoUri);
 		$tplArgs['videoLength'] = htmlspecialchars($videoLength);
+		$tplArgs['videoThumb'] = htmlspecialchars($thumbnailSrc);
 
 		if (strlen($videoUri) != 11) { // not youtube
 			if ($ad === null)
 				$ad = array();
 			$playlist = null;
+		} elseif ($thumbnailSrc == '') { // youtube and auto thumbnail
+			$tplArgs['videoThumb'] = 'http://i.ytimg.com/vi/' . $tplArgs['videoUri'] . '/0.jpg';
 		}
 
 		$tplArgs['ad'] = $ad !== null;
@@ -47,6 +50,8 @@ class shared_pnplayer
 			$tplArgs['playlist'] .= $this->tpl->parse('player:playlist.item', array(
 				'videoUri' => htmlspecialchars($playlistItem[0]),
 				'videoLength' => htmlspecialchars($playlistItem[1]),
+				'videoTitle' => htmlspecialchars($playlistItem[2]),
+				'videoPageUri' => htmlspecialchars($playlistItem[3]),
 			));
 		}}
 

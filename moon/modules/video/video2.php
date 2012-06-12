@@ -664,7 +664,9 @@ class video2 extends moon_com {
 		foreach ($videos as $video) {
 			$playlist[] = array(
 				$video['youtube_video_id'],
-				$video['duration']
+				$video['duration'],
+				$video['title'],
+				$this->linkas('#', $video['uri'] . '-' . $video['id']),
 			);
 		}
 
@@ -702,7 +704,9 @@ class video2 extends moon_com {
 		foreach ($videos as $video) {
 			$playlist[] = array(
 				$video['youtube_video_id'],
-				$video['duration']
+				$video['duration'],
+				$video['title'],
+				$this->linkas('#', $video['uri'] . '-' . $video['id']),
 			);
 		}
 		$m = array(
