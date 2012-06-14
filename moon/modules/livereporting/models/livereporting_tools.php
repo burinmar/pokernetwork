@@ -22,7 +22,7 @@ class livereporting_tools extends livereporting_model_pylon
 	{
 		static $iAdminRepo;
 		if (!$iAdminRepo) {
-			 $iAdminRepo = moon::user()->i_admin('reporting');
+			 $iAdminRepo = moon::user()->i_admin();
 		}
 		switch ($action) {
 			case 'viewLogHidden':
