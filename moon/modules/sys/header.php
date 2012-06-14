@@ -34,6 +34,16 @@ class header extends moon_com
 			return $res;
 		}
 
+
+//Poker 770 7Wonders
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/10-500-poker770-weekend-wonders/',
+'imgPath'=> '/img/p770_wonders_wallpaper.jpg',
+'bgColor'=> '#000000',
+)
+)) return $res;
+
+// Winner Poker 30K
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/30k-winner-wednesday-dozen/',
 'imgPath'=> '/img/winner_30k_wallpaper.jpg',
