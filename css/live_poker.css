@@ -1111,3 +1111,10 @@ div.meta {margin-bottom: 1.5em}
 	position: relative;
 	top: -5px;
 }
+
+.widgetChipsCount {
+	padding-left: 0;
+	padding-right: 0;
+}
+.widgetChipsCount .widgetTitle {margin: 0}
+.widgetChipsCount table {margin-top: 0; font-size: 11px}

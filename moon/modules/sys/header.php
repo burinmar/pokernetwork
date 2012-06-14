@@ -40,6 +40,7 @@ if ($this->wallpaper($res, array(
 'url'=> '/leagues/10-500-poker770-weekend-wonders/',
 'imgPath'=> '/img/p770_wonders_wallpaper.jpg',
 'bgColor'=> '#000000',
+'endDate'=> '2012-07-17',
 )
 )) return $res;
 
