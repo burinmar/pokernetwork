@@ -840,7 +840,7 @@ class video2 extends moon_com {
 
 	private function getLatestHomepageItems($limit = 20)
 	{
-		$sql = 'SELECT id,title,duration,youtube_video_id
+		$sql = 'SELECT id,title,duration,youtube_video_id,uri
 			FROM ' . $this->tblVideos . '
 			WHERE hide=0 AND youtube_video_id!=""
 			ORDER BY created DESC
