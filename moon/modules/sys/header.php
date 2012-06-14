@@ -246,19 +246,7 @@ function wallpaper(&$res, $w) {
 			return FALSE;
 		}
 	}
-	if (!empty($w['promoID'])) {
-		if ($promoLink = $navi->getLink('promotions')) {
-			$field = 'com' === _SITE_ID_ ? 'id' : 'remote_id';
-			$is = $this->db->single_query('SELECT alias FROM promos WHERE ' . $field . ' = 107 AND is_hidden = 0');
-		}
-		if ($promoLink && !empty($is[0])) {
-			$bgURL = $promoLink . $is[0] . '/';
-		}
-		else {
-			return FALSE;
-		}
-	}
-	elseif (!empty($w['url']) && $w['url']{0} !=='+') {
+	if (!empty($w['url']) && $w['url']{0} !=='+') {
 		$bgURL = $w['url'];
 	}
 
