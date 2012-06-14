@@ -71,7 +71,7 @@ if ($this->wallpaper($res, array(
         //background
 		$bgURL = 'http://pokerstars.com/EN/ad/11216421/1000x150scoop.gif.click?rq=noscript&vs=';
 		*/
-
+	return $res;
 
 	}
 
