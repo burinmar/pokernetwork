@@ -181,6 +181,7 @@ function setupAndShowPreroll(context) {
 					},
 					servers: [{
 						type: "OpenX",
+						timeoutInSeconds: 5,
 						apiAddress: "http://ads.ibusmedia.com/www/delivery/fc.php"
 					}],
 					schedule: [
