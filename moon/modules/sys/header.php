@@ -38,7 +38,7 @@ class header extends moon_com
 //PokerStars Main Event
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/19.htm',
-'imgPath'=> '/img/ps_pnme2012_wallpaper.jpg',
+'imgPath'=> '/img/ps_pnme2012_wallpaper.jpg?1',
 'bgColor'=> '#000000',
 'endDate'=> '2012-06-30',
 )
