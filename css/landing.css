@@ -110,3 +110,12 @@
 
 #landing.stars-mainevent {background-image: url('/img/landing/stars-mainevent/intro.jpg?1')}
 #landing.stars-mainevent .download {background: url('/img/landing/stars-mainevent/download.png?1') repeat-x; line-height: 40px; width: 169px; height: 40px; font-size: 14px; color: #fff}
+
+#landing.titanpoker {background-image: url('/img/landing/titan-poker/intro.jpg?1'); background-color: #ecbe8a; color: #412b12}
+#landing.titanpoker .head {margin-bottom: 80px}
+#landing.titanpoker table, #landing.titanpoker td, #landing.titanpoker .details p, #landing.titanpoker .details th {color: #412b12}
+#landing.titanpoker .download {background: url('/img/landing/titan-poker/download.png?1') repeat-x; line-height: 40px; width: 169px; height: 40px; font-size: 14px; color: #fff !important; position: relative; }
+#landing.titanpoker .download:hover {background-position: bottom left}
+#landing.titanpoker .download:after {position: absolute; top: 7px; right: -150px; content: ''; background: url('/img/landing/titan-poker/logo.png'); width: 117px; height: 25px}
+#landing.titanpoker p a {color: #ff4200}
+#landing.titanpoker p a:hover {color: #a22a00}
