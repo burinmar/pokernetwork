@@ -1,8 +1,8 @@
 <%todo_box%>
-<div class="task {class}">
-	<span title="Tasks">You have <b>{count}</b> tasks</span>
+<div class="task toggleItem {class}">
+	<span class="taskCounter" title="Tasks"><i>You have </i><b>{count}</b><i> tasks</i></span>
 	<%if{undone}%>
-	<div class="popup">
+	<div class="popup hide">
 		<span></span>
 		<ul class="clrfix">
 			<%if{support}%><li class="support"><a href="{url.support}" onclick="window.open(this.href);return false"><b>{support}</b> support request(s) to respond.</a></li><%end%>

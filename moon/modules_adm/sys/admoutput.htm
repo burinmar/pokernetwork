@@ -4,6 +4,7 @@
 <head>
 	<meta charset="utf-8" />
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta name="viewport" content="width=device-width; initial-scale=1.0" />
 	<title>{title}</title>
 	<base href="{home_url}" />
 	<script type="text/javascript" src="/js/jquery.js"></script>
@@ -29,9 +30,9 @@
 	<div id="header">
 		<%if{todoHeader}%>{todoHeader}<%end%>
 		<p title="PokerNetwork Content Management System"><img src="img/adm/site_logo.png" alt="PokerNetwork" class="logo" /></p>
-		<div class="user">
+		<div class="user toggleItem">
 			<span class="nick">{username}</span>
-			<div class="popup">
+			<div class="popup hide">
 				<span></span>
 				<ul>
 					<li><a href="{goSite}" target="_blank" class="visit">Visit Website</a></li>

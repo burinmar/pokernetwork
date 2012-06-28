@@ -203,3 +203,11 @@ jQuery(document).ready(function () {
 	}
 
 });
+
+$(function() {
+	if (navigator.userAgent.match(/iPhone/i) || navigator.userAgent.match(/iPad/i)) {
+		$(".toggleItem").click(function(){
+			$(this).children(".popup").toggleClass("unHide").toggleClass("hide");
+		})
+	}
+});
