@@ -35,6 +35,15 @@ class header extends moon_com
 		}
 
 
+//Titan Poker TreasureHunt
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/titan-poker/freerolls/?upcoming',
+'imgPath'=> '/img/titan_treasurehunt_wallpaper.jpg',
+'bgColor'=> '#f7d79c',
+//'endDate'=> '2012-06-30',
+)
+)) return $res;
+
 //PokerStars Main Event
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/19.htm',
