@@ -117,5 +117,6 @@
 #landing.titanpoker .download {background: url('/img/landing/titan-poker/download.png?1') repeat-x; line-height: 40px; width: 169px; height: 40px; font-size: 14px; color: #fff !important; position: relative; }
 #landing.titanpoker .download:hover {background-position: bottom left}
 #landing.titanpoker .download:after {position: absolute; top: 7px; right: -150px; content: ''; background: url('/img/landing/titan-poker/logo.png'); width: 117px; height: 25px}
-#landing.titanpoker p a {color: #ff4200}
+#landing.titanpoker p a, #landing.titanpoker table a {color: #ff4200}
 #landing.titanpoker p a:hover {color: #a22a00}
+#landing.titanpoker #upcomingFreerolls th span {color: #000}
