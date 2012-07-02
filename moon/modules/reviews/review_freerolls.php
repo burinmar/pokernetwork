@@ -178,6 +178,7 @@ class review_freerolls extends moon_com {
 			$m['qualificationTo'] = 'n/a ';
 			$m['qualificationFrom'] = '';
 		}
+		$m['titan'] = 61 == $room['id'];
 		return $tpl->parse('main', $m);
 	}
 
