@@ -733,7 +733,7 @@ class video extends moon_com {
 			$ins[$v] = $item[$v];
 		}
 		//$autopublish = 'com' == _SITE_ID_ ? TRUE : FALSE;
-		$autopublish = 'en' == $item['language'] || moon::locale()->language() == $item['language'] ? TRUE : FALSE;
+		$autopublish = 'en' == $item['language'] || moon::locale()->language() == $item['language'] || !empty($item['brightcove_id']) ? TRUE : FALSE;
 		if (empty($exist['updated']) || $autopublish) {
 			$ins['title'] = $item['title'];
 			$ins['description'] = $item['description'];
