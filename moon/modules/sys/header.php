@@ -36,9 +36,8 @@ class header extends moon_com
 
 //PokerStars 20K freeroll
 if ($this->wallpaper($res, array(
-'roomID'=> 53,
-'url'=> '+download',
-'imgPath'=> '/i/ps_20k_wallpaper2.jpg',
+'url'=> '/pokerstars/freerolls/24.htm',
+'imgPath'=> '/img/ps_20k_wallpaper2.jpg',
 'bgColor'=> '#000',
 )
 )) return $res;
