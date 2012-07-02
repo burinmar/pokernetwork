@@ -34,6 +34,14 @@ class header extends moon_com
 			return $res;
 		}
 
+//PokerStars 20K freeroll
+if ($this->wallpaper($res, array(
+'roomID'=> 53,
+'url'=> '+download',
+'imgPath'=> '/i/ps_20k_wallpaper2.jpg',
+'bgColor'=> '#000',
+)
+)) return $res;
 
 //Titan Poker TreasureHunt
 if ($this->wallpaper($res, array(

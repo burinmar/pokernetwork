@@ -120,3 +120,9 @@
 #landing.titanpoker p a, #landing.titanpoker table a {color: #ff4200}
 #landing.titanpoker p a:hover {color: #a22a00}
 #landing.titanpoker #upcomingFreerolls th span {color: #000}
+
+#landing.pokerstars20k {background-image: url('/img/landing/pokerstars20k/intro.jpg')}
+#landing.pokerstars20k .head {padding: 0 0 0 440px}
+#landing.pokerstars20k .download {background: url('/img/landing/pokerstars20k/download.png') repeat-x; line-height: 40px; width: 169px; height: 40px; font-size: 14px; color: #000; position: relative; }
+#landing.pokerstars20k .download:hover {background-position: bottom left; text-decoration: none}
+#landing.pokerstars20k .download:after {position: absolute; top: 4px; right: -160px; content: ''; background: url('/img/landing/pokerstars20k/logo.png'); width: 122px; height: 17px}
