@@ -312,6 +312,9 @@ class video extends moon_com {
 			}
 		}
 
+		$m['url.web'] = $page->home_url() . ltrim(moon::shared('sitemap')->getLink('video'), '/') . $m['uri'] . '-' . $m['id'] . '.htm';
+		$m['url.youtube'] = 'http://youtu.be/' . $m['youtube_video_id'];
+
 
 		/* Youtube video info */
 		/*if ($yId = $f->get('youtube_video_id')) {
@@ -730,7 +733,7 @@ class video extends moon_com {
 			$ins[$v] = $item[$v];
 		}
 		//$autopublish = 'com' == _SITE_ID_ ? TRUE : FALSE;
-		$autopublish = TRUE;
+		$autopublish = 'en' == $item['language'] || moon::locale()->language() == $item['language'] ? TRUE : FALSE;
 		if (empty($exist['updated']) || $autopublish) {
 			$ins['title'] = $item['title'];
 			$ins['description'] = $item['description'];

@@ -14,7 +14,7 @@ error9=System error!
 <div class="tabzoneHeader clrfix">
 	<h1>{pageTitle}</h1>
 	<!--#
-<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add video</a></div>
+	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add video</a></div>
 -->
 </div>
 
@@ -101,9 +101,9 @@ error9=System error!
 		<div class="forSlaveOriginalText">{master_title}</div>
 
 		<input type="text" name="title" id="i_title" value="{title}" size="80" maxlength="255" class="required"/>
-		<% if {id2} %>
-		<div class="explain">View this article in <a href="{uriPrefix}{uri}.htm" onclick="window.open(this.href);return false;">new window</a></div>
-		<% end {id2} %>
+		<% if {id} %>
+		<div class="explain">Open a page of this video in <a href="{url.web}" onclick="window.open(this.href);return false;">new window</a></div>
+		<% end {id} %>
 	</dd>
 	<dd class="dd100">
 	 <input type="checkbox" name="hide" id="i_hide" value="{hide}" /> <label for="i_hide">Hide</label>
@@ -113,7 +113,7 @@ error9=System error!
 	<dt><label for="i_description">Description</label></dt>
 	<dd class="dd100 w100">
 		<div class="forSlaveOriginalText">{master_description}</div>
-		{toolbar}<textarea rows="15" cols="70" name="description" id="i_description"  class="required">{description}</textarea>
+		{toolbar}<textarea rows="3" cols="70" name="description" id="i_description"  class="required">{description}</textarea>
 	</dd>
 
 
@@ -135,9 +135,26 @@ error9=System error!
 	</table>
 	</dd>
 
+	<%if{youtube_video_id}%>
+	<dt><%if{thumbnail}%><img src="{thumbnail}" width="120" height="90" alt="screenshot"/><%end%>&nbsp;</dt>
+	<dd class="dd100 w100">
+		<div style="width:570px;float:left"><iframe width="560" height="315" src="http://www.youtube.com/embed/{youtube_video_id}" frameborder="0" allowfullscreen></iframe></div>
+		<div style="width:320px;float:right">
+		Embed code in the Pokernetwork:<br />
+		[VIDEO]{url.web}[/VIDEO]<br /><br />
 
-	<dt><label>Thumbnail</label></dt>
-	<dd class="dd100 w100"><%if{thumbnail}%><img src="{thumbnail}" width="120" height="90" alt="screenshot"/><%end%></dd>
+		Youtube video page:<br />
+		<div class="explain"><a href="{url.youtube}" onclick="window.open(this.href);return false;">{url.youtube}</a></div>
+		</div>
+		<div style="clear:both"></div>
+	</dd>
+	<%else{youtube_video_id}%>
+		<dt><label>Thumbnail</label></dt>
+		<dd class="dd100 w100">
+		<%if{thumbnail}%><img src="{thumbnail}" width="120" height="90" alt="screenshot"/><%end%>
+		</dd>
+	<%end%>
+
 	</dl>
 	<div class="formButton clrfix"><input type="submit" value="Save" /> <input type="submit" name="return" value="Save &amp; return" /> <input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
 </form>
