@@ -766,9 +766,9 @@ html {
 	.liveReportingIndexBox div {
 		float: left;
 		width: 243px;
-		margin: 0 10px 10px 0;
+		margin: 0 0 10px 10px;
 	}
-		.liveReportingIndexBox div:nth-child(2n+1) {margin-right: 0}
+		.liveReportingIndexBox div:nth-child(2n+1) {margin-left: 0}
 		.liveReportingIndexBox div a {
 			display: block;
 			text-transform: uppercase;
