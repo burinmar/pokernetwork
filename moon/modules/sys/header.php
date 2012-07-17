@@ -51,24 +51,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-//PokerStars Main Event
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/19.htm',
-'imgPath'=> '/img/ps_pnme2012_wallpaper.jpg?2',
-'bgColor'=> '#000000',
-'endDate'=> '2012-06-30',
-)
-)) return $res;
-
-//Poker 770 7Wonders
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/10-500-poker770-weekend-wonders/',
-'imgPath'=> '/img/p770_wonders_wallpaper.jpg',
-'bgColor'=> '#000000',
-'endDate'=> '2012-07-17',
-)
-)) return $res;
-
 // Winner Poker 30K
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/30k-winner-wednesday-dozen/',
