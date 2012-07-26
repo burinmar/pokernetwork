@@ -42,15 +42,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-//Titan Poker TreasureHunt
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/titan-poker/freerolls/?upcoming',
-'imgPath'=> '/img/titan_treasurehunt_wallpaper.jpg',
-'bgColor'=> '#f7d79c',
-//'endDate'=> '2012-06-30',
-)
-)) return $res;
-
 // Winner Poker 30K
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/30k-winner-wednesday-dozen/',
