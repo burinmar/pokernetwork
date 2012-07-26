@@ -38,6 +38,24 @@ $cfg['banners'] = array(
 			'bn' => 'HomeTop'
 		),
 	),
+	'var.zones.preroll' => array(
+		'home' => array(
+			'title' => 'Pre-roll Homepage',
+			'bn' => 'PrerollHomepage'
+		),
+		'reporting' => array(
+			'title' => 'Pre-roll Live Reporting',
+			'bn' => 'PrerollLiveReporting'
+		),
+		'video' => array(
+			'title' => 'Pre-roll Video page',
+			'bn' => 'PrerollVideoPage'
+		),
+		'embed' => array(
+			'title' => 'Pre-roll Embed',
+			'bn' => 'PrerollEmbed'
+		)
+	),
 	'var.urlTargets' => array(
 		'video' => array(
 			'Videos' => array()

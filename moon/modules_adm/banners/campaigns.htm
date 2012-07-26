@@ -169,6 +169,22 @@ errorBn2=Technical error
 						{html}
 					<% end %>
 					
+					<% if {videoInfo} %>
+					<div class="videoPageVideo media-file">
+						<div class="pnVideoContainer" style="width: 455px;">
+						<div style="height: 340px; " class="pnHeightControl">
+							<a data-zone="3" href="javascript:;" class="pnPreroll">
+								<div>
+									<img src="http://www.pokernews.com/img/spc.gif" height="340px" width="455px" alt="" />
+								</div>
+							</a>
+							<a data-video-uri="{mediaSrc}" class="pnVideo"></a>
+						</div>
+						<div class="toolbar"></div>
+						</div>
+					</div>
+					<% end %>
+
 					<a class="settings toggle-bn-media" href="#" style="right: 35px"><span>Settings</span></a>
 					<div class="options aform">
 						<dl>
@@ -179,6 +195,14 @@ errorBn2=Technical error
 								<% end %>
 								<span class="clr"></span>
 							</dd>
+
+							<% if {videoInfo} %>
+							
+							<dt><label>Impressions limit per session</label></dt>
+							<dd><input type="text" name="views_limit_session[{id}]" value="{views_limit_session}" size="10" />&nbsp;&nbsp;<span class="explain">User session lasts for 4 hours</span></dd>
+
+							<% else {videoInfo} %>
+
 							<dt><label>Url targeting</label></dt>
 							<dd>
 								<div class="fl">
@@ -197,6 +221,9 @@ errorBn2=Technical error
 									<% end %>
 								</div><span class="clr"></span>
 							</dd>
+
+							<% end %>
+
 							<dt></dt>
 							<dd><label><input type="checkbox" name="is_hidden[{id}]" value="{is_hidden}" id="inactive-check" /> Hide</label></dd>
 						</dl>
@@ -264,9 +291,27 @@ errorBn2=Technical error
 						<param name="wmode" value="transparent" />
 					</object>
 				<% end %>
+				
 				<% if {htmlInfo} %>
 					{html}
 				<% end %>
+
+				<% if {videoInfo} %>
+				<div class="videoPageVideo media-file">
+					<div class="pnVideoContainer" style="width: 455px;">
+					<div style="height: 340px; " class="pnHeightControl">
+						<a data-zone="3" href="javascript:;" class="pnPreroll">
+							<div>
+								<img src="http://www.pokernews.com/img/spc.gif" height="340px" width="455px" alt="" />
+							</div>
+						</a>
+						<a data-video-uri="{mediaSrc}" class="pnVideo"></a>
+					</div>
+					<div class="toolbar"></div>
+					</div>
+				</div>
+				<% end %>
+
 			</dd>
 			<% end %>
 			

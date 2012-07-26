@@ -10,6 +10,100 @@ class banners extends moon_com
 	function events($event, $par) {
 
 		switch ($event) {
+			case 'preroll':
+				$zone = isset($_GET['zone']) ? $_GET['zone'] : 'embed';
+				$geo = isset($_GET['geo']) ? (float)$_GET['geo'] : null;
+
+				$ads = $this->getBanners(true);
+
+				// get zone ads. get all if no zone
+				if (is_array($ads) && array_key_exists($zone, $ads)) {
+					$adsTmp = $ads[$zone];
+					$ads = array();
+
+					// filters
+					foreach ($adsTmp as $ad) {
+
+						// filter by geo target
+						$adGeo = (float)$ad['geo_target'];
+
+						if (!empty($adGeo) && $geo && !($adGeo & $geo)) continue;
+
+						// filter by impressions limit per session
+						if ($ad['views_limit_session'] > 0) {
+							// read cookie
+							$saved = !empty($_COOKIE['pnadpr']) ? unserialize($_COOKIE['pnadpr']) : array();
+
+							if (isset($saved[$ad['gid']]) &&
+								intval($saved[$ad['gid']]) > $ad['views_limit_session'])
+							{
+								continue;
+							}
+						}
+
+						$ads[] = $ad;
+					}
+
+					if (!count($ads)) exit;
+
+					shuffle($ads);
+					$ad = array_pop($ads);
+
+					$data = unserialize(stripslashes($ad['alternative']));
+					$ext = !empty($data['ext']) ? $data['ext'] : '';
+					$type = 'video/x-'.$ext;
+					$bitrate = !empty($data['bitrate']) ? $data['bitrate'] : '';
+					$duration = !empty($data['duration']) ? $data['duration'] : '';
+
+					// format duration. 0:16 -> 00:00:16
+					$tmp = array_reverse(explode(':', $duration));
+					$s = !empty($tmp[0]) ? (strlen($tmp[0]) == 1 ? str_pad($tmp[0], 2, '0', STR_PAD_LEFT) : $tmp[0]) : '00';
+					$m = !empty($tmp[1]) ? (strlen($tmp[1]) == 1 ? str_pad($tmp[1], 2, '0', STR_PAD_LEFT) : $tmp[1]) : '00';
+					$h = !empty($tmp[2]) ? (strlen($tmp[2]) == 1 ? str_pad($tmp[2], 2, '0', STR_PAD_LEFT) : $tmp[2]) : '00';
+					$duration = $h.':'.$m.':'.$s;
+
+					$adParams = array(
+						'gid' => $ad['gid'],
+						'sid' => $ad['sid'],
+						'cid' => $ad['cid'],
+						'zone' => $zone,
+						'preroll' => 1
+					);
+					$queryStr = '?d=' . json_encode($adParams);//http_build_query($adParams, '', '&amp;');
+
+					$domain = is_dev() ? 'dev' : 'com';
+					$viewUrl = 'http://www.pokernetwork.' . $domain . '/banners/trackviews/'.$queryStr;
+					$clickUrl = htmlspecialchars($ad['redirect_url']);
+
+					header('Content-Type: application/xml; charset=UTF-8');
+					print $xml = '<VideoAdServingTemplate xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vast.xsd">
+							<Ad id="' . $ad['gid'] . '">
+								<InLine>
+									<AdSystem>PokerNews Ad System</AdSystem>
+									<AdTitle>' . $ad['title'] . '</AdTitle>
+									<Description>Inline Video Ad</Description>
+									<Impression>
+										<URL id="primaryAdServer">' . $viewUrl . '</URL>
+									</Impression>
+									<Video>
+										<Duration>' . $duration . '</Duration>
+										<AdID>' . $ad['gid'] . '</AdID>
+										<VideoClicks>
+											<ClickThrough>
+												<URL id="destination">' . $clickUrl . '</URL>
+											</ClickThrough>
+										</VideoClicks>
+										<MediaFiles>
+											<MediaFile delivery="progressive" bitrate="' . $bitrate . '" width="' . $ad['width'] . '" height="' . $ad['height'] . '" type="' . $type . '">
+												<URL>' . $ad['path'] . '</URL>
+											</MediaFile>
+										</MediaFiles>
+									</Video>
+								</InLine>
+							</Ad>
+						</VideoAdServingTemplate>';
+				}
+				exit;
 			case 'view':
 				$this->forget();
 				if (isset($_GET['mid']) && is_numeric($_GET['mid'])) {
@@ -163,6 +257,25 @@ class banners extends moon_com
 	function setBannersViewed($data)
 	{
 		foreach ($data as $d) {
+
+			if (isset($d['preroll'])) {
+				// for pre-roll ads check/set views limit per session cookie
+				$cookie = !empty($_COOKIE['pnadpr']) ? unserialize($_COOKIE['pnadpr']) : array();
+
+				if (!isset($cookie['exp'])) $cookie['exp'] = time() + 3600*4;
+				if (!isset($cookie[$d['gid']])) $cookie[$d['gid']] = 1;
+				else (int)$cookie[$d['gid']]++;
+
+				$p = array(
+					'expire' => $cookie['exp'],
+					'path' => '/',
+					'domain' => 'www.pokernetwork.' . (is_dev() ? 'dev' : 'com'),
+					'secure' => false,
+					'httponly' => true
+				);
+				setcookie('pnadpr', serialize($cookie), $p['expire'], $p['path'], $p['domain'], $p['secure'], $p['httponly']);
+			}
+
 			$sql = '
 				INSERT DELAYED INTO ' . $this->table('BannersStats') . '
 				(banner_id, campaign_id, site_id, zone, date, views, clicks)
@@ -173,7 +286,7 @@ class banners extends moon_com
 		}
 	}
 
-	function getBanners()
+	function getBanners($videoAdsOnly = false)
 	{
 		$sql = '
 			SELECT
@@ -183,6 +296,7 @@ class banners extends moon_com
 				cb.uri_target,
 				cb.zone_target,
 				cb.views_limit,
+				cb.views_limit_session,
 				b.id as bannerId,
 				b.title,
 				b.type,
@@ -211,6 +325,7 @@ class banners extends moon_com
 			     	AND b.is_hidden = 0
 			     	AND bm.is_hidden = 0
 			     	AND bm.site_id != 0
+			     	' . ($videoAdsOnly ? 'AND b.type = "video"' : 'AND b.type != "video"') . '
 			GROUP BY cb.id;';
 		$result = $this->db->array_query_assoc($sql);
 
@@ -348,6 +463,7 @@ class banners extends moon_com
 				);
 				break;
 			case 'media':
+			case 'video':
 				if ($ad['media_type'] == 'image') {
 					$ad['alternative'] = htmlspecialchars($ad['alternative']);
 					$ad['alternative'] = str_replace("\n", '', $ad['alternative']);
@@ -369,6 +485,12 @@ class banners extends moon_com
 						} else {
 							$params['type'] = 'imagenc';
 						}
+						break;
+					case 'video':
+						$params['type'] = 'video';
+						$params['title'] = $ad['title'];
+						$params['geo_target'] = $ad['geo_target'];
+						$params['views_limit_session'] = $ad['views_limit_session'];
 						break;
 				}
 				$params += array(
@@ -430,7 +552,7 @@ class banners extends moon_com
 		include_once(MOON_MODULES . '../modules_adm/banners/config.cfg.php');
 
 		if (isset($cfg) && isset($cfg['banners'])) {
-			$zones = $cfg['banners']['var.zones'];
+			$zones = $cfg['banners']['var.zones'] + $cfg['banners']['var.zones.preroll'];
 		}
 		return $zones;
 	}

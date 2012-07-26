@@ -10,7 +10,7 @@ $(document).ready(function () {
 
 		// File Upload Settings
 		file_size_limit : '20 MB',
-		file_types : '*.jpg;*.jpeg;*.gif;*.png;*.swf',//"*.*",
+		file_types : '*.jpg;*.jpeg;*.gif;*.png;*.swf;*.flv;*.mp4',//"*.*",
 		file_types_description : "All Files",
 		file_upload_limit : '60',
 		file_queue_limit : '60',

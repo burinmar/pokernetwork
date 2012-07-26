@@ -222,6 +222,7 @@ class banners extends moon_com
 			'typeMedia' => !$form->get('type') ? 'media" checked="checked"' : $form->checked('type', 'media'),
 			'typeHtml' => $form->checked('type', 'html'),
 			'typeFlashXml' => $form->checked('type', 'flashXml'),
+			'typeVideo' => $form->checked('type', 'video'),
 			'is_hidden' => $form->checked('is_hidden', 1),
 			'target_blank' => $form->checked('target_blank', 1),
 			'optRooms' => $form->options('room_id', $optRooms)
@@ -394,7 +395,7 @@ class banners extends moon_com
 		$errorMsg = 0;
 		if ($data['title'] == '') {
 			$errorMsg = 1;
-		} elseif (!in_array($data['type'], array('media','html', 'flashXml'))) {
+		} elseif (!in_array($data['type'], array('media','html', 'flashXml', 'video'))) {
 			$errorMsg = 9;
 		}
 		
@@ -414,13 +415,22 @@ class banners extends moon_com
 		
 		if ($id) {
 			// if url changed - update media items urls
-			$sql = 'SELECT url
+			$sql = 'SELECT url, type
 				FROM ' . $this->tblBanners . ' 
 				WHERE id = ' . intval($id);
 			$res = $this->db->single_query_assoc($sql);
 			if (!empty($res['url']) && ($res['url'] != $ins['url'])) {
 				$sql = 'UPDATE ' . $this->tblBannersMedia . '
 					SET url = "' . $this->db->escape($ins['url']) . '"
+					WHERE	banner_id = ' . intval($id) . ' AND
+					     	site_id != 0';
+				$this->db->query($sql);
+			}
+
+			// if media type changed - hide current media items assigned
+			if (!empty($res['type']) && ($res['type'] != $ins['type'])) {
+				$sql = 'UPDATE ' . $this->tblBannersMedia . '
+					SET is_hidden = 1
 					WHERE	banner_id = ' . intval($id) . ' AND
 					     	site_id != 0';
 				$this->db->query($sql);

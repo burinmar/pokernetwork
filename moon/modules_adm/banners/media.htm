@@ -28,7 +28,7 @@ error_csv_2=Csv upload error: Incorrect data! Correct row example: fr;20;50$ fre
 
 
 
-<% if {media} %>
+<% if {enableSwfUpload} %>
 <!-- UPLOAD FORM -->
 <span class="clr"></span>
 <div class="upload">
@@ -129,6 +129,26 @@ error_csv_2=Csv upload error: Incorrect data! Correct row example: fr;20;50$ fre
 					
 					<label class="hideBanner"><input type="checkbox" name="is_hidden[{site_id}]" value="{is_hidden}" /> <% if {is_hidden} %>Unhide<%else {is_hidden}%>Hide<% end %></label>
 				<% end %>
+
+				<% if {video} %>
+				<div class="videoPageVideo media-file" style="display:none;">
+					<div class="pnVideoContainer" style="width: 455px;">
+					<div style="height: 340px; " class="pnHeightControl">
+						<a data-zone="3" href="javascript:;" class="pnPreroll">
+							<div>
+								<img src="http://www.pokernetwork.com/img/spc.gif" height="340px" width="455px" alt="" />
+							</div>
+						</a>
+						<a data-video-uri="{path}" class="pnVideo"></a>
+					</div>
+					<div class="toolbar"></div>
+					</div>
+				</div>
+
+				<a href="#" class="toggle-bn-media">Show</a>
+				<br /><label class="aform">Url: <input type="text" name="url[{id}]" value="{url}" size="100" maxlength="255" /></label>
+				<% end %>
+
 			</dd>
 		<% end %>
 		
@@ -161,6 +181,26 @@ error_csv_2=Csv upload error: Incorrect data! Correct row example: fr;20;50$ fre
 						{alternative}
 					</object>
 					<% end %>
+
+					<% if {video} %>
+					<div class="videoPageVideo media-file" style="display:none;">
+						<div class="pnVideoContainer" style="width: 455px;">
+						<div style="height: 340px; " class="pnHeightControl">
+							<a data-zone="3" href="javascript:;" class="pnPreroll">
+								<div>
+									<img src="http://www.pokernetwork.com/img/spc.gif" height="340px" width="455px" alt="" />
+								</div>
+							</a>
+							<a data-video-uri="{path}" class="pnVideo"></a>
+						</div>
+						<div class="toolbar"></div>
+						</div>
+					</div>
+
+					<a href="#" class="toggle-bn-media">Show</a>
+					<br /><label class="aform">Url: <input type="text" name="url[{id}]" value="{url}" size="100" maxlength="255" /></label>
+					<% end %>
+
 				</dd>
 			<% end %>
 		<% end %>

@@ -345,8 +345,11 @@ class campaigns extends moon_com
 		));
 
 		$imgSrc = $this->get_var('srcBanners');
+		$videoSrc = 'http://www.pokernetwork.' . (is_dev() ? 'dev' : 'com') . '/w/ads/';
 
 		$zones = $this->getZones();
+		$zonesPreroll = $this->getZonesPreroll();
+
 		$sites = $this->getSites();
 		$urlTargets = $this->getUrlTargets();
 
@@ -363,6 +366,14 @@ class campaigns extends moon_com
 			// non existing banner group, probably garbage, it should have been deleted when deleting bn group
 			if (!$b['banner_id']) continue;
 
+			if ($b['type'] === 'video' && !isset($tmpIsVideoType)) {
+				// pn video player
+				$page->js('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
+				$page->js('http://www.pokernetwork.com/js/pnplayer.js');
+				$page->css('http://www.pokernetwork.com/css/pnplayer.css');
+				$tmpIsVideoType = true;
+			}
+
 			$bannerId = intval($b['banner_id']);
 			$campaignBannerId = intval($b['id']);
 			$item = array(
@@ -370,17 +381,19 @@ class campaigns extends moon_com
 				'banner_id' => $bannerId,
 				'goRemove' => $this->linkas('#remove', $campaignId . '.' . $campaignBannerId),
 
-				'mediaSrc' => $imgSrc . $b['filename'],
+				'mediaSrc' => ($b['type'] == 'media' ? $imgSrc : $videoSrc) . $b['filename'],
 				'media_width' => $b['media_width'],
 				'media_height' => $b['media_height'],
 				'imgInfo' => ($b['type'] == 'media' && $b['media_type'] == 'image' && $b['filename']) ? true : false,
 				'flashInfo' => ($b['type'] == 'media' && $b['media_type'] == 'flash' && $b['filename']) ? true : false,
 				'flashXmlInfo' => ($b['type'] == 'flashXml' && $b['media_type'] == 'flashXml' && $b['filename']) ? true : false,
+				'videoInfo' => ($b['type'] == 'video' && $b['media_type'] == 'video' && $b['filename']) ? true : false,
 				'htmlInfo' => ($b['type'] == 'html' && $b['alternative']) ? true : false,
 				'alternative' => $b['alternative'],
 				'html' => $b['alternative'],
 
 				'views_limit' => $b['views_limit'] ? $b['views_limit'] : '',
+				'views_limit_session' => $b['views_limit_session'] ? $b['views_limit_session'] : '',
 				'is_hidden' => ($b['is_hidden'] || $b['b_hidden']) ? '1" checked="checked"' : '',
 				'title' => $b['title'],
 				'uri_target' => $b['uri_target'],
@@ -407,7 +420,8 @@ class campaigns extends moon_com
 
 			// zone_target
 			$assignedZones = explode(',', $b['zone_target']);
-			foreach($zones as $value => $z) {
+			$tmpZones = $b['type'] == 'video' ? $zonesPreroll : $zones;
+			foreach($tmpZones as $value => $z) {
 				$s = array(
 					'id' => $campaignBannerId,
 					'banner_id' => $bannerId,
@@ -464,17 +478,27 @@ class campaigns extends moon_com
 		// add banners
 		$latestBanners = $this->getLatestBanners();//$assignedIds); - allow multiple same banenrs
 		foreach ($latestBanners as $b) {
+
+			if ($b['type'] === 'video' && !isset($tmpIsVideoType)) {
+				// pn video player
+				$page->js('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
+				$page->js('http://www.pokernews.com/js/pnplayer.js');
+				$page->css('http://www.pokernews.com/css/pnplayer.css');
+				$tmpIsVideoType = true;
+			}
+
 			$item = array(
 				'id' => $b['banner_id'],
 				'title' => htmlspecialchars($b['title']),
 
-				'mediaSrc' => $imgSrc . $b['filename'],
+				'mediaSrc' => ($b['type'] == 'media' ? $imgSrc : $videoSrc) . $b['filename'],
 				'media_width' => $b['media_width'],
 				'media_height' => $b['media_height'],
 				'imgInfo' => ($b['type'] == 'media' && $b['media_type'] == 'image' && $b['filename']) ? true : false,
 				'flashInfo' => ($b['type'] == 'media' && $b['media_type'] == 'flash' && $b['filename']) ? true : false,
 				'flashXmlInfo' => ($b['type'] == 'flashXml' && $b['media_type'] == 'flashXml' && $b['filename']) ? true : false,
 				'htmlInfo' => ($b['type'] == 'html' && $b['alternative']) ? true : false,
+				'videoInfo' => ($b['type'] == 'video' && $b['media_type'] == 'video' && $b['filename']) ? true : false,
 				'html' => $b['alternative'],
 				'alternative' => $b['alternative']
 			);
@@ -587,7 +611,7 @@ class campaigns extends moon_com
 
 	function getAssignedBanners($campaignId = 0)
 	{
-		if (!$campaignId) return array();$sql = 'SELECT	cb.id, cb.banner_id, cb.uri_target, cb.zone_target, cb.views_limit, cb.sites, cb.is_hidden, b.is_hidden as b_hidden, b.title, b.type, max(bm.filename) as filename, max(bm.alternative) as alternative, IF(MAX(bm.site_id) IS NOT NULL, 1, 0) AS assigned, bm.media_type, bm.media_width, bm.media_height
+		if (!$campaignId) return array();$sql = 'SELECT	cb.id, cb.banner_id, cb.uri_target, cb.zone_target, cb.views_limit, cb.views_limit_session, cb.sites, cb.is_hidden, b.is_hidden as b_hidden, b.title, b.type, max(bm.filename) as filename, max(bm.alternative) as alternative, IF(MAX(bm.site_id) IS NOT NULL, 1, 0) AS assigned, bm.media_type, bm.media_width, bm.media_height
 		FROM '.$this->tblCampaignsBanners . ' as cb
 		LEFT JOIN ' . $this->tblBanners . ' as b
 		ON b.id = cb.banner_id
@@ -737,16 +761,18 @@ class campaigns extends moon_com
 		$zones = (isset($_POST['zones']) && is_array($_POST['zones'])) ? $_POST['zones'] : array();
 		$uriTargets = (isset($_POST['uri_target']) && is_array($_POST['uri_target'])) ? $_POST['uri_target'] : array();
 		$viewsLimit = (isset($_POST['views_limit']) && is_array($_POST['views_limit'])) ? $_POST['views_limit'] : array();
+		$viewsLimitSession = (isset($_POST['views_limit_session']) && is_array($_POST['views_limit_session'])) ? $_POST['views_limit_session'] : array();
 		$hidden = (isset($_POST['is_hidden']) && is_array($_POST['is_hidden'])) ? $_POST['is_hidden'] : array();
 
 		$sites = $this->get_var('sitesNames');
 		$siteId = isset($sites[1]) ? $sites[1]['id'] : 0;
-		foreach ($uriTargets as $id => $value) {
+		foreach ($zones as $id => $value) {
 			$upd = array(
 				'zone_target' => isset($zones[$id]) ? implode(',', $zones[$id]) : '',
 				'sites' => $siteId,
-				'uri_target' => $value,
+				'uri_target' => isset($uriTargets[$id]) ? $uriTargets[$id] : '',
 				'views_limit' => isset($viewsLimit[$id]) ? $viewsLimit[$id] : 0,
+				'views_limit_session' => isset($viewsLimitSession[$id]) ? $viewsLimitSession[$id] : 0,
 				'is_hidden' => isset($hidden[$id]) ? 1 : 0
 			);
 			$this->db->update($upd, $this->tblCampaignsBanners, array('id' => $id));
@@ -950,6 +976,11 @@ class campaigns extends moon_com
 	function getZones()
 	{
 		return $this->get_var('zones.' . $this->env);
+	}
+
+	function getZonesPreroll()
+	{
+		return $this->get_var('zones.preroll.' . $this->env);
 	}
 
 	function getSites() {

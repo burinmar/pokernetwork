@@ -116,6 +116,7 @@ class media extends moon_com
 		$mediaType = $form->get('type');
 		$title = $bannerId ? $info['titleEdit'] . ' :: ' . $form->get('title') : $info['titleNew'];
 		$imgSrc = $this->get_var('srcBanners');
+		$videoSrc = 'http://www.pokernetwork.' . (is_dev() ? 'dev' : 'com') . '/w/ads/';
 		$optSites = $this->getAvailableSites($bannerId, $mediaType);
 		$allSiteIds = $this->getAllSiteIds();
 		
@@ -133,6 +134,7 @@ class media extends moon_com
 			'media' => $mediaType == 'media',
 			'flashXml' => $mediaType == 'flashXml',
 			'refresh' => $page->refresh_field(),
+			'enableSwfUpload' => $mediaType == 'media' || $mediaType == 'video',
 			
 			'sessionId' => session_id()
 		) + $form->html_values();
@@ -142,6 +144,7 @@ class media extends moon_com
 		
 		switch ($mediaType) {
 			case 'media':
+			case 'video':
 				$page->js('/js/swfupload/swfupload.js');
 				$page->js('/js/swfupload/swfupload.queue.js');
 				$page->js('/js/swfupload/swfupload.handlers.js');
@@ -150,16 +153,24 @@ class media extends moon_com
 				$page->js('/js/modules_adm/banners.swfupload.js');
 				$page->js('/js/modules_adm/banners.media.js');
 				
+				if ($mediaType === 'video') {
+					// pn video player
+					$page->js('http://ajax.googleapis.com/ajax/libs/swfobject/2.2/swfobject.js');
+					$page->js('http://www.pokernetwork.com/js/pnplayer.js');
+					$page->css('http://www.pokernetwork.com/css/pnplayer.css');
+				}
+
 				$items = $this->getItems($bannerId, $mediaType);
 				$lastId = (isset($items[count($items) - 1])) ? $items[count($items) - 1]['id'] : 0;
 				foreach ($items as $item) {
 					$d = array(
 						'site_name' => isset($allSiteIds[$item['site_id']]) ? $allSiteIds[$item['site_id']] : '',
 						'site_id' => $item['site_id'],
-						'path' => $imgSrc . $item['filename'],
+						'path' => ($mediaType == 'media' ? $imgSrc : $videoSrc) . $item['filename'],
 						'image' => $item['media_type'] == 'image',
 						'flash' => $item['media_type'] == 'flash',
 						'html' => $item['media_type'] == 'html',
+						'video' => $item['media_type'] == 'video',
 						'url' => ($item['url']) ? $item['url'] : $form->get('url'),
 						'alternative' => ($item['alternative']) ? $item['alternative'] : $form->get('img_alt'),
 						'is_hidden' => ($item['is_hidden']) ? '1" checked="checked' : '',
@@ -173,10 +184,11 @@ class media extends moon_com
 				$lastId = (isset($items[count($items) - 1])) ? $items[count($items) - 1]['id'] : 0;
 				foreach ($itemsUndefined as $item) {
 					$d = array(
-						'path' => $imgSrc . $item['filename'],
+						'path' => ($mediaType == 'media' ? $imgSrc : $videoSrc) . $item['filename'],
 						'image' => $item['media_type'] == 'image',
 						'flash' => $item['media_type'] == 'flash',
 						'html' => $item['media_type'] == 'html',
+						'video' => $item['media_type'] == 'video',
 						'last' => $item['id'] == $lastId,
 						'optSites' => $form->options('site_id_tmp', $optSites),
 						'goDelete' => $this->linkas('#delete', $bannerId . '.' . $item['id']),
@@ -271,6 +283,8 @@ class media extends moon_com
 			$where[] = 'm.media_type IN ("image", "flash")';
 		} elseif ($mediaType == 'flashXml') {
 			$where[] = 'm.media_type = "flashXml"';
+		} elseif ($mediaType == 'video') {
+			$where[] = 'm.media_type = "video"';
 		} else {
 			$where[] = 'm.media_type = "html"';
 		}
@@ -304,8 +318,15 @@ class media extends moon_com
 		$where = array();
 		$where[] = 'WHERE banner_id = ' . $bannerId;
 		$where[] = '(site_id  = 0)';
-		$where[] = ($mediaType == 'media') ? 'media_type IN ("image", "flash")' : 'media_type = "html"';
-		
+
+		if ($mediaType == 'media') {
+			$where[] = 'media_type IN ("image", "flash")';
+		} elseif($mediaType == 'video') {
+			$where[] = 'media_type = "video"';
+		} else {
+			$where[] = 'media_type = "html"';
+		}
+
 		$sqlWhere = implode(' AND ', $where);
 		$sql = 'SELECT id,site_id,filename,media_type,media_width,media_height,alternative,url
 			FROM ' . $this->table('BannersMedia') . ' ' . $sqlWhere;
@@ -327,7 +348,15 @@ class media extends moon_com
 			$category = ($this->env == 'casino') ? 3 : 1;
 			$where = array();
 			$where[] = 'WHERE banner_id = ' . $bannerId;
-			$where[] = ($mediaType == 'media' || $mediaType == 'flashXml') ? 'media_type IN ("image", "flash", "flashXml")' : 'media_type = "html"';
+
+			if ($mediaType == 'media') {
+				$where[] = 'media_type IN ("image", "flash")';
+			} elseif($mediaType == 'video') {
+				$where[] = 'media_type = "video"';
+			} else {
+				$where[] = 'media_type = "html"';
+			}
+
 			$where[] = 'site_id > 0';
 			$sqlWhere = implode(' AND ', $where);
 			
@@ -380,7 +409,7 @@ class media extends moon_com
 		$sizes = (!empty($_POST['sizes']) && is_array($_POST['sizes'])) ? $_POST['sizes'] : array();
 		$errorMsg = 0;
 		
-		if ($mediaType == 'media') {
+		if ($mediaType == 'media' || $mediaType == 'video') {
 			// Validation
 			// 1. site id repeatedness
 			$sitesSet = array_diff($siteIds, array(''));
@@ -397,9 +426,9 @@ class media extends moon_com
 			foreach ($urls as $id => $url) {
 				$upd = array(
 					'url' => $url,
-					'alternative' => isset($alts[$id]) ? trim($alts[$id]) : '',
 					'is_hidden' => (isset($hidden[$id])) ? 1 : 0
 				);
+				if (isset($alts[$id])) $upd['alternative'] = trim($alts[$id]);
 				$this->db->update($upd,$this->table('BannersMedia'), array('id' => $id));
 			}
 			
@@ -763,7 +792,7 @@ class media extends moon_com
 			$bannersDir = $this->get_dir('Banners');
 			
 			$fileError = false;
-			if (!$file->has_extension('jpg,jpeg,gif,png,swf')) {
+			if (!$file->has_extension('jpg,jpeg,gif,png,swf,flv,mp4')) {
 				$msg .= 'Invalid file extension';
 				$fileError = true;
 			} else {
@@ -892,21 +921,58 @@ class media extends moon_com
 				} else {
 					$newFile = $bannersDir . uniqid('') . '.' . $file->file_ext();
 					if ($file->save_as($newFile)) {
-						$newFile = $file->file_info();
-						if ($fileInfo = moon_file::info_unpack($newFile)) {
+						$fInfo = $file->file_info();
+						if ($fileInfo = moon_file::info_unpack($fInfo)) {
 							
+							@list($mediaWidth, $mediaHeight) = explode('x', $fileInfo['wh']);
+							if ($mediaWidth == '') {
+								$mediaWidth = null;
+							}
+							$alternative = null;
+							$mediaType = '';
+							if ($fileInfo['ext'] == 'swf') {
+								$mediaType = 'flash';
+							} elseif (in_array($fileInfo['ext'], array('flv','mp4'))) {
+								$mediaType = 'video';
+
+								require_once(MOON_CLASSES . 'getid3/getid3.php');
+								$getID3 = new getID3();
+								$mediaInfo = $getID3->analyze($newFile);
+
+								$f=fopen('tmp/preroll-log.txt','a');
+								fwrite($f, print_r($mediaInfo, true));
+ 								fclose($f);
+
+								$mediaWidth = '';
+								$mediaHeight = '';
+								$bitrate = '';
+								$duration = '';
+
+								if (is_array($mediaInfo) && !empty($mediaInfo['video'])) {
+									$mediaWidth = isset($mediaInfo['video']['resolution_x']) ? $mediaInfo['video']['resolution_x'] : '';
+									$mediaHeight = isset($mediaInfo['video']['resolution_y']) ? $mediaInfo['video']['resolution_y'] : '';
+									$bitrate = isset($mediaInfo['video']['bitrate']) ? $mediaInfo['video']['bitrate'] : '';
+									$duration = isset($mediaInfo['playtime_string']) ? $mediaInfo['playtime_string'] : '';
+								}
+
+								//if ($bitrate) {
+									$alternative = serialize(array('bitrate'=>$bitrate, 'duration'=>$duration, 'ext'=>$fileInfo['ext']));
+								//}
+								
+							} else {
+								$mediaType = 'image';
+							}
+
 							$ins = array(
 								'banner_id' => $bannerId,
 								'filename' => $fileInfo['name_saved'],
-								'media_type' => $fileInfo['ext'] == 'swf' ? 'flash' : 'image',
+								'media_type' => $mediaType,
+								'media_width' => $mediaWidth,
+								'media_height' => $mediaHeight,
+								'alternative' => $alternative,
 								'created' => time()
 							);
-							
-							list($ins['media_width'], $ins['media_height']) = explode('x', $fileInfo['wh']);
-							if ($ins['media_width'] == '') {
-								$ins['media_width'] = null;
-							}
-							
+
 							$this->db->insert($ins, $this->table('BannersMedia'));
 							//$page->set_global($this->my('fullname') . '.success', 'Files(s) uploaded');
 						}

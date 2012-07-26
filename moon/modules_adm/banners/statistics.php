@@ -483,7 +483,7 @@ class statistics extends moon_com
 	
 	function getZones()
 	{
-		$zones = $this->get_var('zones.' . $this->env);
+		$zones = $this->get_var('zones.' . $this->env) + $this->get_var('zones.preroll.' . $this->env);
 		$items = array();
 		foreach ($zones as $id => $z) {
 			$items[$id] = $z['title'];
