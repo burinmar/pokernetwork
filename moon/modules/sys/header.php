@@ -34,6 +34,16 @@ class header extends moon_com
 			return $res;
 		}
 
+
+// Stars WCOOP 20k
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/20k-pokernews-wcoop-freerolls/',
+'imgPath'=> '/img/ps_wcoop2012_wallpaper.jpg',
+'bgColor'=> '#000',
+'startDate'=> '2012-08-01 00:00:01',
+)
+)) return $res;
+
 //PokerStars 20K freeroll
 if ($this->wallpaper($res, array(
 'url'=> '/pokerstars/freerolls/24.htm',
