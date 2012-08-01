@@ -61,6 +61,11 @@ error9=System error!
 					<a href="{goEdit}"><img src="{mediaSrc}" alt="{title}" title="{title}" /></a>
 				</div>
 				<% end %>
+
+				<% if {videoInfo} %>
+				<img src="{!_AIMG_}pre-roll.png" height="100" />
+				<% end %>
+				
 				<% if {flashInfo} %>
 				<div>
 					<object type="application/x-shockwave-flash" data="{mediaSrc}" width="{media_width}" height="{media_height}">

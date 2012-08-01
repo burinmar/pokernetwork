@@ -160,6 +160,7 @@ class banners extends moon_com
 			$item['flashInfo'] = ($item['type'] == 'media' && $item['media_type'] == 'flash' && $item['filename']) ? true : false;
 			$item['flashXmlInfo'] = ($item['type'] == 'flashXml' && $item['media_type'] == 'flashXml' && $item['filename']) ? true : false;
 			$item['htmlInfo'] = ($item['type'] == 'html' && $item['alternative']) ? true : false;
+			$item['videoInfo'] = ($item['type'] == 'video' && $item['media_type'] == 'video') ? true : false;
 			$item['alternative'] = $item['alternative'];
 			$item['html'] = $item['alternative'];
 			
