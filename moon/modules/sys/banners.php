@@ -35,7 +35,7 @@ class banners extends moon_com
 							$saved = !empty($_COOKIE['pnadpr']) ? unserialize($_COOKIE['pnadpr']) : array();
 
 							if (isset($saved[$ad['gid']]) &&
-								intval($saved[$ad['gid']]) > $ad['views_limit_session'])
+								intval($saved[$ad['gid']]) >= $ad['views_limit_session'])
 							{
 								continue;
 							}
