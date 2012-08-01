@@ -96,18 +96,26 @@ function setupAndShowPreroll(context) {
 	}
 
 	// http://www.longtailvideo.com/support/open-video-ads/13048/ova-configuration-guide
+	var tArgs = [],
+		prerollAdditionalData = context.prerollContainer.data();
+	for (var q in prerollAdditionalData) {
+		var k = q,
+			v = prerollAdditionalData[q].toString();
+		tArgs.push(k + '=' + v);
+	}
+
 	var prerollArgs = {
 		position: "pre-roll",
 		notice: {
 			region: "mpreroll-notice",
 			show: true,
 			message: "This preroll runs for _countdown_ seconds"
+		},
+		"server": {
+			"type": "direct",
+			"tag": "http://www.pokernetwork.com/banners/preroll/" + ((tArgs.length) ? '?' + tArgs.join('__amp__') : '')
 		}
 	};
-	var prerollAdditionalData = context.prerollContainer.data();
-	for (var q in prerollAdditionalData) {
-		prerollArgs[q] = prerollAdditionalData[q].toString();
-	}
 
 	flowplayer(prerollContainerId, {
 			src: "http://www.pokernetwork.com/img/flowplayer-3.2.11.swf",
@@ -179,11 +187,6 @@ function setupAndShowPreroll(context) {
 						verticalAlign: "top", horizontalAlign: "right",
 						width: 10, height: 10, opacity: 0
 					},
-					servers: [{
-						type: "OpenX",
-						timeoutInSeconds: 5,
-						apiAddress: "http://ads.ibusmedia.com/www/delivery/fc.php"
-					}],
 					schedule: [
 						prerollArgs
 					]

@@ -58,20 +58,13 @@ class shared_pnplayer
 		return $this->tpl->parse('player', $tplArgs);
 	}
 
-	public function getDefaultAdsConfig()
+	public function getDefaultAdsConfig($zone = null)
 	{
-		$zone = 3;
-		switch (_SITE_ID_) {
-		case 'it':
-			$zone = 4;
-		default:
-			switch (geo_my_country()) {
-			case 'us':
-				$zone = 5;
-				break;
-			}
-		}
-		return array('zone' => $zone);
+		return array(
+			'zone' => $zone,
+			'site' => _SITE_ID_,
+			'geo' => 1<<geo_my_id()
+		);
 	}
 
 	private function loadPreset($preset)

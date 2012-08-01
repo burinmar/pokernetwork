@@ -37,7 +37,7 @@ class video2 extends moon_com {
 					$a = array();
 					$pnPlayer = moon::shared('pnplayer');
 					$flv = $video['youtube_video_id'] ? $video['youtube_video_id'] : $video['flv_url'];
-					$a['video'] = $pnPlayer->getHtml($flv, $video['length'], $preset, null, $pnPlayer->getDefaultAdsConfig());
+					$a['video'] = $pnPlayer->getHtml($flv, $video['length'], $preset, null, $pnPlayer->getDefaultAdsConfig('embed'));
 					$a['video'] = $tpl->ready_js($a['video']);
 					$a['into'] = !empty($_GET['into']) ? $tpl->ready_js($_GET['into']) : '';
 					header('Content-type: text/javascript; charset=UTF-8');
@@ -249,7 +249,7 @@ class video2 extends moon_com {
 				$featuredVideo['player_uri'] = preg_replace('/\?.*$/', '', $featuredVideo['flv_url']);
 			}
 			$pnPlayer = moon::shared('pnplayer');
-			$m['video'] = $pnPlayer->getHtml($featuredVideo['player_uri'], $featuredVideo['length'], 'videoPage', null, $pnPlayer->getDefaultAdsConfig());
+			$m['video'] = $pnPlayer->getHtml($featuredVideo['player_uri'], $featuredVideo['length'], 'videoPage', null, $pnPlayer->getDefaultAdsConfig('video'));
 		}
 
 		foreach ($itemsLatest as $item) {
@@ -418,7 +418,7 @@ class video2 extends moon_com {
 		);
 
 		$pnPlayer = moon::shared('pnplayer');
-		$m['video'] = $pnPlayer->getHtml($video['player_uri'], $video['length'], 'videoPage', null, $pnPlayer->getDefaultAdsConfig());
+		$m['video'] = $pnPlayer->getHtml($video['player_uri'], $video['length'], 'videoPage', null, $pnPlayer->getDefaultAdsConfig('video'));
 
 		$playlists = $this->getPlaylists();
 		$playlistIds = explode(',',$video['playlist_ids']);
@@ -684,7 +684,7 @@ class video2 extends moon_com {
 
 		$m = array(
 			'url.more' => moon::shared('sitemap')->getLink('video'),
-			'video' => $pnPlayer->getHtml($videos[0]['youtube_video_id'], $videos[0]['duration'], $preset, $playlist, $pnPlayer->getDefaultAdsConfig())
+			'video' => $pnPlayer->getHtml($videos[0]['youtube_video_id'], $videos[0]['duration'], $preset, $playlist, $pnPlayer->getDefaultAdsConfig('home'))
 		);
 
 		$tpl = $this->load_template();
@@ -711,7 +711,7 @@ class video2 extends moon_com {
 		}
 		$m = array(
 			'url.more' => moon::shared('sitemap')->getLink('video'),
-			'video' => $pnPlayer->getHtml($videos[0]['youtube_video_id'], $videos[0]['duration'], 'w300', $playlist, $pnPlayer->getDefaultAdsConfig()),
+			'video' => $pnPlayer->getHtml($videos[0]['youtube_video_id'], $videos[0]['duration'], 'w300', $playlist, $pnPlayer->getDefaultAdsConfig('reporting')),
 			'cil' => 0,          //'com' == _SITE_ID_ && $page->uri_segments(1) == 'live-reporting' && $page->uri_segments(3) == 'event-58-no-limit-hold-em-championship';
 			'wsopeBanner' => 0, // 'com' == _SITE_ID_ && $page->uri_segments(1) == 'live-reporting' && $page->uri_segments(2) == '2010-wsop';
 		);
