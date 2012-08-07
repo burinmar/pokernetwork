@@ -24,7 +24,7 @@ input, select {vertical-align: middle}
 input[type="radio"] {vertical-align: text-top}
 input[type="checkbox"] {vertical-align: middle}
 button, input[type="submit"] {cursor: pointer}
-#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li, .myAlertsList li, .blogsList li {zoom: 1;}
+#body, #siteFooter, .tweets li, .widget, .newslistIndexBox .photo, .reviewHeader, .rightInsert, .videoList li, .specFreerolls li, .myAlertsList li, .blogsList li, #langBar {zoom: 1;}
 
 /*Global*/
 .meta {
@@ -428,16 +428,13 @@ html {
 }
 	a.siteLogo {
 		background: url('/img/logo.png') no-repeat 0 0;
-		color: #d4e7ff;
-		font-size: 12px;
-		font-weight: bold;
-		height: 16px;
 		left: 10px;
-		padding: 34px 0 0 270px;
 		position: absolute;
-		text-transform: uppercase;
 		top: 14px;
+		height: 50px;
 		width: 261px;
+		text-indent: -999px;
+		overflow: hidden;
 	}
 	.siteMenu {
 		position: absolute;
@@ -561,6 +558,80 @@ html {
 			border: 0 none;
 			bottom: 9px;
 			right: 8px;
+		}
+
+#langBar {
+	position: absolute;
+	top: 47px;
+	left: 290px;
+}
+	#langBar .langBarCurrent {
+		font-size: 12px;
+		font-weight: bold;
+		color: #d4e7ff;
+		text-transform: uppercase;
+		line-height: 16px;
+		position: relative;
+		z-index: 1000;
+		
+	}
+	#langBar:hover .langBarCurrent {color: #0050bd;}
+		#langBar .langBarCurrent img {
+			vertical-align: middle;
+			border: 1px solid #3878ff;
+			margin-right: 2px;
+		}
+	#langBarBox {
+		display: none;
+		background-color: #fff;
+		position: absolute;
+		top: -13px;
+		left: -13px;
+		padding: 50px 13px 0;
+		width: 500px;
+		z-index: 999;
+		-moz-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.5);
+		box-shadow: 0 0 5px rgba(0,0,0,0.5);
+	} #langBar:hover #langBarBox {display: block;}
+	#langBarBox .langBarBoxFooter {
+		border-top: 1px solid #d7d7d7;
+		text-align: right;
+		display: block;
+		margin: 0 -13px;
+		padding: 10px 13px 10px 0;
+	}
+	#langBarBox .langBarBoxHeader {
+		border-bottom: 1px solid #d7d7d7;
+		display: block;
+		padding-bottom: 10px;
+		margin-bottom: 10px;
+		font-size: 13px;
+		font-weight: bold;
+	}
+		#langBarBox .langBarBoxHeader img {
+			vertical-align: middle;
+			margin-right: 8px;
+		}
+		#langBarBox ul {
+			float: left;
+			width: 152px;
+			margin-right: 16px;
+		}
+		#langBarBox ul.last {margin-right: 0px;}
+		#langBarBox ul img {
+			vertical-align: middle;
+			margin-right: 6px;
+			border: 1px solid #e5e5e5;
+		}
+		#langBarBox ul li {margin-bottom: 10px;}
+		#langBarBox ul li a {
+			font-size: 13px;
+			font-weight: bold;
+		}
+		#langBarBox li.sep {
+			border-bottom: 1px solid #d7d7d7;
+			padding-bottom: 15px;
 		}
 
 #overlayHeader {
