@@ -103,11 +103,6 @@
 
 
 /*SKINS*/
-#landing.winner-dozen {background-image: url('/img/landing/winner-dozen/intro.jpg?1'); background-color: #200000}
-#landing.winner-dozen .download {background-image: url('/img/landing/winner-dozen/download.png'); color: #fff; position: relative; }
-#landing.winner-dozen .download:hover {background-position: bottom left}
-#landing.winner-dozen .download:after {position: absolute; top: 7px; right: -120px; content: ''; background: url('/img/landing/winner-dozen/logo.png'); width: 102px; height: 24px}
-
 #landing.wcoop2012 {background-image: url('/img/landing/wcoop2012/intro.png')}
 #landing.wcoop2012 .download {background: url('/img/landing/wcoop2012/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #fff; position: relative; }
 #landing.wcoop2012 .download:hover {background-position: bottom left}

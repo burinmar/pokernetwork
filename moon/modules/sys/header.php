@@ -40,23 +40,6 @@ if ($this->wallpaper($res, array(
 'url'=> '/leagues/20k-pokernews-wcoop-freerolls/',
 'imgPath'=> '/img/ps_wcoop2012_wallpaper.jpg',
 'bgColor'=> '#000',
-'startDate'=> '2012-08-01 00:00:01',
-)
-)) return $res;
-
-//PokerStars 20K freeroll
-if ($this->wallpaper($res, array(
-'url'=> '/pokerstars/freerolls/24.htm',
-'imgPath'=> '/img/ps_20k_wallpaper2.jpg',
-'bgColor'=> '#000',
-)
-)) return $res;
-
-// Winner Poker 30K
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/30k-winner-wednesday-dozen/',
-'imgPath'=> '/img/winner_30k_wallpaper.jpg',
-'bgColor'=> '#1e0000',
 )
 )) return $res;
 
