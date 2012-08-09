@@ -107,3 +107,8 @@
 #landing.wcoop2012 .download {background: url('/img/landing/wcoop2012/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #fff; position: relative; }
 #landing.wcoop2012 .download:hover {background-position: bottom left}
 #landing.wcoop2012 .download:after {position: absolute; top: 8px; right: -140px; content: ''; background: url('/img/landing/wcoop2012/logo.png'); width: 121px; height: 18px}
+
+#landing.pkrspeedway {background-image: url('/img/landing/pkrspeedway/intro.jpg')}
+#landing.pkrspeedway .download {background: url('/img/landing/pkrspeedway/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #fff; position: relative; }
+#landing.pkrspeedway .download:hover {background-position: bottom left}
+#landing.pkrspeedway .download:after {position: absolute; top: 8px; right: -130px; content: ''; background: url('/img/landing/pkrspeedway/logo.png'); width: 109px; height: 29px}
