@@ -112,3 +112,6 @@
 #landing.pkrspeedway .download {background: url('/img/landing/pkrspeedway/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #fff; position: relative; }
 #landing.pkrspeedway .download:hover {background-position: bottom left}
 #landing.pkrspeedway .download:after {position: absolute; top: 8px; right: -130px; content: ''; background: url('/img/landing/pkrspeedway/logo.png'); width: 109px; height: 29px}
+
+#landing.pokerstars5k {background-image: url('/img/landing/pokerstars5k/intro.jpg?1'); padding: 40px 35px 65px 65px}
+#landing.pokerstars5k .download {background-image: url('/img/landing/pokerstars5k/download.png?1'); line-height: 60px; width: 306px; height: 60px; font-size: 29px; text-transform: none; font-weight: normal}
