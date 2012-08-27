@@ -180,7 +180,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$where = $this->getLogEntriesSqlWhere($eventId, $dayId, $filter);
 		$entries = $this->db->array_query_assoc('
-			SELECT l.id, l.event_id, l.type, l.is_hidden, l.created_on, l.author_id, l.contents
+			SELECT l.id, l.event_id, l.type, l.is_hidden, l.created_on, l.author_id, l.contents, l.sync_id IS NOT NULL synced
 			FROM ' . $this->table('Log') . ' l 
 			WHERE ' . implode(' AND ', $where) . '
 			ORDER BY l.created_on ' . (!empty($filter['rsort']) ? '' : 'DESC ') .

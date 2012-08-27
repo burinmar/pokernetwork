@@ -282,6 +282,9 @@ class livereporting_event_pylon extends livereporting_event
 		);
 		
 		if (isset($data['contents']['contents'])) {
+			if ($data['type'] == 'post') {
+				$data['contents']['contents'] = preg_replace('~{poll:[0-9]+}~', '', $data['contents']['contents']);
+			}
 			$rArgv['body'] = $data['contents']['contents'];
 		}
 

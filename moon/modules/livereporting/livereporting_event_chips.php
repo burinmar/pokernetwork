@@ -558,10 +558,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.fulllist'  => !empty($argv['fulllist']),
 			'cc.published' => !empty($argv['published']),
 			'cc.is_exportable' => !empty($argv['is_exportable']),
-			'cc.show_keyhand' => _SITE_ID_ == 'com', // may be temporary
 			'cc.is_keyhand' => $argv['is_keyhand'],
 			'cc.datetime_options' => '',
-			'cc.custom_datetime' => $lrep->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M +S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
+			'cc.custom_datetime' => $lrep->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
 			'cc.custom_tz' => $argv['tzName'],
 			'cc.fullist_change_disabled' => !empty($argv['fullist_change_disabled'])
 		);
