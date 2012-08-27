@@ -32,6 +32,7 @@ class video2 extends moon_com {
 					$page->page404();
 				}
 				elseif (isset($_GET['embed'])) {
+					$this->forget();
 					$preset = $_GET['embed'] ? $_GET['embed'] : 'PokerNetwork';
 					$tpl = $this->load_template();
 					$a = array();
@@ -234,6 +235,7 @@ class video2 extends moon_com {
 			$m['videoId'] = $featuredVideo['id'];
 			$m['playerId'] = $this->get_var('playerId');
 			$m['name'] = htmlspecialchars($featuredVideo['name']);
+			$m['thumbSrc'] = $this->defaultThumbnail($featuredVideo['thumbnail_url']);
 			$m['uri.featured'] = $this->linkas('#', $featuredVideo['uri'] . '-' . $featuredVideo['id']);
 			$m['publishedDate'] = $locale->datef($featuredVideo['published_date'], 'News');
 			$m['length'] = $this->secToTime($featuredVideo['length']) . ' ' . $minStr;
@@ -262,7 +264,7 @@ class video2 extends moon_com {
 
 			$item['url.video'] = $this->linkas('#', $item['uri'] . '-' . $item['id']);
 			$item['title'] = htmlspecialchars($item['name']);
-			$item['thumbSrc'] = $item['thumbnail_url'];
+			$item['thumbSrc'] = $this->defaultThumbnail($item['thumbnail_url']);
 			$item['length'] = $this->secToTime($item['length']);
 			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -281,7 +283,7 @@ class video2 extends moon_com {
 
 			$item['url.video'] = $this->linkas('#', $item['uri'] . '-' . $item['id']);
 			$item['title'] = htmlspecialchars($item['name']);
-			$item['thumbSrc'] = $item['thumbnail_url'];
+			$item['thumbSrc'] = $this->defaultThumbnail($item['thumbnail_url']);
 			$item['length'] = $this->secToTime($item['length']);
 			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -333,7 +335,7 @@ class video2 extends moon_com {
 
 			$item['title'] = htmlspecialchars($v['name']);
 			$item['uri.video'] = $this->linkas('#', $v['uri'] . '-' . $v['id']);
-			$item['thumbSrc'] = $v['thumbnail_url'];
+			$item['thumbSrc'] = $this->defaultThumbnail($v['thumbnail_url']);
 			$item['length'] = $this->secToTime($v['length']);
 			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -355,7 +357,7 @@ class video2 extends moon_com {
 
 			$item['title'] = htmlspecialchars($v['name']);
 			$item['uri.video'] = $this->linkas('#', $v['uri'] . '-' . $v['id']);
-			$item['thumbSrc'] = $v['thumbnail_url'];
+			$item['thumbSrc'] = $this->defaultThumbnail($v['thumbnail_url']);
 			$item['length'] = $this->secToTime($v['length']);
 			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -381,7 +383,7 @@ class video2 extends moon_com {
 		$page->meta('description', $video['description']);
 
 		// facebook like button specific tags
-		$imgSrc = strpos($video['thumbnail_url'], 'http') !== false ? $video['thumbnail_url'] : rtrim($page->home_url(), '/') . $video['thumbnail_url'] . '?t=' . time();
+		$imgSrc = strpos($video['thumbnail_url'], 'http') !== false ? $this->defaultThumbnail($video['thumbnail_url']) : rtrim($page->home_url(), '/') . $video['thumbnail_url'] . '?t=' . time();
 		if (!empty($video['youtube_video_id'])) {
 			$page->meta('video_width', '560');
 			$page->meta('video_height', '315');
@@ -438,7 +440,7 @@ class video2 extends moon_com {
 		}
 		$iCard = array();
 		$iCard['title'] = $video['name'];
-		$imgSrc = strpos($video['thumbnail_url'], 'http') !== false ? $video['thumbnail_url'] : $homeUrl . $video['thumbnail_url'] . '?t=' . time();
+		$imgSrc = strpos($video['thumbnail_url'], 'http') !== false ? $this->defaultThumbnail($video['thumbnail_url']) : $homeUrl . $video['thumbnail_url'] . '?t=' . time();
 		$iCard['img'] = $imgSrc;
 		$iCard['url'] = $homeUrl . $m['uri.self'];
 		$iCard['description'] = $video['description'];
@@ -556,7 +558,7 @@ class video2 extends moon_com {
 
 				$item['url.video'] = $this->linkas('#', $item['uri'] . '-' . $item['id']);
 				$item['title'] = htmlspecialchars($item['name']);
-				$item['thumbSrc'] = $item['thumbnail_url'];
+				$item['thumbSrc'] = $this->defaultThumbnail($item['thumbnail_url']);
 				$item['length'] = $this->secToTime($item['length']);
 				$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 				$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -570,6 +572,13 @@ class video2 extends moon_com {
 		}
 
 		return $tpl->parse('viewList', $m);
+	}
+
+	private function defaultThumbnail($imgSrc)
+	{
+		if (strpos($imgSrc, 'ytimg.com') !== false)
+			$imgSrc = str_replace('default.jpg', 'mqdefault.jpg', $imgSrc);
+		return $imgSrc;
 	}
 
 	private function htmlCategoriesBox($playlistId = 0)
@@ -759,6 +768,8 @@ class video2 extends moon_com {
 				$if[] = "IF(FIND_IN_SET('" . $this->db->escape($tag) . "', tags), 1, 0)";
 			}
 		}
+		if (0 == count($if))
+			$if[] = '1';
 
 		$w = array();
 		if ($id) {
@@ -803,9 +814,9 @@ class video2 extends moon_com {
 	private function getPlaylists()
 	{
 		if (!isset($this->tmpPlaylists)) {
-			$sql = 'SELECT id,name,uri
+			$sql = 'SELECT id,title name,uri
 				FROM ' . $this->table('VideosPlaylists') . '
-				WHERE is_hidden = 0
+				WHERE hide = 0
 				ORDER BY sort_order ASC';
 			$this->tmpPlaylists = $this->db->array_query_assoc($sql,'id');
 		}
