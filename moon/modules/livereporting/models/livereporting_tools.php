@@ -121,6 +121,7 @@ class livereporting_tools extends livereporting_model_pylon
 				}
 			}
 		} else {
+			$total_br = 0;
 			if (mb_strlen($text) <= $length) {
 				return $text;
 			} else {

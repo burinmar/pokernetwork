@@ -145,6 +145,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 				));
 			}
 			$page->title($page->title() . ' | ' . $rArgv['title']);
+			$this->helperRenderOGMeta($rArgv, $data);
 			return $tpl->parse('entry:photos', $rArgv);
 		}
 	}

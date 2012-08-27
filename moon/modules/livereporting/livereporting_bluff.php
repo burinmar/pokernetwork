@@ -296,7 +296,7 @@ class livereporting_bluff extends moon_com
 		foreach ($qDays as $day) {
 			$chipsC = $this->object('livereporting')->instEventModel('_src_bluff')->getLastChips($argv['event_id'], $day);
 			foreach ($chipsC as $chip) {
-				if ($chip['chips'] == '0' && $chip['day_id'] != $day) {
+				if ($chip['chips'] == '0' && $chip['day_id'] != $day) { // maybe switch to getLastChips(false, true) ?
 					continue ;
 				}
 				$chips[] = array(
@@ -457,9 +457,9 @@ class livereporting_bluff extends moon_com
 
 		$i = 1;
 		foreach ($chips as $chip) {
-			if (0 == intval($chip['chips'])) {
-				continue;
-			}
+			// if (0 == intval($chip['chips'])) {
+			// 	continue;
+			// }
 			$bluff = $this->getBluff($argv['event_id'], $chip['uname']);
 			$chip['bluff_id'] = $bluff['id'];
 			$xml->start_node('chip_count', array('place' => $i++));
@@ -1148,6 +1148,8 @@ class livereporting_bluff extends moon_com
 				' . $post['ante'] . '
 				</td></tr></table></td></tr></table>';
 		}
+
+		$post['contents'] = preg_replace('~{poll:[0-9]+}~', '', $post['contents']);
 		
 		$xml->start_node('live_update', array(
 			'id'=>$post['id']

@@ -51,6 +51,7 @@ class livereporting_index extends moon_com
 					moon_close();
 					exit;
 				case 'ipn-news-browse':
+					header('X-Cache:gMAW4KadNkM');
 					$this->redirectIPNNews();
 					exit;
 				default:
@@ -617,8 +618,15 @@ class livereporting_index extends moon_com
 		$mainArgv = array(
 			'running_tournaments' => '',
 			'upcoming_tournaments' => '',
-			'tours' => ''
+			'tours' => '',
+			'intro' => ''
 		);
+
+		$pageData = moon::shared('sitemap')->getPage();
+		if (!empty($pageData)) {
+			$mainArgv['intro'] = $pageData['content_html'];
+		}
+
 		$tournamentsArchive = $tpl->parse('index:tournaments_archive', array(
 			'url' => $lrep->makeUri('index#tour-archive')
 		));
@@ -683,6 +691,7 @@ class livereporting_index extends moon_com
 					));
 					$resTpl['spec_url'] = $resTpl['url'] . '#' . $event['post']['type'] . '-' . $event['post']['id'];
 					$data['contents'] = preg_replace('~<table.*?</table>~', '', $data['contents']);
+					$data['contents'] = preg_replace('~{poll:[0-9]+}~', '', $data['contents']);
 					$resTpl['post'] = $lrep->instTools()->helperHtmlExcerpt($data['contents'], 400, 3, '...', false, 2);
 					if (FALSE !== strpos($resTpl['post'], 'BrightcoveExperience')) $page->js('http://admin.brightcove.com/js/BrightcoveExperiences.js');
 					if (isset($data['xphotos'])) {

@@ -37,7 +37,7 @@ $cfg['livereporting'] = array(
 
 	'var.root' => moon::shared('sitemap')->getLink('reporting'),
 
-	'vocabulary' => '{dir.multilang}{module}/{name}.txt',
+	'vocabulary' => '{dir.multilang}livereporting/{name}.txt',
 	'vocabulary{livereporting_event_chips}'   => '{dir.multilang}{module}/livereporting_event.txt',
 	'vocabulary{livereporting_event_day}'     => '{dir.multilang}{module}/livereporting_event.txt',
 	'vocabulary{livereporting_event_event}'   => '{dir.multilang}{module}/livereporting_event.txt',
@@ -48,8 +48,9 @@ $cfg['livereporting'] = array(
 	'vocabulary{livereporting_event_round}'   => '{dir.multilang}{module}/livereporting_event.txt',
 	'vocabulary{livereporting_tournament}'    => '{dir.multilang}{module}/livereporting_tour.txt',
 	'vocabulary{livereporting_tour}'          => '{dir.multilang}{module}/livereporting_category.txt',
-	'vocabulary{reporting_news}'    => '{dir.multilang}{module}/livereporting_index.txt',
-	'vocabulary{reporting_hotels}'    => '{dir.multilang}/hotels.txt',
+	'vocabulary{reporting_news}'              => '{dir.multilang}{module}/livereporting_index.txt',
+	'vocabulary{reporting_hotels}'            => '{dir.multilang}/hotels.txt',
+	'vocabulary{rtf}'                    => '{dir.multilang}/shared.txt',
 
 	'dir.web:LogosBigBg' => '/w/lrep/lbbg/',
 	'dir.web:LogosSmall' => '/w/lrep/ls/',
@@ -125,8 +126,15 @@ $cfg['livereporting'] = array(
 	)
 );
 
+if (_SITE_ID_ == 'com' && moon::page()->get_global('adminView')) {
+	$db = moon::db();
+	if (method_exists($db, 'operateOnMaster')) {
+		$db->operateOnMaster();
+	}
+}
+
 if (is_dev()) {
-	$cfg['livereporting']['var.wsopxml'] = array(150, 156, 154);
+	$cfg['livereporting']['var.wsopxml'] = array(150, 156, 154, 253);
 	$cfg['livereporting']['var.twitter'] = array('oqY0t7uKsjyTN4Vb6nQ', 'XdyKYe9MyrfWE9247x5E4KQ49ClY6JUXbyzJvRZr30', '297837556-nlHyQvRt2Klc4E8DkS1XNYKQtAZp7PhYo2ZdFR5j', 'yQcn7FWiFtaK6eQu8JvP9nA5v98tvvitVOIJfCF1sU');
 } else {
 	unset($cfg['livereporting']['var.hotelsLanguageConfig']['pt']);

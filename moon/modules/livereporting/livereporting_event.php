@@ -734,9 +734,7 @@ class livereporting_event extends moon_com
 	
 	private function partialRenderTopwidgetKeyHands(&$eventInfo, &$argv, &$lrep, &$tpl)
 	{
-		if (_SITE_ID_ != 'com')
-			return ;
-
+		return ;
 		$keyHands = $this->lrepEv()->getKeyHandEntries($argv['event_id']);
 		if (count($keyHands) < 4)
 			return ;
@@ -749,7 +747,7 @@ class livereporting_event extends moon_com
 			$tplArgv['list.entries'] .= $tpl->parse('sidebar:key_hands.item', array(
 				'url' => $lrep->makeUri('event#view', array(
 					'event_id' => $entry['event_id'],
-					'path' => $this->getUriPath(),
+					'path' => $this->getUriPath($entry['day_id']),
 					'type' => $entry['type'],
 					'id' => $entry['id']
 				), $this->getUriFilter(NULL)),
@@ -966,7 +964,7 @@ class livereporting_event extends moon_com
 							: '',
 						'player_sponsorimg' => isset($chip['sponsor']['ico'])
 							? ($chip['sponsor_id'] > 0
-							? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
+								? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
 								: $chip['sponsorimg'])
 							: NULL,
 						'chips' => number_format($chip['chips']),
@@ -1060,7 +1058,7 @@ class livereporting_event extends moon_com
 			}
 			
 			//
-			$page->css('/css/live_poker_adm.css');
+			$page->css('/css/live-poker-adm.css');
 			//
 			$mainArgv['sidebar_controls'] = $this->partialRenderAdmSidebar($argv, $e);
 		}
@@ -1386,7 +1384,7 @@ class livereporting_event extends moon_com
 
 		$error = false;
 
-		if ($sessStarted < time() - 10 || empty($sid[$key])) {
+		if ($sessStarted < time() - 1800 || empty($sid[$key])) {
 			$realSid = '';
 			$sendData = array(
 				'ns' => 'lrep',

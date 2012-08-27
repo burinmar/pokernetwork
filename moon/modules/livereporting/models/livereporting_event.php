@@ -249,7 +249,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	protected function getKeyHandEntries($eventId)
 	{
 		$entries = $this->db->array_query_assoc('
-			SELECT l.id, l.event_id, l.type, l.created_on, l.author_id, COALESCE(p.title, c.title) title
+			SELECT l.id, l.event_id, l.day_id, l.type, l.created_on, l.author_id, COALESCE(p.title, c.title) title
 			FROM ' . $this->table('Log') . ' l 
 			LEFT JOIN ' . $this->table('tPosts') . ' p
 				ON p.is_keyhand=1 AND p.id=l.id AND l.type="post"
@@ -351,7 +351,7 @@ class livereporting_model_event extends livereporting_model_pylon
 					? ' AND l.day_id NOT IN(' . implode(',', $omitDays) . ')' : '')  .'
 				AND l.type="round" 
 				AND l.is_hidden=0 
-				ORDER BY round DESC
+				ORDER BY l.day_id=' . $dayId /* may be 0, but ok */ . ' DESC, l.created_on DESC
 				LIMIT 1
 			) a
 			INNER JOIN reporting_ng_sub_rounds r 
@@ -449,6 +449,7 @@ class livereporting_model_event extends livereporting_model_pylon
 
 	/**
 	 * Returns previous days, except parallel
+	 * Days must be ordered
 	 * @todo check (1)
 	 * @todo check (2)
 	 */
@@ -520,14 +521,14 @@ class livereporting_model_event extends livereporting_model_pylon
 				}
 			}
 		} else if ($tmpDayName[1] == '2') {
-			$cntIs4 = false; // only suitable for 4 days, else fucked up
+			$primaryDaysCnt = 0;
 			foreach ($daysData as $dayData) {
-				if ($dayData['name'] == '1d') {
-					$cntIs4 = true;
-					break;
+				if (substr($dayData['name'], 0, 1) == '1') {
+					$primaryDaysCnt++;
 				}
 			}
-			if ($cntIs4 == true) {
+			if ($primaryDaysCnt == 4) { 
+				// only suitable for 4 days, else fucked up
 				if ($tmpDayName[0] == '2a') {
 					$omitNames = array('2b', '1b', '1d');
 				} elseif ($tmpDayName[0] == '2b') {
@@ -537,6 +538,18 @@ class livereporting_model_event extends livereporting_model_pylon
 				}
 				foreach ($daysData as $dayData) {
 					if (in_array($dayData['name'], $omitNames)) {
+						$omit[] = $dayData['id'];
+					}
+				}
+			} elseif ($primaryDaysCnt == 3) {
+				// leave only days, that have same letters, e.g. 2b => 2b, 2ab => 1a, 1b
+				$leaveNames = array();
+				foreach (str_split($tmpDayName[2]) as $leaveDayLatter) {
+					$leaveNames[] = '1' . $leaveDayLatter;
+				}
+
+				foreach ($daysData as $dayData) {
+					if (substr($dayData['name'], 0, 1) == '1' && !in_array($dayData['name'], $leaveNames)) {
 						$omit[] = $dayData['id'];
 					}
 				}

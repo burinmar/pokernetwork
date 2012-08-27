@@ -111,7 +111,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$lrep   = $this->lrep();
 		$lrepTools = $lrep->instTools();
 		$tpl = $this->load_template();
-
+		
 		$rArgv = $this->helperRenderCommonArgv($data, $argv, $tpl);
 		$rArgv += array(
 			'is_full'    => $data['contents']['is_full_import'],
@@ -255,6 +255,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 
 		$page->title($page->title() . ' | ' . $rArgv['title']);
+		$this->helperRenderOGMeta($rArgv);
 		return $tpl->parse('entry:chips', $rArgv);
 	}
 
@@ -614,7 +615,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'cc.ipnimagetitle' => '',
 				'cc.ipnimagesrc' => ''
 			);
-		}		
+		}
 
 		return $tpl->parse('controls:chips', $controlsArgv);
 	}
@@ -730,14 +731,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 
 		$players = $this->getPlayersData($location['event_id'], $location['day_id'], $data['datetime'], TRUE);
 		$playerNames = array();
-		$sponsors = array();
 		foreach ($players as $k => $player) {
 			$playerNames[$k] = strtolower($player['name']);
-			if ($player['sponsor_id']) {
-				$sponsors[] = $player['sponsor_id'];
-			}
 		}
-		$sponsors = $this->lrep()->instEventModel('_src_event')->getSponsorsById($sponsors);
 
 		// always sync this section with save(preprocess) !
 		$place = 1;
@@ -798,9 +794,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 						? $player['amount']
 						: NULL,
 					'chips_change' => $player['chips_change'],
-					'sponsor' => isset($sponsors[$player['sponsor_id']])
-						? htmlspecialchars($sponsors[$player['sponsor_id']]['name'])
-						: '',
 					'url' => $player['id']
 						? $lrep->makeUri('event#edit', array(
 							'event_id' => $location['event_id'],
@@ -940,7 +933,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 	{
 		// $includeIntermediate = no chips change / chips change since last major update
 		$sql = '
-			SELECT p.id, p.card, p.sponsor_id, p.status, p.is_pnews, p.name, p.place, ce.chips
+			SELECT p.id, p.card, p.sponsor_id, p.status, p.is_pnews, p.name, p.place, p.country_id, ce.chips
 			FROM ' . $this->table('Players') . ' p
 			LEFT JOIN ' . $this->table('Chips') . ' ce
 				ON ce.id=(
@@ -1013,7 +1006,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 		return $lastFullChips[$eventId . '-' . $dayId];
 	}
-
+	
 	private function delete($importId)
 	{
 		if (NULL == ($prereq = $this->helperDeleteCheckPrerequisites($importId, 'chips'))) {
@@ -1273,8 +1266,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'is_full_import' => $data['is_full_listing']
 			);
 		}
-		if (_SITE_ID_ != 'com')
-			unset($saveDataChips['is_keyhand']); // may be temporary
 		$saveDataLog = array(
 			'type' => 'chips',
 			'is_hidden' => $data['published'] != '1',
@@ -1367,7 +1358,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			$saveDataLog['is_hidden'], $tags, 
 			$saveDataLog['created_on']
 		);
-				
+		
 		return $entryId;
 	}
 
@@ -1662,7 +1653,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 					for ($i = 0; $i < $numColumns; $i++) {
 						$newRow[$i] =
 							isset($row[$i + 1])
-								? $row[$i + 1]
+								? rtrim($row[$i + 1], chr(160)) // no-break space (broken leftover)
 								: '';
 					}
 					/*foreach ($row as $cell) {
@@ -1675,6 +1666,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			$data['import_textarea'] = str_replace("\r", '', $data['import_textarea']);
 			$rows = explode("\n", $data['import_textarea']);
 			foreach ($rows as $row) {
+				$row = str_replace(chr(194).chr(160), ' ', $row); // no-break space
 				$row = preg_split("~\t|;|,~", $row);
 				$newRow = array();
 				foreach ($row as $cell) {

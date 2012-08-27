@@ -97,7 +97,7 @@ class livereporting_event_day extends livereporting_event_pylon
 			'cd.bundled_control' => !empty($argv['bundled_control']),
 			'cd.save_event'      => $this->parent->my('fullname') . '#save-day',
 			'cd.id'              => $argv['id'],
-			'cd.custom_datetime' => $this->lrep()->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M +S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
+			'cd.custom_datetime' => $this->lrep()->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
 			'cd.custom_tz'       => $argv['tzName'],
 		);
 

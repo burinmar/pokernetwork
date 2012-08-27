@@ -168,7 +168,7 @@ class livereporting_event_pylon extends livereporting_event
 		}
 		
 		$controlsArgv['custom_datetime'] = $lrep->instTools()
-			->helperCustomDatetimeWrite('+Y #m +d +H:M +S -z', (
+			->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (
 				isset($argv['created_on']) 
 					? intval($argv['created_on']) 
 					: time()) + $argv['tzOffset'], 
@@ -370,9 +370,22 @@ class livereporting_event_pylon extends livereporting_event
 				'show_controls' => $allowWrite,
 				'control' => ''
 			);
-		}		
+		}
 		
 		return $rArgv;
+	}
+
+	protected function helperRenderOGMeta($rArgv, $data = array())
+	{
+		$page = moon::page();
+		$page->fbMeta['og:title'] = $rArgv['title'];
+		$page->fbMeta['og:description'] = $this->lrep()->instTools()->helperHtmlExcerpt(
+			strip_tags($rArgv['body']), 
+			220, 1, '...', false, false);
+		if (!empty($rArgv['image_src']))
+			$page->fbMeta['og:image'] = $rArgv['image_src'];
+		elseif (isset($data['contents']['xphotos'][0]))
+			$page->fbMeta['og:image'] = $this->get_var('ipnReadBase') . $data['contents']['xphotos'][0]['src'];	
 	}
 	
 	public function helperRenderCommonArgvMobileapp(&$data, $argv, $tpl)
@@ -662,7 +675,7 @@ class livereporting_event_pylon extends livereporting_event
 		$this->object('other.ctags')->getReportingHandle()
 			->update($id, $type, $tags, $createdOn);
 	}
-	
+
 	/**
 	 * Quicker way to get livereporting object
 	 * @return livereporting

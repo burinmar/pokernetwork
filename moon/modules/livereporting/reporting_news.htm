@@ -12,14 +12,11 @@
 			</ul>
 		</div>
 	</div>
-	<!--#
-<span class="live">&nbsp;</span>
--->
 	<% end %>
 </div>
 
 <% entries.event %>
-<li class="event"><a href="{url}" style="background-image: url('{image}')">{title}</a></li>
+<li class="event"><a href="{url}" <%if {initiallyVisible} %>style="background: url({image}) white"<%else {initiallyVisible} %>data-bg="{image}" style="background: white"<%end%>>{title}</a></li>
 
 <% entries.story %>
-<li class="story"><a href="{url}" style="background-image: url('{image}')"><span>{title}</span></a></li>
+<li class="story"><a href="{url}" <%if {initiallyVisible} %>style="background: url({image}) white"<%else {initiallyVisible} %>data-bg="{image}" style="background: white"<%end%>><span>{title}</span></a></li>

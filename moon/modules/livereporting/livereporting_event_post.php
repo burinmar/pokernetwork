@@ -79,6 +79,7 @@ class livereporting_event_post extends livereporting_event_pylon
 				)));
 			}
 			$page->title($page->title() . ' | ' . $rArgv['title']);
+			$this->helperRenderOGMeta($rArgv);
 			return $tpl->parse('entry:post', $rArgv);
 		}
 	}
@@ -92,6 +93,9 @@ class livereporting_event_post extends livereporting_event_pylon
 		$rtf = $this->object('rtf');
 		$rtf->setInstance($this->get_var('rtf') . '-post:0');
 
+		if (!empty($argv['synced']))
+			$argv['contents'] = preg_replace('~{poll:([0-9]+)}~', '' /*'<!-- {poll:com:\1} -->'*/, $argv['contents']);
+
 		$controlsArgv = array(
 			'cp.save_event' => $this->parent->my('fullname') . '#save-post',
 			'cp.id' => isset($argv['id'])
@@ -101,7 +105,6 @@ class livereporting_event_post extends livereporting_event_pylon
 			'cp.body' => htmlspecialchars($argv['contents']),
 			'cp.tags' => htmlspecialchars($argv['tags']),
 			'cp.is_exportable' => $argv['is_exportable'],
-			'cp.show_keyhand' => _SITE_ID_ == 'com', // may be temporary
 			'cp.is_keyhand' => $argv['is_keyhand'],
 			'cp.day_id' => $argv['day_id'],
 			'cp.unhide' => !empty($argv['unhide']),
@@ -116,7 +119,7 @@ class livereporting_event_post extends livereporting_event_pylon
 					: '',
 				array('noarticle'=>true)),
 		);
-
+		
 		list(
 			$controlsArgv['cp.datetime_options'],
 			$controlsArgv['cp.custom_datetime'],
@@ -146,7 +149,7 @@ class livereporting_event_post extends livereporting_event_pylon
 			$location,
 			$entry
 		) = $prereq;
-		
+
 		$userId = intval(moon::user()->get_user_id());
 		$tags = $this->helperSaveGetTags($data['tags']);
 		
@@ -165,8 +168,6 @@ class livereporting_event_post extends livereporting_event_pylon
 			'image_src' => @$data['image']['src'],
 			'image_alt' => @$data['image']['title'],
 		);
-		if (_SITE_ID_ != 'com')
-			unset($saveDataPost['is_keyhand']); // may be temporary
 		$saveDataLog = array(
 			'type' => 'post',
 			'is_hidden' => $data['published'] != '1',
@@ -263,7 +264,7 @@ class livereporting_event_post extends livereporting_event_pylon
 	private function getEditableData($id, $eventId)
 	{
 		$entry = $this->db->single_query_assoc('
-			SELECT l.tournament_id, l.event_id, l.day_id, l.created_on, l.updated_on, l.is_hidden, d.*
+			SELECT l.tournament_id, l.event_id, l.day_id, l.created_on, l.updated_on, l.is_hidden, l.sync_id IS NOT NULL synced, d.*
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tPosts') . ' d
 				ON l.id=d.id

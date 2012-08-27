@@ -21,13 +21,14 @@ class reporting_news extends moon_com
 		if (0 == count($entries)) {
 			return '';
 		}
-		foreach ($entries as $entry) {
+		foreach ($entries as $nr => $entry) {
 			$mainArgv['list.entries'] .= $tpl->parse('entries.' . $entry['type'], array(
 				'url' => htmlspecialchars($entry['url']),
 				'title' => htmlspecialchars($entry['title']),
 				'image' => !empty($entry['image'])
 					? $imgDir . $entry['image']
-					: $imgDef
+					: $imgDef,
+				'initiallyVisible' => $nr < 4
 			)) . "\n";
 		}
 		return $tpl->parse('main', $mainArgv);
