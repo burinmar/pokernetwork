@@ -25,7 +25,7 @@ class cleanup extends moon_com
 				$this->doCalcPPId();
 				moon::page()->set_local('cron', ob_get_contents());
 				return;
-				
+			
 			default:
 				break;
 		}
@@ -78,10 +78,6 @@ class cleanup extends moon_com
 		natsort($days);
 		if (0 == count($days)) {
 			return ;
-		}
-
-		if (method_exists($this->db, 'operateOnMaster')) {
-			$this->db->operateOnMaster();
 		}
 
 		$this->db->query('

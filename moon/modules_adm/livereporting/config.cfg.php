@@ -75,3 +75,8 @@ function livereporting_adm_alt_log($trnId = 0, $evId = 0, $dayId = 0, $type = 'o
 		)
 	');
 }
+
+$db = moon::db();
+if (method_exists($db, 'operateOnMaster')) {
+	$db->operateOnMaster();
+}

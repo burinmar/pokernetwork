@@ -25,10 +25,6 @@ class sync_reporting_v2 extends moon_com
 			Header('Cache-Control: no-cache');
 			ini_set("html_errors","off");
 		}
-		if (method_exists($this->db, 'operateOnMaster')) {
-			echo 'Operating on master' . "\n";
-			$this->db->operateOnMaster();
-		}
 		$tournaments = $this->db->array_query_assoc('
 			SELECT id, name, sync_id, autopublish, state, updated_on FROM reporting_ng_tournaments
 			WHERE is_syncable=1 AND is_live>=0 
@@ -1280,10 +1276,10 @@ class sync_reporting_v2 extends moon_com
 			return;
 		}
 		$data = file_get_contents($responseFile);
-		$data = explode(',', $data);
 		if (empty($data)) {
 			return;
 		}
+		$data = explode(',', $data);
 		
 		// "dirty"
 		// only delete what really belongs to the tournament (tournament_id=?, from lrDaysMap in this case)
