@@ -29,7 +29,7 @@ e.image2=Image error: Techical error!
 	<dl>
 		<dt><label>Winner</label></dt>
 		<dd><input type="text" maxlength="100" size="40" name="winner" value="{entry.winner}" />
-			<%if {suggested_winner} %><a href="javascript:;" id="suggested_winner_ctrl">&larr;</a> <span id="suggested_winner">{suggested_winner}</span><%end%>
+			<%if {suggested_winner} %><a href="javascript:;" id="suggested_winner_ctrl" class="suggestedLRwinner"> <span id="suggested_winner">{suggested_winner}</span></a><%end%>
 		</dd>
 		
 		<dt><label for="i_winning_hand">Winning hand</label></dt>
@@ -40,7 +40,7 @@ e.image2=Image error: Techical error!
 
 		<dt><label>Runner-up</label></dt>
 		<dd><input type="text" maxlength="100" size="40" name="runner_up" value="{entry.runner_up}" />
-			<%if {suggested_runnerup} %><a href="javascript:;" id="suggested_runnerup_ctrl">&larr;</a> <span id="suggested_runnerup">{suggested_runnerup}</span><%end%>
+			<%if {suggested_runnerup} %><a href="javascript:;" id="suggested_runnerup_ctrl" class="suggestedLRwinner"> <span id="suggested_runnerup">{suggested_runnerup}</span></a><%end%>
 		</dd>
 		
 		<dt><label for="i_losing_hand">Losing hand</label></dt>
@@ -52,7 +52,7 @@ e.image2=Image error: Techical error!
 
 		<dt><label>1st place prize</label></dt>
 		<dd><input type="text" maxlength="11" size="11" name="prize" value="{entry.prize}" /> {tourcurr}
-			<%if {suggested_prize} %><a href="javascript:;" id="suggested_prize_ctrl">&larr;</a> <span id="suggested_prize">{suggested_prize}</span><%end%>
+			<%if {suggested_prize} %><a href="javascript:;" id="suggested_prize_ctrl" class="suggestedLRwinner"> <span id="suggested_prize"> {suggested_prize}</span></a><%end%>
 			</dd>
 	</dl>
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" class="btReturn" /><input type="button" class="btCancel" value="Cancel" onclick="window.location.href='{url.back}'" /></div>	

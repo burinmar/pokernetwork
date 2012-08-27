@@ -188,7 +188,8 @@ class event_list extends moon_com
 				'urlwinner' => ($event['winner_id'])
 					? $this->linkas('winner_list#', $event['winner_id'])
 					: $this->linkas('winner_list#new', 'by-event.' . $event['id']),
-				'winner' => htmlspecialchars($event['winner'])
+				'winner' => htmlspecialchars($event['winner']),
+				'add_winner' => empty($event['winner']) && (!empty($event['days_closed']) || $event['state'] == '2')
 			));
 			foreach ($event['days'] as $day) {
 				$mainArgv['list.entries'] .= $tpl->parse('list:entries.subitem', array(
@@ -232,7 +233,7 @@ class event_list extends moon_com
 		$events = array();
 
 		$rEvents = $this->db->array_query_assoc('
-			SELECT e.id, e.from_date, e.to_date, e.name, e.state, e.is_live, e.is_main, COUNT(d.id) dayscnt, w.id winner_id, w.winner
+			SELECT e.id, e.from_date, e.to_date, e.name, e.state, e.is_live, e.is_main, COUNT(d.id) dayscnt, w.id winner_id, w.winner, MIN(d.state)=2 days_closed
 			FROM ' . $this->table('Events') . ' e
 			LEFT JOIN ' . $this->table('Days') . ' d
 				ON e.id=d.event_id
@@ -276,8 +277,9 @@ class event_list extends moon_com
 		);
 
 		$page->js('/js/modules_adm/ng-entry.js');
+		$page->js('/js/raphael-min.js');
+		$page->js('/js/modules_adm/livereporting_day_graph.js');
 		$page->js('/js/modules_adm/livereporting.js');
-		$page->js('/js/jquery/maskedinput-1.1.3.js');
 		$page->js('/js/jquery/livequery.js');
 
 		$nr = 0;

@@ -28,6 +28,10 @@ class sync_reporting extends moon_com
 				moon::page()->set_local('cron', ob_get_contents());
 				return;
 
+			case 'imgsrv-local-reimport':
+				$this->doImgsrvLocalReimport();
+				return;
+
 			default:
 				break;
 		}
@@ -50,6 +54,7 @@ class sync_reporting extends moon_com
 		$fn = tempnam("tmp", "lrep");
 		$fp = fopen($fn, 'wb');
 		fwrite($fp, $data);
+		fclose($fp);
 		
 		$ch = curl_init(is_dev()
 			? 'http://imgsrv.pokernews.dev/import.php'
@@ -68,6 +73,7 @@ class sync_reporting extends moon_com
 		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 
 		$gotData = curl_exec($ch);
+		unlink($fn);
 		$oldData = $gotData;
 		$gotData = @unserialize($gotData);
 		if (!isset ($gotData['images'])) {
@@ -93,10 +99,10 @@ class sync_reporting extends moon_com
 			$iId = 0;
 			if (!empty($exists)) {
 				$this->db->update(array(
-				    'image_misc' => $image['misc'],
-				    'image_alt' => (string)$image['description'],
+					'image_misc' => $image['misc'],
+					'image_alt' => (string)$image['description'],
 				), $this->table('Photos'), array(
-				    'id' => $exists['id']
+					'id' => $exists['id']
 				));
 				if ($this->db->affected_rows()) {
 					$updated++;
@@ -168,8 +174,96 @@ class sync_reporting extends moon_com
 		if ($deletedCnt) {
 			livereporting_adm_alt_log(0, 0, 0, 'delete', 'photos', 0, $deletedCnt . ' +tags{} @imsrv', -1);
 		}
+	}
 
+	function doImgsrvLocalReimport()
+	{
+		$fn = tempnam("tmp", "lrep");
+		$fp = fopen($fn, 'wb');
+		fwrite($fp, 'Required dummy');
 		fclose($fp);
+
+		$ch = curl_init(is_dev()
+			? 'http://imgsrv.pokernews.dev/import.php'
+			: 'http://imgsrv.pokernews.com/import.php');
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 60*20);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, array(
+			'key' => 'larry-the-cow',
+			'src_id' => _SITE_ID_,
+			'operation' => 'fetch-all-local',
+			'data' => '@' . $fn
+		));
+		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+
+		$gotData = curl_exec($ch);
 		unlink($fn);
+		$oldData = $gotData;
+		$gotData = @unserialize($gotData);
+		if (!isset ($gotData['images']) || !is_array($gotData['images'])) {
+			echo 'No data';
+			return ;
+		}
+
+		$insertedDescrs = 0;
+		$updatedDescrs = 0;
+		$replacedTags = 0;
+		foreach ($gotData['images'] as $image) {
+			$path = explode('/', $image['uri']);
+			$imageIds = array_keys($this->db->array_query_assoc('
+				SELECT id FROM ' . $this->table('Photos') . '
+				WHERE event_id="' . intval($path[2]) . '" AND image_misc LIKE "' . intval($image['id']) . ',%"
+			', 'id'));
+			if (0 == count($imageIds)) {
+				$imageData = array(
+					'import_id' => null,
+					'day_id' => $path[3],
+					'event_id' => $path[2],
+					'image_misc' => $image['id'] . ',' . $image['misc'],
+					'image_src' => $image['image_src'],
+					'image_alt' => (string)$image['d'],
+					'created_on' => time()
+				);
+				$this->db->insert($imageData, $this->table('Photos'));
+				$imageIds[] = $this->db->insert_id();
+				$insertedDescrs++;
+			} else {
+				foreach ($imageIds as $imageId) {
+					$this->db->update(array(
+						'image_misc' => $image['id'] . ',' . $image['misc'],
+						'image_alt' => (string)$image['d'],
+					), $this->table('Photos'), array(
+						'id' => $imageId
+					));
+					$updatedDescrs += $this->db->affected_rows();
+				}
+				$this->db->query('
+					DELETE FROM ' . $this->table('Tags') . '
+					WHERE id IN(' . implode(',', $imageIds) . ') AND type="photo"
+				');
+			}
+			foreach (explode(',', $image['tags']) as $tag) {
+				foreach ($imageIds as $imageId) {
+					$this->db->insert(array(
+						'id' => $imageId,
+						'tag' => trim($tag),
+						'type' => "photo",
+						'day_id' => $path[3],
+						'event_id' => $path[2],
+						'tournament_id' => $path[1],
+					), $this->table('Tags'));
+					$replacedTags++;
+				}
+			}			
+		}
+
+		echo 'ok';
+
+		echo 'Inserted ' . $insertedDescrs . ' images' . "\n";
+		echo 'Updated ' . $updatedDescrs . ' images' . "\n";
+		echo 'Replaces ' . $replacedTags . ' tags' . "\n";
 	}
 }

@@ -228,7 +228,6 @@ class tour_list extends moon_com
 
 		$page->js('/js/modules_adm/ng-entry.js');
 		$page->js('/js/modules_adm/livereporting.js');
-		$page->js('/js/jquery/maskedinput-1.1.3.js');
 		$page->js('http://maps.google.com/maps/api/js?sensor=false');
 
 		if (NULL === $argv['id']) {

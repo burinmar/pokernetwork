@@ -70,7 +70,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 <tr class="<%if {is_hidden}%>inactive<%end%>">
 	<td>{start_date}</td>
 	<td><a href="{url}" <%if {is_main} %>style="font-weight:bold;"<%end%>>{name}</a></td>
-	<td><a href="{urlwinner}"><%if{winner}%>{winner}<%else{winner}%><span style="color: red">+ Add winner</span><%end%></a></td>
+	<td><a href="{urlwinner}"><%if{winner}%>{winner}<%end%><%if{add_winner}%><span style="color: red">+ Add winner</span><%end%></a></td>
 	<td class="tac">{status}</td>
 	<td>{days}</td>
 	<td><input type="checkbox" class="row-mark" id="row:{id}" /></td>
@@ -210,23 +210,24 @@ e.ncommdupe=There is already subforum assigned to display news comments
 
 		<dt><label>Event days</label></dt>
 		<dd>
-		<script type="text/javascript">
-		<!--
-		var emptyDayControl = {emptyDayControl};
-		<%if {entry.id} %>
-		var isNewEvt = false;
-		<%else {entry.id} %>
-		var isNewEvt = true;
-		<%end%>
-		//-->
-		</script>
-		<table id="event_days">
-		<tr>
-			<td>Title (day no.)</td>
-			<td>Date</td>
-		</tr>
-		{days}
-		</table>
+			<div id="day-preview-holder" style="float: right;"></div>
+			<script type="text/javascript">
+			<!--
+			var emptyDayControl = {emptyDayControl};
+			<%if {entry.id} %>
+			var isNewEvt = false;
+			<%else {entry.id} %>
+			var isNewEvt = true;
+			<%end%>
+			//-->
+			</script>
+			<table id="event_days">
+			<tr>
+				<td>Title (day no.)</td>
+				<td>Date</td>
+			</tr>
+			{days}
+			</table>
 		</dd>
 
 	</dl>

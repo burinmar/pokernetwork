@@ -26,6 +26,15 @@ class cleanup extends moon_com
 				moon::page()->set_local('cron', ob_get_contents());
 				return;
 			
+			case 'wsop-bluff-profile':
+				ob_start();
+				$days = isset($_GET['days'])
+					? max(1, intval($_GET['days']))
+					: 2;
+				$this->doUpdateBluffCountry($days);
+				moon::page()->set_local('cron', ob_get_contents());
+				return;
+			
 			default:
 				break;
 		}
@@ -151,10 +160,22 @@ class cleanup extends moon_com
 		}
 		$this->db->query('DELETE FROM reporting_ng_chips WHERE id IN (' . implode(',', $extras) . ')');
 		livereporting_adm_alt_log(0, 0, 0, 'delete', 'other', '0', 'cnt:' . count($extras), -1);
+	}
 
-		if (method_exists($this->db, 'operateOnMaster')) {
-			$this->db->operateNormally();
-		}
+	private function doUpdateBluffCountry($numDays)
+	{
+		$this->db->query('
+			UPDATE reporting_ng_players p
+			INNER JOIN (
+				SELECT pb.name, pb.event_id, pb.country FROM reporting_ng_players_bluff pb
+				INNER JOIN (
+					SELECT DISTINCT event_id FROM reporting_ng_days WHERE GREATEST(created_on,updated_on)>(UNIX_TIMESTAMP()-' . intval($numDays) . '*86400)
+				) d ON d.event_id=pb.event_id
+			) pb
+				ON p.event_id=pb.event_id AND p.name=pb.name
+			SET p.country_id=pb.country
+		');
+		echo 'Updated: ' . $this->db->affected_rows();
 	}
 
 	/* if uncommenting apply alt_log()
