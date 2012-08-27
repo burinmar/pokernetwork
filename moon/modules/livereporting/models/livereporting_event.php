@@ -563,7 +563,14 @@ class livereporting_model_event extends livereporting_model_pylon
 				'name'  => 'DeepStack Team Pro',
 				'favicon' => '/img/live_poker/deepstacks-icon.png',
 				'is_hidden' => 0,
-			)
+			),
+			-2 => array(
+				'id' => -2,
+				'alias' => '',
+				'name'  => 'Onnit',
+				'favicon' => '/img/live_poker/nn-icon.png',
+				'is_hidden' => 0,
+			),
 		);
 	}
 	
@@ -633,7 +640,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		 * right join is particularly slow, so ensure that every players has at least one (empty) chip
 		 */
 		$sql = '
-		SELECT p.id, ce.chips, p.name uname, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.card, p.pp_id, p.status, p.is_pnews, p.place' : '') . ' 
+		SELECT p.id, ce.chips, p.name uname, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.card, p.pp_id, p.status, p.is_pnews, p.place, p.country_id' : '') . ' 
 		FROM (
 			SELECT c.chips, c.player_id' . (!$tiny ? ', c.created_on, c.day_id, c.chips_change' : '' ) . ' FROM (
 				SELECT player_id, MAX(created_on) created_on FROM reporting_ng_chips

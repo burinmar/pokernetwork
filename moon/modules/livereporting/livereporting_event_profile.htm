@@ -54,13 +54,16 @@ Player chipcounts: <br />
 			<select name="sponsor" style="height:auto;"><option value="">&nbsp;</option>{cu.sponsor}</select></p>
 		<p><label for="status">Status:</label>
 			<input type="text" name="status" value="{cu.status}" /></p>
+		<p><label for="country_id">Country</label>
+			<select name="country_id" style="height:auto;"><option value="">Unknown</option>{cu.country}</select></p>
+			
 		<%if {cu.bluff} %> 
 		<input type="hidden" name="bluff_id" value="{cu.bluff.bluff_id}" />
-		<p style="border-top:1px solid #034EA2; padding-top:10px; margin-top:10px;"><label for="status">Country code:</label>
+		<p style="border-top:1px solid #034EA2; padding-top:10px; margin-top:10px;"><label for="country">Country code (WSOP):</label>
 			<input type="text" name="country" value="{cu.bluff.country}" maxlength="3"  /></p>
-		<p><label for="status">State code:</label>
+		<p><label for="state">State code (WSOP):</label>
 			<input type="text" name="state" value="{cu.bluff.state}" maxlength="3" /></p>
-		<p><label for="status">City:</label>
+		<p><label for="city">City (WSOP):</label>
 			<input type="text" name="city" value="{cu.bluff.city}" /></p>
 		<%end%>
 		<p style="float:right"><a href="{cu.playerdelete}" class="rq-confirm-delete">Delete player</a></p>

@@ -964,8 +964,10 @@ class livereporting_event extends moon_com
 						'playerurl' => $showLinks
 							? str_replace('{}', $chip['id'], $playerUrl)
 							: '',
-						'player_sponsorimg' => !empty($chip['sponsorimg'])
+						'player_sponsorimg' => isset($chip['sponsor']['ico'])
+							? ($chip['sponsor_id'] > 0
 							? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
+								: $chip['sponsorimg'])
 							: NULL,
 						'chips' => number_format($chip['chips']),
 					));

@@ -13,6 +13,7 @@
 	<table class="chipsCount tal chipstable" summary="{!chip_statistics}">
 	<col class="player" />
 	<col class="sponsor" />
+	<col class="country" />
 	<col class="chipsTotal" />
 	<col class="chipsDelta" />
 	<thead>
@@ -43,6 +44,9 @@
 	</td>
 	<td class="sponsor">
 		<span><%if {player_sponsorimg} %><img src="{player_sponsorimg}" alt="" class="splogo" /><%end%> <%if {player_is_pnews} %><img src="/img/pn-player.png" alt="PN" class="splogo" /><%end%> {player_sponsor}</span>
+	</td>
+	<td class="country">
+		<%if {country} %><img src="http://www.pokernews.com/i/flags/flag_{country_id}.png" alt="{country}" /> {country}<%end%>
 	</td>
 	<td class="numeric"><%if {is_busted} %>{!busted}<%else {is_busted} %>{chips}<%end%></td>
 	<td class="numeric"><%if {is_busted} %><%else {is_busted} %>{chips_change} <%if {chips_change_direction} %><img src="/img/live_poker/delta_{chips_change_direction}.png" width="7" height="8" alt="{chips_change_direction}" /><%end%><%end%></td>
@@ -75,6 +79,7 @@
 	<table class="chipsCount tal chipstable" summary="{!chip_statistics}">
 	<col class="player" />
 	<col class="sponsor" />
+	<col class="country" />
 	<col class="chipsTotal" />
 	<col class="chipsDelta" />
 	<thead>
@@ -107,6 +112,9 @@
 			<%if {player_status} %><span>{player_status}</span><%end%>
 		<%end%>
 	</td>
+	<td class="country">
+		<%if {country} %><img src="http://www.pokernews.com/i/flags/flag_{country_id}.png" alt="{country}" /> {country}<%end%>
+	</td>
 	<td class="numeric"><%if {is_busted} %>{!busted}<%else {is_busted} %>{chips}<%end%></td>
 	<td class="numeric"><%if {is_busted} %><%else {is_busted} %>{chips_change} <%if {chips_change_direction} %><img src="/img/live_poker/delta_{chips_change_direction}.png" width="7" height="8" alt="{chips_change_direction}" /><%end%><%end%></td>
 </tr>
@@ -137,6 +145,7 @@
 		<p><label style="width:100px">Column order: </label>
 			<select name="column_order">
 				<option value="1.2" selected="selected">player, amount</option>
+				<option value="1.2.3">player, amount, country</option>
 				<option value="2.1">amount, player</option>
 				<option value="10.11.2">last name, first n., amount</option>
 			</select>

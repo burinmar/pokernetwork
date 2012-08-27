@@ -3,6 +3,7 @@
 <table class="chipsCount tal" summary="{!chip_statistics}">
 	<col class="player" />
 	<col class="sponsor" />
+	<col class="country" />
 	<%if {adm} %><col class="chipsTotal" /><%end%>
 	<col class="chipsTotal" />
 	<%if {adm} %><col class="chipsTime" /><%end%>
@@ -47,6 +48,7 @@ var write_ctchips_day='{write_ctchips_day}';
 		<%else {playerurl} %>{player}<%end%>
 	</td>
 	<td class="sponsor">{sponsor}</td>
+	<td class="country"><%if {country} %><img src="http://www.pokernews.com/i/flags/flag_{country_id}.png" alt="{country}" /> {country}<%end%></td>
 	{adm_newctrl}
 	<td class="numeric">
 	<%if {is_busted} %>{!busted}<%else {is_busted} %>

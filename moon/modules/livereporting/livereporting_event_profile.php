@@ -15,7 +15,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 		switch ($event) {
 			case 'save-profile':
 				$data = $this->helperEventGetData(array(
-					'id', 'event_id', 'name', 'card', 'is_pnews', 'sponsor', 'status',
+					'id', 'event_id', 'name', 'card', 'is_pnews', 'sponsor', 'status', 'country_id',
 					'bluff_id', 'city', 'state', 'country'
 				));
 				$profileId = $this->save($data);
@@ -132,6 +132,8 @@ class livereporting_event_profile extends livereporting_event_pylon
 			'sponsor' => $profile['sponsor_id'],
 			'sponsors' => $sponsors,
 			'status' => $profile['status'],
+			'country_id' => strtolower($profile['country_id']),
+			'countries' => moon::shared('countries')->getCountries(),
 			'bluff' => isset($profile['bluff'])
 				? $profile['bluff']
 				: NULL
@@ -143,7 +145,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 	private function getProfile($id, $eventId, $dayId)
 	{
 		$profile = $this->db->single_query_assoc('
-			SELECT p.id, p.name, p.card, p.is_pnews, p.sponsor_id, p.status
+			SELECT p.id, p.name, p.card, p.is_pnews, p.sponsor_id, p.status, p.country_id
 			FROM ' . $this->table('Players') . ' p
 			WHERE p.id=' . getInteger($id) . '
 				AND p.event_id=' . getInteger($eventId)
@@ -223,19 +225,27 @@ class livereporting_event_profile extends livereporting_event_pylon
 			'cu.is_pnews' => htmlspecialchars($argv['is_pnews']),
 			'cu.event_id' => $argv['event_id'],
 			'cu.sponsor' => '',
-			'cu.status' => '',
+			'cu.country' => '',
+			'cu.status' => $argv['status'],
 			'cu.playerdelete' => $this->linkas('event#delete', array(
 					'event_id' => $argv['event_id'],
 					'type' => 'profile',
 					'id' => $argv['id']
 				))
 		);
+
+		$argv['countries'] = array(
+			'' => ' ' // alt+255
+		) + $argv['countries'];
+		foreach ($argv['countries'] as $countryId => $countryName) {
+			$controlsArgv['cu.country'] .= '<option value="' . $countryId . '"' . ($countryId == $argv['country_id'] ? ' selected="selected"' : '') . '>' . htmlspecialchars($countryName) . '</option>' ;
+		}
+
 		foreach ($argv['sponsors'] as $sponsor) {
 			if ($sponsor['is_hidden'] == '0' || $sponsor['id'] == $argv['sponsor']) {
 				$controlsArgv['cu.sponsor'] .= '<option value="' . $sponsor['id'] . '"' . ($sponsor['id'] == $argv['sponsor'] ? ' selected="selected"' : '') . '>' . htmlspecialchars($sponsor['name']) . '</option>' ;
 			}
 		}
-		$controlsArgv['cu.status'] = $argv['status'];
 
 		if (!empty($argv['bluff'])) {
 			$controlsArgv += array(
@@ -260,6 +270,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 		$this->db->update(array(
 			'sponsor_id' => $argv['sponsor'],
 			'status' => $argv['status'],
+			'country_id' => strtoupper($argv['country_id']),
 			'is_pnews' => $argv['is_pnews'],
 			'name' => $argv['name'],
 			'card' => $argv['card'],

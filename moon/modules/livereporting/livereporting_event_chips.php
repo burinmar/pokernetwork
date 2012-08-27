@@ -111,7 +111,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$lrep   = $this->lrep();
 		$lrepTools = $lrep->instTools();
 		$tpl = $this->load_template();
-		
+
 		$rArgv = $this->helperRenderCommonArgv($data, $argv, $tpl);
 		$rArgv += array(
 			'is_full'    => $data['contents']['is_full_import'],
@@ -137,14 +137,20 @@ class livereporting_event_chips extends livereporting_event_pylon
 					? str_replace('{}', $chip['id'], $playerUrl)
 					: '',
 				'player_sponsorimg' => isset($chip['sponsor']['ico'])
-					? ($chip['sponsor']['id'] > 0
-						? img('rw', @$chip['sponsor']['id'], $chip['sponsor']['ico'])
+					? (isset($chip['sponsor']['id']) && $chip['sponsor']['id'] > 0
+						? img('rw', $chip['sponsor']['id'], $chip['sponsor']['ico'])
 						: $chip['sponsor']['ico'])
 					: NULL,
 				'player_sponsor' => $lrepTools->helperPlayerStatus(
 					isset($chip['status'])  ? $chip['status'] : '',
 					isset($chip['sponsor'])	? $chip['sponsor']['name'] : ''),
 				'player_is_pnews' => !empty($chip['ispn']),
+				'country' => !empty($chip['country_id'])
+					? htmlspecialchars($chip['country_id'])
+					: '',
+				'country_id' => !empty($chip['country_id'])
+					? htmlspecialchars(strtolower($chip['country_id']))
+					: ''
 			));
 			$rArgv['entries'] .= $tpl->parse('logEntry:chips.chips.item', $chipsArgv);
 		}
@@ -237,6 +243,12 @@ class livereporting_event_chips extends livereporting_event_pylon
 					'player_sponsorurl' =>  $chip['sponsorurl'],
 					'player_status'  =>  $lrep->instTools()->helperPlayerStatus($chip['status'], $chip['sponsor']),
 					'player_is_pnews' => !empty($chip['ispn']),
+					'country' => !empty($chip['country_id'])
+						? htmlspecialchars($chip['country_id'])
+						: '',
+					'country_id' => !empty($chip['country_id'])
+						? htmlspecialchars(strtolower($chip['country_id']))
+						: ''
 				));
 			}
 			$rArgv['entries'] .= $tpl->parse('entry:chips.chips.item', $chipsArgv);
@@ -402,7 +414,13 @@ class livereporting_event_chips extends livereporting_event_pylon
 					'sponsor' => '',
 					'adm_newctrl' => $newCtrl,
 					'adm_dtctrl' => $dtCtrl,
-					'adm_delctrl' => $delCtrl
+					'adm_delctrl' => $delCtrl,
+					'country' => !empty($chip['country_id'])
+						? htmlspecialchars($chip['country_id'])
+						: '',
+					'country_id' => !empty($chip['country_id'])
+						? htmlspecialchars(strtolower($chip['country_id']))
+						: ''
 				);
 				$chipsArgv['sponsor'] = trim($tpl->parse('logTab:chips.chips.item.sponsor', array(
 					'sponsorimg' => !empty($chip['sponsorimg'])
@@ -652,7 +670,17 @@ class livereporting_event_chips extends livereporting_event_pylon
 					'country' => trim((string)$row->country),
 					'state' => trim((string)$row->state)
 				), $this->table('PlayersBluff'));
-		}		
+		}
+		// and update reporting player profiles too
+		$this->db->query('
+			UPDATE ' . $this->table('Players') . ' p
+			INNER JOIN (
+				SELECT name, event_id, country FROM ' . $this->table('PlayersBluff') . '
+				WHERE event_id=' . $location['event_id'] . '
+			) pb
+				ON p.event_id=pb.event_id AND p.name=pb.name
+			SET p.country_id=pb.country
+		');
 
 		$data['chips'] = array();
 		$chipss = array();
@@ -859,7 +887,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 		if (count($chips) > 0) {
 			$players = $this->db->array_query_assoc('
-				SELECT p.id, p.name, p.is_pnews, p.sponsor_id, p.status
+				SELECT p.id, p.name, p.is_pnews, p.sponsor_id, p.status, p.country_id
 				FROM ' . $this->table('Players') . ' p
 				WHERE p.id IN (' . implode(',', array_keys($chips)) . ')
 			');
@@ -876,6 +904,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 					'uname'   => $player['name'],
 					'ispn'    => $player['is_pnews'],
 					'status'  => $player['status'],
+					'country_id' => $player['country_id'],
 					'sponsor_id' => $player['sponsor_id'],
 					'sponsor'    => null,
 					'sponsorimg' => null,
@@ -1391,6 +1420,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 					if (!empty($player['status'])) {
 						$chip['status'] = $player['status'];
 					}
+					if (!empty($player['country_id'])) {
+						$chip['country_id'] = $player['country_id'];
+					}
 					if (!empty($player['is_pnews'])) {
 						$chip['is_pnews'] = 1;
 					}
@@ -1413,6 +1445,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 						? $row[0]
 						: '';
 					$chip['chips_change'] = NULL;
+				}
+				if (isset($row[3])) {
+					$chip['country_id'] = $this->helperGetCountryIdByName($row[3]);
 				}
 				$chips[] = $chip;
 			}
@@ -1452,12 +1487,19 @@ class livereporting_event_chips extends livereporting_event_pylon
 						'event_id' => $location['event_id'],
 						'name' => $chip['uname'],
 						'card' => $chip['ucard'],
+						'country_id' => $chip['country_id'],
 						'created_on' => time(),
 						'day_enter_id' => $dayEnterId
 					), $this->table('Players'));
 					$iId = $this->db->insert_id();
 					$evProfileObj->notifyPlayerSaved($iId, $chip['uname']);
 					$newPlayerIds[strtolower($chip['uname'])] = $iId;
+				} else {
+					$this->db->update(array(
+						'country_id' => $chip['country_id'],
+					), $this->table('Players'), array(
+						'id' => $chip['player_id']
+					));
 				}
 			}
 
@@ -1489,11 +1531,14 @@ class livereporting_event_chips extends livereporting_event_pylon
 						'id'  => $chip['sponsor']['id'],
 						'uri'  => $chip['sponsor']['alias'],
 						'name' => $chip['sponsor']['name'],
-						'ico'  => $chip['sponsor']['favicon']
+						'ico'  => $chip['sponsor']['favicon'],
 					);
 				}
 				if (isset($chip['status'])) {
 					$topChip['status'] = $chip['status'];
+				}
+				if (isset($chip['country_id'])) {
+					$topChip['country_id'] = $chip['country_id'];
 				}
 				if (isset($chip['is_pnews'])) {
 					$topChip['ispn'] = intval($chip['is_pnews']);
@@ -1549,6 +1594,27 @@ class livereporting_event_chips extends livereporting_event_pylon
 			$chipsBackupText,
 			$newPlayerIds
 		);		
+	}
+
+	private function helperGetCountryIdByName($name)
+	{
+		static $countries;
+		if (!$countries) {
+			$countries = array();
+			$countriesStock = moon::shared('countries')->getCountries();
+			foreach ($countriesStock as $key => $value) {
+				$countries[strtolower($value)] = $key;
+				$countries[$key] = $key;
+			}
+			$countries['usa'] = 'us';
+			$countries['uk'] = 'gb';
+			$countries['great britain'] = 'gb';
+		}
+
+		$name = strtolower(trim($name));
+		return isset($countries[$name])
+			? strtoupper($countries[$name])
+			: null;
 	}
 
 	private function helperSaveGetBustablePlayers(&$players, $mentionedPlayers, $location)

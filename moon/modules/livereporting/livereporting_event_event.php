@@ -128,6 +128,7 @@ class livereporting_event_event extends livereporting_event_pylon
 					$dpList = array();
 					$rows = explode("\n", $data['new_players_list']);
 					foreach ($rows as $row) {
+						$row = str_replace(chr(194).chr(160), ' ', $row); // no-break space ftw
 						$row = preg_split("~\t|;|,~", $row);
 						$newRow = array();
 						foreach ($row as $cell) {
