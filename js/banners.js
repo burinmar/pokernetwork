@@ -327,7 +327,6 @@ $.extend(Banners.prototype, {
 		var s = document.createElement('script');
 		s.type= 'text/javascript';
 		s.src = url;
-		console.log(s)
 		document.getElementsByTagName('body')[0].appendChild(s);
 	},
 	_objCountAttr: function (o) {
