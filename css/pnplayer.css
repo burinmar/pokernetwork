@@ -5,6 +5,7 @@
 	background: #000;
 	overflow: hidden;
 	position: relative;
+	margin-bottom: 10px;
 }
 .pnVideoContainer object {display: block}
 .pnVideoContainer .play,
