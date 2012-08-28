@@ -1,6 +1,6 @@
 <% logTab:main %>
-<%if {chips_last_updated} %><span class="meta">Last update on <b style="color: #000">{chips_last_updated}</b></span><%end%>
-<table class="chipsCount tal" summary="{!chip_statistics}">
+<h3 class="articleTitle">{!chip_statistics}<%if {chips_last_updated} %>&nbsp;&nbsp;&nbsp;<em style="font-size: 11px; color: #999">Last update on <span style="color: #000">{chips_last_updated}</span></em><%end%></h3>
+<table class="chipsCount tal <%if {adm} %>chipsCountADM<%end%>" summary="{!chip_statistics}">
 	<col class="player" />
 	<col class="sponsor" />
 	<col class="country" />
@@ -10,8 +10,9 @@
 	<col class="chipsDelta" />
 	<%if {adm} %>
 	<tbody>
-		<tr class="sortRow"><td colspan="2" style="padding-left:27px;"><a href="{cts_name_url}" class="{cts_name_class}">Sort</a></td>
-			<td class="numeric" colspan="2"><a href="{cts_chip_url}" class="{cts_chip_class}">Sort</a></td>
+		<tr class="sortRow">
+			<td colspan="3" style="padding-left:27px;"><a href="{cts_name_url}" class="{cts_name_class}">Sort</a></td>
+			<td class="numeric" colspan="3"><a href="{cts_chip_url}" class="{cts_chip_class}">Sort</a></td>
 			<td><input type="hidden" id="cts_sort" value="{cts_sort}" /></td>
 		</tr>
 	</tbody>
@@ -19,25 +20,28 @@
 	<tbody id="chipsCountEntries">
 	{entries}
 	</tbody>
-	<%if {adm} %>
-	<tbody><tr>
-		<td colspan="2"><label><input type="checkbox" id="delctchipsmark" /> Mark all</label></td>
-		<td class="numeric"><input type="button" id="newctchips" value="Save" /></td>
-		<td colspan="3"></td>
-	</tr></tbody>
-	<%end%>
 </table>
 <%if {adm} %>
-<p><input type="button" id="delctplayerb" value="Delete selected" /> (will delete player and corresponding chips)</p>
-<br />
-<p>Add new player: <input type="text" value="" id="newctplayer" /> <input type="button" id="newctplayerb" value="Save" />
+<label style="margin-left: 9px"><input type="checkbox" id="delctchipsmark" /> Mark all</label><span class="clr"></span>
+<div class="list-footer fr"><input type="button" id="delctplayerb" class="button fr btDel" value="Delete selected" /></div>
+<div class="formButton"><input type="submit" id="newctchips" value="Update" /></div>
+<small class="fr" style="color: 333">(will delete player and corresponding chips)</small>
+<span class="clr"></span>
+<div class="aform clrfix" style="margin-top: 30px">
+	<dl>
+		<dt><label>Add new player</label></dt>
+		<dd><input type="text" value="" id="newctplayer" /></dd>
+	</dl>
+	<div class="formButton"><input type="submit" id="newctplayerb" value="Add" /></div>
+</div>
+
 <%end%>
 <span class="clr"></span>
 <%if {adm} %>
-<script type="text/javascript">
-var write_ctchips_url='{write_ctchips_url}';
-var write_ctchips_day='{write_ctchips_day}';
-</script>
+	<script type="text/javascript">
+	var write_ctchips_url='{write_ctchips_url}';
+	var write_ctchips_day='{write_ctchips_day}';
+	</script>
 <%end%>
 
 
@@ -63,17 +67,17 @@ var write_ctchips_day='{write_ctchips_day}';
 <% logTab:chips.chips.item.sponsor %>
 <%if {sponsorurl} %>
 <a href="{sponsorurl}"><img src="{sponsorimg}" alt="{sponsor}" title="{sponsor}" class="splogo" /></a>
-	<%if {is_pnews} %><a href="http://strategy.pokernews.com/" target="_blank"><img src="/img/pn-player.png" alt="PN" class="splogo" /></a><%end%> <a href="{sponsorurl}">{status}</a>
+	<%if {is_pnews} %><a href="http://strategy.pokernews.com/" target="_blank"><img src="/img/pn-player.png" alt="PN" class="splogo" /></a><%end%> <a href="{sponsorurl}" class="sponsorStatus">{status}</a>
 <%else {sponsorurl} %>
 <%if {sponsorimg} %><img src="{sponsorimg}" alt="{sponsor}" title="{sponsor}" class="splogo" /><%end%>
-	<%if {is_pnews} %><a href="http://strategy.pokernews.com/" target="_blank"><img src="/img/pn-player.png" alt="PN" class="splogo" /></a><%end%> <span>{status}</span>
+	<%if {is_pnews} %><a href="http://strategy.pokernews.com/" target="_blank"><img src="/img/pn-player.png" alt="PN" class="splogo" /></a><%end%> <span class="sponsorStatus">{status}</span>
 <%end%>
 
 <% logTab:chips.chips.item.del_ctrl %>
 &nbsp; <input type="checkbox" class="delctchips" name="delctplayer[{playerid}]" />
 
 <% logTab:chips.chips.item.new_ctrl %>
-<td class="numeric"><input type="text" size="10" class="newctchips" name="newctchips[{playerid}]" value="" /></td>
+<td class="numeric"><input type="text" size="10" style="width: 50px; height: 16px; line-height: 16px" class="newctchips" name="newctchips[{playerid}]" value="" /></td>
 
 <% logTab:chips.chips.item.dt_ctrl %>
 <td <%if {created_on_old} %> class="old"<%end%>>{created_on}</td>

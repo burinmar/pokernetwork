@@ -7,7 +7,7 @@
 	<p class="tweetContent">{body}</p>
 	<p class="tweetDate">
 		{!posted} <span class="date">{created_on}</span> 
-		<%if {show_controls} %><%if {url.edit} %> | <a href="{url.edit}">edit</a><%end%> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
+		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a></span><%end%>
 	</p>
 </div>
 
@@ -29,14 +29,15 @@
 	<input type="hidden" name="event"   value="{ct.save_event}" />
 	<input type="hidden" name="day_id"  value="{ct.day_id}" />
 	<input type="hidden" name="tweet_id" value="{ct.id}" />
-	<fieldset>
-		<legend>Twitter post</legend>
-		<p><textarea name="body" id="rq-wt-body" cols="55" rows="7">{ct.body}</textarea></p>
-		<p><span><span id="tweet-limit">0</span> / 115</span></p>
-		<p><label>&nbsp;</label>
-			<input type="submit" value="Save"/>
-		</p>
-	</fieldset>
+	<div class="aform clrfix">
+		<ul class="tabs"><li class="current">Twitter post<span class="edge"></span></li></ul>
+		<dl>
+			<dd class="w100" style="padding-left: 10px">
+				<textarea name="body" id="rq-wt-body" cols="55" rows="7">{ct.body}</textarea>
+				<div class="explain"><span id="tweet-limit">0</span> / 115</div>
+			</dd>
+		</dl>
+		<div class="formButton clrfix"><input type="submit" value="Save"/></div>
+	</div>
 </form>
 </div>
-

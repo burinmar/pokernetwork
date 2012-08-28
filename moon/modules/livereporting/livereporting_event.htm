@@ -45,6 +45,7 @@ payouts = payouts | {!payouts}
 				</ul>
 			</div><span class="clr"></span>
 			<%end%>
+			<%if {showControls} %><div id="rq-log-controls"> {controls} </div><% end %>
 			<div class="filterTabs filterTabsTopLine clrfix">
 				<b>Show:</b>
 				<ul>
@@ -65,7 +66,7 @@ payouts = payouts | {!payouts}
 			/*]]>*/
 			</script>
 			<%end%>
-			<%if {showControls} %><div id="rq-log-controls"> {controls} </div><% end %>
+			
 			{list.entries}
 			{paginator}
 		</div>
@@ -288,72 +289,81 @@ day.all=   {!day_all}
 
 <% sidebar:main %>
 <div id="rq-sidebar">
+	
 	<%if {show_write_controls} %>
-		<strong>Actions for this day</strong>
-		<ul class="rq-side{active} rq-sidembx">
-			<li><a href="{url.write-post}" id="rq-wp-start" class="rq-qn-startable">Write post</a>
-				<%if {show_full_controls} %>(<a href="{url.write-chips}" id="rq-wc-start" class="rq-qn-startable">+chips</a>)<%end%>
-				<%if {url.write-tweet} %>	(<a href="{url.write-tweet}" id="rq-wt-start" class="rq-qn-startable">*tweet</a>)<%end%>
-			</li>
-			<li><a href="{url.write-photos}"     id="rq-wx-start" class="rq-qn-startable">Photos selection</a></li>
-			<li><a href="{url.upload-photos}"    id="rq-wp-upload">Upload</a>
-				or <a href="{url.review-photos}" id="rq-wp-review">Review</a> photos</li>
-			<%if {show_full_controls} %>
-			<li><a href="{url.write-round}"      id="rq-wr-start" class="rq-qn-startable">Manage betting structure</a></li>
-			<li><a href="javascript:;"           id="rq-wd-toggle-actions">Post day state</a>
-				<ul id="rq-wd-actions">
-				<%if {url.dprogress} %><li><a href="{url.dprogress}" class="rq-confirm-change-day">{dprogress}</a></li><%end%>
-				<%if {url.dregress} %><li><a  href="{url.dregress}"  class="rq-confirm-change-day">{dregress}</a></li><%end%>
-				</ul>
-			</li>
-			<%end%>
-		</ul>
-		<hr size="1" />
+		<div class="rq-sidebarGroup">
+			<strong class="groupTitle">Day Actions</strong>
+			<ul class="rq-side{active} rq-sidembx">
+				<li><a href="{url.write-post}" id="rq-wp-start" class="rq-qn-startable">Write post</a>
+					<%if {show_full_controls} %>(<a href="{url.write-chips}" id="rq-wc-start" class="rq-qn-startable">+chips</a>)<%end%>
+					<%if {url.write-tweet} %>	(<a href="{url.write-tweet}" id="rq-wt-start" class="rq-qn-startable">*tweet</a>)<%end%>
+				</li>
+				<li><a href="{url.write-photos}"     id="rq-wx-start" class="rq-qn-startable">Photos selection</a></li>
+				<li><a href="{url.upload-photos}"    id="rq-wp-upload">Upload</a>
+					or <a href="{url.review-photos}" id="rq-wp-review">Review</a> photos</li>
+				<%if {show_full_controls} %>
+				<li><a href="{url.write-round}"      id="rq-wr-start" class="rq-qn-startable">Manage betting structure</a></li>
+				<li><a href="javascript:;"           id="rq-wd-toggle-actions">Post day state</a>
+					<ul id="rq-wd-actions">
+					<%if {url.dprogress} %><li><a href="{url.dprogress}" class="rq-confirm-change-day">{dprogress}</a></li><%end%>
+					<%if {url.dregress} %><li><a  href="{url.dregress}"  class="rq-confirm-change-day">{dregress}</a></li><%end%>
+					</ul>
+				</li>
+				<%end%>
+			</ul>
+		</div>
 	<%end%>
+
 	<%if {show_event_controls} %><%if {show_full_controls} %>
-		<strong>Actions for this event</strong>
-		<ul class="rq-side{active} rq-sidembx">
-			<li><a href="{ce.url.sect-prizepool}" id="rq-wepp-start" class="rq-qn-startable">Prizepool and payouts</a></li>
-			<li><a href="{ce.url.sect-winners}"   id="rq-wew-start"  class="rq-qn-startable">Winners order finetune</a></li>
-			<%if {show_write_controls} %>
-			<li><a href="{ce.url.sect-list}"      id="rq-wep-start"  class="rq-qn-startable">Players info</a></li>
-			<%end%>
-			<li><a href="{url.write-evmisc}"      id="rq-wm-start"   class="rq-qn-startable">Miscellaneous</a></li>
-			<%if {show_event_progress_change} %>
-			<li><a href="javascript:;" id="rq-we-toggle-actions">Event state</a>
-				<ul id="rq-we-actions">
-				<%if {url.eprogress} %><li><a href="{url.eprogress}" class="rq-confirm-change-evt">{eprogress}</a></li><%end%>
-				<%if {url.eregress} %><li><a href="{url.eregress}" class="rq-confirm-change-evt">{eregress}</a></li><%end%>
-				</ul>
-			</li>
-			<%end%>
-		</ul>
-		<hr size="1" />
+		<div class="rq-sidebarGroup">
+			<strong class="groupTitle">Event Actions</strong>
+			<ul class="rq-side{active} rq-sidembx">
+				<li><a href="{ce.url.sect-prizepool}" id="rq-wepp-start" class="rq-qn-startable">Prizepool and payouts</a></li>
+				<li><a href="{ce.url.sect-winners}"   id="rq-wew-start"  class="rq-qn-startable">Winners order finetune</a></li>
+				<%if {show_write_controls} %>
+				<li><a href="{ce.url.sect-list}"      id="rq-wep-start"  class="rq-qn-startable">Players info</a></li>
+				<%end%>
+				<li><a href="{url.write-evmisc}"      id="rq-wm-start"   class="rq-qn-startable">Miscellaneous</a></li>
+				<%if {show_event_progress_change} %>
+				<li><a href="javascript:;" id="rq-we-toggle-actions">Event state</a>
+					<ul id="rq-we-actions">
+					<%if {url.eprogress} %><li><a href="{url.eprogress}" class="rq-confirm-change-evt">{eprogress}</a></li><%end%>
+					<%if {url.eregress} %><li><a href="{url.eregress}" class="rq-confirm-change-evt">{eregress}</a></li><%end%>
+					</ul>
+				</li>
+				<%end%>
+			</ul>
+		</div>
 	<%end%><%end%>
-	<strong>Event</strong> <span class="small gray">({evtstate})</span> <br />
-	<strong>Event days</strong>
-	<ul>
-		<% loop {days+=sidebar:day} %>
-		<li><a href="{url}">{name}</a>
-		<%if {is_started} %><span class="small gray">(started)</span><%end%>
-		<%if {is_completed} %><span class="small gray">(completed)</span><%end%>
-		</li>
-		<% end {days} %>
-	</ul>
+
+	<div class="rq-sidebarGroup eventStates">
+		<strong class="groupTitle">Event <small class="grayText">{evtstate}</small></strong>
+		<ul>
+			<% loop {days+=sidebar:day} %>
+			<li><a href="{url}">{name}</a>
+			<%if {is_started} %><small class="greenText">started</small><%end%>
+			<%if {is_completed} %><small class="grayText">completed</small><%end%>
+			</li>
+			<% end {days} %>
+		</ul>
+	</div>
+
 	<%if {show_event_controls} %>
-	<hr size="1" />
-	<strong>Players left</strong>
-	<ul>
-		<li><input type="text" id="rSbPleft" value="{pl.pleft}" size="3" /> of
-			<input type="text" id="rSbPTotal" value="{pl.ptotal}" size="3" />
-			<input type="hidden" id="rSbPEvent" value="{pl.event}" size="3" />
-			<a href="javascript:;" id="rSbPSave">Save</a>
-			<script type="text/javascript">
-			var write_sbplayers_url = '{write_sbplayers_url}';
-			</script>
-		</li>
-	</ul>
+	<div class="rq-sidebarGroup">
+		<strong class="groupTitle">Players left</strong>
+		<ul class="playersLeft aform">
+			<li><input type="text" id="rSbPleft" value="{pl.pleft}" size="3" title="Players Left" />&nbsp;&nbsp;of&nbsp;&nbsp;
+				<input type="text" id="rSbPTotal" value="{pl.ptotal}" size="3" title="Total Players" />
+				<input type="hidden" id="rSbPEvent" value="{pl.event}" size="3" />
+				<a href="javascript:;" id="rSbPSave" class="icoConfirm" title="Confirm"></a>
+				<script type="text/javascript">
+				var write_sbplayers_url = '{write_sbplayers_url}';
+				</script>
+			</li>
+		</ul>
+	</div>
 	<%end%>
+
 </div>
 
 <% sidebar:t9n %>

@@ -278,6 +278,7 @@
 
 /* Social network buttons */
 div.meta {margin-bottom: 1.5em}
+.meta {position: relative;}
 .meta a {color: #0050bd}
 .livePokerPage .articleSocialLinks .gplus {position: relative; top: 4px; left: 5px; display: inline-block; overflow: hidden}
 .livePokerPage .articleSocialLinks img {vertical-align: middle; margin-left: 5px}

@@ -3,7 +3,7 @@
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
 	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {round_id} %> &bull; {!round} {round_nr}<%if {round_details} %>: {round_small_blind}-{round_big_blind}, {round_ante} ante<%end%><%end%> {sociallinks}
-		<%if {show_controls} %> | <a href="{url.edit}">edit</a> | <a href="{url.delete}" class="rq-confirm-delete">delete</a><%end%>
+		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a></span><%end%>
 	</div>
 	<% if {image} %><div class="fl10">
 		<div><img src="{image_src}" alt="{image_description}" /></div>
@@ -46,48 +46,71 @@
 
 
 <% controls:post %>
-<%if {cp.bundled_control} %><p><a href="#" id="rq-wp-start-bun">Edit</a></p><%end%>
+<%if {cp.bundled_control} %><div class="postActionIcons postActionIconsStatic"><a href="#" id="rq-wp-start-bun" class="editIco">Edit</a></div><%end%>
 <div id="rq-wp" style="<%if {cp.unhide} %><%else {cp.unhide} %>display:none;<%end%>">
 <form method="post" class="control" action="{!action}">
 	<input type="hidden" name="event"   value="{cp.save_event}" />
 	<input type="hidden" name="day_id"  value="{cp.day_id}" />
 	<input type="hidden" name="post_id" value="{cp.id}" />
-	<fieldset>
-		<legend>Post</legend>
-		<p><label>Title:</label><input type="text" name="title" maxlength="255" class="full-width" value="{cp.title}" /></p>
-		<p><label>Date:</label>
-			<select name="datetime_options" id="rq-wp-datetime-options">{cp.datetime_options}</select>
-			<span class="input-padright" id="rq-wp-datetime-custom" style="display:none;">{cp.custom_datetime} {cp.custom_tz}</span>
-		</p>
-		{cp.toolbar}
-		Text:
-		<p><textarea name="body" id="rq-wp-body" cols="55" rows="15">{cp.body}</textarea></p>
-		<%if{hl}%><a href="/h/?a={hl}" onclick="var w=window.open('/h/?a={hl}', 'hb', 'width=840,height=645,toolbar=no,scrollbars=yes,resizable=yes');w.focus();return false;">Add hand log</a><%end%>
-		<p><label>Tags:</label> <input type="text" name="tags" maxlength="255" class="full-width" value="{cp.tags}" /></p>
-		<p>
-			<input type="hidden" name="ipnimageid"    value="{cp.ipnimageid}" />
-			<input type="hidden" name="ipnimagemisc"  value="{cp.ipnimagemisc}" />
-			<input type="hidden" name="ipnimagesrc"   value="{cp.ipnimagesrc}" />
-			<input type="hidden" name="round_id"   value="{cp.round_id}" />
-			<input type="hidden" id="ipnbase"   value="{cp.url.ipn}" />
-			<label>Image:</label> <br />
-			<a href="{cp.url.ipnpreview}" id="rq-wp-ipnattach">Select</a> or 
-			<a href="{cp.url.ipnupload}" id="rq-wp-ipnupload">Upload</a> 
-			<span id="rq-wp-ipndelete2" <%if {cp.ipnimageid} %><%else {cp.ipnimageid} %>style="display:none"<%end%>>or</span>
-			<a href="javascript:;" id="rq-wp-ipndelete" <%if {cp.ipnimageid} %><%else {cp.ipnimageid} %>style="display:none"<%end%>>Delete</a> image <br />
-			<span style="display:block;padding-bottom:0.5em;<%if {cp.ipnimageid} %><%else {cp.ipnimageid} %>display:none<%end%>" id="rq-wp-ipnpreview">
-				<a href="{cp.url.ipnpreview}" id="rq-wp-ipnattach2"><img src="<%if {cp.ipnimageid} %>{cp.url.ipn}{cp.ipnimagesrc}<%else {cp.ipnimageid} %>/img/spc.gif<%end%>" width="100" style="float:left; padding-right:.5em;" alt="" /></a>
-				Image title:<br />
-				<textarea name="ipnimagetitle" style="width:320px;height:45px;" rows="3" cols="40">{cp.ipnimagetitle}</textarea>
-				<br style="clear: both" />
-			</span>
-		</p>
-		<p><label>Published:</label> <input type="checkbox" name="published" value="1" class="checkbox"<%if {cp.published} %> checked="checked"<%end%> /></p>
-		<%if {cp.show_keyhand} %><p><label>Is Key Hand:</label> <input type="checkbox" name="is_keyhand" value="1" class="checkbox"<%if {cp.is_keyhand} %> checked="checked"<%end%> /></p><%end%>
-		<p><label>Exportable:</label> <input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cp.is_exportable} %> checked="checked"<%end%> /><span class="small gray"> &nbsp; (WSOP xml)</span></p>
-		<p><label>&nbsp;</label>
-			<input type="submit" value="Save"/>
-		</p>
-	</fieldset>
+	<div class="aform clrfix">
+		<ul class="tabs"><li class="current">Write Post<span class="edge"></span></li></ul>
+		
+		<dl>
+			<dt><label>Pots Title</label></dt>
+			<dd class="w100"><input type="text" name="title" maxlength="255" class="full-width" value="{cp.title}" /></dd>
+		
+			<dt><label>Content</label></dt>
+			<dd class="w100">
+				<%if{hl}%><a href="/h/?a={hl}" onclick="var w=window.open('/h/?a={hl}', 'hb', 'width=840,height=645,toolbar=no,scrollbars=yes,resizable=yes');w.focus();return false;" class="addhandLog">Add hand log</a><%end%>
+				{cp.toolbar}
+				<textarea name="body" id="rq-wp-body" cols="55" rows="15">{cp.body}</textarea>
+			</dd>
+			<dt><label>Tags</label></dt>
+			<dd class="w100"><input type="text" name="tags" maxlength="255" class="full-width" value="{cp.tags}" /></dd>
+			
+			<dt><label>Image</label></dt>
+			<dd>
+				<input type="hidden" name="ipnimageid"    value="{cp.ipnimageid}" />
+				<input type="hidden" name="ipnimagemisc"  value="{cp.ipnimagemisc}" />
+				<input type="hidden" name="ipnimagesrc"   value="{cp.ipnimagesrc}" />
+				<input type="hidden" name="round_id"   value="{cp.round_id}" />
+				<input type="hidden" id="ipnbase"   value="{cp.url.ipn}" />
+				<a href="{cp.url.ipnpreview}" id="rq-wp-ipnattach">Select</a> or <a href="{cp.url.ipnupload}" id="rq-wp-ipnupload">Upload</a>
+
+				<span id="rq-wp-ipndelete2" <%if {cp.ipnimageid} %><%else {cp.ipnimageid} %>style="display:none"<%end%>>or</span>
+				<a href="javascript:;" id="rq-wp-ipndelete" <%if {cp.ipnimageid} %><%else {cp.ipnimageid} %>style="display:none"<%end%>>Delete</a> image <br />
+				<span style="display:block;padding-bottom:0.5em;<%if {cp.ipnimageid} %><%else {cp.ipnimageid} %>display:none<%end%>" id="rq-wp-ipnpreview">
+					<a href="{cp.url.ipnpreview}" id="rq-wp-ipnattach2"><img src="<%if {cp.ipnimageid} %>{cp.url.ipn}{cp.ipnimagesrc}<%else {cp.ipnimageid} %>/img/spc.gif<%end%>" width="200" style="float:left; padding-right:.5em;" alt="" /></a>
+					<label>Image title: <input name="ipnimagetitle" type="text" value="{cp.ipnimagetitle}" class="desc" /></label>
+				</span><span class="clr"></span>
+			</dd>
+		
+			<dt><label>Publish date</label></dt>
+			<dd>
+				<select name="datetime_options" id="rq-wp-datetime-options" class="dateSelection">{cp.datetime_options}</select>
+				<span class="dateSelectionItems" id="rq-wp-datetime-custom" style="display:none;">{cp.custom_datetime} {cp.custom_tz}</span>
+				<span class="clr"></span>
+			</dd>
+			<dt><label>Additional Setting</label></dt>
+			<dd>
+				<label><input type="checkbox" name="published" value="1" class="checkbox"<%if {cp.published} %> checked="checked"<%end%> /> Published</label><br />
+				<label><input type="checkbox" name="is_keyhand" value="1" class="checkbox"<%if {cp.is_keyhand} %> checked="checked"<%end%> /> Is Key Hand</label><br />
+				<label><input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cp.is_exportable} %> checked="checked"<%end%> /> Exportable <small class="grayText">(WSOP xml)</small></label>
+				<%if {cp.forum_topic.createble} %>
+				<div class="create-topic-context">
+					<label><input type="checkbox" name="create_topic" value="1" class="checkbox create-topic-toggle"<%if {cp.forum_topic.created} %> checked="checked" disabled="disabled"<%end%> /> Forum topic</label>
+					<%if {cp.forum_topic.created} %>&nbsp;&nbsp;<a href="{cp.forum_topic.url}" target="_blank">{cp.forum_topic.title}</a>
+					<%else {cp.forum_topic.created} %>
+					<div class="create-topic-initial-comment" style="display:none">
+						<small class="grayText">Initial topic comment:</small>
+						<textarea name="create_topic_initial_comment" cols="10" rows="3"></textarea>
+					</div>
+					<%end%>
+				</div>
+				<%end%>
+			</dd>
+		</dl>
+		<div class="formButton clrfix"><input type="submit" value="Save" /></div>
+	</div>
 </form>
 </div>

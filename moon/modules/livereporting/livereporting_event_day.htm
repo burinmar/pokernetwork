@@ -5,7 +5,7 @@
 		<%if {is_completed} %>{day_name} {!completed}<%end%>
 	</h3>
 	<p class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
-		<%if {show_controls} %> | <a href="{url.edit}">edit</a><%end%>
+		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a></span><%end%>
 	</p>
 	<div class="changedBets">
 		<%if {is_started} %>{event_name}<br /> {day_name} {!started}<%end%>

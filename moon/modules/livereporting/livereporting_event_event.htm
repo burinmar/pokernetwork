@@ -4,40 +4,60 @@
 	<input type="hidden" name="event" value="{cm.save_event}" />
 	<input type="hidden" name="event_id" value="{ce.event_id}" />
 	<% if {cm.master} %><input type="hidden" name="master" value="{cm.master}" /><%end%>
-	<fieldset>
-		<legend>Event: Misc.</legend>
-		<table>
-			<tr><td>
-			<p><label style="width: 100px;">Prizepool:</label>
-			   <input name="prizepool" size="10" maxlength="10" value="{cm.prizepool}" type="text" />
-			</p>
-			<p><label style="width: 100px;">Chips total:</label>
-			   <input name="chipspool" size="10" maxlength="10" value="{cm.chipspool}" type="text" />
-			</p>
-			<p><label style="width: 100px;">Players total:</label>
-			   <input name="players_total" size="10" maxlength="10" value="{cm.players_total}" type="text" />
-			</p>
-			<p><label style="width: 100px;">Players left:</label>
-			   <input name="players_left" size="10" maxlength="10" value="{cm.players_left}" type="text" />
-			</p>
-		</td><td style="padding-left: 25px;">
-			<p><label style="width: 100px;">Buy-in:</label>
-			   <input name="buyin" size="10" maxlength="10" value="{cm.buyin}" type="text" />
-			</p>
-			<p><label style="width: 100px;">Fee:</label>
-			   <input name="fee" size="10" maxlength="10" value="{cm.fee}" type="text" />
-			</p>
-			<p><label style="width: 100px;">Rebuys:</label>
-			   <input name="rebuy" size="10" maxlength="10" value="{cm.rebuy}" type="text" />
-			</p>
-			<p><label style="width: 100px;">Addons:</label>
-			   <input name="addon" size="10" maxlength="10" value="{cm.addon}" type="text" />
-			</p>
-		</td></tr><tr><td colspan="2">
-			<p><input type="submit" value="Save" /></p>
-		</td></tr>
-		</table>
-	</fieldset>
+	<div class="aform clrfix">
+		<ul class="tabs"><li class="current">Event: Misc.<span class="edge"></span></li></ul>
+		<dl>
+			<dd style="padding: 10px">
+				<table>
+					<colgroup>
+						<col style="width: 80px" />
+						<col style="width: 120px" />
+						<col style="width: 80px" />
+						<col style="width: 120px" />
+					</colgroup>
+					<tbody>
+					<tr>
+						<td><label>Prize Pool</label></td>
+						<td><input name="prizepool" size="10" maxlength="10" value="{cm.prizepool}" type="text" style="width: 80px" /></td>
+						<td><label>Players Total</label></td>
+						<td><input name="players_total" size="10" maxlength="10" value="{cm.players_total}" type="text" style="width: 80px" /></td>
+					</tr>
+					<tr>
+						<td><label>Chips Total</label></td>
+						<td><input name="chipspool" size="10" maxlength="10" value="{cm.chipspool}" type="text" style="width: 80px" /></td>
+						<td><label>Players Left</label></td>
+						<td><input name="players_left" size="10" maxlength="10" value="{cm.players_left}" type="text" style="width: 80px" /></td>
+					</tr>
+					</tbody>
+				</table>
+			</dd>
+			<dd style="padding: 10px">
+				<table>
+					<colgroup>
+						<col style="width: 80px" />
+						<col style="width: 120px" />
+						<col style="width: 80px" />
+						<col style="width: 120px" />
+					</colgroup>
+					<tbody>
+					<tr>
+						<td><label>Buy-in</label></td>
+						<td><input name="buyin" size="10" maxlength="10" value="{cm.buyin}" type="text" style="width: 80px" /></td>
+						<td><label>Fee</label></td>
+						<td><input name="fee" size="10" maxlength="10" value="{cm.fee}" type="text" style="width: 80px" /></td>
+					</tr>
+					<tr>
+						<td><label>Rebuys</label></td>
+						<td><input name="rebuy" size="10" maxlength="10" value="{cm.rebuy}" type="text" style="width: 80px" /></td>
+						<td><label>Addons</label></td>
+						<td><input name="addon" size="10" maxlength="10" value="{cm.addon}" type="text" style="width: 80px" /></td>
+					</tr>
+					</tbody>
+				</table>
+			</dd>
+		</dl>
+		<div class="formButton clrfix"><input type="submit" value="Save" /></div>
+	</div>
 </form>
 </div>
 <div id="rq-we" style="<%if {ce.unhide} %><%else {ce.unhide} %>display:none;<%end%>">
@@ -46,36 +66,37 @@
 	<input type="hidden" name="event_id" value="{ce.event_id}" />
 	<input type="hidden" name="day_id" value="{ce.day_id}" />
 	<% if {ce.master} %><input type="hidden" name="master" value="{ce.master}" /><%end%>
-	<fieldset>
-		<legend>Event: 
+	<div class="aform clrfix">
+		<ul class="tabs"><li class="current">
+			Event:
 			<span id="rq-we-sect-prizepool-c2">Prizepool and payouts</span>
 			<span id="rq-we-sect-winners-c2">Winners order finetune</span>
 			<span id="rq-we-sect-list-c2">Players info</span>
-		</legend>
+			<span class="edge"></span></li>
+		</ul>
 		<script type="text/javascript">
 		var write_event_load_url = '{ce.url.ajax_load}';
 		</script>
+		
 		<div id="rq-we-sect-prizepool" <%if {ce.sect_prizepool_active}%>style="display:block;"<%end%>>
 			<div id="rq-we-places-load" style="display:none;"><img src="/img/load-wgite.gif" alt="" /></div>
 			<div id="rq-we-places">
 				{ce.sc.places}
 			</div>
-			<br />
-			<p>
-				<input type="submit" name="action_save_prizepool" id="action_save_prizepool" value="Save" style="width:100px;"/>
-				<input type="submit" name="action_delete_prizepool" id="action_delete_prizepool" value="Delete marked" style="width:100px;display:none;" class="js-row-mark-sc" />
-			</p>
+			<div class="list-footer"><input type="submit" name="action_delete_prizepool" id="action_delete_prizepool" value="Delete marked" style="display:none" class="button btDel fr js-row-mark-sc" /></div>
+			<div class="formButton"><input type="submit" name="action_save_prizepool" id="action_save_prizepool" value="Save" style="margin-top: 0" /></div>
+			<span class="clr"></span>
 		</div>
+		
 		<div id="rq-we-sect-winners" <%if {ce.sect_winners_active}%>style="display:block;"<%end%>>
 			<div id="rq-we-winners-load" style="display:none;"><img src="/img/load-wgite.gif" alt="" /></div>
 			<div id="rq-we-winners">
 				{ce.sc.winners}
 			</div>
 			<br />
-			<p>
-				<input type="submit" name="action_save_winners" id="action_save_winners" value="Save" style="width:100px;"/>
-			</p>
+			<div class="formButton clrfix"><input type="submit" name="action_save_winners" id="action_save_winners" value="Save"/></div>
 		</div>
+
 		<div id="rq-we-sect-list" <%if {ce.sect_list_active}%>style="display:block;"<%end%>>
 			<div id="rq-we-list-load" style="display:none;"><img src="/img/load-wgite.gif" alt="" /></div>
 			<script type="text/javascript">
@@ -87,21 +108,23 @@
 			<%if {ce.sect_prizepool_active}%> var write_event_sect_prizepool_launch = true; <%end%>
 			</script>
 			<div id="rq-we-list">
-				<p>
-				<%if {ce.sect_list_paging} %>
-					Filter by name index: <br />
-					<select id="rq-we-list-pager">{ce.sect_list_paging}</select>
-				<% end %>
-				</p>
-				<p>
-					Filter by name: <br />
-					<input type="text" id="rq-we-list-filter" value="" />
-				</p>
-				<table class="longtable">
-					<colgroup>
-						<col style="width:100px;" />
-						<col style="width:270px;" />
-					</colgroup>
+				<div class="filterForm" style="margin-top: 10px">
+				<table>
+					<tr>
+						<td><%if {ce.sect_list_paging} %><label>Filter by name index: <select id="rq-we-list-pager" style="width: 170px">{ce.sect_list_paging}</select></label><% end %></td>
+						<td><label>Filter by name: <input type="text" id="rq-we-list-filter" value="" style="width: 170px" /></label></td>
+					</tr>
+				</table>
+				</div>
+				<table class="longtable list">
+					<thead>
+						<tr>
+							<th></th>
+							<th><span>Player Name</span></th>
+							<th><span>Sponsor</span></th>
+							<th></th>
+						</tr>
+					</thead>
 					<tbody id="rq-we-list-data" style="display:none;">
 					<tr id="rq-we-list-row--id-">
 						<td><a href="{ce.sect_list.evurl}">-card-</a></td>
@@ -111,26 +134,35 @@
 					</tr>
 					</tbody>
 				</table>
-				<hr style="margin:1em 0 0.5em 0" />
-				<p>Import records from Excel file &ndash; Select &amp; Paste new players data into the text area:</p>
-				<p><select><option>player [, id, sponsor, initial_chips]</option></select></p>
-				<p><textarea name="new_players_list" id="new_players_list_ta" rows="5" cols="40"></textarea></p>
-				<p><input type="button" value="Preview data" id="rq-we-list-preview" name="action_preview_new_plist" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" /></p>
+
+				<h3>Import Records From Excel File</h3>
+				<p class="explain">Import records from Excel file &ndash; Select &amp; Paste new players data into the text area:</p>
+				<dl>
+					<dd class="w100" style="padding: 10px">
+						<select><option>player [, id, sponsor, initial_chips]</option></select><br /><br />
+						<textarea name="new_players_list" id="new_players_list_ta" rows="5" cols="40"></textarea>
+					</dd>
+				</dl>
+				<div class="formButton clrfix">
+					<input type="button" value="Preview data" id="rq-we-list-preview" name="action_preview_new_plist" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" />
+				</div>
+				
 				<p id="rq-we-list-previewarea"></p>
-				<p id="rq-we-list-save-p" style="display:none"><input type="submit" name="action_save_new_plist" disabled="disabled" value="Save" id="rq-we-list-save" /></p>
-				<% if {ce.special_import} %>
-					<hr style="margin:1em 0 0.5em 0" />
-					<p>Wsop.com provides pokernews.com with a special feed of event players. You can import it here.</p>
-					<p id="rq-we-list-import-p"><input type="button" name="action_import_new_plist" value="Import WSOP players preview" id="rq-we-list-import" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" /></p>
-				<% end %>
+				<div class="formButton clrfix" id="rq-we-list-save-p" style="display:none"><input type="submit" name="action_save_new_plist" disabled="disabled" value="Save" id="rq-we-list-save" /></div>
+				<!--# <% if {ce.special_import} %>
+					<br /><h3>Import Records From WSOP.com</h3>
+					<p class="explain">Wsop.com provides pokernews.com with a special feed of event players. You can import it here.</p>
+					<div class="formButton clrfix"  id="rq-we-list-import-p"><input type="button" name="action_import_new_plist" value="Import WSOP players preview" id="rq-we-list-import" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" />
+					</div>
+				<% end %> -->
 			</div>
 		</div>
-	</fieldset>
+	</div>
 </form>
 </div>
 
 
-<% controls:event.statuses %>
+<% controls:event.statuses_delete_me %>
 1=Pro
 2=Online Qualifier
 3=Sponsored Player
@@ -173,25 +205,37 @@
 
 
 <% controls:event.place_list %>
-<table class="longtable" id="rq_we_pl_placetable">
+<table class="list" id="rq_we_pl_placetable">
+<colgroup>
+	<col style="width: 100px;" />
+	<col style="width: 140px;" />
+	<col />
+	<col style="width: 24px;" />
+</colgroup>
+<thead>
 <tr>
-	<td style="width: 24px;"></td>
-	<td style="width: 140px;">Place</td>
-	<td style="width: 140px;">Prize</td>
-	<td>Winner</td>
+	<th><span>Place</span></th>
+	<th><span>Prize</span></th>
+	<th><span>Winner</span></th>
+	<th></th>
 </tr>
+</thead>
+<tbody>
 <%loop {place_list += controls:event.place_list.item} %>
-<tr><td><%if {repeated} %><%else {repeated} %><input type="checkbox" class="checkbox js-row-mark" name="delete[{id}]" value="1" /><%end%></td>
-	<td><%if {repeated} %>{place}<%else {repeated} %><input type="text" name="place[{id}]"  value="{placev}" size="8" /><%end%></td>
-	<td><%if {repeated} %>{prize}<%else {repeated} %><input type="text" name="prize[{id}]" value="{prizev}" size="8" /><%end%></td>
-	<td>{name}</td></tr>
+<tr>
+	<td><%if {repeated} %>{place}<%else {repeated} %><input style="width: 70px" type="text" name="place[{id}]"  value="{placev}" size="8" /><%end%></td>
+	<td><%if {repeated} %>{prize}<%else {repeated} %><input style="width: 70px" type="text" name="prize[{id}]" value="{prizev}" size="8" /><%end%></td>
+	<td>{name}</td>
+	<td><%if {repeated} %><%else {repeated} %><input type="checkbox" class="checkbox js-row-mark" name="delete[{id}]" value="1" /><%end%></td>
+</tr>
 <%end%>
 <tr>
+	<td><input style="width: 40px" type="text" name="new_place[]" value="" size="8" class="rq-we-pl-newplace" /></td>
+	<td><input style="width: 80px" type="text" name="new_prize[]" value="" size="8" /></td>
 	<td></td>
-	<td><input type="text" name="new_place[]" value="" size="8" class="rq-we-pl-newplace" /></td>
-	<td><input type="text" name="new_prize[]" value="" size="8" /></td>
 	<td>&nbsp;</td>
 </tr>
+</tbody>
 </table>
 <script type="text/javascript">
 /*<![CDATA[*/
@@ -199,46 +243,48 @@ var rq_we_pl_newplace={rq_we_pl_newplace};
 /*]]>*/
 </script>
 
-
 <% controls:event.place_list.newitem %>
 <tr>
+	<td><input style="width: 40px" type="text" name="new_place[]" value="" size="8" class="rq-we-pl-newplace" /></td>
+	<td><input style="width: 80px" type="text" name="new_prize[]" value="" size="8" /></td>
 	<td></td>
-	<td><input type="text" name="new_place[]" value="" size="8" class="rq-we-pl-newplace" /></td>
-	<td><input type="text" name="new_prize[]" value="" size="8" /></td>
 	<td>&nbsp;</td>
 </tr>
 
 
 <% controls:event.winner_list %>
-<p>Take note that any player in this list may be auto-reordered anytime he is mentioned in &quot;full players listing&quot; batch chipcount import. <br />You should also normally not enter players in the list by hand, but manage existing ones when necessary (this is possible though, whenever the player was mentioned at least in one chipcount update).
-</p>
+<p class="explain" style="margin: 10px 0; line-height: 16px">Take note that any player in this list may be auto-reordered anytime he is mentioned in &quot;full players listing&quot; batch chipcount import. <br />You should also normally not enter players in the list by hand, but manage existing ones when necessary (this is possible though, whenever the player was mentioned at least in one chipcount update).</p>
 <table class="colsym2">
 <tr>
 	<td style="width:30px;padding:2px 10px 0 0;"><%loop {rows += controls:event.winner_list.row} %>{nr}<br/><%end%></td>
-	<td><textarea name="winner_list" style="height:{height}px;background-image:none;" cols="20" rows="2">{winners}</textarea></td>
+	<td><textarea name="winner_list" style="height:{height}px;" cols="20" rows="2">{winners}</textarea></td>
 </tr>
 </table>
 
 
 <% controls:plist.save_preview %>
-<table class="longtable">
-<tr>
-	<th style="width:100px">Id</th>
-	<th>Name</th>
-	<th>Sponsor</th>
-</tr>
-<%loop {cc.plist += controls:plist.save_preview.item} %>
-<tr class="<%if {is_new_player} %>green<%end%> <%if {is_del_player} %>red<%end%>">
-<td>{id}</td>
-<td>{name}</td>
-<td>{sponsor}</td>
-</tr>
-<%end%>
-</table>
-Legend:<br />
-<span class="green">New player</span>
-<span class="red">Deleted player</span>
-
+<div class="scrollDiv" style="margin-top: 30px">
+	<table class="list">
+		<thead>
+		<tr>
+			<th style="width:100px"><span>Id</span></th>
+			<th><span>Name</span></th>
+			<th><span>Sponsor</span></th>
+		</tr>
+		</thead>
+		<tbody>
+			<%loop {cc.plist += controls:plist.save_preview.item} %>
+			<tr class="<%if {is_new_player} %>green<%end%> <%if {is_del_player} %>red<%end%>">
+				<td>{id}</td>
+				<td>{name}</td>
+				<td>{sponsor}</td>
+			</tr>
+		</tbody>
+		<%end%>
+	</table>
+</div>
+<div class="fr legend"><span class="green">New player</span><span class="red">Busted player</span></div>
+<span class="clr"></span>
 
 
 

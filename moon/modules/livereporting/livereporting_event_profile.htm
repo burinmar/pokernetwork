@@ -4,70 +4,87 @@
 	{control}
 </div>
 <%end%>
-<h3>{cu.name}</h3>
-<%if {cu.is_pnews} %><p>Is PokerNews player</p><%end%>
-<%if {cu.sponsor} %>
-<p>
-	<% if {cu.sponsorurl} %>
-	Sponsor: <a href="{cu.sponsorurl}"><img src="{cu.sponsorimg}" alt="{cu.sponsor}" title="{cu.sponsor}" style="vertical-align:middle" /></a> <a href="{cu.sponsorurl}">{cu.status}</a>
-	<% else {cu.sponsorurl} %>
-	Sponsor: <img src="{cu.sponsorimg}" alt="{cu.sponsor}" title="{cu.sponsor}" style="vertical-align:middle" /> {cu.status}
-	<%end%>
-</p>
-<%end%>
-<p>
-Player chipcounts: <br />
-<table class="profilechips" border="1">
-<tr>
-	<th>Chips&nbsp;</th>
-	<th>Chips change&nbsp;</th>
-	<th>Logged</th>
-</tr>
-{cu.chips_list}
-</table>
-<p>
+<div class="aform clrfix">
+	<h3>{cu.name}</h3>
+	<%if {cu.is_pnews} %><p>Is PokerNews player</p><%end%>
+	<%if {cu.sponsor} %>
+	<p>
+		<% if {cu.sponsorurl} %>
+		Sponsor: <a href="{cu.sponsorurl}"><img src="{cu.sponsorimg}" alt="{cu.sponsor}" title="{cu.sponsor}" style="vertical-align:middle" /></a> <a href="{cu.sponsorurl}">{cu.status}</a>
+		<% else {cu.sponsorurl} %>
+		Sponsor: <img src="{cu.sponsorimg}" alt="{cu.sponsor}" title="{cu.sponsor}" style="vertical-align:middle" /> {cu.status}
+		<%end%>
+	</p>
+	<%end%><br />
+	<h3>Player chipcounts</h3>
+	<table class="profilechips list">
+		<thead>
+		<tr>
+			<th><span>Chips</span></th>
+			<th><span>Chips change</span></th>
+			<th><span>Logged</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		{cu.chips_list}
+		</tbody>
+	</table>
+</div>
 
 <% cu.chips_list.item %>
 <tr <%if {busted} %> class="busted"<%end%>>
 	<td <%if {is_full} %> style="font-weight:bold;"<%end%>>{chips}</td>
 	<td><%if {chips_change_direction} %><img src="/img/live_poker/chip_{chips_change_direction}.gif" alt="" /> <%end%>{chips_change}</td>
-	<td><%if {import_url} %><a href="{import_url}">{created_on}</a><%else {import_url} %>{created_on} [<a href="{delete_url}">x</a>]<%end%></td>
+	<td><%if {import_url} %><a href="{import_url}">{created_on}</a><%else {import_url} %>{created_on} &nbsp;&nbsp;<a href="{delete_url}">delete</a><%end%></td>
 </tr>
 
 
 <% controls:profile %>
-<%if {cu.bundled_control} %><p><a href="#" id="rq-wu-start-bun">Edit</a></p><%end%>
+<%if {cu.bundled_control} %><div class="postActionIcons postActionIconsStatic"><a href="#" id="rq-wu-start-bun" class="editIco">Edit</a></div><%end%>
 <div id="rq-wu" style="<%if {cu.unhide} %><%else {cu.unhide} %>display:none;<%end%>">
 <form action="{!action}" class="control" method="post">
 	<input type="hidden" name="event" value="{cu.save_event}" />
 	<input type="hidden" name="id" value="{cu.id}" />
 	<input type="hidden" name="event_id" value="{cu.event_id}" />
-	<fieldset>
-		<legend>User profile</legend>
-		<p><label for="name">Name:</label>
-			<input type="text" name="name" maxlength="100" size="60" value="{cu.name}" /></p>
-		<p><label for="name">ID:</label>
-			<input type="text" name="card" maxlength="100" size="10" value="{cu.card}" /></p>
-		<p><label for="is_pnews">PN <img src="/img/pn-player.png" style="vertical-align: top;height:16px;" alt="Player" class="splogo" />:</label>
-			<input type="checkbox" class="checkbox" name="is_pnews" value="1" <%if {cu.is_pnews}%> checked="checked"<%end%> />&nbsp;</p>
-		<p><label for="sponsor">Sponsor:</label>
-			<select name="sponsor" style="height:auto;"><option value="">&nbsp;</option>{cu.sponsor}</select></p>
-		<p><label for="status">Status:</label>
-			<input type="text" name="status" value="{cu.status}" /></p>
-		<p><label for="country_id">Country</label>
-			<select name="country_id" style="height:auto;"><option value="">Unknown</option>{cu.country}</select></p>
+	<div class="aform clrfix" style="margin-bottom: 10px">
+		<ul class="tabs"><li class="current">User profile<span class="edge"></span></li></ul>
+		<dl>
+			<dt><label>Name</label></dt>
+			<dd><input type="text" name="name" maxlength="100" size="60" value="{cu.name}" /></dd>
 			
-		<%if {cu.bluff} %> 
-		<input type="hidden" name="bluff_id" value="{cu.bluff.bluff_id}" />
-		<p style="border-top:1px solid #034EA2; padding-top:10px; margin-top:10px;"><label for="country">Country code (WSOP):</label>
-			<input type="text" name="country" value="{cu.bluff.country}" maxlength="3"  /></p>
-		<p><label for="state">State code (WSOP):</label>
-			<input type="text" name="state" value="{cu.bluff.state}" maxlength="3" /></p>
-		<p><label for="city">City (WSOP):</label>
-			<input type="text" name="city" value="{cu.bluff.city}" /></p>
-		<%end%>
-		<p style="float:right"><a href="{cu.playerdelete}" class="rq-confirm-delete">Delete player</a></p>
-		<p><input type="submit" value="Save" /><p>
-	</fieldset>
+			<dt><label>ID</label></dt>
+			<dd><input type="text" name="card" maxlength="100" size="10" value="{cu.card}" /></dd>
+			
+			<dt></dt>
+			<dd><label><input type="checkbox" class="checkbox" name="is_pnews" value="1" <%if {cu.is_pnews}%> checked="checked"<%end%> /> PokerNews Player</label></dd>
+			
+			<dt><label>Sponsor</label></dt>
+			<dd><select name="sponsor" style="height:auto;"><option value="">&nbsp;</option>{cu.sponsor}</select></dd>
+			
+			<dt><label>Status</label></dt>
+			<dd><input type="text" name="status" value="{cu.status}" /></dd>
+			
+			<dt><label>Country</label></dt>
+			<dd><select name="country_id" style="height:auto;"><option value="">Unknown</option>{cu.country}</select></dd>
+			
+			<%if {cu.bluff} %> 
+				<dt><label>Country code (WSOP)</label></dt>
+				<dd>
+					<input type="hidden" name="bluff_id" value="{cu.bluff.bluff_id}" />
+					<input type="text" name="country" value="{cu.bluff.country}" maxlength="3" />
+				</dd>
+				
+				<dt><label>State code (WSOP)</label></dt>
+				<dd><input type="text" name="state" value="{cu.bluff.state}" maxlength="3" /></dd>
+				
+				<dt><label>City (WSOP)</label></dt>
+				<dd><input type="text" name="city" value="{cu.bluff.city}" /></dd>
+			<%end%>
+		</dl>
+		<div class="formButton clrfix">
+			<a href="{cu.playerdelete}" class="rq-confirm-delete button fr btDel" style="color: #000; margin-top: 10px">Delete player</a>
+			<input type="submit" value="Save" />
+		</div>
+	</div>
 </form>
 </div>

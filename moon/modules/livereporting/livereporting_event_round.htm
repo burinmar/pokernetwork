@@ -2,7 +2,7 @@
 <div class="article <%if{is_hidden}%>article-hidden<%end%>" id="round-{id}">
 	<h3 class="articleTitle" id="no{id}">{!round} {round} {!started}</h3>
 	<p class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
-		<%if {show_controls} %> | <a href="{url.edit}">edit</a> <%if {show_fullcontrols} %> | <a href="{url.stop}">stop</a><%end%><%end%>
+		<%if {show_controls} %><span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if {show_fullcontrols} %><a href="{url.stop}" class="stopIco" title="Stop">stop</a><%end%></span><%end%>
 	</p>
 	<div class="changedBets">
 		<% if {custom} %>
@@ -45,40 +45,56 @@
 	<input type="hidden" name="day_id" value="{cr.day_id}" />
 	<input type="hidden" name="round_id" value="{cr.round_id}" />
 	<% if {cr.master} %><input type="hidden" name="master" value="{cr.master}" /><%end%>
-	<fieldset>
-		<legend>Betting structure</legend>
-		<p><label>Level:</label><input type="text" size="2" name="round" value="{cr.round}" style="float:left;margin-right: 130px" />
-		   <label>Duration:</label><input type="text" size="3" name="duration" value="{cr.duration}" />min.</p>
+	<div class="aform clrfix">
+		<ul class="tabs"><li class="current">Betting structure<span class="edge"></span></li></ul>
+		<dl>
+			<dt><label>Level</label></dt>
+			<dd><input type="text" size="2" name="round" value="{cr.round}" style="width: 50px" /></dd>
+			
+			<dt><label>Duration</label></dt>
+			<dd><input type="text" size="3" name="duration" value="{cr.duration}" style="width: 50px" />&nbsp;&nbsp;min.</dd>
+		
 		<%if {cr.show_single_entry} %>
-		<p><label>Date:</label>
-			<select name="datetime_options" id="rq-wr-datetime-options">{cr.datetime_options}</select>
-			<span class="input-padright" id="rq-wr-datetime-custom" style="display:none;">{cr.custom_datetime} {cr.custom_tz}</span>
-		</p>
+			<dt><label>Date</label></dt>
+			<dd>
+				<select name="datetime_options" id="rq-wr-datetime-options" class="dateSelection">{cr.datetime_options}</select>
+				<span class="dateSelectionItems" id="rq-wr-datetime-custom" style="display:none;">{cr.custom_datetime} {cr.custom_tz}</span><span class="clr"></span>
+			</dd>
 		<%end%>
-		<p>Use limits instead of blinds <input type="checkbox" name="limit_not_blind" id="rq-wr-limit-not-blind" style="position:relative; top: 2px" <%if {cr.limit_not_blind} %> checked="checked"<%end%> /></p>
-		<table>
-			<tr><td>&nbsp;</td><td style="padding-left:8px">Custom description:</td></tr>
-			<tr><td>
-				<p id="rq-wr-small-blind-p"><label>Small blind:</label> <input type="text" name="small_blind" size="7" maxlength="9" value="{cr.small_blind}" /></p>
-				<p id="rq-wr-small-limit-p"><label>Small limit:</label> <input type="text" name="small_limit" size="7" maxlength="9" value="{cr.small_blind}" /></p>
-				</td>
-				<td rowspan="3" style="vertical-align:top;padding-left:8px">
+			<dt></dt>
+			<dd><input type="checkbox" name="limit_not_blind" id="rq-wr-limit-not-blind" style="position:relative; top: 2px" <%if {cr.limit_not_blind} %> checked="checked"<%end%> /> <label for="rq-wr-limit-not-blind">Use limits instead of blinds</label></dd>
+		</dl>
+		<dl id="rq-wr-small-blind-p">
+			<dt><label>Small blind</label></dt>
+			<dd><input type="text" name="small_blind" size="7" maxlength="9" value="{cr.small_blind}" style="width: 80px" /></dd>
+		</dl>
+		<dl id="rq-wr-small-limit-p">
+			<dt><label>Small limit</label></dt>
+			<dd><input type="text" name="small_limit" size="7" maxlength="9" value="{cr.small_blind}" style="width: 80px" /></dd>
+		</dl>
+		<dl id="rq-wr-big-blind-p">
+			<dt><label>Big blind</label></dt>
+			<dd><input type="text" name="big_blind" size="7"  maxlength="9" value="{cr.big_blind}" style="width: 80px" /></dd>
+		</dl>
+		<dl id="rq-wr-big-limit-p">
+			<dt><label>Big limit</label></dt>
+			<dd><input type="text" name="big_limit" size="7"  maxlength="9" value="{cr.big_blind}" style="width: 80px" /></dd>
+		</dl>
+		<dl>
+			<dt><label>Ante</label></dt>
+			<dd><input type="text" name="ante" size="7" maxlength="9" value="{cr.ante}" style="width: 80px" /></dd>
+			<dt><label>Custom description</label></dt>
+			<dd class="w100">
 				<textarea name="description" style="height:72px;" cols="50" rows="4">{cr.description}</textarea>
-				</td></tr>
-			<tr><td>
-				<p id="rq-wr-big-blind-p"><label>Big blind:</label> <input type="text" name="big_blind" size="7"  maxlength="9" value="{cr.big_blind}" /></p>
-				<p id="rq-wr-big-limit-p"><label>Big limit:</label> <input type="text" name="big_limit" size="7"  maxlength="9" value="{cr.big_blind}" /></p>
-			</td></tr>
-			<tr><td><p><label>Ante:</label> <input type="text" name="ante" size="7" maxlength="9" value="{cr.ante}" /></p></td></tr>
-		</table>
-		<p>Note: Entering custom description will ignore blinds and ante fields.</p>
-		<p><label>&nbsp;</label>
-			<input type="submit" value="Save"/>
-		</p>
+				<div class="explain">Note: Entering custom description will ignore blinds and ante fields.</div>
+			</dd>
+		</dl>
+		<div class="formButton clrfix"><input type="submit" value="Save" /></div>
+
 		<%if {cr.show_single_entry} %>
 		<%else {cr.show_single_entry} %>
-		<hr size="1" style="clear:both;margin: 5px 0;" />
-		{!rounds}
+
+		<br /><h3>{!rounds}</h3>
 		<div id="rq-wr-rounds-load" style="display:none;"><img src="/img/load-wgite.gif" alt="" /></div>
 		<div id="rq-wr-rounds">
 			<script type="text/javascript">
@@ -87,45 +103,51 @@
 			{rounds}
 		</div>
 		<%end%>
-	</fieldset>
+	</div>
 </form>
 </div>
 
 <% controls:round.round_list %>
 <%if {rounds} %>
-<table class="rounds">
-<%loop {rounds += controls:round.item} %>
-	<tr>
-		<td>{round}</td>
-		<td>
-			<a href="{url.edit}" class="small">edit</a>&nbsp;<a href="{url.delete}" class="small rq-confirm-delete">delete</a>&nbsp;&nbsp;
-		</td>
-		<td>
-			<%if {custom} %>{description}<%else {custom} %>
-				<%if {limit_not_blind} %>
-				Limits: {small_blind} / {big_blind};  ante: {ante}
-				<%else {limit_not_blind} %>
-				Blinds: {small_blind} / {big_blind};  ante: {ante}
+<table class="rounds list">
+<colgroup>
+	<col style="width: 35px" />
+	<col style="width: 65px" />
+	<col />
+	<col />
+	<col style="width: 90px" />
+</colgroup>
+<tbody>
+	<%loop {rounds += controls:round.item} %>
+		<tr>
+			<td>{round}</td>
+			<td class="postActionIcons" style="white-space: nowrap">
+				<a href="{url.edit}" class="editIco" title="Edit Round">edit</a>
+				<a href="{url.delete}" class="deleteIco rq-confirm-delete" title="Edit Round">delete</a>
+			</td>
+			<td>
+				<%if {custom} %>{description}<%else {custom} %>
+					<%if {limit_not_blind} %>
+					Limits: {small_blind} / {big_blind};  ante: {ante}
+					<%else {limit_not_blind} %>
+					Blinds: {small_blind} / {big_blind};  ante: {ante}
+					<%end%>
 				<%end%>
-			<%end%>
-		</td>
-		<td>
-			<%if {started_on} %>
-				Started: <span style="white-space:nowrap">{started_on}</span>.
-				<%if {stop} %><a href="{url.stop}" class="confirm-change-round">Stop</a><%end%>
-			<%else {started_on} %>
-				Duration: {duration} min.
-				<%if {start} %><a href="{url.start}" class="confirm-change-round">Start now</a><%end%>
-				<%if {move} %>&nbsp; Move to day: <%loop {moveDay += controls:round.item.moveDay} %><a href="{url.move}" class="rq-confirm-change-round">{name}</a>&nbsp;<%end%><%end%>
-			<%end%>
-		</td>
-		<td><%if {startable} %>
-			<a href="{url.edit}" class="small">start</a> &nbsp; &nbsp;
-			<a href="{url.delete}" class="small">move</a>
-			<% end %>
-		</td>
-	</tr>
-<%end%>
+			</td>
+			<td class="grayText">
+				<%if {started_on} %>
+					Started: <span style="white-space:nowrap">{started_on}</span>.
+					<%if {stop} %><a href="{url.stop}" class="confirm-change-round">Stop</a><%end%>
+				<%else {started_on} %>
+					Duration: {duration} min.
+					<%if {start} %><a href="{url.start}" class="confirm-change-round">Start now</a><%end%>
+					<%if {move} %>&nbsp; Move to day: <%loop {moveDay += controls:round.item.moveDay} %><a href="{url.move}" class="rq-confirm-change-round">{name}</a>&nbsp;<%end%><%end%>
+				<%end%>
+			</td>
+			<td><%if {startable} %><a href="{url.edit}" class="small">start</a>&nbsp;<a href="{url.delete}" class="small">move</a><% end %></td>
+		</tr>
+	<%end%>
+</tbody>
 </table>
 <%end%>
 
