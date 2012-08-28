@@ -18,7 +18,29 @@
 		<div class="thumbContainer">
 			<ul>
 				<%loop {playlist += player:playlist.item} %>
-				<li><a href="{videoPageUri}" data-video-uri="{videoUri}" data-video-length="{videoLength}"><img src="http://i.ytimg.com/vi/{videoUri}/default.jpg" alt="" title="{videoTitle}" /></a></li>
+				<li><a href="{videoPageUri}" data-video-uri="{videoUri}" data-video-length="{videoLength}"><img src="http://i.ytimg.com/vi/{videoUri}/mqdefault.jpg" alt="" title="{videoTitle}" /></a></li>
+				<%end%>
+			</ul>
+		</div>
+	</div>
+	<%end%>
+</div>
+</div>
+
+<% player:iframe %>
+<div class="{class}">
+<div class="pnVideoContainer pnVideoContainerIframe" style="width: {width};">
+	<iframe title="YouTube video player" width="{width}" height="{height}" 
+		src="http://www.youtube.com/embed/{videoUri}?wmode=transparent" frameborder="0" allowfullscreen="allowfullscreen">
+	</iframe>
+	<%if {playlist} %>
+	<div class="playlist">
+		<a href="#" class="prev"></a>
+		<a href="#" class="next"></a>
+		<div class="thumbContainer">
+			<ul>
+				<%loop {playlist += player:playlist.item:iframe} %>
+				<li><a href="{videoPageUri}"><img src="http://i.ytimg.com/vi/{videoUri}/mqdefault.jpg" alt="" title="{videoTitle}" /></a></li>
 				<%end%>
 			</ul>
 		</div>
@@ -50,6 +72,11 @@ class=w300 progressTop
 <% preset:videoPage %>
 width=455px
 height=257px
+class=videoPageVideo
+
+<% preset:videoPage:iframe %>
+width=455px
+height=370px
 class=videoPageVideo
 
 <% preset:homePage %>

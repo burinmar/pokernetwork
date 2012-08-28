@@ -20,6 +20,16 @@ class shared_pnplayer
 	public function getHtml($videoUri, $videoLength = 0, $preset = 'default', $playlist = null, $ad = array(), $thumbnailSrc = null) 
 	{
 		$this->setHtmlEnv();
+		include_class('mobile_device_detect');
+
+		$tplTgt = 'player';
+		$tplPLTgt = 'player:playlist.item';
+		if (strlen($videoUri) == 11 && mobile_device_detect(true, true) !== false) {
+			$tplTgt   .= ':iframe';
+			$tplPLTgt .= ':iframe';
+			if ($this->tpl->has_part('preset:' . $preset . ':iframe'))
+				$preset .= ':iframe';
+		}
 
 		$tplArgs = $this->loadPreset($preset);
 		$tplArgs['videoUri'] = htmlspecialchars($videoUri);
@@ -47,7 +57,7 @@ class shared_pnplayer
 		$tplArgs['playlist'] = '';
 		if (is_array($playlist)) {
 		foreach ($playlist as $playlistItem) {
-			$tplArgs['playlist'] .= $this->tpl->parse('player:playlist.item', array(
+			$tplArgs['playlist'] .= $this->tpl->parse($tplPLTgt, array(
 				'videoUri' => htmlspecialchars($playlistItem[0]),
 				'videoLength' => htmlspecialchars($playlistItem[1]),
 				'videoTitle' => htmlspecialchars($playlistItem[2]),
@@ -55,7 +65,7 @@ class shared_pnplayer
 			));
 		}}
 
-		return $this->tpl->parse('player', $tplArgs);
+		return $this->tpl->parse($tplTgt, $tplArgs);
 	}
 
 	public function getDefaultAdsConfig($zone = null)

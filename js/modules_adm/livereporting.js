@@ -13,17 +13,16 @@ function skinPreview() {
 		.css('background-position', 'center');
 }
 
-function evAddDay(date) {
+function evAddDay() {
 	var s = emptyDayControl;
 	var nr = $('#event_days .evDName').length + 1;
 	s = s.replace(/{nr}/g, nr);
 	s = s.replace(/{value}/g, '');
-	s = s.replace(/{from_date}/g, date);
+	s = s.replace(/{from_date}/g, '');
 	$('#event_days tr:last').after(s);
 	jQuery("#event_days .isDate:last").each(function () {
 		var id = jQuery(this).attr('id');
-		if (id) jQuery(this).before('<a href="void(0);" onclick="pickDate(\'' + id + '\');return false" title=""><img src="/img/adm/_calendar.png" alt="Pick date" width="24" style="margin-bottom: -6px;" /></a>&nbsp;');
-		$(this).mask("9999-99-99");
+		if (id) jQuery(this).before('<a href="void(0);" onclick="pickDate(\'' + id + '\');return false" title="" class="calendar"></a>&nbsp;');
 	});	
 	if (nr > 1) {
 		jQuery("#event_days .evDName:last").focus(function(){
@@ -71,8 +70,6 @@ $(document).ready(function(){
 		});
 		cToggleByCheckbox('#isLiveTournament', '.is_live_dep');
 	}
-	$(".isDate").mask("9999-99-99");
-	$(".isTime").mask("99:99");
 	skinPreview();
 	$('#entry-skin').change(skinPreview);
 	
@@ -91,6 +88,30 @@ $(document).ready(function(){
 	}
 });
 
+$(document).ready(function(){
+	if (typeof emptyDayControl == 'undefined') {
+		return ;
+	}
+	var daysEliminationPreview = $('#day-preview-holder');
+	try {
+		daysEliminationPreview.pnReportingDayGraph({
+			width: 540,
+			height: 150
+		});
+	} catch(e) {}
+
+	function displayDaysPreview() {
+		var days = [];
+		$('#event_days input.evDName').each(function(){
+			days.push($(this).val());
+		});
+		try {
+			daysEliminationPreview.pnReportingDayGraph('set', days);
+		} catch(e) {}
+	}
+	$('#event_days input.evDName').livequery('change', displayDaysPreview);
+	displayDaysPreview();
+});
 
 var map;
 var marker;
