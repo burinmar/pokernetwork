@@ -107,6 +107,7 @@ p.blocky {margin-top: 15px;}
 	-webkit-border-radius: 4px;
 	background: #fff;
 	line-height: normal;
+	box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.3) inset;
 }
 .aform input[disabled="disabled"], .aform textarea[disabled="disabled"] {background-color: #ebebe4;}
 
