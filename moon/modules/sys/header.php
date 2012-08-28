@@ -34,6 +34,15 @@ class header extends moon_com
 			return $res;
 		}
 
+//  $67,500 PokerStars PokerNews Freeroll Series 
+if ($this->wallpaper($res, array(
+'promoID'=> 110,
+'imgPath'=> '/img/ps_frseries_wallpaper.jpg',
+'bgColor'=> '#000',
+'startDate'=> '2012-09-01 00:00:01',
+)
+)) return $res;
+
 
 // Stars WCOOP 20k
 if ($this->wallpaper($res, array(
