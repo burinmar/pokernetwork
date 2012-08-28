@@ -809,5 +809,8 @@ $.fn.pnVideoSlider = function(args)
 /*! end flowplayer */
 
 jQuery(function(){
-	$('.pnVideoContainer').pnVideo();
+	try {
+		$('.pnVideoContainer').pnVideo();
+	} catch(e) {}
+	$('.pnVideoContainerIframe .playlist').pnVideoSlider();
 });
