@@ -1,0 +1,74 @@
+#promo {background: #000000 url('bg.jpg') no-repeat top left}
+#promo .head {
+	float: right;
+	margin-right: 40px;
+	width: 450px;
+	padding-top: 50px;
+	position: relative;
+	margin-bottom: 0;
+	min-height: 220px;
+	padding-left: 0;
+}
+#promo .head h1 {
+	line-height: 44px;
+	margin-bottom: 5px;
+}
+#promo .head p {font-size: 20px; color: #fff; margin-bottom: 20px}
+#promo .menu {background: #164f16 url('menu.png') repeat-x top right}
+#promo .menu a {background: url('menu-sep.png') no-repeat top right; color: #fff}
+#promo .menu a:hover {color:#fff}
+#promo .menu .active a {color: #32bc32}
+#promo .menu .active, #promo .menu .active:hover {background: url('menu.png') repeat-x 0px -43px}
+#promo .menu li:hover {background: url('menu.png') repeat-x bottom left}
+#promo .prize {
+	border-bottom: 0 none;
+	padding-bottom: 0;
+}
+#promo .prize a,
+#promo .content a {color: #1fad1f}
+#promo .prize a:hover,
+#promo .content a:hover {color: #43fa43}
+#promo .content h2 {color: #fff}
+#promo table th {background: #3b873b; color: #391900}
+#promo table td {
+	background: #992127;
+	border-bottom: 1px dotted #001416;
+}
+#promo table.results td {background: #ab262c; border-bottom: 1px dotted #001416}
+#promo table.results tr:nth-child(odd) td {background: #992127}
+
+#promo .download {
+	display: inline-block;
+	min-width: 150px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 10px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	background: #1ea81e;
+	box-shadow: 2px 2px 3px rgba(0, 0, 0, 1);
+	border-radius: 5px;
+}
+	#promo .download:after {
+		content: '';
+		position: absolute;
+		top: 4px;
+		right: -180px;
+		background: url('logo.png') no-repeat top right;
+		height: 34px;
+		width: 161px;
+	}
+
+#promo .usertable {margin-bottom: 20px}
+#promo .usertable td {padding: 10px}
+#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
+#promo .content .paging {background-color: #3b873b}
+
+#promo .archive {border-top: 0 none}
+#promo .show-archive {border-bottom: 1px dashed #43fa43}
+#promo .show-archive:hover {border-color:#fff}
