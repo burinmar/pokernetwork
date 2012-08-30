@@ -116,7 +116,7 @@
 #landing.pokerstars5k {background-image: url('/img/landing/pokerstars5k/intro.jpg?1'); padding: 40px 35px 65px 65px}
 #landing.pokerstars5k .download {background-image: url('/img/landing/pokerstars5k/download.png?1'); line-height: 60px; width: 306px; height: 60px; font-size: 29px; text-transform: none; font-weight: normal}
 
-#landing.unibet-racetrack {background-image: url('/img/landing/unibet-racetrack/intro.jpg')}
+#landing.unibet-racetrack {background-image: url('/img/landing/unibet-racetrack/intro.jpg?1')}
 #landing.unibet-racetrack .download {background: url('/img/landing/unibet-racetrack/download.png?1') repeat-x; line-height: 39px; height: 39px; font-size: 14px; color: #fff; position: relative; }
 #landing.unibet-racetrack .download:hover {background-position: bottom left}
 #landing.unibet-racetrack .download:after {position: absolute; top: 5px; right: -180px; content: ''; background: url('/img/landing/unibet-racetrack/logo.png'); width: 161px; height: 34px}

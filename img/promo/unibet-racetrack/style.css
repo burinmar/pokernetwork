@@ -1,4 +1,4 @@
-#promo {background: #000000 url('bg.jpg') no-repeat top left}
+#promo {background: #000000 url('bg.jpg?1') no-repeat top left}
 #promo .head {
 	float: right;
 	margin-right: 40px;
