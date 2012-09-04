@@ -727,7 +727,7 @@ class video extends moon_com {
 
 	function syncUpdateItem($item, $exist) {
 
-		$fields = array( 'id', 'hide', 'duration', 'created', 'author_id', 'youtube_video_id', 'brightcove_id', 'flv_url', 'thumbnail_url');
+		$fields = array( 'id', 'hide', 'duration', 'created', 'author_id', 'youtube_video_id', 'youtube_channel_id', 'language', 'brightcove_id', 'flv_url', 'thumbnail_url');
 		$ins = array();
 		foreach ($fields as $v) {
 			$ins[$v] = $item[$v];
