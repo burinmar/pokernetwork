@@ -34,6 +34,15 @@ class header extends moon_com
 			return $res;
 		}
 
+// UnibetPoker RaceTrack
+if ($this->wallpaper($res, array(
+'promoID'=> 111,
+'imgPath'=> '/img/unibet_racetrack_wallpaper.jpg',
+'bgColor'=> '#000',
+'startDate'=> '2012-09-05 00:00:01',
+)
+)) return $res;
+
 //  $67,500 PokerStars PokerNews Freeroll Series 
 if ($this->wallpaper($res, array(
 'promoID'=> 110,
