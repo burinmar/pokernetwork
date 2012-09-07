@@ -2,6 +2,7 @@
 window.onYouTubePlayerReady = function (playerId) {
 	$('#' + playerId).pnVideo('videoPlayerReady');
 };
+// more `onYouTubePlayer...` functions are attached to window to capture multiple onStateChange
 (function($) {
 var autoId = 1;
 var contexts = {};
@@ -427,7 +428,12 @@ function videoPlayerReady() {
 	context.userSeekingTime = false;
 
 	// bind videoPlayerStateChange
-	player.addEventListener('onStateChange', '(function(state) { return jQuery("#' + context.instanceId + '").pnVideo("videoPlayerStateChange", state); })' );
+	var stateChangeFname = 'onYouTubePlayer' + context.instanceId.replace(/[^a-z0-9]/ig, '') + 'StateChange';
+	window[stateChangeFname] = function(state) {
+		jQuery('#' + context.instanceId).pnVideo("videoPlayerStateChange", state);
+	};
+	player.addEventListener('onStateChange', stateChangeFname);
+	// player.addEventListener('onStateChange', '(function(state) { return jQuery("#' + context.instanceId + '").pnVideo("videoPlayerStateChange", state); })' );
 	// player.addEventListener('onPlaybackQualityChange', '(function(q) {window.console && console.log("quality:" + q)} )');
 
 	if (context.videoInitializedOnce === true) {
