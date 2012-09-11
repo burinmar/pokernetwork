@@ -120,3 +120,9 @@
 #landing.unibet-racetrack .download {background: url('/img/landing/unibet-racetrack/download.png?1') repeat-x; line-height: 39px; height: 39px; font-size: 14px; color: #fff; position: relative; }
 #landing.unibet-racetrack .download:hover {background-position: bottom left}
 #landing.unibet-racetrack .download:after {position: absolute; top: 5px; right: -180px; content: ''; background: url('/img/landing/unibet-racetrack/logo.png'); width: 161px; height: 34px}
+
+#landing.magnificent {background-image: url('/img/landing/magnificent/intro.jpg?1')}
+#landing.magnificent h1 {color: #281600;}
+#landing.magnificent .download {background: url('/img/landing/magnificent/download.png?1') repeat-x; line-height: 39px; height: 39px; font-size: 14px; color: #fff; position: relative; }
+#landing.magnificent .download:hover {background-position: bottom left}
+#landing.magnificent .download:after {position: absolute; top: -3px; right: -130px; content: ''; background: url('/img/landing/magnificent/logo.png'); width: 105px; height: 29px}
