@@ -354,6 +354,7 @@ class news extends moon_com {
 
 		// meta info
 		$page->title($article['title']);
+		$page->css('/css/article.css');
 		$page->meta('description', $article['meta_description']);
 		$page->meta('robots', 'index,follow');
 		$page->meta('twitter:card', 'summary');
