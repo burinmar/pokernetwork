@@ -15,7 +15,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 		switch ($event) {
 			case 'save-tweet':
 				$data = $this->helperEventGetData(array(
-					'tweet_id', 'day_id', 'body', 'datetime_options' /* to fetch datetime */
+					'tweet_id', 'twitter_id', 'day_id', 'body', 'datetime_options' /* to fetch datetime */
 				));
 				
 				$postId = $this->save($data);
@@ -73,6 +73,9 @@ class livereporting_event_tweet extends livereporting_event_pylon
 			'ct.save_event' => $this->parent->my('fullname') . '#save-tweet',
 			'ct.id' => isset($argv['id'])
 				? intval($argv['id'])
+				: '',
+			'ct.twitter_id' => isset($argv['twitter_id'])
+				? $argv['twitter_id']
 				: '',
 			'ct.body' => htmlspecialchars($argv['contents']),
 			'ct.day_id' => $argv['day_id'],
@@ -132,7 +135,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 		
 		$r = $twitter->post('statuses/update', $twitterPost);
 		if (isset($r) && !empty($r->id)) {
-			return true;
+			return $r->id_str;
 		}
 
 		return false;
@@ -158,9 +161,10 @@ class livereporting_event_tweet extends livereporting_event_pylon
 		$saveDataLog = array(
 			'type' => 'tweet',
 			'is_hidden' => 0,
-			'contents' => serialize(array(
-				'contents' => $data['body']
-			))
+			'contents' => array(
+				'contents' => $data['body'],
+				'twitter_id' => $data['twitter_id'], // bs
+			)
 		);
 
 		$this->helperSaveAssignCommonLogAttrs($saveDataLog, $userId, $entry, $data, $location);
@@ -175,6 +179,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 			$this->db->update($saveDataTweet, $this->table('tTweets'), array(
 				'id' => $entry['id']
 			));
+			$saveDataLog['contents'] = serialize($saveDataLog['contents']);
 			$this->db->update($saveDataLog, $this->table('Log'), array(
 				'id' => $entry['id'],
 				'type' => 'tweet'
@@ -184,17 +189,24 @@ class livereporting_event_tweet extends livereporting_event_pylon
 			if (!($entry['id'] = $saveDataLog['id'] = $this->db->insert_id())) {
 				return ;
 			}
-			if (!$this->sendToTwitter(array(
+			if (false === ($tweetId = $this->sendToTwitter(array(
 				'id' => $saveDataLog['id'],
 				'event_id' => $saveDataLog['event_id'],
 				'contents' => $saveDataTweet['contents']
-			), $e)) {
+			), $e))) {
 				$this->db->query('
 					DELETE FROM ' . $this->table('tTweets') . '
 					WHERE id="' . $saveDataLog['id'] . '"
 				');
 				return ;
 			}
+			$this->db->update(array(
+				'twitter_id' => $tweetId
+			), $this->table('tTweets'), array(
+				'id' => $entry['id']
+			));
+			$saveDataLog['contents']['twitter_id'] = $tweetId;
+			$saveDataLog['contents'] = serialize($saveDataLog['contents']);
 			$this->db->insert($saveDataLog, $this->table('Log'));
 		}
 
