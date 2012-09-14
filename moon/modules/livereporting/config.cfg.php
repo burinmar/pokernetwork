@@ -118,8 +118,6 @@ $cfg['livereporting'] = array(
 		148, 167, 194, 253
 	),
 	
-	'var.twitter' => array('Kj7Hvj3E1UjaZt6Da05Ow', 'GJxqUgimQtejlTkWEj7Vge7DiKfdYutjOLkzf5i96as', '41773339-QZA2n0GYQZjWYolmw6nRxr6fBeF6wRQL9qs1V1n9k', 'i6jMUTJ5KbX6xpCicVujkjUjbzfQNXhxXPnGcMRkqDo'),
-
 	'var.hotelsLanguageConfig' => array(
 		'com' => array('en_US'),
 		'pt' => array('pt_PT')
@@ -135,7 +133,6 @@ if (_SITE_ID_ == 'com' && moon::page()->get_global('adminView')) {
 
 if (is_dev()) {
 	$cfg['livereporting']['var.wsopxml'] = array(150, 156, 154, 253);
-	$cfg['livereporting']['var.twitter'] = array('oqY0t7uKsjyTN4Vb6nQ', 'XdyKYe9MyrfWE9247x5E4KQ49ClY6JUXbyzJvRZr30', '297837556-nlHyQvRt2Klc4E8DkS1XNYKQtAZp7PhYo2ZdFR5j', 'yQcn7FWiFtaK6eQu8JvP9nA5v98tvvitVOIJfCF1sU');
 } else {
 	unset($cfg['livereporting']['var.hotelsLanguageConfig']['pt']);
 }

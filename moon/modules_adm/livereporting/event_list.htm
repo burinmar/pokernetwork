@@ -14,6 +14,7 @@ e.empty_from_date=Start date is empty
 e.uri_duplicate=Uri is already used
 e.bluff_duplicate=Bluff id is already used
 e.stars_duplicate=Stars id is already used
+e.wpt_duplicate=WPT id is already used
 e.nocomm=Subforum already has topics in it - could not use for news comments
 e.ncommdupe=There is already subforum assigned to display news comments
 
@@ -199,13 +200,28 @@ e.ncommdupe=There is already subforum assigned to display news comments
 			</table>
 		</dd>
 
-		<%if {is_bluffable} %>
-		<dt class="is_live_dep"><label>Bluff id</label></dt>
-		<dd class="is_live_dep"><input type="text" maxlength="12" size="10" name="bluff_id" value="{entry.bluff_id}" /></dd>
-		<% end %>
-		<%if {is_starsable} %>
-		<dt class="is_live_dep"><label>Stars id</label></dt>
-		<dd class="is_live_dep"><input type="text" maxlength="12" size="10" name="stars_id" value="{entry.stars_id}" /></dd>
+		<%if {show_export_control} %>
+		<dt class="is_live_dep"><label>Export options</label></dt>
+		<dd class="is_live_dep">
+			<table>
+				<colgroup>
+					<col style="width: 80px" />
+					<col style="width: 120px" />
+				</colgroup>
+				<%if {is_bluffable} %><tr>
+					<td><label>Bluff id</label></td>
+					<td><input type="text" maxlength="12" size="10" name="bluff_id" value="{entry.bluff_id}" /></td>
+				</tr><%end%>
+				<%if {is_starsable} %><tr>
+					<td><label>Stars id</label></td>
+					<td><input type="text" maxlength="12" size="10" name="stars_id" value="{entry.stars_id}" /></td>
+				</tr><%end%>
+				<%if {is_wptable} %><tr>
+					<td><label>WPT id</label></td>
+					<td><input type="text" maxlength="12" size="10" name="wpt_id" value="{entry.wpt_id}" /></td>
+				</tr><%end%>
+			</table>
+		</dd>
 		<% end %>
 
 		<dt><label>Event days</label></dt>

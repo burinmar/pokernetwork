@@ -373,22 +373,47 @@ class livereporting_event_pylon extends livereporting_event
 				'show_controls' => $allowWrite,
 				'control' => ''
 			);
+			if (null != ($twitterNick = $this->getUserTwitterNick($data['author_id'])))
+				$rArgv['author_twitter_nick'] = $twitterNick;
+			$commentsComp = $this->object('comments');
+			if (in_array($data['type'], array('post', 'chips', 'photos'))  && is_object($commentsComp)) {
+				$shift = array(
+					'post'   => 0, 
+					'chips'  => 1,
+					'photos' => 2
+				);
+				$rArgv['comments'] = $commentsComp->show($data['id'] * 10 + $shift[$data['type']]);
+  			} else 
+  				$rArgv['comments'] = '';
 		}
 		
 		return $rArgv;
 	}
 
+	private function getUserTwitterNick($id)
+	{
+		$user = $this->db->single_query_assoc('SELECT twitter FROM ' . $this->table('Users') . ' WHERE id=' . intval($id) . ' AND twitter IS NOT NULL');
+		if (isset($user['twitter']))
+			return $user['twitter'];
+	}
+
 	protected function helperRenderOGMeta($rArgv, $data = array())
 	{
 		$page = moon::page();
-		$page->fbMeta['og:title'] = $rArgv['title'];
+		$page->meta('twitter:card', 'summary');
+		$page->meta('twitter:site', '@Pokernews');
+		$page->meta('twitter:creator', !isset($rArgv['author_twitter_nick'])
+			? '@Pokernews'
+			: '@' . $rArgv['author_twitter_nick']);
+		$page->fbMeta['og:title'] = $rArgv['title']; // required, or twitter:title
 		$page->fbMeta['og:description'] = $this->lrep()->instTools()->helperHtmlExcerpt(
 			strip_tags($rArgv['body']), 
-			220, 1, '...', false, false);
+			220, 1, '...', false, false); // required, or twitter:description
 		if (!empty($rArgv['image_src']))
-			$page->fbMeta['og:image'] = $rArgv['image_src'];
+			$page->fbMeta['og:image'] = $rArgv['image_src']; // twitter:image
 		elseif (isset($data['contents']['xphotos'][0]))
 			$page->fbMeta['og:image'] = $this->get_var('ipnReadBase') . $data['contents']['xphotos'][0]['src'];	
+		$page->fbMeta['og:url'] = htmlspecialchars(rtrim($page->home_url(), '/') . $rArgv['url.view']); // required, or twitter:url
 	}
 	
 	public function helperRenderCommonArgvMobileapp(&$data, $argv, $tpl)

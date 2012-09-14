@@ -197,7 +197,10 @@
 				<textarea name="intro" id="rq-wc-body" rows="6" cols="40">{cc.intro}</textarea>
 			</dd>
 			<dt><label>Tags</label></dt>
-			<dd class="w100"><input type="text" name="tags" maxlength="255" class="full-width" value="{cc.tags}" /></dd>
+			<dd class="w100">
+				<input type="text" name="tags" maxlength="255" class="full-width js-tag-suggestable" data-scope-event-id-hint="{cc.event_id}" value="{cc.tags}" />
+				<div class="js-tag-suggestions"></div>
+			</dd>
 			
 			<dt><label>Image</label></dt>
 			<dd>

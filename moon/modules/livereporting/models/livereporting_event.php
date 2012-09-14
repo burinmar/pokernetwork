@@ -114,7 +114,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 
 		$eventsData[$eventId] = $this->db->single_query_assoc('
-			SELECT t.name tname, t.timezone, t.currency, t.ad_rooms, t.tour, e.name ename, e.is_live,
+			SELECT t.name tname, t.timezone, t.currency, t.ad_rooms, t.tour, e.name ename, e.is_live, t.geolocation,
 			       e.players_left pleft, e.players_total ptotal, e.prizepool ppool, e.chipspool cp, t.state tstate, e.state, 
 			       t.is_syncable&e.is_syncable synced, t.sync_id sync_origin, t.autopublish, e.buyin, e.fee, e.rebuy, e.addon
 			FROM ' . $this->table('Tournaments') . ' t

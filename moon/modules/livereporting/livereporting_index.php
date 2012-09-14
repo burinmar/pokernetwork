@@ -156,9 +156,15 @@ class livereporting_index extends moon_com
 				$this->renderExportWinners();
 				break;
 			case 'bluff': // redirect
-				if (NULL == ($eventId = $this->object('livereporting_bluff')->bluffEventId($argv['uri']['argv'][3], TRUE))) {
+			case 'wpt':   // redirect
+				$src = $argv['uri']['argv'][1];
+				if ($src == 'bluff')
+					$eventId = $this->object('livereporting_bluff')->bluffEventId($argv['uri']['argv'][3], TRUE);
+				if ($src == 'wpt')
+					$eventId = $this->object('livereporting_bluff')->wptEventId($argv['uri']['argv'][3], TRUE);
+				if (!$eventId)
 					return ;
-				}
+
 				if (!isset($argv['uri']['argv'][4])) {
 					$dayId = $this->object('livereporting')->instEventModel('_src_index')
 						->getDaysDefaultId($eventId);
@@ -178,7 +184,7 @@ class livereporting_index extends moon_com
 					'day_id' => $dayId,
 					'key' => $argv['uri']['argv'][2],
 					'dist' => 'xml',
-					'src' => 'bluff'
+					'src' => $src
 				));
 				exit; // should have exited anyway
 			case 'bluff-grouped': // redirect, do not bother with event and day ids
@@ -189,6 +195,17 @@ class livereporting_index extends moon_com
 					'key' => $argv['uri']['argv'][2],
 					'dist' => 'xml',
 					'src' => 'bluff'
+				));
+				exit;
+			case 'bluff-root': // redirect, do not bother with event and day ids
+			case 'wpt-root': // redirect, do not bother with event and day ids
+				$src = str_replace('-root', '', $argv['uri']['argv'][1]);
+				$this->object('livereporting_event')->main(array(
+					'render' => 'bluff-xml',
+					'nocache' => 1,
+					'key' => $argv['uri']['argv'][2],
+					'dist' => 'xml',
+					'src' => $src
 				));
 				exit;
 		}}

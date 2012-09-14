@@ -25,10 +25,34 @@ var livePokerAdm = function() {
 				$('#rq-we').hide();
 				$('.rq-sidembx').removeClass('rq-sidewe' + suffix);
 			};
+			// sync some post/chips fields when switching
+			var syncFields = function(map) {
+				$.each(map, function(dst, src){
+					try {
+						var $dst = $(dst);
+						// if ($dst.val().length == 0)
+							$dst.val( $(src).val() );
+					} catch (e) {}
+				});
+			};
 			return{
-			rqWpShow : stdShow, // post
+			rqWpShow : function (id) {
+				syncFields({
+					'#rq-wp-body': '#rq-wc-body',
+					'#rq-wp input[name=title]': '#rq-wc input[name=title]',
+					'#rq-wp input[name=tags]': '#rq-wc input[name=tags]'
+				});
+				stdShow(id);
+			}, // post
 			rqWpHide : stdHide,
-			rqWcShow : stdShow, // post: chips
+			rqWcShow : function (id) {
+				syncFields({ 
+					'#rq-wc-body': '#rq-wp-body',
+					'#rq-wc input[name=title]': '#rq-wp input[name=title]',
+					'#rq-wc input[name=tags]': '#rq-wp input[name=tags]'
+				});
+				stdShow(id);
+			}, // post: chips
 			rqWcHide : stdHide,
 			rqWtShow : stdShow, // post: tweet
 			rqWtHide : stdHide,
@@ -462,19 +486,63 @@ var livePokerAdm = function() {
 			document.getElementById('tweet-limit').innerHTML = $('#rq-wt-body').val().length;
 		}
 		$('#rq-wt-body').keyup(function(){
-			if (this.value.length > 115) {
-				this.value = this.value.substring(0, 115);
+			if (this.value.length > 113) {
+				this.value = this.value.substring(0, 113);
 			} else {
 				document.getElementById('tweet-limit').innerHTML = this.value.length;
 			}
 		});
 		$('#rq-wt form').submit(function(event){
 			var l = $('#rq-wt-body')[0].value.length;
-			if (l === 0 || l > 115) {
+			if (l === 0 || l > 113) {
 				event.preventDefault();
 				return ;
 			}
 		});
+
+		// tag autocompletion for post and chips (from post contents) {
+		$('#rq-wp .js-tag-suggestable, #rq-wc .js-tag-suggestable').focus(function(){
+			var $scope = $(this).parents('#rq-wp, #rq-wc');
+			var request = [
+				$('input[name=title]', $scope).val(), 
+				$('#rq-wp-body, #rq-wc-body', $scope).val()
+			].join(' ');
+			if ($(this).data('ajax-tag-suggestion-hash') == request.length)
+				return ;
+			$(this).data('ajax-tag-suggestion-hash', request.length);
+			(function($scope, self){ return function() {
+				$.ajax({
+					type: 'POST',
+					url: '/',
+					data: {
+						event: 'livereporting.livereporting_event#suggest-tags',
+						text: request,
+						event_id: $(self).data('scope-event-id-hint')
+					},
+					success: function(resp) {
+						$('.js-tag-suggestions', $scope).html(resp).fadeIn(300);
+					},
+					error: function() {
+						$('.js-tag-suggestions', $scope).fadeOut(300);
+					}
+				});
+			}})($scope, this)();
+		});
+		$('#rq-wp .js-tag-suggestions a, #rq-wc .js-tag-suggestions a').live('click', function(){
+			var $scope = $(this).parents('#rq-wp, #rq-wc');
+			var $tgt = $('.js-tag-suggestable', $scope);
+			var currentTags = [], currentTagsLC = [];
+			var tag = $(this).html();
+			if ($tgt.val() != '') {
+				currentTags = $tgt.val().split(',');
+			}
+			currentTagsLC = $tgt.val().toLowerCase().split(',');
+			if ($.inArray(tag.toLowerCase(), currentTagsLC) == -1) {
+				currentTags.push(tag);
+				$tgt.val(currentTags.join(','));
+			}
+		});
+		// }
 	}
 	
 	function setupChipsTabControl() {

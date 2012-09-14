@@ -17,7 +17,20 @@
 <div id="rq-entry-control">
 	{control}
 </div>
-{body}
+
+<div id="livePokerLiveReporting"><!--# id for css only #-->
+<div class="article tweet" id="tweet-{id}">
+	<h3 class="articleTitle">PokerNews_Live Tweet</h3>
+	<p class="tweetAuthor">
+		<%if {author_name} %><a href="http://twitter.com/pokernews_live"><img height="48" width="48" alt="PokerNews_Live" src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" class="fl10 tweetAuthorPhoto"> @PokerNews_live</a><%end%>
+	</p>
+	<p class="tweetContent">{body}</p>
+	<p class="tweetDate">
+		{!posted} <span class="date">{created_on}</span> 
+	</p>
+</div>
+</div>
+
 <span class="clr"> </span>
 <p><a href="{url.up}">{!back}</a></p>
 <%end%>
@@ -29,12 +42,13 @@
 	<input type="hidden" name="event"   value="{ct.save_event}" />
 	<input type="hidden" name="day_id"  value="{ct.day_id}" />
 	<input type="hidden" name="tweet_id" value="{ct.id}" />
+	<input type="hidden" name="datetime_options" value="now_dt" />
 	<div class="aform clrfix">
 		<ul class="tabs"><li class="current">Twitter post<span class="edge"></span></li></ul>
 		<dl>
 			<dd class="w100" style="padding-left: 10px">
 				<textarea name="body" id="rq-wt-body" cols="55" rows="7">{ct.body}</textarea>
-				<div class="explain"><span id="tweet-limit">0</span> / 115</div>
+				<div class="explain"><span id="tweet-limit">0</span> / 113</div>
 			</dd>
 		</dl>
 		<div class="formButton clrfix"><input type="submit" value="Save"/></div>

@@ -66,7 +66,10 @@
 				<textarea name="body" id="rq-wp-body" cols="55" rows="15">{cp.body}</textarea>
 			</dd>
 			<dt><label>Tags</label></dt>
-			<dd class="w100"><input type="text" name="tags" maxlength="255" class="full-width" value="{cp.tags}" /></dd>
+			<dd class="w100">
+				<input type="text" name="tags" maxlength="255" class="full-width js-tag-suggestable" data-scope-event-id-hint="{cp.event_id}" value="{cp.tags}" />
+				<div class="js-tag-suggestions"></div>
+			</dd>
 			
 			<dt><label>Image</label></dt>
 			<dd>

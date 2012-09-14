@@ -348,15 +348,7 @@ class ctags extends moon_com
 	{
 		$video = $this->object('video.video');
 		$entries = array();
-		if (method_exists($video, 'getVideoUri')) { // deprecated, temporary
-			$entriesR = $this->db->query('
-				SELECT id, name, LEFT(published_date, LENGTH(published_date) - 3) published, short_description, thumbnail_url
-				FROM videos
-				WHERE is_hidden=0 AND is_deleted=0 AND id IN(' . implode(',', $ids) . ')
-			');
-		} else {
-			$entriesR = $video->getVideoCtagsItems($ids);
-		}
+		$entriesR = $video->getVideoCtagsItems($ids);
 		while ($entry = $this->db->fetch_row_assoc($entriesR)) {
 			$entry_ = array(
 				'title' => $entry['name'],

@@ -15,7 +15,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 		switch ($event) {
 			case 'save-tweet':
 				$data = $this->helperEventGetData(array(
-					'tweet_id', 'day_id', 'body'
+					'tweet_id', 'day_id', 'body', 'datetime_options' /* to fetch datetime */
 				));
 				
 				$postId = $this->save($data);
@@ -85,24 +85,8 @@ class livereporting_event_tweet extends livereporting_event_pylon
 
 	private function sendToTwitter($message, &$e) 
 	{
-		$isLocal = is_local_version();
-		
 		// services API
-		include_class('twitter');
-		$a = $this->get_var('twitter');
-		$o = new TwitterOAuth($a[0], $a[1], $a[2], $a[3]);
-		$r = $o->get('account/rate_limit_status');
-		
-		if (!isset($r->remaining_hits)) {
-			$e = 'Empty rate limit.';
-			return false;
-		}
-		$twitterRemainingHits = $r->remaining_hits;
-
-		if ($twitterRemainingHits <= 1) {
-			$e = 'Reached hourly-limit';
-			return false;
-		}
+		$twitter = moon::shared('twitter')->getInstance('PokerNews_live');
 		
 		$page = &moon::page();
 		$homeURL = $page->home_url();
@@ -115,51 +99,41 @@ class livereporting_event_tweet extends livereporting_event_pylon
 				'id' => $message['id']
 			), $this->getUriFilter(TRUE, NULL));
 		
-		$tweet = '';
-		//$twitterTag = '';
-		$shortLink = short_url($url);
-		
-		/*$tag = $this->db->single_query_assoc('
-			SELECT e.twitter_tag etag, t.twitter_tag ttag
-			FROM ' . $this->table('Events') . ' e
-			INNER JOIN ' . $this->table('Tournaments') . ' t
-				ON t.id=e.tournament_id
-			WHERE e.id=' . getInteger($message['event_id']) . '
-		');
-		if (!empty($tag['etag'])) {
-			$twitterTag = $tag['etag'];
-		} else if (!empty($tag['ttag'])) {
-			$twitterTag = $tag['ttag'];
-		}
-		if ($twitterTag && strpos($twitterTag, '#') !== 0) {
-			$twitterTag = '#' . $twitterTag;
-		}
-		$tweet .= $twitterTag;*/
-
 		$txt = $message['contents'];
 		$txt = str_replace(array("\n", "\r"), ' ', $txt);
-		//$txt = preg_replace('/\[[^]]*(\]|$)/', '', $txt);
 		$txt = str_replace(array("#"), '', $txt);
-		//$txt = strip_tags($txt);
 
-		$tweet .= ' ' . $txt;
-		$strOver = mb_strlen($tweet) + mb_strlen($shortLink) + 1 - 140;
+		$tweet = $txt;
+		$shortLink = short_url($url);
+
+		$strOver = mb_strlen($tweet) + 1 + mb_strlen($shortLink) - 140;
 		if ($strOver > 0) {
 			$tweet = trim($tweet, '.!- :');
 			$tweet = mb_substr($tweet, 0, (mb_strlen($tweet) - $strOver - 4));
 		}
 		$tweet .= ' ' . $shortLink;
 
-		//if (!$isLocal) {
-		$r = $o->post('statuses/update', array(
+		$twitterPost = array(
 			'status' => $tweet,
-			'trim_user' => 1, 
-			'include_entities' => 0
-		));
+			'trim_user' => 1
+		);
+
+		$eventInfo = $this->lrep()->instEventModel('_src_event')->getEventData($message['event_id']);
+		if (NULL != $eventInfo) {
+			$geolocation = explode(',', $eventInfo['geolocation']);
+			if (2 == count($geolocation)) {
+				$twitterPost += array(
+					'lat'  => trim($geolocation[0]),
+					'long' => trim($geolocation[1]),
+					'display_coordinates' => true
+				);
+			}
+		}
+		
+		$r = $twitter->post('statuses/update', $twitterPost);
 		if (isset($r) && !empty($r->id)) {
 			return true;
 		}
-		//}
 
 		return false;
 	}

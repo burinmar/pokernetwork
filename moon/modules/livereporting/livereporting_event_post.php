@@ -107,6 +107,7 @@ class livereporting_event_post extends livereporting_event_pylon
 			'cp.is_exportable' => $argv['is_exportable'],
 			'cp.is_keyhand' => $argv['is_keyhand'],
 			'cp.day_id' => $argv['day_id'],
+			'cp.event_id' => $argv['event_id'],
 			'cp.unhide' => !empty($argv['unhide']),
 			'cp.bundled_control' => !empty($argv['bundled_control']),
 			'cp.published' => !empty($argv['published']),

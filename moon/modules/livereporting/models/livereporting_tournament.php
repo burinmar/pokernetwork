@@ -579,7 +579,7 @@ class livereporting_model_tournament_src_tournament extends livereporting_model_
  */
 class livereporting_model_tournament_src_bluff extends livereporting_model_tournament
 {
-	function getEvents($tournamentId)
+	function getTournamentBluffableEvents($tournamentId)
 		{ return parent::getEventsWithBluff($tournamentId); }
 }
 

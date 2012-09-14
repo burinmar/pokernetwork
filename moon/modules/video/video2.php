@@ -383,22 +383,31 @@ class video2 extends moon_com {
 		$page->meta('description', $video['description']);
 
 		// facebook like button specific tags
-		$imgSrc = strpos($video['thumbnail_url'], 'http') !== false ? $this->defaultThumbnail($video['thumbnail_url']) : rtrim($page->home_url(), '/') . $video['thumbnail_url'] . '?t=' . time();
 		if (!empty($video['youtube_video_id'])) {
-			$page->meta('video_width', '560');
-			$page->meta('video_height', '315');
+			$page->meta('twitter:card', 'player');
+			$page->meta('twitter:site', '@Pokernews');
+			$page->meta('twitter:creator', '@Pokernews'); // see below for override while iterating authors
+			$page->fbMeta['og:url'] =                                                  // required, or twitter:url
+				htmlspecialchars(rtrim($page->home_url(), '/') . $this->linkas('#', $video['uri'] . '-' . $video['id'])); 
+			$page->fbMeta['og:image'] =                                                             // twitter:image
+				strpos($video['thumbnail_url'], 'http') !== false ? $this->defaultThumbnail($video['thumbnail_url']) : rtrim($page->home_url(), '/') . $video['thumbnail_url'] . '?t=' . time();
+			$page->fbMeta['og:title'] = htmlspecialchars($video['name']);              // required, or twitter:title
+			$page->fbMeta['og:description'] = htmlspecialchars($video['description']); // required, or twitter:description
+			//
+			$page->fbMeta['og:video'] = 'https://www.youtube.com/v/' . $video['youtube_video_id'];
+			$page->fbMeta['og:video:width'] = '455';
+			$page->fbMeta['og:video:height'] = '260';
+			$page->fbMeta['og:video:type'] = 'application/x-shockwave-flash';
+			$page->meta('twitter:player', 'https://www.youtube.com/embed/' . $video['youtube_video_id'] . '?wmode=transparent');
+			$page->meta('twitter:player:width', '455');
+			$page->meta('twitter:player:heigh', '251');
+
 			$videoSrc = 'http://youtube.googleapis.com/v/' . $video['youtube_video_id'];
 			$video['player_uri'] = $video['youtube_video_id'];
 		} else {
-			$page->meta('video_width', '435');
-			$page->meta('video_height', '370');
-			$videoSrc = 'http://c.brightcove.com/services/viewer/federated_f9/69609817001?isVid=1&amp;isUI=1&amp;autoStart=1&amp;dynamicStreaming=1&amp;publisherID=1544546948&amp;playerID=69609817001&amp;domain=embed&amp;videoId=' . $video['id'];
+			// $videoSrc = 'http://c.brightcove.com/services/viewer/federated_f9/69609817001?isVid=1&amp;isUI=1&amp;autoStart=1&amp;dynamicStreaming=1&amp;publisherID=1544546948&amp;playerID=69609817001&amp;domain=embed&amp;videoId=' . $video['id'];
 			$video['player_uri'] = preg_replace('/\?.*$/', '', $video['flv_url']);
 		}
-		$page->meta('video_type', 'application/x-shockwave-flash');
-		$page->meta('medium', 'video');
-		$page->head_link($imgSrc, 'image_src');
-		$page->head_link($videoSrc, 'video_src');
 
 		$sitemap->breadcrumb(array('' => $video['name']));
 

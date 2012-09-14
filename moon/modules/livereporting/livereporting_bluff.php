@@ -9,7 +9,7 @@ class livereporting_bluff extends moon_com
 {
 	public function process($argv)
 	{
-		if (!in_array($argv['dist'], array('xml', 'json'))) {
+		if (!in_array($argv['dist'], array('xml'))) {
 			return;
 		}
 		// 'src' == 'bluff' from or
@@ -20,10 +20,10 @@ class livereporting_bluff extends moon_com
 		}
 		
 		if (!isset($_GET['nocache']) && !isset($argv['nocache'])) {
-			$cacheFn = 'tmp/cache/lrep.bluff.' . urlencode($argv['key']) . '.' . 
+			$cacheFn = 'tmp/cache/lrep.' . urlencode($argv['key']) . '.' . 
 				intval($argv['event_id']) . '.' . urlencode($argv['day_id']) . '.' . 
 				$argv['src'] . '.' . $argv['dist'];
-			if (file_exists($cacheFn)) {
+			if (file_exists($cacheFn) && is_file($cacheFn)) {
 				$output = file_get_contents($cacheFn);
 				preg_match('~<timestamp>(.+?)</timestamp>~', $output, $tzts);
 				if (isset($tzts[1])) {
@@ -89,6 +89,10 @@ class livereporting_bluff extends moon_com
 
 			case 'tournament-winners':
 				$output = $this->exGroupedTournamentWinners($argv);
+				break;
+
+			case 'navigation-index':
+				$output = $this->exRootNavigationIndex($argv);
 				break;
 
 			default:
@@ -824,7 +828,7 @@ class livereporting_bluff extends moon_com
 			ORDER BY l.created_on DESC
 			LIMIT ' . $limit
 		);
-		if (!in_array(@$argv['src'], array('stars', 'bluff'))) {
+		if (!in_array(@$argv['src'], array('stars', 'bluff', 'wpt'))) {
 			$cPosts = array(); // do not show in pnapp
 		} else {
 			$cPosts = $this->db->array_query_assoc('
@@ -936,7 +940,7 @@ class livereporting_bluff extends moon_com
 				AND p.is_exportable=1
 			ORDER BY l.day_id DESC, l.created_on DESC
 		');
-		if (!in_array(@$argv['src'], array('stars', 'bluff'))) {
+		if (!in_array(@$argv['src'], array('stars', 'bluff', 'wpt'))) {
 			$cPosts = array(); // do not show in pnapp
 		} else {
 			$cPosts = $this->db->array_query_assoc('
@@ -1162,7 +1166,7 @@ class livereporting_bluff extends moon_com
 
 		$xml->node('title','', $post['title']);
 		if (!empty($post['image_src'])) {
-			if (!empty($argv['src']) && in_array($argv['src'], array('bluff', 'stars'))) {
+			if (!empty($argv['src']) && in_array($argv['src'], array('bluff', 'stars', 'wpt'))) {
 				$dims = explode(',', $post['image_misc']);
 				$orientation = 'right';
 				$w = null; $h = null;
@@ -1314,6 +1318,11 @@ class livereporting_bluff extends moon_com
 		return $xml->close_xml();
 	}
 
+	/**
+	 * Wsop: bluffable events by tournaments: 
+	 * * reporting_winners winner, runner-up (if available)
+	 * * players poker profile data (if available)
+	 */
 	private function exGroupedTournamentWinners($argv)
 	{
 		// $evt = $this->object('livereporting_event');
@@ -1349,7 +1358,7 @@ class livereporting_bluff extends moon_com
 		$lrep = $this->object('livereporting');
 		$lrepTools = $lrep->instTools();
 		$lrepTournament = $lrep->instTournamentModel('_src_bluff');
-		$events = $lrepTournament->getEvents($argv['tournament_id']);
+		$events = $lrepTournament->getTournamentBluffableEvents($argv['tournament_id']);
 		foreach ($events as $event) {
 			$xml->start_node('event', array(
 				'id' => $event['id'],
@@ -1382,6 +1391,94 @@ class livereporting_bluff extends moon_com
 		return $xml->close_xml();
 	}
 
+	private function exRootNavigationIndex($argv)
+	{
+		switch ($argv['src']) {
+		case 'bluff':
+		case 'wpt':
+			$filterField = $argv['src'] . '_id';
+			$urlSrcKey = $argv['src'];
+			break;
+		default:
+			moon::page()->page404();
+		}
+
+		$evtData = $this->db->array_query_assoc('
+			SELECT t.id tid, t.name tname, e.name ename, e.id eid, e.' . $filterField . ' access_id
+			FROM ' . $this->table('Tournaments') . ' t
+			INNER JOIN ' . $this->table('Events') . ' e
+				ON t.id=e.tournament_id
+			WHERE e.' . $filterField . ' IS NOT NULL AND e.is_live=1
+			ORDER BY e.id DESC
+		');
+		$baseUrl = moon::page()->home_url() . 'live-reporting/export.';
+
+		$xml=new moon_xml_write;
+		$xml->encoding('utf-8');
+		$xml->open_xml();
+		$xml->start_node('div', array(
+			'class' => 'navigation-index'
+		));
+
+		$xml->start_node('entry_templates');
+			$xml->node('template', array(
+				'description' => 'Top blog updates, by time. Without context specified explicitly - for active day only',
+				'context' => '\'all\'; day name (e.g. \'1a\', \'2\')'
+			), $baseUrl . $urlSrcKey . '.topupdates.ACCESS_ID.[CONTEXT.]xml');
+			$xml->node('template', array(
+				'description' => 'All blog posts, by time. Without context specified explicitly - for active day only',
+				'context' => '\'all\'; day name (e.g. \'1a\', \'2\')'
+			), $baseUrl . $urlSrcKey . '.updates.ACCESS_ID.[CONTEXT.]xml');
+
+			$xml->node('template', array(
+				'description' => 'Top chips. Without context specified explicitly - for active day only',
+				'context' => 'day name (e.g. \'1a\', \'2\')'
+			), $baseUrl . $urlSrcKey . '.topchips.ACCESS_ID.[CONTEXT.]xml');
+			$xml->node('template', array(
+				'description' => 'All chips. Without context specified explicitly - for active day only',
+				'context' => 'day name (e.g. \'1a\', \'2\')'
+			), $baseUrl . $urlSrcKey . '.chipcounts.ACCESS_ID.[CONTEXT.]xml');
+
+			$xml->node('template', array(
+				'description' => 'Photos gallery'
+			), $baseUrl . $urlSrcKey . '.gallery.ACCESS_ID.[CONTEXT.]xml');
+			$xml->node('template', array(
+				'description' => 'Payouts'
+			), sprintf($baseUrl, 'payouts'));
+			$xml->node('template', array(
+				'description' => 'Players count and remaining players count'
+			), $baseUrl . $urlSrcKey . '.playersleft.ACCESS_ID.[CONTEXT.]xml');
+			$xml->node('template', array(
+				'description' => 'Days list'
+			), $baseUrl . $urlSrcKey . '.days.ACCESS_ID.[CONTEXT.]xml');
+		$xml->end_node('entry_templates');
+
+		// case 'betting':
+		// 	// depends on day or all days
+		// 	$output = $this->exBetting($argv);
+		// 	break;
+
+		// case 'shoutbox':
+		// 	// depends on event
+		// 	$output = $this->exShoutBoxPub($argv['event_id']);
+		// 	break;
+
+		$xml->start_node('entry_points');
+		foreach ($evtData as $event) {
+			$xml->start_node('node');
+				$xml->node('tournament_name', '', $event['tname']);
+				// $xml->node('tournament_id', '', $event['tid']);
+				$xml->node('event_name', '', $event['ename']);
+				// $xml->node('event_id', '', $event['eid']);
+				$xml->node('access_id', '', $event['access_id']);
+			$xml->end_node('node');
+		}
+		$xml->end_node('entry_points');
+
+		$xml->end_node('div');
+		return $xml->close_xml();
+	}
+
 	private function fancyDate($time, $tzOffset)
 	{
 		$tzz = round($tzOffset/3600);
@@ -1403,21 +1500,41 @@ class livereporting_bluff extends moon_com
 		return moon::locale()->gmdatef($time + $tzOffset, 'Reporting') . ' PST';
 	}
 	
+
+	/**
+	 * Get bluff_id by event_id and vice versa
+	 */
 	public function bluffEventId($id, $rev = false) 
+	{
+		return $this->exportFieldToEventId('bluff_id', $id, $rev);
+	}
+
+	/**
+	 * Get wpt_id by event_id and vice versa
+	 */
+	public function wptEventId($id, $rev = false) 
+	{
+		return $this->exportFieldToEventId('wpt_id', $id, $rev);
+	}
+
+	/**
+	 * Backend for bluffEventId, wptEventId
+	 */
+	private function exportFieldToEventId($field, $id, $rev)
 	{
 		if ($rev == FALSE) {
 			$row = $this->db->single_query_assoc('
-				SELECT bluff_id FROM ' . $this->table('Events') . '
+				SELECT `'. $field. '` expfld FROM ' . $this->table('Events') . '
 				WHERE id=' . intval($id) . '
 				LIMIT 1
 			');
-			return isset($row['bluff_id'])
-				? $row['bluff_id']
+			return isset($row['expfld'])
+				? $row['expfld']
 				: null;
 		} else {
 			$row = $this->db->single_query_assoc('
 				SELECT id FROM ' . $this->table('Events') . '
-				WHERE bluff_id=' . intval($id) . '
+				WHERE `'. $field. '`=' . intval($id) . '
 				LIMIT 1
 			');
 			return isset($row['id'])

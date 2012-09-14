@@ -8,6 +8,7 @@ class event_list extends moon_com
 	{
 		$this->bluffable = in_array(_SITE_ID_, array('com', 'fr'));
 		$this->starsable = in_array(_SITE_ID_, array('com'));
+		$this->wptable   = in_array(_SITE_ID_, array('com'));
 	}
 
 	function properties()
@@ -29,7 +30,7 @@ class event_list extends moon_com
 				$form->names('id','tournament_id','name',
 					'from_date','from_time','to_date',
 					'to_time','buyin','fee','rebuy','addon','is_live','is_main','is_syncable','alias','prizepool','chipspool','players_total','players_left',
-					'stayhere', 'bluff_id', 'stars_id',
+					'stayhere', 'bluff_id', 'stars_id', 'wpt_id',
 					'dayid', 'dayname', 'dayfrom_date', 'dayfrom_time'
 				);
 				$form->fill($_POST);
@@ -305,6 +306,7 @@ class event_list extends moon_com
 				'chipspool' => '',
 				'bluff_id' => '',
 				'stars_id' => '',
+				'wpt_id' => '',
 				'is_live' => '1',
 				'is_main' => '',
 				'is_syncable' => '1'
@@ -364,12 +366,18 @@ class event_list extends moon_com
 		if ($tournament['is_syncable']) {
 			$mainArgv['is_tsyncable'] = true;
 		}
+
 		if ($this->bluffable) {
 			$mainArgv['is_bluffable'] = true;
 		}
 		if ($this->starsable) {
 			$mainArgv['is_starsable'] = true;
 		}
+		if ($this->wptable) {
+			$mainArgv['is_wptable'] = true;
+		}
+		$mainArgv['show_export_control'] = $this->bluffable || $this->starsable || $this->wptable;
+
 		if (isset($argv['failed-form-data'])) {
 			$entryData = $this->overwriteArray_($entryData, $argv['failed-form-data']);
 		}
@@ -439,6 +447,9 @@ class event_list extends moon_com
 		}
 		if ($this->starsable) {
 			$saveDataKeys[] = 'stars_id';
+		}
+		if ($this->wptable) {
+			$saveDataKeys[] = 'wpt_id';
 		}
 		foreach ($saveDataKeys as $key) {
 			if (isset($data[$key])) {
@@ -534,13 +545,31 @@ class event_list extends moon_com
 				: '') . '
 		');
 		if ('0' != $bluffDupe['cid']) {
-			$page->alert($messages['e.bluff_duplicate']);
+			$page->alert($messages['e.stars_duplicate']);
 			$isInvalid = TRUE;
 		}}
 		if ($this->starsable) {
 			$saveData['stars_id'] = empty($saveData['stars_id'])
 				? NULL
 				: $saveData['stars_id'];
+		}
+		
+		if ($this->wptable && !empty($saveData['wpt_id'])) {
+		$bluffDupe = $this->db->single_query_assoc('
+			SELECT COUNT(id) cid FROM ' . $this->table('Events') . '
+			WHERE wpt_id="' . addslashes($saveData['wpt_id'])  . '"' .
+			(($saveData['id'] !== NULL)
+				? ' AND id!=' . $saveData['id']
+				: '') . '
+		');
+		if ('0' != $bluffDupe['cid']) {
+			$page->alert($messages['e.wpt_duplicate']);
+			$isInvalid = TRUE;
+		}}
+		if ($this->wptable) {
+			$saveData['wpt_id'] = empty($saveData['wpt_id'])
+				? NULL
+				: $saveData['wpt_id'];
 		}
 		
 		if (TRUE === $isInvalid) {

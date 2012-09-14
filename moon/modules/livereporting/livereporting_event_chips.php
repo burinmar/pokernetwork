@@ -538,6 +538,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.bundled_control' => !empty($argv['bundled_control']),
 			'cc.save_event' => $this->parent->my('fullname') . '#save-chips',
 			'cc.day_id'     => $argv['day_id'],
+			'cc.event_id'   => $argv['event_id'],
 			'cc.import_id'  => isset($argv['import_id'])
 				? intval($argv['import_id'])
 				: '',

@@ -23,7 +23,14 @@ class livereporting_event extends moon_com
 	{
 		// _POST (start limited)
 		if (isset($_POST['event'])) {
+			switch ($event) {
+			case 'suggest-tags':
+				// suggest post/chips tags combining post contents and players database + (possibly) earlier event tags
+				$this->eSuggestTags();
+				break;
+			default:
 			$this->eSaves($event, $argv);
+			}
 			moon::page()->page404();
 		} // end limited
 
@@ -114,6 +121,81 @@ class livereporting_event extends moon_com
 			}
 			moon_close(); exit;
 		}
+	}
+	
+	private function eSuggestTags()
+	{
+		if (!$this->lrep()->instTools()->isAllowed('writeContent')) {
+			moon::page()->page404();
+		}
+		$text = isset($_POST['text'])
+			? $_POST['text']
+			: '';
+		$page = &moon::page();
+		if ($text != '') {
+			$eventId = isset($_POST['event_id'])
+				? intval($_POST['event_id'])
+				: 0;
+			$tags = $this->getRecommendedTags($text, $eventId);
+			if (!empty($tags)) {
+				$output = array();
+				foreach ($tags as $t) {
+					$output[] = '<a href="javascript:;">' . $t . '</a>';
+				}
+				echo '<span>Recommended tags:</span> ' . implode(', ', $output);
+				moon_close(); exit;
+			}
+		}
+		header('HTTP/1.0 404 Not Found');
+		moon_close(); exit;
+	}
+
+	private function getRecommendedTags($text, $eventId = 0)
+	{
+		$candidates = array();
+		if ($eventId != 0) {
+			$eventTags = $this->db->query('
+				SELECT tag FROM ' . $this->table('Tags') . '
+				WHERE event_id=' . intval($eventId) . '
+				GROUP BY tag
+			');
+			while ($row = $this->db->fetch_row_assoc($eventTags)) {
+				$candidates[$row['tag']] = null;
+			}
+		}
+		if (1) {
+			$playersTags = $this->db->query('
+				SELECT title FROM ' . $this->table('PlayersPoker') . '
+				WHERE hidden=0
+			');
+			while ($row = $this->db->fetch_row_assoc($playersTags)) {
+				$candidates[$row['title']] = null;
+			}
+		}
+		$candidates = array_keys($candidates);
+
+		$text = preg_replace('~\[.{2,3}\]~', '', $text);
+		$text = str_replace(array('.', ',', '"', ':', ']', '[', '=', '+', '-', ')', '(', '*', '!', '?', '', "\n", "\r"), ' ', $text);
+		// transliterate {
+		$prevLocale = setlocale(LC_ALL, 0);
+		setlocale(LC_ALL, 'en_US.UTF-8');
+		$text =	iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $text);
+		setlocale(LC_ALL, $prevLocale);
+		// }
+		$recommended = array();
+		foreach ($candidates as $tag) {
+			if (stripos($text, $tag) !== FALSE) {
+				$recommended[] = $tag;
+			} elseif(($wordsCnt = count($words = explode(' ', $tag))) > 1) {
+				$lastName = array_pop($words);
+				if (strpos($text, $lastName . ' ') !== FALSE) { // case sensitive, not part of the word
+					$recommended[] = $tag;
+				}
+			}
+		}
+
+		sort($recommended);
+		return $recommended;
 	}
 	
 	private function eEntryPages($argv)

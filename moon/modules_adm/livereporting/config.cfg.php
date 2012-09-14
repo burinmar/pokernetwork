@@ -40,7 +40,6 @@ $cfg['livereporting'] = array(
 	'dir.web:LogosM1'    => '/w/lrep/m1/',
 	'dir.web:LogosM2'    => '/w/lrep/m2/',
 	'dir.web:ImgsSlider' => '/w/lrep/slider/',
-	'var.twitter' => array('Kj7Hvj3E1UjaZt6Da05Ow', 'GJxqUgimQtejlTkWEj7Vge7DiKfdYutjOLkzf5i96as', '41773339-QZA2n0GYQZjWYolmw6nRxr6fBeF6wRQL9qs1V1n9k', 'i6jMUTJ5KbX6xpCicVujkjUjbzfQNXhxXPnGcMRkqDo'),
 	'var.entriesPerPage' => 50,
 	'page.Common' => 'sys.adm,fake',
 	'comp.rtf' => 'MoonShared.rtf',

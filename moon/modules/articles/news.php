@@ -356,7 +356,13 @@ class news extends moon_com {
 		$page->title($article['title']);
 		$page->meta('description', $article['meta_description']);
 		$page->meta('robots', 'index,follow');
-		$page->css('/css/article.css');
+		$page->meta('twitter:card', 'summary');
+		$page->meta('twitter:site', '@Pokernews');
+		$page->meta('twitter:creator', '@Pokernews'); // see below for override while iterating authors
+		$page->fbMeta['og:url'] = htmlspecialchars($homeUrl . $uriSelf);         // required, or twitter:url
+		$page->fbMeta['og:image'] = htmlspecialchars($homeUrl . $this->getImageSrc($article['img'], 'thumb_')); // twitter:image
+		$page->fbMeta['og:title'] = htmlspecialchars($article['title']);         // required, or twitter:title
+		$page->fbMeta['og:description'] = htmlspecialchars($article['summary']); // required, or twitter:description
 
 		if ($article['is_turbo']) {
 			$article['content_html'] .= $this->htmlArticleTurboContents($article['id'], TRUE);
@@ -393,7 +399,16 @@ class news extends moon_com {
 		);
 		$m['authorsLinks'] = '';
 		if (isset($oShared->htmlAuthorsData) && is_array($oShared->htmlAuthorsData)) {
-		foreach ($oShared->htmlAuthorsData as $authorData) {
+			$gaVars = $page->get_local('gaCustomVars');
+			if (!is_array($gaVars)) $gaVars = array();
+			$markedTwitterAuthor = false;
+
+			foreach ($oShared->htmlAuthorsData as $authorData) {
+				if (!$markedTwitterAuthor && !empty($authorData['twitter'])) {
+					$markedTwitterAuthor = true;
+					$page->meta('twitter:creator', '@' . $authorData['twitter']);
+				}
+
 			if (empty($authorData['twitter']) && empty($authorData['gplus_url'])) continue;
 			$m['authorsLinks'] .= $tpl->parse('authorsLinks', array(
 				'name' => htmlspecialchars($authorData['name']),
