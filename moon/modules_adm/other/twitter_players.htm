@@ -6,6 +6,7 @@ titleEdit=Edit
 error1=Twitter nickname required
 error2=Player title required
 error3=This twitter nickname is already in use
+error4=Limit of active twitter accounts depleted
 error9=System error!
 
 <% main %>
@@ -13,7 +14,11 @@ error9=System error!
 <% if {viewList} %>
 <div class="tabzoneHeader clrfix">
 	<h1>{pageTitle}</h1>
-	<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new Twitter</a></div>
+	<%if {goNew} %>
+		<div class="fr"><a href="{goNew}" class="button buttonAddNew">Add new Twitter</a></div>
+	<%else {goNew} %>
+		<div class="fr">Limit of 295 active twitter accounts depleted</div>
+	<% end%>
 </div>		
 <!--# filter -->
 <% insert {filter} %>

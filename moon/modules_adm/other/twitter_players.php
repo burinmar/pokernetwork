@@ -113,10 +113,12 @@ function renderList($vars)
 	$main['items'] = $itemsList;
 	$main['paging'] = $paging;
 	$main['pageTitle'] = $win->current_info('title');
-	$main['goNew'] = $this->linkas('#edit');
+	$main['goNew'] = $this->playersReserveDepleted()
+		? ''
+		: $this->linkas('#edit');
 	$main['goDelete'] = $this->my('fullname') . '#delete';
-		$main += $ordering;
-		
+        $main += $ordering;
+        
 	return $tpl->parse('main', $main);
 }
 function renderForm($vars)
@@ -174,6 +176,13 @@ function getItem($id)
 		WHERE id = ' . intval($id);
 	return $this->db->single_query_assoc($sql);
 }
+function playersReserveDepleted()
+{
+	$visiblePlayers = $this->db->single_query_assoc('SELECT COUNT(*) as cnt
+		FROM ' . $this->table('TwitterPlayers') . '
+		WHERE is_hidden=0');
+	return $visiblePlayers['cnt'] >= 295;
+}
 function saveItem()
 {
 	$form = &$this->formItem;
@@ -204,7 +213,20 @@ function saveItem()
 		}
 	}
 
-	if ($errorMsg) {
+	// if unhiding or adding new, check if reserve is not depleted
+	if (!$data['is_hidden']) {
+		if ($this->playersReserveDepleted()) {
+			$result = $this->db->single_query_assoc('
+				SELECT is_hidden
+				FROM ' . $this->table('TwitterPlayers') . '
+				WHERE id = ' . $id);
+			if (empty($result) || $result['is_hidden']) { // new or was hidden
+				$errorMsg = 4;
+			}
+		}
+	}
+
+ 	if ($errorMsg) {
 		$this->set_var('error', $errorMsg);
 		return FALSE;
 	}
