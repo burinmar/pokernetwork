@@ -178,7 +178,7 @@ class twitter_import extends moon_com {
 		$timeline = $twitter->get('lists/statuses', array(
 			'list_id' => $playersListId,
 			'include_rts' => 'false',
-			'include_entities' => 'false',
+			'include_entities' => 'true',
 			'since_id' => $this->getLastTweetId(),
 			'count' => '200' // default is, like, ~20
 		));
@@ -219,7 +219,7 @@ class twitter_import extends moon_com {
 				'screen_name' => $tweet->user->screen_name,
 				'image_url' => $tweet->user->profile_image_url,
 				'created' => strtotime($tweet->created_at),
-				'message' => $this->addTwitterUrls($tweet->text),
+				'message' => $this->parseTwitterMessage($tweet),
 				'is_last_message' => $isLastMessage,
 				'is_hidden' => $isHidden,
 			), $this->table('TwitterMessages'));
@@ -255,24 +255,25 @@ class twitter_import extends moon_com {
 			: 0;
 	}
 
-	private function addTwitterUrls($msg)
+	private function parseTwitterMessage($tweet)
 	{
-		// http://ow.ly/cQF5, http://pro.betfair.com/2009/annette_15/
-		$pattern = '((http://)([w\.]{0,4}[a-zA-Z1-9\-_\.]+\.[a-z]{2,3}(/[a-zA-Z0-9\-/_\?=&~#;\.\+]+)?))';
-		
-		$matches = array();
-		if(preg_match_all($pattern, $msg, $matches)) {
-			if (!empty($matches[0])) {
-				foreach ($matches[0] as $m) {
-					$msg = str_replace($m, '<a href="' . htmlspecialchars($matches[1][0] . $matches[2][0]) . '" target="_blank" rel="nofollow">' . htmlspecialchars($m) . '</a>', $msg);
-				}
-			}
+		$msg = $tweet->text;
+
+		foreach ($tweet->entities->urls as $url) {
+			$msg = str_replace(
+				$url->url, 
+				sprintf('<a href="%s" target="_blank" rel="nofollow">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)), 
+				$msg);
 		}
 
-		// @poker_2_0
-		$pattern = '((@)([a-zA-Z0-9\-_]+)([,\s\n\r\t]+))';
-		$replace = '\\1<a href="http://twitter.com/\\2" target="_blank" rel="nofollow">\\2</a> ';
+		$pattern = '~@([a-zA-Z0-9\-_]+)~';
+		$replace = '@<a href="http://twitter.com/\\1" target="_blank" rel="nofollow">\\1</a> ';
 		$msg = preg_replace($pattern, $replace, $msg);
+
+		$pattern = '~#([a-zA-Z0-9\-_]+)~';
+		$replace = '#<a href="http://twitter.com/search/?src=hash&q=%23\\1" target="_blank" rel="nofollow">\\1</a> ';
+		$msg = preg_replace($pattern, $replace, $msg);
+
 		return $msg;
 	}
 }
