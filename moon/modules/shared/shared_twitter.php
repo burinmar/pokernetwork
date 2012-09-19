@@ -22,6 +22,18 @@ class shared_twitter
 	private function getKeys($account)
 	{
 		switch (strtolower($account)) {
+		case 'pokernetwork_socialimport':
+			return is_dev() // .dev -> pntest1
+				? array('oqY0t7uKsjyTN4Vb6nQ', 'XdyKYe9MyrfWE9247x5E4KQ49ClY6JUXbyzJvRZr30', '297837556-nlHyQvRt2Klc4E8DkS1XNYKQtAZp7PhYo2ZdFR5j', 'yQcn7FWiFtaK6eQu8JvP9nA5v98tvvitVOIJfCF1sU')
+				: $this->getKeysSocialImport();
+		}
+	}
+
+	private function getKeysSocialImport()
+	{
+		switch (_SITE_ID_) {
+		case 'pnw:com':
+			return array('stMnYtvpYBNnvM4yMf3uXA', 'SyGrGhYSRW2XHr9DTrgclBCtKF2jxHKg3IvM5sI498', '833107724-MCO98iQWnJcJnAZ3k5MMGRPmoJAErCAp6oPJpwAU', 'Bk6PoFG1nSPaefCHqPcvktN6CySroXOpD4fNbi3vM');
 		}
 	}
 }
