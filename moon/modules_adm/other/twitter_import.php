@@ -259,21 +259,37 @@ class twitter_import extends moon_com {
 	{
 		$msg = $tweet->text;
 
+		// links
 		foreach ($tweet->entities->urls as $url) {
 			$msg = str_replace(
-				$url->url, 
+				$url->url,
 				sprintf('<a href="%s" target="_blank" rel="nofollow">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)), 
 				$msg);
 		}
+		// links to images
+		foreach ($tweet->entities->media as $url) {
+			$msg = str_replace(
+				$url->url,
+				sprintf('<a href="%s" target="_blank" rel="nofollow" class="twitter-image">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)), 
+				$msg);
+		}
 
-		$pattern = '~@([a-zA-Z0-9\-_]+)~';
-		$replace = '@<a href="http://twitter.com/\\1" target="_blank" rel="nofollow">\\1</a> ';
-		$msg = preg_replace($pattern, $replace, $msg);
+		// users
+		foreach ($tweet->entities->user_mentions as $twitterUser) {
+			$msg = str_replace(
+				'@' . $twitterUser->screen_name, 
+				sprintf('@<a href="http://twitter.com/%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($twitterUser->screen_name), htmlspecialchars($twitterUser->screen_name)), 
+				$msg);
+		}
 
-		$pattern = '~#([a-zA-Z0-9\-_]+)~';
-		$replace = '#<a href="http://twitter.com/search/?src=hash&q=%23\\1" target="_blank" rel="nofollow">\\1</a> ';
-		$msg = preg_replace($pattern, $replace, $msg);
-
+		// hashtags
+		foreach ($tweet->entities->hashtags as $hashtag) {
+			$msg = str_replace(
+				'#' . $hashtag->text, 
+				sprintf('#<a href="http://twitter.com/search/?src=hash&amp;q=%%23%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($hashtag->text), htmlspecialchars($hashtag->text)), 
+				$msg);
+		}
+		
 		return $msg;
 	}
 }
