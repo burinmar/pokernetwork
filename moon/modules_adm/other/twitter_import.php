@@ -260,6 +260,7 @@ class twitter_import extends moon_com {
 		$msg = $tweet->text;
 
 		// links
+		if (isset($tweet->entities->urls) && is_array($tweet->entities->urls))
 		foreach ($tweet->entities->urls as $url) {
 			$msg = str_replace(
 				$url->url,
@@ -267,6 +268,7 @@ class twitter_import extends moon_com {
 				$msg);
 		}
 		// links to images
+		if (isset($tweet->entities->media) && is_array($tweet->entities->media))
 		foreach ($tweet->entities->media as $url) {
 			$msg = str_replace(
 				$url->url,
@@ -275,6 +277,7 @@ class twitter_import extends moon_com {
 		}
 
 		// users
+		if (isset($tweet->entities->user_mentions) && is_array($tweet->entities->user_mentions))
 		foreach ($tweet->entities->user_mentions as $twitterUser) {
 			$msg = str_replace(
 				'@' . $twitterUser->screen_name, 
@@ -283,13 +286,14 @@ class twitter_import extends moon_com {
 		}
 
 		// hashtags
+		if (isset($tweet->entities->hashtags) && is_array($tweet->entities->hashtags))
 		foreach ($tweet->entities->hashtags as $hashtag) {
 			$msg = str_replace(
 				'#' . $hashtag->text, 
 				sprintf('#<a href="http://twitter.com/search/?src=hash&amp;q=%%23%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($hashtag->text), htmlspecialchars($hashtag->text)), 
 				$msg);
 		}
-		
+
 		return $msg;
 	}
 }
