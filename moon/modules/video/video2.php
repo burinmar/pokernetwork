@@ -235,7 +235,7 @@ class video2 extends moon_com {
 			$m['videoId'] = $featuredVideo['id'];
 			$m['playerId'] = $this->get_var('playerId');
 			$m['name'] = htmlspecialchars($featuredVideo['name']);
-			$m['thumbSrc'] = $this->defaultThumbnail($featuredVideo['thumbnail_url']);
+			$m['thumbSrc'] = $this->defaultThumbnail($featuredVideo['youtube_video_id']);
 			$m['uri.featured'] = $this->linkas('#', $featuredVideo['uri'] . '-' . $featuredVideo['id']);
 			$m['publishedDate'] = $locale->datef($featuredVideo['published_date'], 'News');
 			$m['length'] = $this->secToTime($featuredVideo['length']) . ' ' . $minStr;
@@ -264,7 +264,7 @@ class video2 extends moon_com {
 
 			$item['url.video'] = $this->linkas('#', $item['uri'] . '-' . $item['id']);
 			$item['title'] = htmlspecialchars($item['name']);
-			$item['thumbSrc'] = $this->defaultThumbnail($item['thumbnail_url']);
+			$item['thumbSrc'] = $this->defaultThumbnail($item['youtube_video_id']);
 			$item['length'] = $this->secToTime($item['length']);
 			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -283,7 +283,7 @@ class video2 extends moon_com {
 
 			$item['url.video'] = $this->linkas('#', $item['uri'] . '-' . $item['id']);
 			$item['title'] = htmlspecialchars($item['name']);
-			$item['thumbSrc'] = $this->defaultThumbnail($item['thumbnail_url']);
+			$item['thumbSrc'] = $this->defaultThumbnail($item['youtube_video_id']);
 			$item['length'] = $this->secToTime($item['length']);
 			$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -335,7 +335,7 @@ class video2 extends moon_com {
 
 			$item['title'] = htmlspecialchars($v['name']);
 			$item['uri.video'] = $this->linkas('#', $v['uri'] . '-' . $v['id']);
-			$item['thumbSrc'] = $this->defaultThumbnail($v['thumbnail_url']);
+			$item['thumbSrc'] = $this->defaultThumbnail($v['youtube_video_id']);
 			$item['length'] = $this->secToTime($v['length']);
 			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -357,7 +357,7 @@ class video2 extends moon_com {
 
 			$item['title'] = htmlspecialchars($v['name']);
 			$item['uri.video'] = $this->linkas('#', $v['uri'] . '-' . $v['id']);
-			$item['thumbSrc'] = $this->defaultThumbnail($v['thumbnail_url']);
+			$item['thumbSrc'] = $this->defaultThumbnail($v['youtube_video_id']);
 			$item['length'] = $this->secToTime($v['length']);
 			$item['url.comments'] = ($item['comm_count'] = $v['comm_count']) ? $item['uri.video'] . '#comm-list' : '';
 			$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -389,9 +389,7 @@ class video2 extends moon_com {
 			$page->meta('twitter:creator', '@Pokernews'); // see below for override while iterating authors
 			$page->fbMeta['og:url'] =                                                  // required, or twitter:url
 				htmlspecialchars(rtrim($page->home_url(), '/') . $this->linkas('#', $video['uri'] . '-' . $video['id'])); 
-			$page->fbMeta['og:image'] =                                                             // twitter:image
-				strpos($video['thumbnail_url'], 'http') !== false ? $this->defaultThumbnail($video['thumbnail_url']) : rtrim($page->home_url(), '/') . $video['thumbnail_url'] . '?t=' . time();
-			$page->fbMeta['og:title'] = htmlspecialchars($video['name']);              // required, or twitter:title
+			$page->fbMeta['og:image'] = $this->defaultThumbnail($video['youtube_video_id']);        // twitter:image			$page->fbMeta['og:title'] = htmlspecialchars($video['name']);              // required, or twitter:title
 			$page->fbMeta['og:description'] = htmlspecialchars($video['description']); // required, or twitter:description
 			//
 			$page->fbMeta['og:video'] = 'https://www.youtube.com/v/' . $video['youtube_video_id'];
@@ -449,7 +447,7 @@ class video2 extends moon_com {
 		}
 		$iCard = array();
 		$iCard['title'] = $video['name'];
-		$imgSrc = strpos($video['thumbnail_url'], 'http') !== false ? $this->defaultThumbnail($video['thumbnail_url']) : $homeUrl . $video['thumbnail_url'] . '?t=' . time();
+		$imgSrc = $this->defaultThumbnail($video['youtube_video_id']);
 		$iCard['img'] = $imgSrc;
 		$iCard['url'] = $homeUrl . $m['uri.self'];
 		$iCard['description'] = $video['description'];
@@ -567,7 +565,7 @@ class video2 extends moon_com {
 
 				$item['url.video'] = $this->linkas('#', $item['uri'] . '-' . $item['id']);
 				$item['title'] = htmlspecialchars($item['name']);
-				$item['thumbSrc'] = $this->defaultThumbnail($item['thumbnail_url']);
+				$item['thumbSrc'] = $this->defaultThumbnail($item['youtube_video_id']);
 				$item['length'] = $this->secToTime($item['length']);
 				$item['url.comments'] = $item['comm_count'] ? $item['url.video'] . '#comm-list' : '';
 				$item['commentsWord'] = $item['comm_count'] == 1 ? 'comment' : 'comments';
@@ -583,11 +581,9 @@ class video2 extends moon_com {
 		return $tpl->parse('viewList', $m);
 	}
 
-	private function defaultThumbnail($imgSrc)
+	private function defaultThumbnail($youtubeVideoId)
 	{
-		if (strpos($imgSrc, 'ytimg.com') !== false)
-			$imgSrc = str_replace('default.jpg', 'mqdefault.jpg', $imgSrc);
-		return $imgSrc;
+		return sprintf('http://i.ytimg.com/vi/%s/mqdefault.jpg', rawurlencode($youtubeVideoId));
 	}
 
 	private function htmlCategoriesBox($playlistId = 0)
@@ -754,7 +750,7 @@ class video2 extends moon_com {
 		$idField = (strlen($id) >= 9) 
 			? 'brightcove_id'
 			: 'id';
-		$sql = 'SELECT id,title name,uri,description,duration length,created published_date,tags,category playlist_ids,thumbnail_url,flv_url,youtube_video_id,comm_count
+		$sql = 'SELECT id,title name,uri,description,duration length,created published_date,tags,category playlist_ids,flv_url,youtube_video_id,comm_count
 			FROM ' . $this->table('Videos') . '
 			WHERE ' . $where . ' AND
 				hide = 0';
@@ -788,7 +784,7 @@ class video2 extends moon_com {
 		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
 
 		$strSelect = ', ' . implode(' + ', $if) . ' as weight';
-		$sql = 'SELECT	id,title name,uri,thumbnail_url,duration length,comm_count,created published_date ' . $strSelect . '
+		$sql = 'SELECT	id,title name,uri,youtube_video_id,duration length,comm_count,created published_date ' . $strSelect . '
 			FROM ' . $this->table('Videos') . '
 			' . $where . '
 			ORDER BY weight DESC, created DESC
@@ -812,7 +808,7 @@ class video2 extends moon_com {
 		}
 		$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
 
-		$sql = 'SELECT	id,title name,uri,thumbnail_url,duration length,created published_date
+		$sql = 'SELECT	id,title name,uri,youtube_video_id,duration length,created published_date
 			FROM ' . $this->table('Videos') . '
 			' . $where . '
 			ORDER BY created DESC
@@ -842,7 +838,7 @@ class video2 extends moon_com {
 
 	private function getList($playlistID = FALSE, $tag = FALSE, $year = 0, $month = 0)
 	{
-		$sql = 'SELECT id,title name,uri,thumbnail_url,duration length,created published_date,comm_count
+		$sql = 'SELECT id,title name,uri,youtube_video_id,duration length,created published_date,comm_count
 			FROM ' . $this->tblVideos . $this->sqlWhere($playlistID, $tag, $year, $month) . '
 			ORDER BY created DESC ' .
 			$this->sqlLimit();
@@ -851,7 +847,7 @@ class video2 extends moon_com {
 
 	private function getLatestItems($limit = 11, $id = 0)
 	{
-		$sql = 'SELECT id,title name,uri,thumbnail_url,duration length,created published_date,comm_count,tags,description short_description, youtube_video_id, flv_url
+		$sql = 'SELECT id,title name,uri,youtube_video_id,duration length,created published_date,comm_count,tags,description short_description, youtube_video_id, flv_url
 			FROM ' . $this->tblVideos . $this->sqlWhere() . ($id ? ' AND id <> ' . $id : '') . '
 			ORDER BY created DESC
 			LIMIT ' . $limit;
@@ -873,7 +869,7 @@ class video2 extends moon_com {
 		$l = moon::locale();
 		$now = floor($l->now() / 300) * 300;
 		$viewsInterval = (string)($now - 3600*24*30);
-		$sql = 'SELECT id,title name,uri,thumbnail_url,duration length,created published_date,comm_count
+		$sql = 'SELECT id,title name,uri,youtube_video_id,duration length,created published_date,comm_count
 			FROM ' . $this->tblVideos . $this->sqlWhere() . ' AND created > ' . $viewsInterval . '
 			ORDER BY views_count DESC
 			LIMIT 10';
@@ -1083,7 +1079,7 @@ class video2 extends moon_com {
 		foreach ($ids as $key => $value)
 			$ids[$key] = intval($value);
 		return $this->db->query('
-			SELECT id, title name,CONCAT(uri, "-", id) as uri, created published, description, thumbnail_url
+			SELECT id, title name,CONCAT(uri, "-", id) as uri, created published, description, concat("http://i.ytimg.com/vi/", youtube_video_id, "/mqdefault.jpg") thumbnail_url
 			FROM ' . $this->tblVideos . '
 			WHERE hide=0 AND id IN(' . implode(',', $ids) . ')
 		');
