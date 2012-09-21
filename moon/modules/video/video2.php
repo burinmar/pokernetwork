@@ -743,6 +743,7 @@ class video2 extends moon_com {
 		} elseif ($type == 'id') {
 			$where = 'id = "' . intval($id) . '"';
 		} elseif ($type == 'brightcove_id') {
+			return array();
 			$where = 'brightcove_id = "' . $this->db->escape(sprintf("%.0f",$id)) . '"';
 		} else {
 			return array();
