@@ -169,7 +169,7 @@ class search extends moon_com {
 
 	function getResultsVideo($q, $limit) {
 		$sql = "
-			SELECT id,title,uri,created,thumbnail_url,duration
+			SELECT id,title,uri,created,youtube_video_id,duration
 			FROM video2
 			WHERE hide=0
 				" . $this->_where($q, array('title', 'tags', 'description')) . '
@@ -187,7 +187,7 @@ class search extends moon_com {
 			$d['date'] = $locale->datef($time, 'News');
 			$d['url.video'] = $linkBase . $d['uri'] . '-' . $d['id'] . '.htm';
 			$d['title'] = htmlspecialchars($d['title']);
-			$d['thumbSrc'] = $d['thumbnail_url'];
+			$d['thumbSrc'] = sprintf('http://i.ytimg.com/vi/%s/mqdefault.jpg', rawurlencode($d['youtube_video_id']));
 			$d['length'] = $oVideo->secToTime($d['duration']);
 			$s .= $tpl->parse('itemVideo', $d);
 		}

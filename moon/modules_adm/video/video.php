@@ -8,7 +8,7 @@ class video extends moon_com {
 
 		/* form of item */
 		$this->form = & $this->form();
-		$this->form->names('id', 'hide', 'yhide', 'category', 'uri', 'title', 'youtube_playlist_id', 'description', 'youtube_video_id', 'tags', 'thumbnail_url', 'updated', 'master_updated');
+		$this->form->names('id', 'hide', 'yhide', 'category', 'uri', 'title', 'youtube_playlist_id', 'description', 'youtube_video_id', 'tags', 'updated', 'master_updated');
 		$this->form->fill(array('date' => time()));
 
 		/* form of filter */
@@ -169,8 +169,7 @@ class video extends moon_com {
 					$ids[] = $d['author_id'];
 				}
 			}
-			//$authors = $this->getAuthors($ids);
-			$authors = array();
+			$authors = $this->getAuthors($ids);
 
 
 
@@ -195,7 +194,7 @@ class video extends moon_com {
 				else {
 					$d['author'] = '';
 				}
-				$d['img'] = $d['thumbnail_url'] ? $d['thumbnail_url'] :$http.'/i/video-placeholder.png';
+				$d['img'] = $d['youtube_video_id'] ? sprintf('http://i.ytimg.com/vi/%s/mqdefault.jpg', rawurlencode($d['youtube_video_id'])) :$http.'/i/video-placeholder.png';
 				$d['description'] = htmlspecialchars($text->excerpt($d['description'], 300));
 				$d['duration'] = $this->duration($d['duration']);
 
@@ -273,7 +272,7 @@ class video extends moon_com {
 
 
 		$http = 'http://adm.pokernews.' . (is_dev() ? 'dev':'com');
-		$m['thumbnail'] = $m['thumbnail_url'] ? $m['thumbnail_url'] : $http . '/i/video-placeholder.png';
+		$m['thumbnail'] = $m['youtube_video_id'] ? sprintf('http://i.ytimg.com/vi/%s/mqdefault.jpg', rawurlencode($m['youtube_video_id'])) : $http . '/i/video-placeholder.png';
 
 		/* category */
 		$categories = $this->getCategories();
@@ -727,7 +726,7 @@ class video extends moon_com {
 
 	function syncUpdateItem($item, $exist) {
 
-		$fields = array( 'id', 'hide', 'duration', 'created', 'author_id', 'youtube_video_id', 'youtube_channel_id', 'language', 'brightcove_id', 'flv_url', 'thumbnail_url');
+		$fields = array( 'id', 'hide', 'duration', 'created', 'author_id', 'youtube_video_id', 'youtube_channel_id', 'language');
 		$ins = array();
 		foreach ($fields as $v) {
 			$ins[$v] = $item[$v];
