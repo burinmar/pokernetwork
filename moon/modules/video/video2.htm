@@ -84,7 +84,7 @@ latestVideos=Latest Videos
 	<ul class="videoList">
 		<% loop {items:popularMonth} %>
 		<li>
-			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" /><span>{length}</span></a>
 			<b><a href="{url.video}">{title}</a></b>
 			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
 		</li>
@@ -131,7 +131,7 @@ latestVideos=Latest Videos
 	<ul class="videoList">
 		<% loop {related} %>
 		<li>
-			<a href="{uri.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<a href="{uri.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" /><span>{length}</span></a>
 			<b><a href="{uri.video}">{title}</a></b>
 			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
 		</li>
@@ -146,7 +146,7 @@ latestVideos=Latest Videos
 	<ul class="videoList">
 		<% loop {latest} %>
 		<li>
-			<a href="{uri.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<a href="{uri.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" /><span>{length}</span></a>
 			<b><a href="{uri.video}">{title}</a></b>
 			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
 		</li>
@@ -163,7 +163,7 @@ latestVideos=Latest Videos
 	<ul class="videoList">
 		<% loop {items} %>
 		<li>
-			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" height="90" /><span>{length}</span></a>
+			<a href="{url.video}" class="thumb"><img alt="" src="{thumbSrc}" width="120" /><span>{length}</span></a>
 			<b><a href="{url.video}">{title}</a></b>
 			<span class="meta">{date}<% if {url.comments} %> <a class="commentIco" href="{url.comments}">{comm_count}</a><% end {if} %></span>
 		</li>
