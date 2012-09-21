@@ -373,8 +373,6 @@ class livereporting_event_pylon extends livereporting_event
 				'show_controls' => $allowWrite,
 				'control' => ''
 			);
-			if (null != ($twitterNick = $this->getUserTwitterNick($data['author_id'])))
-				$rArgv['author_twitter_nick'] = $twitterNick;
 			$commentsComp = $this->object('comments');
 			if (in_array($data['type'], array('post', 'chips', 'photos'))  && is_object($commentsComp)) {
 				$shift = array(
@@ -390,21 +388,12 @@ class livereporting_event_pylon extends livereporting_event
 		return $rArgv;
 	}
 
-	private function getUserTwitterNick($id)
-	{
-		$user = $this->db->single_query_assoc('SELECT twitter FROM ' . $this->table('Users') . ' WHERE id=' . intval($id) . ' AND twitter IS NOT NULL');
-		if (isset($user['twitter']))
-			return $user['twitter'];
-	}
-
 	protected function helperRenderOGMeta($rArgv, $data = array())
 	{
 		$page = moon::page();
 		$page->meta('twitter:card', 'summary');
 		$page->meta('twitter:site', '@Pokernews');
-		$page->meta('twitter:creator', !isset($rArgv['author_twitter_nick'])
-			? '@Pokernews'
-			: '@' . $rArgv['author_twitter_nick']);
+		$page->meta('twitter:creator', '@Pokernews');
 		$page->fbMeta['og:title'] = $rArgv['title']; // required, or twitter:title
 		$page->fbMeta['og:description'] = $this->lrep()->instTools()->helperHtmlExcerpt(
 			strip_tags($rArgv['body']), 
