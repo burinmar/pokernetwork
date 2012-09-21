@@ -37,7 +37,7 @@ class video2 extends moon_com {
 					$tpl = $this->load_template();
 					$a = array();
 					$pnPlayer = moon::shared('pnplayer');
-					$flv = $video['youtube_video_id'] ? $video['youtube_video_id'] : $video['flv_url'];
+					$flv = $video['youtube_video_id'];
 					$a['video'] = $pnPlayer->getHtml($flv, $video['length'], $preset, null, $pnPlayer->getDefaultAdsConfig('embed'));
 					$a['video'] = $tpl->ready_js($a['video']);
 					$a['into'] = !empty($_GET['into']) ? $tpl->ready_js($_GET['into']) : '';
@@ -248,7 +248,7 @@ class video2 extends moon_com {
 			if (!empty($featuredVideo['youtube_video_id'])) {
 				$featuredVideo['player_uri'] = $featuredVideo['youtube_video_id'];
 			} else {
-				$featuredVideo['player_uri'] = preg_replace('/\?.*$/', '', $featuredVideo['flv_url']);
+				$featuredVideo['player_uri'] = '';
 			}
 			$pnPlayer = moon::shared('pnplayer');
 			$m['video'] = $pnPlayer->getHtml($featuredVideo['player_uri'], $featuredVideo['length'], 'videoPage', null, $pnPlayer->getDefaultAdsConfig('video'));
@@ -404,7 +404,7 @@ class video2 extends moon_com {
 			$video['player_uri'] = $video['youtube_video_id'];
 		} else {
 			// $videoSrc = 'http://c.brightcove.com/services/viewer/federated_f9/69609817001?isVid=1&amp;isUI=1&amp;autoStart=1&amp;dynamicStreaming=1&amp;publisherID=1544546948&amp;playerID=69609817001&amp;domain=embed&amp;videoId=' . $video['id'];
-			$video['player_uri'] = preg_replace('/\?.*$/', '', $video['flv_url']);
+			$video['player_uri'] = '';
 		}
 
 		$sitemap->breadcrumb(array('' => $video['name']));
@@ -750,7 +750,7 @@ class video2 extends moon_com {
 		$idField = (strlen($id) >= 9) 
 			? 'brightcove_id'
 			: 'id';
-		$sql = 'SELECT id,title name,uri,description,duration length,created published_date,tags,category playlist_ids,flv_url,youtube_video_id,comm_count
+		$sql = 'SELECT id,title name,uri,description,duration length,created published_date,tags,category playlist_ids,youtube_video_id,comm_count
 			FROM ' . $this->table('Videos') . '
 			WHERE ' . $where . ' AND
 				hide = 0';
@@ -847,7 +847,7 @@ class video2 extends moon_com {
 
 	private function getLatestItems($limit = 11, $id = 0)
 	{
-		$sql = 'SELECT id,title name,uri,youtube_video_id,duration length,created published_date,comm_count,tags,description short_description, youtube_video_id, flv_url
+		$sql = 'SELECT id,title name,uri,youtube_video_id,duration length,created published_date,comm_count,tags,description short_description, youtube_video_id
 			FROM ' . $this->tblVideos . $this->sqlWhere() . ($id ? ' AND id <> ' . $id : '') . '
 			ORDER BY created DESC
 			LIMIT ' . $limit;
