@@ -135,6 +135,7 @@ class twitter extends moon_com {
 		$page = moon::page();
 		$sitemap = moon::shared('sitemap');
 		$tpl = $this->load_template();
+		$homeUrl = rtrim($page->home_url(), '/');
 
 		$m = array(
 			'uri.messages' => $sitemap->getLink(),
@@ -157,7 +158,9 @@ class twitter extends moon_com {
 			foreach ($items as $item) {
 				$item['url.author'] = $m['uri.messages'] . $item['screen_name'] . '/';
 				$item['avatarSrc'] = $item['image_url'];
-				$item['url.twitter'] = 'http://twitter.com/'.$item['screen_name'];
+				$item['name'] = htmlspecialchars($item['name']);
+				$item['screen_name'] = htmlspecialchars($item['screen_name']);
+				$item['authorUri'] = $homeUrl . $this->linkas('#' . $item['screen_name']);
 				$item['author'] = htmlspecialchars($item['name']);
 				$item['message'] = $item['message'];
 				$ago = $txt->ago($item['created']);
@@ -215,7 +218,7 @@ class twitter extends moon_com {
 			$item['avatarSrc'] = $item['image_url'];
 			$item['name'] = htmlspecialchars($item['name']);
 			$item['screen_name'] = htmlspecialchars($item['screen_name']);
-			$item['url.twitter'] = 'http://twitter.com/'.$item['screen_name'];
+			$item['authorUri'] = $homeUrl . $this->linkas('#' . $item['screen_name']);
 			$item['message'] = $item['message'];
 			$m['items:box'] .= $tpl->parse('items:box', $item);
 		}
@@ -257,10 +260,9 @@ class twitter extends moon_com {
 			$ago = $txt->ago($item['created']);
 			$item['time'] = ($ago) ? $ago : date('D, d M Y H:i', $item['created']);
 			$item['authorUri'] = $homeUrl . $this->linkas('#' . $item['screen_name']);
-			$item['avatarSrc'] = $item['image_url'];
 			$item['name'] = htmlspecialchars($item['name']);
 			$item['screen_name'] = htmlspecialchars($item['screen_name']);
-			$item['url.twitter'] = 'http://twitter.com/'.$item['screen_name'];
+			$item['authorUri'] = $homeUrl . $this->linkas('#' . $item['screen_name']);
 			$item['message'] = $item['message'];
 			$m['items:box:reporting'] .= $tpl->parse('items:box:reporting', $item);
 		}
@@ -281,7 +283,7 @@ class twitter extends moon_com {
 
 	function getItems()
 	{
-		$sql = 'SELECT name, screen_name, image_url, created, message
+		$sql = 'SELECT message_id, name, screen_name, image_url, created, message
 			FROM ' . $this->tblMessages . ' ' .
 			$this->sqlWhere() . '
 			ORDER BY created DESC ' .
@@ -312,7 +314,7 @@ class twitter extends moon_com {
 
 	function getLastItems($lastMessages = true)
 	{
-		$sql = 'SELECT name, screen_name, image_url, created, message
+		$sql = 'SELECT message_id, name, screen_name, image_url, created, message
 			FROM ' . $this->tblMessages  . '
 			WHERE is_hidden = 0 ' . ($lastMessages ? ' AND is_last_message = 1' : '') . '
 			ORDER BY created DESC
