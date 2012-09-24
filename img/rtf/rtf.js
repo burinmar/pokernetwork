@@ -692,7 +692,7 @@ rtfObject.prototype.getTwitterMsg = function( url)
 	var func = function (d) {
     	if (d['text']) {
 			var img = d['user']['profile_image_url'];
-			var str='[TWITTER="' + url + '"]\nimg=' + (img ? img : '')+'\nnick=' + d['user']['screen_name'] + '\nname=' + d['user']['name'] + '\ndate=' + d['created_at'] + '\ntext=' + d['text'] + '\n[/TWITTER]';
+			var str='[TWITTER="' + url + '"]\nimg=' + (img ? img : '')+'\nnick=' + d['user']['screen_name'] + '\nname=' + d['user']['name'] + '\ndate=' + d['created_at'] + '\ntext=' + d['text'] +  '\nid=' + d['id_str'] + '\n[/TWITTER]';
 			me.insert(str, 12 + url.length, 10);
 		}
 		me.buttonEvent('twitter','close');

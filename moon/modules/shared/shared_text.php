@@ -798,7 +798,8 @@ function _tag($tag,$param,$txt){
 			if (!$this->features['liveUrl']) {
 				$a['text'] = $this->make_urls($a['text']);
 			}
-			$txt = (empty($a['img']) ? '' : '<img src="' . $a['img'] . '" />') . '<p><span><a href="' . $url . '" onclick="window.open(this.href);return false;">' . $a['nick'] . '</a>'.(empty($a['name']) ? '' : ' '.$a['name']).'</span> <q cite="' . $url . '">' . $a['text'] . '</q>' . ($date ? ' <i>' . $date . '</i>' : '') .'</p>';
+			//$txt = (empty($a['img']) ? '' : '<img src="' . $a['img'] . '" />') . '<p><span><a href="' . $url . '" onclick="window.open(this.href);return false;">' . $a['nick'] . '</a>'.(empty($a['name']) ? '' : ' '.$a['name']).'</span> <q cite="' . $url . '">' . $a['text'] . '</q>' . ($date ? ' <i>' . $date . '</i>' : '') .'</p>';
+			$txt = '<div class="author">'.(empty($a['img']) ? '' : '<img src="' . $a['img'] . '" />').'<p><a href="' . $url . '" onclick="window.open(this.href);return false;"><b>'.(empty($a['name']) ? '' : $a['name']).'</b></a><br /><a href="' . $url . '" onclick="window.open(this.href);return false;">@' . $a['nick'] . '</a></p></div><span class="clr"></span><q cite="' . $url . '" class="tweetMessage">' . $a['text'] . '</q>' . ($date ? '<span class="date">' . $date . '</span>' : ''). (empty($a['id']) ? '' : '<div class="tweetActions"><a href="https://twitter.com/intent/tweet?in_reply_to=' . $a['id'] . '" class="tweetReply">Reply</a><a href="https://twitter.com/intent/retweet?tweet_id=' . $a['id'] . '" class="tweetRetweet">Retweet</a><a href="https://twitter.com/intent/favorite?tweet_id=' . $a['id'] . '" class="tweetFavorite">Favorite</a></div>').'<a href="https://twitter.com/' . $a['nick'] . '" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow</a>';
 			$txt = str_replace('{txt}', $txt, $tags[$tag]);
 		}
 		break;

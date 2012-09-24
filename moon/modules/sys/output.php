@@ -111,6 +111,7 @@ class output extends moon_com {
 				}
 			}
 		}
+		$footScripts .= '<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>';
 		//Justino prasymu
 		$footScripts .= '<img src="https://pixel.mathtag.com/event/img?mt_id=134403&mt_adid=101145&v1=&v2=&v3=&s1=&s2=&s3=" width="1" height="1" />';
 		$hl = $p->head_link();
