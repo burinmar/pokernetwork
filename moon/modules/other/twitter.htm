@@ -9,12 +9,21 @@
 			<li><a href="{uri.players}">Tweeters</a></li>
 		</ul>
 	</div>
-	<% if {items:messages} %><br />
+	<% if {items:messages} %>
 	<ul class="tweets clrfix" style="margin-bottom: 30px">
 		<% loop {items:messages} %>
 		<li>
-			<a href="{url.author}"><img src="{avatarSrc}" alt="{author}" width="48" height="48" /></a>
-			<p><b>{name}</b> <a href="{url.twitter}" target="_blank">@{screen_name}</a><br />{message}</p>
+			<a href="{authorUri}"><img src="{avatarSrc}" alt="{name}" width="48" height="48" /></a>
+				<div class="tweetContent">
+					<b><a href="{authorUri}">{name}</a></b> <a href="{url.twitter}" target="_blank" class="nick">@{screen_name}</a>
+					<p>{message}</p>
+				</div>
+			<a href="#" class="tweetDate">{date}</a>
+			<div class="tweetActions">
+				<a href="https://twitter.com/intent/tweet?in_reply_to=248702100580745216" class="tweetReply">Reply</a>
+				<a href="https://twitter.com/intent/retweet?tweet_id=248702100580745216" class="tweetRetweet">Retweet</a>
+				<a href="https://twitter.com/intent/favorite?tweet_id=248702100580745216" class="tweetFavorite">Favorite</a>
+			</div>
 		</li>
 		<% end %>
 	</ul>
@@ -53,13 +62,22 @@
 
 <% twitter_box %>
 <% if {items:box} %>
-<div class="widget">
-	<h2 class="widgetTitle"><a href="{allMessagesUri}">Fresh Tweets</a></h2>
+<div class="widget homePageTweets">
+	<h2 class="widgetTitle"><a href="{allMessagesUri}">Fresh Tweets</a> <img src="/img/twitter-bird-16x16.png" alt="Twitter" class="fr" /></h2>
 	<ul class="tweets clrfix">
 		<% loop {items:box} %>
 		<li>
 			<a href="{authorUri}"><img src="{avatarSrc}" alt="{name}" width="48" height="48" /></a>
-			<p><b>{name}</b> <a href="{url.twitter}" target="_blank">@{screen_name}</a><br />{message}</p>
+				<div class="tweetContent">
+					<b><a href="{authorUri}">{name}</a></b> <a href="{url.twitter}" target="_blank" class="nick">@{screen_name}</a>
+					<p>{message}</p>
+				</div>
+			<a href="#" class="tweetDate">{date}</a>
+			<div class="tweetActions">
+				<a href="https://twitter.com/intent/tweet?in_reply_to=248702100580745216" class="tweetReply">Reply</a>
+				<a href="https://twitter.com/intent/retweet?tweet_id=248702100580745216" class="tweetRetweet">Retweet</a>
+				<a href="https://twitter.com/intent/favorite?tweet_id=248702100580745216" class="tweetFavorite">Favorite</a>
+			</div>
 		</li>
 		<% end %>
 	</ul>
