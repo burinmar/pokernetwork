@@ -36,7 +36,7 @@ class header extends moon_com
 
 // PartyPoker Manchester United VIP Trip
 if ($this->wallpaper($res, array(
-'promoID'=> 10,
+'url'=> '/leagues/partypoker-manchester-united-vip-trip/',
 'imgPath'=> '/img/partypoker_manutd_wallpaper.jpg',
 'bgColor'=> '#72001b',
 )
@@ -44,19 +44,17 @@ if ($this->wallpaper($res, array(
 
 // UnibetPoker RaceTrack
 if ($this->wallpaper($res, array(
-'promoID'=> 111,
+'url'=> '/leagues/13-000-pokernews-racetrack/',
 'imgPath'=> '/img/unibet_racetrack_wallpaper.jpg',
 'bgColor'=> '#000',
-'startDate'=> '2012-09-05 00:00:01',
 )
 )) return $res;
 
 //  $67,500 PokerStars PokerNews Freeroll Series 
 if ($this->wallpaper($res, array(
-'promoID'=> 110,
+'url'=> '/pokerstars/freerolls/?upcoming',
 'imgPath'=> '/img/ps_frseries_wallpaper.jpg',
 'bgColor'=> '#000',
-'startDate'=> '2012-09-01 00:00:01',
 )
 )) return $res;
 
