@@ -36,7 +36,7 @@ class header extends moon_com
 
 // PartyPoker Manchester United VIP Trip
 if ($this->wallpaper($res, array(
-'promoID'=> 112,
+'promoID'=> 10,
 'imgPath'=> '/img/partypoker_manutd_wallpaper.jpg',
 'bgColor'=> '#72001b',
 )
