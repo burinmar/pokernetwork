@@ -34,6 +34,14 @@ class header extends moon_com
 			return $res;
 		}
 
+// PartyPoker Manchester United VIP Trip
+if ($this->wallpaper($res, array(
+'promoID'=> 112,
+'imgPath'=> '/img/partypoker_manutd_wallpaper.jpg',
+'bgColor'=> '#72001b',
+)
+)) return $res;
+
 // UnibetPoker RaceTrack
 if ($this->wallpaper($res, array(
 'promoID'=> 111,
