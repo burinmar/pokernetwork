@@ -398,6 +398,8 @@ class livereporting_event_pylon extends livereporting_event
 		$page->fbMeta['og:description'] = $this->lrep()->instTools()->helperHtmlExcerpt(
 			strip_tags($rArgv['body']), 
 			220, 1, '...', false, false); // required, or twitter:description
+		if (empty($page->fbMeta['og:description'])) // it may be empty sometimes, and twitter requires it be non-empty
+			$page->meta('twitter:description', htmlspecialchars_decode($rArgv['title']));
 		if (!empty($rArgv['image_src']))
 			$page->fbMeta['og:image'] = $rArgv['image_src']; // twitter:image
 		elseif (isset($data['contents']['xphotos'][0]))
