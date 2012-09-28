@@ -359,7 +359,7 @@ class news extends moon_com {
 		$page->meta('robots', 'index,follow');
 		$page->meta('twitter:card', 'summary');
 		$page->meta('twitter:site', '@Pokernews');
-		$page->meta('twitter:creator', '@Pokernews'); // see below for override while iterating authors
+		// $page->meta('twitter:creator', ); // see below for override while iterating authors
 		$page->fbMeta['og:url'] = htmlspecialchars($homeUrl . $uriSelf);         // required, or twitter:url
 		$page->fbMeta['og:image'] = htmlspecialchars($homeUrl . $this->getImageSrc($article['img'], 'thumb_')); // twitter:image
 		$page->fbMeta['og:title'] = htmlspecialchars($article['title']);         // required, or twitter:title

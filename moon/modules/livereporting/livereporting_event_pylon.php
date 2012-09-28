@@ -393,7 +393,8 @@ class livereporting_event_pylon extends livereporting_event
 		$page = moon::page();
 		$page->meta('twitter:card', 'summary');
 		$page->meta('twitter:site', '@Pokernews');
-		$page->meta('twitter:creator', '@Pokernews');
+		if (isset($rArgv['author_twitter_nick']))
+			$page->meta('twitter:creator', '@' . $rArgv['author_twitter_nick']);
 		$page->fbMeta['og:title'] = $rArgv['title']; // required, or twitter:title
 		$page->fbMeta['og:description'] = $this->lrep()->instTools()->helperHtmlExcerpt(
 			strip_tags($rArgv['body']), 
