@@ -385,7 +385,8 @@ class video2 extends moon_com {
 		// facebook like button specific tags
 		if (!empty($video['youtube_video_id'])) {
 			$page->meta('twitter:card', 'player');
-			$page->meta('twitter:site', '@Pokernews');
+			$page->meta('twitter:site', '@Poker_Network');
+			$page->meta('twitter:creator', '@Pokernews');
 			$page->fbMeta['og:url'] =                                                  // required, or twitter:url
 				htmlspecialchars(rtrim($page->home_url(), '/') . $this->linkas('#', $video['uri'] . '-' . $video['id'])); 
 			$page->fbMeta['og:image'] = $this->defaultThumbnail($video['youtube_video_id']);        // twitter:image			$page->fbMeta['og:title'] = htmlspecialchars($video['name']);              // required, or twitter:title
