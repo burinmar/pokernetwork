@@ -59,6 +59,11 @@ class output extends moon_com {
 		);
 		$p->head_link('/favicon.ico', 'favicon');
 
+		if (isset($p->fbMeta)) {
+			foreach ($p->fbMeta as $k => $v) {
+				$m['head.tags'] .= '<meta property="' . $k . '" content="' . $v . '"/>' . "\n";
+			}
+		}
 		// Meta information
 		$meta = $p->meta();
 		if (is_array($meta)) {
