@@ -11,6 +11,11 @@ class livereporting_tour extends moon_com
 	/* @var $lrep livereporting */
 	function events($event, $argv)
 	{
+		if ($event == 'sync-tours') {
+			if ($this->importToursBase($argv))
+				moon::page()->set_local('transporter', 'done');
+			return;
+		}
 		$tours = poker_tours();
 		if (is_numeric($event) && isset($tours[$id = $event])) {
 			//audrius. kad galima būtų meniu įdėti Live poker->WSOP
@@ -79,6 +84,8 @@ class livereporting_tour extends moon_com
 		$page->css('/css/live_poker.css');
 		
 		$tourData = $lrep->instTourModel('_src_tour')->getTour($argv['tourId']);
+		if (null == $tourData)
+			$page->page404();
 		$tourData = array_merge($argv['tour'], (array)$tourData);
 		$tourData['titleShort'] = $tourData['uri'];
 		
@@ -203,5 +210,18 @@ class livereporting_tour extends moon_com
 			));
 		}
 		return $toursList;
-	}	
+	}
+
+	private function importToursBase($data) 
+	{
+		if (!is_array($data))
+			return false;
+		foreach ($data as $row) {
+			$this->db->replace($row, 'reporting_ng_tours_base');
+			// if ($this->db->error())
+			// 	return false;
+		}
+
+		return true;
+	}
 }
