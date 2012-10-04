@@ -216,12 +216,20 @@ class livereporting_tour extends moon_com
 	{
 		if (!is_array($data))
 			return false;
+
+		$return = true;
 		foreach ($data as $row) {
 			$this->db->replace($row, 'reporting_ng_tours_base');
-			// if ($this->db->error())
-			// 	return false;
+			// if ($this->db->error()) {
+			// 	$return = false;
+			// 	break;
+			// }
 		}
 
-		return true;
+		$cache = moon::cache('memcache');
+		$cacheKey = 'reporting.tours_base';
+		$cache->delete($cacheKey);
+
+		return $return;
 	}
 }

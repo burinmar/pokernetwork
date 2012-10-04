@@ -390,8 +390,8 @@ class livereporting_tools extends livereporting_model_pylon
 			if (in_array($argv['skin5LogoSuffix'], array('def', 'idx'))) {
 				$ls['logo'] = sprintf($skins['img'], $tournament['skin'], $argv['skin5LogoSuffix']);
 			} else {
-				$key = isset($tours[$tournament['tour']]['key'])
-					? $tours[$tournament['tour']]['key']
+				$key = isset($tours[$tournament['tour']]['skin_key'])
+					? $tours[$tournament['tour']]['skin_key']
 					: 'default';
 				$ls['logo'] = sprintf($skins['tours'], $key . $argv['skin5LogoSuffix']);
 			}

@@ -217,12 +217,10 @@ class shared extends moon_com {
 		foreach ($tours as $tour) {
 			$uri = (!empty($tour['uri'])) ? str_replace('-', ' ', $tour['uri']) : null;
 			$title = (!empty($tour['title'])) ? $tour['title'] : null;
-			$key = (!empty($tour['key'])) ? $tour['key'] : null;
 			
 			if (
 				in_array(strtolower($uri), $tags, true) ||
-				in_array(strtolower($title), $tags, true) ||
-				in_array(strtolower($key), $tags, true)
+				in_array(strtolower($title), $tags, true)
 			) {
 				$items[] = array(
 					'url.tour' => '/' . $tour['uri'] . '/',

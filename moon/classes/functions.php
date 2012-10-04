@@ -341,6 +341,8 @@ function img($dir, $name, $arg3=null) {
 		case 'game' :
 		case 'gamec' :
 		case 'deposit' :
+		case 'reporting-tour':
+		case 'reporting-tour-big':
 
 			$s = 'http://i.pokernews.' . $com . '/' . $dir . '/' . $name;
 		break;
@@ -507,8 +509,30 @@ function htmlDiff($old, $new){
  */
 function poker_tours()
 {
-	require_once 'poker_tours.php';
-	return poker_tours_backend();
+	static $data;
+
+	if ($data === NULL) {
+		$cache = moon::cache('memcache');
+		$cache->on(TRUE);
+		$cacheKey = 'reporting.tours_base';
+		if (($data = $cache->get($cacheKey)) === FALSE) {
+			$db = moon :: db();
+			$data = $db->array_query_assoc('
+				SELECT id, uri, skin_key, title, title_pre, img1, img2
+				FROM reporting_ng_tours_base
+				WHERE is_hidden=0
+			', 'id');
+			foreach ($data as $k => $row) {
+				$data[$k]['img1'] = img('reporting-tour',     $row['id'], $row['img1']);
+				$data[$k]['img2'] = img('reporting-tour-big', $row['id'], $row['img2']);
+			}
+			$cache->save(serialize($data), 60);
+		} else {
+			$data = unserialize($data);
+		}
+	}
+
+	return $data;
 }
 
 function make_uri($s) {
