@@ -34,6 +34,15 @@ class header extends moon_com
 			return $res;
 		}
 
+// Partypoker Ipad
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/partypoker-ipad-raffle/',
+'imgPath'=> '/img/partypoker_ipad_wallpaper.jpg',
+'bgColor'=> '#000',
+'endDate'=> '2012-10-23 23:59:59',
+)
+)) return $res;
+
 // UnibetPoker RaceTrack
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/13-000-pokernews-racetrack/',
