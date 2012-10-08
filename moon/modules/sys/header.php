@@ -34,14 +34,6 @@ class header extends moon_com
 			return $res;
 		}
 
-// PartyPoker Manchester United VIP Trip
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/partypoker-manchester-united-vip-trip/',
-'imgPath'=> '/img/partypoker_manutd_wallpaper.jpg',
-'bgColor'=> '#72001b',
-)
-)) return $res;
-
 // UnibetPoker RaceTrack
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/13-000-pokernews-racetrack/',
