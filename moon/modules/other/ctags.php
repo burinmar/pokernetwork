@@ -434,7 +434,7 @@ class ctags_updater extends moon_com
 		return $this->ctags->getUrl($tag, $this->src);
 	}
 
-	protected function update($srcId, $tags, $activeSince = NULL)
+	protected function updateTags($srcId, $tags, $activeSince = NULL)
 	{
 		foreach ($tags as $key => $title) {
 			$tag = make_uri(trim($title));
@@ -514,6 +514,6 @@ class ctags_updater_livereporting extends ctags_updater
 	public function update($id, $type, $tags, $activeSince = NULL)
 	{
 		$srcId = $id . '-' . $type;
-		parent::update($srcId, $tags, $activeSince);
+		$this->updateTags($srcId, $tags, $activeSince);
 	}
 }

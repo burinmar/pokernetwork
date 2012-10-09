@@ -1,7 +1,6 @@
 <?php
 
 set_time_limit(3600);
-//error_reporting(E_ALL);
 
 class sync_reporting extends moon_com
 {

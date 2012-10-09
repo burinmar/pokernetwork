@@ -298,7 +298,7 @@ class livereporting_bluff extends moon_com
 		$chips = array();
 
 		foreach ($qDays as $day) {
-			$chipsC = $this->object('livereporting')->instEventModel('_src_bluff')->getLastChips($argv['event_id'], $day);
+			$chipsC = $this->object('livereporting')->instEventModel('_src_bluff')->getChips($argv['event_id'], $day);
 			foreach ($chipsC as $chip) {
 				if ($chip['chips'] == '0' && $chip['day_id'] != $day) { // maybe switch to getLastChips(false, true) ?
 					continue ;
@@ -443,7 +443,7 @@ class livereporting_bluff extends moon_com
 			WHERE event_id=' . intval($argv['event_id']) . '
 		', 'name');
 
-		$chips = $this->object('livereporting')->instEventModel('_src_bluff')->getLastChips($argv['event_id'], $argv['day_id']);
+		$chips = $this->object('livereporting')->instEventModel('_src_bluff')->getChips($argv['event_id'], $argv['day_id']);
 
 		$chips = array_slice($chips, 0, 10);
 

@@ -349,7 +349,8 @@ function localVideoPlayerReady(context) {
 			$('.timeProgress .progress', $controls).css({
 				width: ui.value + '%'
 			});
-		}
+		},
+		step: 0.05
 	});
 
 	context.defaultHeight = $('.pnHeightControl', context.self).height();
@@ -394,7 +395,7 @@ function localVideoPlayerTimeChange(context, player) {
 		timeFormat(duration)
 	);
 	if (!context.userSeekingTime) {
-		$('.timeProgress', $controls).slider('value', parseInt(currentTime / duration * 100, 10));
+		$('.timeProgress', $controls).slider('value', currentTime / duration * 100);
 	}
 }
 
@@ -519,7 +520,8 @@ function videoPlayerReady() {
 			$('.timeProgress .progress', $controls).css({
 				width: ui.value + '%'
 			});
-		}
+		},
+		step: 0.05
 	});
 
 	$('.fullscreen', $controls).click(function(){
@@ -560,7 +562,8 @@ function videoPlayerTimeChange(context, player) {
 	var currentTime = player.getCurrentTime();
 	var duration = player.getDuration();
 
-	$controls.addClass('withTime');
+	if (!$controls.hasClass('withTime'))
+		$controls.addClass('withTime');
 	$('.time .elapsed', $controls).html(
 		timeFormat(currentTime)
 	);
@@ -568,9 +571,8 @@ function videoPlayerTimeChange(context, player) {
 		timeFormat(duration)
 	);
 	if (!context.userSeekingTime) {
-		$('.timeProgress', $controls).slider('value', parseInt(currentTime / duration * 100, 10));
+		$('.timeProgress', $controls).slider('value', currentTime / duration * 100);
 	}
-
 	$('.timeProgress .buffer', $controls).css({
 		width: [Math.ceil((player.getVideoBytesLoaded() + player.getVideoStartBytes()) / player.getVideoBytesTotal() * 100), '%'].join('')
 	});

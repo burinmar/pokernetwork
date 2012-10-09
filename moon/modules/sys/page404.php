@@ -17,7 +17,7 @@ class page404 extends moon_com {
 			}
 		}
 		// gal turime kur redirektinti?
-		$this->redirect();
+		$this->tryRedirect();
 		header("HTTP/1.0 404 Not Found", TRUE, 404);
 		$p = & moon :: page();
 		$u = & moon :: user();
@@ -46,7 +46,7 @@ class page404 extends moon_com {
 	}
 
 
-	function redirect() {
+	function tryRedirect() {
 		$uri = (isset ($_SERVER['REQUEST_URI'])) ? urldecode($_SERVER['REQUEST_URI']) : '';
 		list($uri) = explode('?', $uri);
 		if (!in_array($uri, array('/', '/register/js.php', '/live-reporting/ajax.batch.js', '/banners/get-data.php', '/banners/track-views.php'))) {

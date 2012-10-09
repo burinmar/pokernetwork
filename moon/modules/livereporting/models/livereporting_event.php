@@ -1012,7 +1012,7 @@ class livereporting_model_event_src_bluff extends livereporting_model_event
 {
 	function getDaysDefaultId($eventId)
 		{ return parent::getDaysDefaultId($eventId); }
-	function getLastChips($eventId, $dayId)
+	function getChips($eventId, $dayId)
 		{ return parent::getLastChips($eventId, $dayId, FALSE, FALSE); }
 	function getSponsorsById($ids)
 		{ return parent::getSponsorsById($ids); }
@@ -1117,7 +1117,7 @@ class livereporting_model_event_src_mobileapp extends livereporting_model_event
 		{ return parent::getMobileappPhotos($dayId); }
 	function getEventData($eventId)
 		{ return parent::getEventData($eventId); }
-	function getLogEntries($eventId, $dayId, $filter, $limit)
+	function getLogEntries($eventId, $dayId, $filter = NULL, $limit = 5)
 		{ return parent::getLogEntries($eventId, $dayId, $filter, 'LIMIT ' . intval($limit)); }
 	function getChips($eventId, $dayId)
 		{ return parent::getLastChips($eventId, $dayId, FALSE, TRUE); }

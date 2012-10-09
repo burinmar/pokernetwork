@@ -211,3 +211,12 @@ $(function() {
 		})
 	}
 });
+
+(function($){ // try keep session alive
+	setInterval(function(){
+		$.ajax('/adm/', {
+			cache: false,
+			type: "HEAD"
+		});
+	}, 5*60*1000);
+})(jQuery);

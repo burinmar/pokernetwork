@@ -24,11 +24,11 @@ class livereporting_event_pylon extends livereporting_event
 	/**
 	 * override livereporting_event -- default empty method
 	 */
-	function main() {}
+	function main($argv = null) {}
 	/**
 	 * override livereporting_event -- default empty method
 	 */
-	function events() {}
+	function events($event = null, $argv = null) {}
 	/**
 	 * override livereporting_event -- default empty method
 	 */
