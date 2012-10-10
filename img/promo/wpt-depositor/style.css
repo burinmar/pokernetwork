@@ -1,0 +1,78 @@
+#promo {background: #000 url('bg.jpg') no-repeat top left}
+#promo .head {
+	float: right;
+	margin-right: 40px;
+	width: 450px;
+	padding-top: 50px;
+	position: relative;
+	margin-bottom: 0;
+	padding-left: 0;
+	min-height: 220px;
+}
+#promo .head h1 {
+	font-size: 35px;
+	line-height: 40px;
+}
+#promo .head p {font-size: 20px; color: #fff; margin-bottom: 20px}
+#promo .menu {background: #0847a9 url('menu.png') repeat-x top right}
+#promo .menu a {background: url('menu-sep.png') no-repeat top right; color: #fff}
+#promo .menu a:hover {color:#fff}
+#promo .menu .active a {color: #fff}
+#promo .menu .active, #promo .menu .active:hover {background: url('menu.png') repeat-x 0px -43px}
+#promo .menu li:hover {background: url('menu.png') repeat-x bottom left}
+#promo .prize {
+	border-bottom: 0 none;
+	padding-bottom: 0;
+}
+#promo .prize a,
+#promo .content a {color: #11a8ff}
+#promo .prize a:hover,
+#promo .content a:hover {color: #8fd3ff}
+#promo .content h2 {color: #fff}
+#promo table th {background: #1052b1; color: #fff}
+#promo table td {
+	background: #051730;
+	border-bottom: 1px dotted #001416;
+}
+#promo table.results td {background: #062045; border-bottom: 1px dotted #001416;}
+#promo table.results tr:nth-child(odd) td {background: #051730}
+
+#promo .download {
+	display: inline-block;
+	min-width: 150px;
+	color: #002c7d;
+	font-size: 14px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 10px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	background-image: -moz-linear-gradient(top, #ffffff 0%, #7d7d7d 100%);
+	background-image: -webkit-linear-gradient(top, #ffffff 0%, #7d7d7d 100%);
+	background-image: -o-linear-gradient(top, #ffffff 0%, #7d7d7d 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#7d7d7d');
+}
+	#promo .download:hover {
+		background: #fff;
+	}
+	#promo .download:after {
+		content: '';
+		position: absolute;
+		top: 5px;
+		right: -160px;
+		background: url('logo.png') no-repeat top right;
+		height: 25px;
+		width: 141px;
+	}
+
+#promo .usertable {margin-bottom: 20px}
+#promo .usertable td {padding: 10px}
+#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
+#promo .content .paging {background-color: #1052b1}
+
+#promo .archive {border-top: 0 none}
+#promo .show-archive {border-bottom: 1px dashed #002c7d}
+#promo .show-archive:hover {border-color:#8fd3ff}
