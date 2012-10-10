@@ -443,7 +443,7 @@ class livereporting_index extends moon_com
 
 		if (0 != count($running)) {
 			$result .= $tpl->parse('widget_index:main', array(
-				'tournaments' => $this->helperRenderIndexWidgetTournaments($running, $tours, $skins, $lrep, $lrepTools, $locale, $text, $tpl, $newsCountVar),
+				'tournaments' => $this->helperRenderIndexWidgetTournaments($running, $tours, $skins, $lrep, $lrepTools, $tpl, $newsCountVar),
 				'url.reporting' => $lrep->makeUri('index#view'),
 			));
 		}
