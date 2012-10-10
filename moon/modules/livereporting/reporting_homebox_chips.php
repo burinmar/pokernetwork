@@ -7,7 +7,7 @@
  */
 class reporting_homebox_chips extends moon_com
 {
-	function main($vars)
+	function main()
 	{
 		$lrep = $this->object('livereporting');
 		$eventID = is_dev() ? 737 : 722;

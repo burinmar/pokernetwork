@@ -102,7 +102,7 @@ class livereporting_event extends moon_com
 			if (!$this->lrep()->instTools()->isAllowed('writeContent')) {
 				moon::page()->page404();
 			}
-			list ($component, $uri) = $this->lrep()->readUri();
+			list (, $uri) = $this->lrep()->readUri();
 			self::$requestArgv = $this->getRequestArgv($uri);
 			// }
 			switch ($event) {
@@ -131,7 +131,6 @@ class livereporting_event extends moon_com
 		$text = isset($_POST['text'])
 			? $_POST['text']
 			: '';
-		$page = &moon::page();
 		if ($text != '') {
 			$eventId = isset($_POST['event_id'])
 				? intval($_POST['event_id'])
@@ -304,7 +303,7 @@ class livereporting_event extends moon_com
 		$tpl = $this->load_template();
 		$tabs = $tpl->parse_array('log:tabs');
 		foreach ($tabs as $tabId => $tab) {
-			list ($urlKey, $tabName) = explode('|', $tab);
+			list ($urlKey) = explode('|', $tab);
 			if ($argv['uri']['argv'][0] == trim($urlKey)) {
 				self::$requestArgv['tab'] = $tabId;
 				$this->set_var('tab', $tabId);
@@ -372,7 +371,7 @@ class livereporting_event extends moon_com
 	
 	private function lrep()
 	{
-		static $lrepObj;
+		static $lrepObj = null;
 		if (!$lrepObj) {
 			$lrepObj = $this->object('livereporting');
 		}
@@ -384,7 +383,7 @@ class livereporting_event extends moon_com
 	 */
 	private function lrepEv()
 	{
-		static $lrepEvObj;
+		static $lrepEvObj = null;
 		if (!$lrepEvObj) {
 			$lrepEvObj = $this->lrep()->instEventModel('_src_event');
 		}
@@ -518,7 +517,7 @@ class livereporting_event extends moon_com
 		}
 
 		$this->partialRenderSidewidgets($mainArgv, $argv, $tpl, $lrep, $eventInfo, $page); // + sets safeTabs for topnav
-		$this->partialRenderTopnav($mainArgv, $argv, $page, $lrep, $tpl, $t9n, $eventInfo); // + common css
+		$this->partialRenderTopnav($mainArgv, $argv, $page, $lrep, $tpl, $eventInfo); // + common css
 		$this->partialRenderControls($mainArgv, $page, $lrep, $argv, $eventInfo); // + adm css
 
 		return $tpl->parse('log:main', $mainArgv);
@@ -590,7 +589,7 @@ class livereporting_event extends moon_com
 			$argv['filter'] + array('showHidden' => $showHidden), 
 			$paginatorInfo['sqllimit']
 		);
-		foreach ($logEntries as $k => $logEntry) {
+		foreach ($logEntries as $logEntry) {
 			switch ($logEntry['type']) {
 				case 'post':
 				case 'tweet':
@@ -612,7 +611,7 @@ class livereporting_event extends moon_com
 		$mainArgv['mainContainerId'] = 'livePokerLiveReporting';
 	}
 
-	private function partialRenderTopnav(&$mainArgv, $argv, $page, $lrep, $tpl, $t9n, $eventInfo)
+	private function partialRenderTopnav(&$mainArgv, $argv, $page, $lrep, $tpl, $eventInfo)
 	{
 		$mainArgv['list.days'] = '';
 		$mainArgv['list.tabs'] = '';
@@ -728,7 +727,7 @@ class livereporting_event extends moon_com
 			$mainArgv_['eventlist.paged'],
 			$mainArgv_['eventlist.singleevent']) = $this->partialRenderSidewidgetEventsList($argv, $page, $lrep, $tpl);
 		
-		$mainArgv_['widget.key_hands'] = $this->partialRenderTopwidgetKeyHands($eventInfo, $argv, $lrep, $tpl);
+		$mainArgv_['widget.key_hands'] = $this->partialRenderTopwidgetKeyHands($argv, $lrep, $tpl);
 
 		list (
 			$playersLeft,
@@ -814,7 +813,7 @@ class livereporting_event extends moon_com
 		$mainArgv += $mainArgv_;
 	}
 	
-	private function partialRenderTopwidgetKeyHands(&$eventInfo, &$argv, &$lrep, &$tpl)
+	private function partialRenderTopwidgetKeyHands(&$argv, &$lrep, &$tpl)
 	{
 		return ;
 		$keyHands = $this->lrepEv()->getKeyHandEntries($argv['event_id']);
@@ -1096,7 +1095,7 @@ class livereporting_event extends moon_com
 				'event_name' => htmlspecialchars($eventInfo['ename']),
 				'tournament_name' => htmlspecialchars($eventInfo['tname'])
 			));
-			foreach ($lastPhotos as $k => $lastPhoto) {
+			foreach ($lastPhotos as $lastPhoto) {
 				$lastPhoto['src_big'] = $lastPhoto['image_src'];
 				$lastPhoto['src_big'][strlen($lastPhoto['src_big']) - 15] = 'm';
 				$mainArgv['list.event_photos'] .= $tpl->parse('log:event_photos.item', array(
@@ -1142,7 +1141,7 @@ class livereporting_event extends moon_com
 			//
 			$page->css('/css/live-poker-adm.css');
 			//
-			$mainArgv['sidebar_controls'] = $this->partialRenderAdmSidebar($argv, $e);
+			$mainArgv['sidebar_controls'] = $this->partialRenderAdmSidebar($argv);
 		}
 	}
 
@@ -1154,7 +1153,7 @@ class livereporting_event extends moon_com
 		}
 	}
 	
-	private function renderEntry($argv, &$e)
+	private function renderEntry($argv)
 	{
 		$page = moon::page();
 		$tpl  = $this->load_template();
@@ -1225,7 +1224,7 @@ class livereporting_event extends moon_com
 		));
 
 		$this->partialRenderSidewidgets($mainArgv, $argv, $tpl, $lrep, $eventInfo, $page); // + sets safeTabs for topnav
-		$this->partialRenderTopnav($mainArgv, $argv, $page, $lrep, $tpl, $t9n, $eventInfo); // + common css
+		$this->partialRenderTopnav($mainArgv, $argv, $page, $lrep, $tpl, $eventInfo); // + common css
 		$this->partialRenderControls($mainArgv, $page, $lrep, $argv, $eventInfo); // + adm css
 
 		switch ($entry['type']) {
@@ -1254,7 +1253,7 @@ class livereporting_event extends moon_com
 		return $tpl->parse('log:main', $mainArgv);
 	}
 
-	private function partialRenderAdmSidebar($argv, &$e)
+	private function partialRenderAdmSidebar($argv)
 	{
 		$tpl  = $this->load_template();
 		$t9n  = $tpl->parse_array('sidebar:t9n');
@@ -1467,7 +1466,6 @@ class livereporting_event extends moon_com
 		$error = false;
 
 		if ($sessStarted < time() - 1800 || empty($sid[$key])) {
-			$realSid = '';
 			$sendData = array(
 				'ns' => 'lrep',
 				'src' => _SITE_ID_,

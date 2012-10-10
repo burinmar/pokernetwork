@@ -7,7 +7,7 @@
  */
 class reporting_news extends moon_com 
 {
-	function main($vars)
+	function main()
 	{
 		$tpl = $this->load_template();
 		moon::page()->js('/js/modules/lrslider.js');

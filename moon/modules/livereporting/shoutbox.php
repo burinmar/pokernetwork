@@ -34,7 +34,7 @@ class shoutbox extends moon_com {
 
 		if (!isset($argv['event_id'])) {
 			$lr = $this->object('livereporting');
-			list ($component, $argv) = $lr->readUri();
+			list (, $argv) = $lr->readUri();
 		}
 		if (empty($argv['event_id'])) {
 			moon_close();
@@ -219,7 +219,7 @@ class shoutbox extends moon_com {
 
 		$dat = $this->getList(' LIMIT 5');
 		$user_ids = array();
-		foreach ($dat as $k => $v) {
+		foreach ($dat as $v) {
 			$user_ids[] = $v['user_id'];
 		}
 		$users = $this->users($user_ids);

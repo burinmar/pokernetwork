@@ -168,7 +168,7 @@ class livereporting_tour extends moon_com
 		) + $tourData;
 
 		// related articles (by tag)
-		if ($articlesObject = $this->object('articles.shared')) {
+		if (false != ($articlesObject = $this->object('articles.shared'))) {
 			$articlesObject->articleType($articlesObject->typeNews);
 			$mainArgv['url.moreNews'] = !empty($tourData['news_tag'])
 				? $articlesObject->getTagUrl($tourData['news_tag'])

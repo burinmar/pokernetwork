@@ -1091,7 +1091,7 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 
 	private function helperLiveReportingTourLogo($tId)
 	{
-		static $map;
+		static $map = null;
 		if (!$map) {
 			$map = $this->db->array_query_assoc('
 				SELECT id, tour

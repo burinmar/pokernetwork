@@ -50,11 +50,11 @@ class livereporting extends moon_com
 						array_push($argv, $last);
 					}
 				}
-				list($component, $argv) = $this->readUri_($event, $argv);
+				list($component, $argv) = $this->readUri_($argv);
 				break;
 
 			case 'make_uri':
-				return $this->makeUri_($event, $argv);
+				return $this->makeUri_($argv);
 		}
 
 		$page = moon::page();
@@ -104,7 +104,7 @@ class livereporting extends moon_com
 	 */
 	public function instHierarchyModel()
 	{
-		static $model;
+		static $model = null;
 		if (!$model) {
 			require_once dirname(__FILE__) . '/models/livereporting_hierarchy.php';
 			$model = new livereporting_model_hierarchy($this);
@@ -118,7 +118,7 @@ class livereporting extends moon_com
 	 */
 	public function instTools()
 	{
-		static $model;
+		static $model = null;
 		if (!$model) {
 			require_once dirname(__FILE__) . '/models/livereporting_tools.php';
 			$model = new livereporting_tools($this);
@@ -198,7 +198,7 @@ class livereporting extends moon_com
 		if (in_array($uri[count($uri)-1], array('htm', 'js', 'rss', 'xml'))) {
 			array_pop($uri);
 		}
-		return $this->readUri_('read_uri', $uri);
+		return $this->readUri_($uri);
 	}
 
 	/**
@@ -208,7 +208,7 @@ class livereporting extends moon_com
 	 * - name#event of component to continue parsing
 	 * - arguments, which may include "relative" url(path), tournament/event ids,  etc.
 	 */
-	private function readUri_($event, $argv)
+	private function readUri_($argv)
 	{
 		if (!isset($argv[0])) {
 			$argv[0] = '';
@@ -287,7 +287,6 @@ class livereporting extends moon_com
 				if (($eId = array_search(array($tId, $uri['path'][0]), $eBase)) === false) {
 					return ;
 				}
-				$eUri = $eBase[$eId];
 				array_shift($uri['path']); // url to relative: eid/.. => ..
 				if (count($uri['argv']) == 2 && is_numeric($uri['argv'][1])) {
 					array_unshift($uri['argv'], 'view'); // => [view.]post.123
@@ -315,7 +314,7 @@ class livereporting extends moon_com
 		foreach ($get as $k => $v) {
 			$get[$k] = $k . '=' . $v;
 		}
-		return $this->makeUri_('', array(
+		return $this->makeUri_(array(
 			'event' => $event,
 			'params' => $argv
 		)) . (!empty($get)
@@ -348,7 +347,7 @@ class livereporting extends moon_com
 	 * Constructs uri according to the component contract
 	 * Does not include _get[] parameters
 	 */
-	private function makeUri_($event, $argv)
+	private function makeUri_($argv)
 	{
 		$this->cachedEnv();
 		$argv['event'] = str_replace($this->myModuleStr, '', $argv['event']);
@@ -505,7 +504,7 @@ class livereporting extends moon_com
 
 	public function altLog($trnId = 0, $evId = 0, $dayId = 0, $type = 'other', $table = 'other', $id = '0', $comment = '', $userId = NULL)
 	{
-		static $currentUserId;
+		static $currentUserId = null;
 		if (!isset($currentUserId)) {
 			$currentUserId = moon::user()->id();
 		}

@@ -20,8 +20,8 @@ class livereporting_tools extends livereporting_model_pylon
 	 */
 	function isAllowed($action, $data = NULL)
 	{
-		static $iAdminRepo;
-		if (!$iAdminRepo) {
+		static $iAdminRepo = null;
+		if (null === $iAdminRepo) {
 			 $iAdminRepo = moon::user()->i_admin();
 		}
 		switch ($action) {

@@ -115,7 +115,7 @@ class reporting_hotels extends moon_com
 		foreach (array('nights') as $key) {
 			$values = explode(',', $optionValues[$key]);
 			$mainArgv['list.' . $key] = '';
-			foreach ($values as $nr => $value) {
+			foreach ($values as $value) {
 				$mainArgv['list.' . $key] .= $tpl->parse('list:optionShort.item', array(
 					'value' => intval($value),
 					'name' => htmlspecialchars($value),
@@ -294,7 +294,7 @@ class reporting_hotels extends moon_com
 		foreach (array('nights') as $key) {
 			$values = explode(',', $optionValues[$key]);
 			$mainArgv['list.' . $key] = '';
-			foreach ($values as $nr => $value) {
+			foreach ($values as $value) {
 				$mainArgv['list.' . $key] .= $tpl->parse('list:optionShort.item', array(
 					'value' => intval($value),
 					'name' => htmlspecialchars($value),
@@ -1285,7 +1285,6 @@ class reporting_hotels extends moon_com
 			$this->linkas('#') . '?' . htmlspecialchars(http_build_query($getArgv + array('page' => '{pg}'))),
 			$this->linkas('#') . '?' . htmlspecialchars(http_build_query($getArgv))
 		);
-		$pnInfo = $pager->get_info();
 		return array(
 			'pnInfo' => $pager->get_info(),
 			'nav' => $pager->show_nav()

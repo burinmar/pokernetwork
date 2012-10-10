@@ -60,7 +60,6 @@ class livereporting_event_event extends livereporting_event_pylon
 				moon_close();
 				exit;
 			case 'save-event': 
-				$form = $this->form();
 				$add = (!empty($_POST['master'])
 						? array('master' => 'event')
 						: NULL
@@ -208,11 +207,11 @@ class livereporting_event_event extends livereporting_event_pylon
 					: NULL,
 			)));
 		} elseif ($argv['variation'] == 'logTab') {
-			return $this->renderLogTab($data, $argv);
+			return $this->renderLogTab($data);
 		}
 	}
 
-	private function renderLogTab($data, $argv) // payouts
+	private function renderLogTab($data) // payouts
 	{
 		$tpl = $this->load_template();
 		$path = $this->getUriPath();
@@ -281,7 +280,6 @@ class livereporting_event_event extends livereporting_event_pylon
 	function renderControl($argv)
 	{
 		$tpl= $this->load_template();
-		$lrep = $this->lrep();
 
 		$cUriPath = $this->getUriPath();
 		$cUriPathZ = $this->getUriPath(0);
@@ -685,7 +683,6 @@ class livereporting_event_event extends livereporting_event_pylon
 		$textareaResult = array();
 		$newPList = array();
 		$delPList = array();
-		$opList = array();
 		foreach ($delData as $row) {
 			$delPList[] = array($row);
 			$textareaResult[] = '#' . $row;
@@ -805,7 +802,6 @@ class livereporting_event_event extends livereporting_event_pylon
 			return FALSE;
 		}
 		list ($location) = $prereq;
-		$lrep = $this->lrep();
 		$chipsObj = $this->instEventChips();
 		$profileObj = $this->instEventProfile();
 

@@ -417,7 +417,6 @@ class livereporting_model_tournament extends livereporting_model_pylon
 	
 	protected function getRunningMobileappTree()
 	{
-		$tree = array();
 		$tournaments = $this->db->array_query_assoc('
 			SELECT id, name title, "" img, 1 live, timezone, logo_mobile_1 img1, logo_mobile_2 img2
 			FROM ' . $this->table('Tournaments') . '

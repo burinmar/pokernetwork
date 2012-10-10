@@ -86,7 +86,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 			->parse('controls:tweet', $controlsArgv);
 	}
 
-	private function sendToTwitter($message, &$e) 
+	private function sendToTwitter($message) 
 	{
 		// services API
 		$twitter = moon::shared('twitter')->getInstance('PokerNews_live');
@@ -193,7 +193,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 				'id' => $saveDataLog['id'],
 				'event_id' => $saveDataLog['event_id'],
 				'contents' => $saveDataTweet['contents']
-			), $e))) {
+			)))) {
 				$this->db->query('
 					DELETE FROM ' . $this->table('tTweets') . '
 					WHERE id="' . $saveDataLog['id'] . '"

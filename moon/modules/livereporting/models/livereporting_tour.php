@@ -76,7 +76,7 @@ class livereporting_model_tour extends livereporting_model_pylon
 		
 		// get all players mentioned
 		$playersNameList = array();
-		foreach ($tournaments as $k => $tournament) {
+		foreach ($tournaments as $tournament) {
 			if (!empty($tournament['winner'])) {
 				$playersNameList[] = $this->db->escape($tournament['winner']);
 			}

@@ -63,7 +63,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 			$page->page404();
 		}
 
-		if (($profile = $this->getProfile($data['id'], $data['event_id'], $data['day_id'])) == NULL) {
+		if (($profile = $this->getProfile($data['id'], $data['event_id'])) == NULL) {
 			$page->page404();
 		}
 		$sponsors = $lrep->instEventModel('_src_event_profile')->getSponsors();
@@ -142,7 +142,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 		return $tpl->parse('entry:profile', $profileArgv);
 	}
 	
-	private function getProfile($id, $eventId, $dayId)
+	private function getProfile($id, $eventId)
 	{
 		$profile = $this->db->single_query_assoc('
 			SELECT p.id, p.name, p.card, p.is_pnews, p.sponsor_id, p.status, p.country_id

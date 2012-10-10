@@ -820,9 +820,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 					'chips_change' => $player['chips'] != NULL
 						? -1 * intval($player['chips'])
 						: NULL ,
-					'sponsor' => isset($sponsors[$player['sponsor_id']])
-						? htmlspecialchars($sponsors[$player['sponsor_id']]['name'])
-						: '',
 					'url' => $lrep->makeUri('event#edit', array(
 							'event_id' => $location['event_id'],
 							'type' => 'profile',
@@ -1468,7 +1465,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			// also notify profiles
 			$newPlayerIds = array();
 			$dayEnterId = $location['day_id']; // unroll
-			foreach ($chips as $chipNr => $chip) {
+			foreach ($chips as $chip) {
 				if ($chip['player_id'] == NULL) {
 					if (substr($chip['uname'], 0, 3) == '???') {
 						continue;
@@ -1589,7 +1586,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 
 	private function helperGetCountryIdByName($name)
 	{
-		static $countries;
+		static $countries = null;
 		if (!$countries) {
 			$countries = array();
 			$countriesStock = moon::shared('countries')->getCountries();

@@ -515,7 +515,7 @@ class livereporting_event_pylon extends livereporting_event
 	{
 		$cTags = explode(',', $tags);
 		$tags = array();
-		foreach ($cTags as $k => $tag) {
+		foreach ($cTags as $tag) {
 			$tag = trim($tag);
 			if ($tag != '') {
 				$tags[] = $tag;
@@ -701,7 +701,7 @@ class livereporting_event_pylon extends livereporting_event
 	 */
 	protected function lrep()
 	{
-		static $lrepObj;
+		static $lrepObj = null;
 		if (!$lrepObj) {
 			$lrepObj = $this->object('livereporting');
 		}

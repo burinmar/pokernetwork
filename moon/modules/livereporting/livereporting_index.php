@@ -76,7 +76,7 @@ class livereporting_index extends moon_com
 		$e = NULL;
 		switch ($argv['render']) {
 			case 'index':
-				$output = $this->renderIndex($argv, $e);
+				$output = $this->renderIndex($e);
 				break;
 
 			case 'tour-archive':
@@ -406,8 +406,6 @@ class livereporting_index extends moon_com
 	private function renderIndexWidget()
 	{
 		$tpl = $this->load_template();
-		$locale = &moon::locale();
-		$text   = &moon::shared('text');
 		$lrep = $this->object('livereporting');
 		$lrepTools = $lrep->instTools();
 		
@@ -437,7 +435,7 @@ class livereporting_index extends moon_com
 		}
 		if (0 != count($runningSpecial) && 0 != count($runningSpecial[0]['running_events'])) {
 			$result .= $tpl->parse('widget_index:main_wsop11', array(
-				'tournaments' => $this->helperRenderIndexWidgetTournaments($runningSpecial, $tours, $skins, $lrep, $lrepTools, $locale, $text, $tpl, $newsCountVar)
+				'tournaments' => $this->helperRenderIndexWidgetTournaments($runningSpecial, $tours, $skins, $lrep, $lrepTools, $tpl, $newsCountVar)
 			));
 		}
 		*/
@@ -454,12 +452,11 @@ class livereporting_index extends moon_com
 		return $result;
 	}
 
-	private function helperRenderIndexWidgetTournaments($running, $tours, $skins, $lrep, $lrepTools, $locale, $text, $tpl, &$newsCountVar)
+	private function helperRenderIndexWidgetTournaments($running, $tours, $skins, $lrep, $lrepTools, $tpl, &$newsCountVar)
 	{
 		$result = '';
 		$nr = 0;
 		foreach ($running as $tournament) {
-			list($tzOffset, $tzName) = $locale->timezone($tournament['timezone']);
 			$newsCountVar['tournaments']++;
 			$rtArgv = array(
 				'name' => htmlspecialchars($tournament['name']),
@@ -571,8 +568,6 @@ class livereporting_index extends moon_com
 		}
 		$tpl = $this->load_template();
 		$lrep = $this->object('livereporting');
-		$locale = &moon::locale();
-		$text   = &moon::shared('text');
 		$running = $lrep->instTournamentModel('_src_index')->getRunningTournaments(TRUE, FALSE, FALSE, FALSE);
 		if (empty($running)) {
 			return ;
@@ -614,11 +609,10 @@ class livereporting_index extends moon_com
 
 	/**
 	 * Reporting index
-	 * @param <array> $argv
 	 * @param <mixed> $e
 	 * @return <string>
 	 */
-	private function renderIndex($argv, &$e)
+	private function renderIndex(&$e)
 	{
 		$page = &moon::page();
 		$locale = &moon::locale();
@@ -916,7 +910,6 @@ class livereporting_index extends moon_com
 		$error = false;
 
 		if ($last < time() - 1800 || empty($sid[$key])) {
-			$realSid = '';
 			$user = &moon::user();
 			$sendData = array(
 				'ns' => 'lrep',

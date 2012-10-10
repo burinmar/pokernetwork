@@ -121,7 +121,7 @@ class livereporting_bluff extends moon_com
 		', 'id');
 		usort($dayData, array($this, 'daysSortCmp'));
 		$dayData_ = array();
-		foreach ($dayData as $k => $v) {
+		foreach ($dayData as $v) {
 			$dayData_[$v['id']] = $v;
 		}
 		return $dayData_;
@@ -245,7 +245,6 @@ class livereporting_bluff extends moon_com
 
 	private function exChipcounts($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$lrepTools = $this->object('livereporting')->instTools();
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
@@ -502,7 +501,6 @@ class livereporting_bluff extends moon_com
 
 	private function exPlayersleft($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
 			FROM ' . $this->table('Tournaments') . ' t
@@ -690,7 +688,6 @@ class livereporting_bluff extends moon_com
 
 	private function exBetting($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
 			FROM ' . $this->table('Tournaments') . ' t
@@ -785,7 +782,6 @@ class livereporting_bluff extends moon_com
 	
 	private function exTopupdates($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
 			FROM ' . $this->table('Tournaments') . ' t
@@ -900,7 +896,6 @@ class livereporting_bluff extends moon_com
 
 	private function exUpdates($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
 			FROM ' . $this->table('Tournaments') . ' t
@@ -1072,7 +1067,7 @@ class livereporting_bluff extends moon_com
 			$rtf->setInstance($this->get_var('rtf') . '-bluff');
 			list(, $post['contents']) = $rtf->parseText($post['id'], $post['contents']);
 			preg_match_all('/\[((10|[2-9AKQJtx]{1})(s|c|h|d|x)([,|\s]*))+\]/i', $post['contents'], $m);
-			foreach($m[0] as $k => $v) {
+			foreach($m[0] as $v) {
 				$t = preg_replace('/(10|[2-9AKQJtx]{1})(s|c|h|d|x)/i', '{$1$2}', $v);
 				$t = str_replace(array("[", "]", ",", " "), "", $t);
 				$post['contents'] = str_replace($v, $t, $post['contents']);
@@ -1195,7 +1190,6 @@ class livereporting_bluff extends moon_com
 	
 	private function exPayouts($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
 			FROM ' . $this->table('Tournaments') . ' t
@@ -1269,7 +1263,6 @@ class livereporting_bluff extends moon_com
 
 	private function exDays($argv)
 	{
-		$evt = $this->object('livereporting_event');
 		$evtData = $this->db->single_query_assoc('
 			SELECT t.id tid, t.name tname, t.timezone, t.currency, e.name ename, e.*
 			FROM ' . $this->table('Tournaments') . ' t
@@ -1495,8 +1488,8 @@ class livereporting_bluff extends moon_com
 		}
 		
 		$tzOffset = -8*3600;
-		$tzz = round($tzOffset/3600);
-		$tz = ($tzz<0 ? '-':'+') . (abs($tzz)<10 ? '0':'') . abs($tzz).'00';
+		// $tzz = round($tzOffset/3600);
+		// $tz = ($tzz<0 ? '-':'+') . (abs($tzz)<10 ? '0':'') . abs($tzz).'00';
 		return moon::locale()->gmdatef($time + $tzOffset, 'Reporting') . ' PST';
 	}
 	

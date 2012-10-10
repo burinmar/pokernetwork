@@ -78,10 +78,9 @@ class livereporting_event_photos extends livereporting_event_pylon
 				'unhide' => (!empty($_GET['master']) && $_GET['master'] == 'xphotos')
 			)));
 		} elseif ($argv['variation'] == 'logTab') {
-			return $this->renderLogTab($data, $argv);
+			return $this->renderLogTab($data);
 		}
 		
-		$lrep = $this->lrep();
 		$page = moon::page();
 		$page->js('/js/pnslideshow.js');
 		$tpl = $this->load_template();
@@ -234,7 +233,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 		return $tpl->parse('controls:photos', $controlsArgv);
 	}
 
-	private function renderLogTab($data, $argv)
+	private function renderLogTab($data)
 	{
 		$page = moon::page();
 		$page->css('/css/jquery/lightbox-0.5.css');
@@ -505,7 +504,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 			return FALSE;
 		}
 
-		$rPhotos = $this->db->query('
+		$this->db->query('
 			UPDATE ' . $this->table('Photos') . '
 			SET is_hidden=1
 			WHERE id="' . getInteger($imageId) . '" AND import_id IS NULL
