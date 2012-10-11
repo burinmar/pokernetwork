@@ -48,6 +48,7 @@ if ($this->wallpaper($res, array(
 'url'=> '/leagues/13-000-pokernews-racetrack/',
 'imgPath'=> '/img/unibet_racetrack_wallpaper.jpg',
 'bgColor'=> '#000',
+'endDate'=> '2012-10-31 23:59:59',
 )
 )) return $res;
 
@@ -56,23 +57,12 @@ if ($this->wallpaper($res, array(
 'url'=> '/pokerstars/freerolls/?upcoming',
 'imgPath'=> '/img/ps_frseries_wallpaper.jpg',
 'bgColor'=> '#000',
+'endDate'=> '2012-12-06 23:59:59',
 )
 )) return $res;
-
-
-// Stars WCOOP 20k
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/20k-pokernews-wcoop-freerolls/',
-'imgPath'=> '/img/ps_wcoop2012_wallpaper.jpg',
-'bgColor'=> '#000',
-)
-)) return $res;
-
-
-
 
 		/************* SLAMSTAS *************/
-        /*
+		/*
 		// PokerStars SCOOP 2012
 		//banner
 		$psb =$tpl->parse('pokerstars', array('siteID'=>'EN'));
