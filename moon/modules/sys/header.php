@@ -34,10 +34,28 @@ class header extends moon_com
 			return $res;
 		}
 
+// $6,000 WPT Depositor Freerolls 
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/6-000-wpt-depositor-freerolls/',
+'imgPath'=> '/img/wallpaper/wpt_6k_wallpaper.jpg',
+'bgColor'=> '#000',
+'endDate'=> '2012-11-04 23:59:59',
+)
+)) return $res;
+
 // Partypoker Ipad
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/partypoker-ipad-raffle/',
-'imgPath'=> '/img/partypoker_ipad_wallpaper.jpg',
+'imgPath'=> '/img/wallpaper/partypoker_ipad_wallpaper.jpg',
+'bgColor'=> '#000',
+'endDate'=> '2012-10-23 23:59:59',
+)
+)) return $res;
+
+// Partypoker Ipad
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/partypoker-ipad-raffle/',
+'imgPath'=> '/img/wallpaper/partypoker_ipad_wallpaper.jpg',
 'bgColor'=> '#000',
 'endDate'=> '2012-10-23 23:59:59',
 )
@@ -46,7 +64,7 @@ if ($this->wallpaper($res, array(
 // UnibetPoker RaceTrack
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/13-000-pokernews-racetrack/',
-'imgPath'=> '/img/unibet_racetrack_wallpaper.jpg',
+'imgPath'=> '/img/wallpaper/unibet_racetrack_wallpaper.jpg',
 'bgColor'=> '#000',
 'endDate'=> '2012-10-31 23:59:59',
 )
@@ -55,7 +73,7 @@ if ($this->wallpaper($res, array(
 //  $67,500 PokerStars PokerNews Freeroll Series 
 if ($this->wallpaper($res, array(
 'url'=> '/pokerstars/freerolls/?upcoming',
-'imgPath'=> '/img/ps_frseries_wallpaper.jpg',
+'imgPath'=> '/img/wallpaper/ps_frseries_wallpaper.jpg',
 'bgColor'=> '#000',
 'endDate'=> '2012-12-06 23:59:59',
 )
