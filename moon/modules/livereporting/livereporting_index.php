@@ -50,10 +50,6 @@ class livereporting_index extends moon_com
 					echo $this->previewText(isset($_GET['id']) ? $_GET['id'] : NULL, $_POST['body']);
 					moon_close();
 					exit;
-				case 'ipn-news-browse':
-					header('X-Cache:gMAW4KadNkM');
-					$this->redirectIPNNews();
-					exit;
 				default:
 					moon::page()->page404();
 			}
@@ -883,86 +879,6 @@ class livereporting_index extends moon_com
 		}
 
 		return $tpl->parse('tournaments-archive:main', $mainArgv);
-	}
-	
-	/**
-	 * Sets up image.pokernews.com session
-	 * @return <null> Redirects
-	 */
-	private function redirectIPNNews()
-	{
-		$page = &moon::page();
-		$user = &moon::user();
-		$sid = $page->get_global($this->my('module') . '.livereporting_event_ipnSid');
-		$key = 'news';
-
-		if (!$user->i_admin()) {
-			return ;
-		}
-
-		if (!is_array($sid)) {
-			$sid = array();
-		}
-		$last = isset($sid[$key][1])
-			? $sid[$key][1]
-			: time();
-
-		$error = false;
-
-		if ($last < time() - 1800 || empty($sid[$key])) {
-			$user = &moon::user();
-			$sendData = array(
-				'ns' => 'lrep',
-				'src' => _SITE_ID_,
-				'user' => $user->get_user_id(),
-				'user_nick' => $user->get_user('nick'),
-				'key' => $this->get_var('ipnPwd'),
-				'sig' => 'pn'
-			);
-			$sendData = serialize($sendData);
-
-			$ch = curl_init($this->get_var('ipnWriteBase') . $this->get_var('ipnLoginUrl'));
-			curl_setopt($ch, CURLOPT_HEADER, 0);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-				'event' => 'core.login#remotelogin',
-				'data' => $sendData
-			));
-			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-			$gotData = curl_exec($ch);
-			curl_close($ch);
-
-			$gotData = @unserialize($gotData);
-
-			if (is_array($gotData)) {
-				$sid[$key] = array(
-					$gotData['sid'],
-					time()
-				);
-			} else {
-				$error = true;
-			}
-		}
-		
-		foreach ($sid as $k => $v) {
-			if ($sid[$k][1] < time() - 1800) {
-				unset($sid[$k]);
-			}
-		}
-
-		$page->set_global($this->my('module') . '.livereporting_event_ipnSid', $sid);
-
-		if (!empty($sid[$key]) && !$error) {
-			// @no way to check if logged in -- reswitch [A] instead
-			$page->redirect($this->get_var('ipnWriteBase') . $this->get_var('ipnBrowseNewsUrl') . '?sid=' . $sid[$key][0] . '&key=');
-		} else {
-			$page->page404();
-		}
-
-		moon_close();
-		exit;
 	}
 
 	private function previewText($id, $text)

@@ -77,9 +77,6 @@ $cfg['livereporting'] = array(
 	'var.ipnBrowseUrl' => '/app/app-browse/q/',
 	'var.ipnReviewUrl' => '/app/app-manage/q/',
 	'var.ipnBrowseNewsUrl' => '/app/app-browse_news/q/',
-	'var.ipnPwd' => moon::user()->i_admin()
-		? 'larry-the-cow'
-		: NULL,
 	'var.ipnDataReq' => array(
 		'b' => array(
 				'qs' => 'r:250,250,F;w:02.png,-1,1,T,8,6;',
@@ -98,6 +95,15 @@ $cfg['livereporting'] = array(
 				'name' => 'Gallery medium-big'
 			),
 	),
+	'var.pnetworkIpnPubKey' => moon::user()->i_admin() ?
+		'-----BEGIN PRIVATE KEY-----'. "\n" . 'MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAK1MXQw2Ft3y2voo' . "\n" . 
+		'f3UERqrK52DmVcFoDEmoxLzRogNIWbBDDs7Jg6jt2UFeIjOeQG03Ve4+stTBQFlW' . "\n" . 'DPmyxYiJZTFczDw9IMncqwZrEKyPoYZn2rnwuaCC9uS0K0ZizM4KRWE+Gtm9/rGp' . "\n" .
+		'oaI3DTCOAlr5DjZfyqrvJ4ou3ZyrAgMBAAECgYBySdtPk1hvVZtuwUiVjpVgS+Je' . "\n" . 'OGmz3H/GEER3VjVnvs5PfVoFrEZlIT9XadJagnJw1L6aGcVspGpgwGxcPLciJvOh' . "\n" .
+		'DWakjsixhD2HiVzqeBZgbeFaJyQ4cL3fOhJ7JGs5M+dQntH6/vru0efFq9/r7M34' . "\n" . 'tsj1R139kjQH6zGg8QJBAOPpUcvO/MdrbUvyIJr8mWEOnZafbnlC+/XYVZX5Xf+7' . "\n" .
+		'3q7x5eeBRRJEv9BYu0piavAgF1X+are+tManPCQu/WMCQQDCp/tyKuKdD0cPIze8' . "\n" . 'L6dUQ1wgK1sNncvtie6mrnNNACnE4jHKf6CF5vYICa0Qd+fvva+yzp4x85Ccwtf4' . "\n" .
+		'awoZAkBL5gqAZfkWbDckwIiNNKvbf6OJYqTGq0D/WUD/ReFA5g69kf8vPoSDFfQO' . "\n" . '7U3J8saMGxPKZoShllfbhBvqLN/jAkEAsuP4NJru+lJhBqth/GN7Dvh8wN+3ZVMg' . "\n" .
+		'Z+Q8XBi0xA4jVNpf0e7q0kRI1Wg3EYxwriYQQ26ZeeSSgU6bdqTAeQJAEeOoWBzJ' . "\n" . 'cj+MUjiC/XXm6b0yy83MGE6dGCZY6sI1zzsVwlFMyUsJBL4b6C8JudnZBcH6CoyZ' . "\n" .
+		'KtLw4RjRdh780Q==' . "\n" . '-----END PRIVATE KEY-----' : null,
 
 	'tb.Rooms'        => 'rw2_rooms',
 	'tb.RoomsSorting' => 'rw2_rooms_sorting',

@@ -1465,14 +1465,12 @@ class livereporting_event extends moon_com
 
 		$error = false;
 
-		if ($sessStarted < time() - 1800 || empty($sid[$key])) {
+		if ($sessStarted < time() - 180 || empty($sid[$key])) {
 			$sendData = array(
 				'ns' => 'lrep',
 				'src' => _SITE_ID_,
 				'user' => $user->get_user_id(),
 				'user_nick' => $user->get_user('nick'),
-				'key' => $this->get_var('ipnPwd'),
-				'sig' => 'pn',
 				'root_uri' => array(
 					array($this->requestArgv('tournament_id')),
 				),
@@ -1487,7 +1485,8 @@ class livereporting_event extends moon_com
 					array($this->requestArgv('event_id'), $eventInfo['ename']),
 					array($this->requestArgv('day_id'), 'Day ' . $days[$this->requestArgv('day_id')]['name']),
 				),
-				'transforms' => $this->get_var('ipnDataReq')
+				'transforms' => $this->get_var('ipnDataReq'),
+				'time' => time()
 			);
 			if ($eventInfo['synced']) {
 				$syncData = $this->lrepEv()->getTournamentSyncOrigin($this->requestArgv('event_id'));
@@ -1498,7 +1497,9 @@ class livereporting_event extends moon_com
 					);
 				}
 			}
+
 			$sendData = serialize($sendData);
+			openssl_sign($sendData, $signature, $this->get_var('pnetworkIpnPubKey'));
 
 			$ch = curl_init($this->get_var('ipnWriteBase') . $this->get_var('ipnLoginUrl'));
 			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
@@ -1506,7 +1507,8 @@ class livereporting_event extends moon_com
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
 				'event' => 'core.login#remotelogin',
-				'data' => $sendData
+				'data' => $sendData,
+				'signature' => $signature
 			));
 			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 			$gotData = curl_exec($ch);
