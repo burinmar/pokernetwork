@@ -37,7 +37,7 @@ class header extends moon_com
 // $6,000 WPT Depositor Freerolls 
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/6-000-wpt-depositor-freerolls/',
-'imgPath'=> '/img/wallpaper/wpt_6k_wallpaper.jpg',
+'imgPath'=> '/img/wallpaper/wpt_6k_wallpaper.jpg?1',
 'bgColor'=> '#000',
 'endDate'=> '2012-11-04 23:59:59',
 )
