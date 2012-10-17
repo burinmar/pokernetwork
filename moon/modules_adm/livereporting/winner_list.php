@@ -60,7 +60,7 @@ class winner_list extends moon_com
 
 			case 'new':
 				if (isset($argv[1]) && $argv[0] == 'by-event'
-				    && NULL !== ($id = $this->getInteger_($argv[1]))) {
+				    && NULL !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 					$this->set_var('event-id', $id);
 					$this->set_var('render', 'entry');
 				}
@@ -68,9 +68,9 @@ class winner_list extends moon_com
  
 			default:
 				if (isset($argv[1]) && $argv[0] == 'by-event'
-				    && NULL !== ($id = $this->getInteger_($argv[1]))) {
+				    && NULL !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 					$this->set_var('event-id', $id);
-				} elseif (isset($argv[0]) && NULL !== ($id = $this->getInteger_($argv[0]))) {
+				} elseif (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -173,7 +173,9 @@ class winner_list extends moon_com
 			$mainArgv['title'] = htmlspecialchars($entryData['winner']);
 		}
 		if (isset($argv['failed-form-data'])) {
-			$entryData = $this->overwriteArray_($entryData, $argv['failed-form-data']);
+			$entryData = array_intersect_key(
+				array_merge($entryData, $argv['failed-form-data']),
+				$entryData);
 		}
 
 		$mainArgv['url.back'] = $this->linkas('event_list#', 'by-tour.' . $location['tournament_id']);
@@ -222,7 +224,7 @@ class winner_list extends moon_com
 
 	function getEntry_($id)
 	{
-		if (NULL === $this->getInteger_($id)) {
+		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
@@ -252,7 +254,7 @@ class winner_list extends moon_com
 			}
 		}
 		
-		if (NULL !== $this->getInteger_($saveData['id'])) {
+		if (NULL !== filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
 			$check = $this->db->single_query_assoc('
 				SELECT id FROM ' . $this->table('Events') . '
 				WHERE tournament_id="' .addslashes($data['tournament_id']). '"
@@ -269,7 +271,7 @@ class winner_list extends moon_com
 
 		$isInvalid = FALSE;
 		if (isset($saveData['id']) && '' !== $saveData['id']) {
-			$saveData['id'] = $this->getInteger_($saveData['id']);
+			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 			if (NULL === $saveData['id']) {
 				$page->alert($messages['e.invalid_id']);
 				$isInvalid = TRUE;
@@ -311,35 +313,5 @@ class winner_list extends moon_com
 			livereporting_adm_alt_log($saveData['tournament_id'], $saveData['event_id'], 0, 'update', 'winners', $saveData['id']);
 			return $saveData['id'];
 		}
-	}
-
-	function getInteger_($i) {
-		if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
-			return intval($i);
-		} else {
-			return NULL;
-		}
-	}
-
-	function overwriteArray_($base, $extend)
-	{
-		foreach ($base as $key => $value) {
-			if (isset($extend[$key])) {
-				$base[$key] = $extend[$key];
-			}
-		}
-
-		return $base;
-	}
-
-	function extendArray_($base, $extend)
-	{
-		if (!is_array($base)) {
-			$base = array();
-		}
-		if (!is_array($extend)) {
-			$extend = array();
-		}
-		return array_merge($base, $extend);
 	}
 }

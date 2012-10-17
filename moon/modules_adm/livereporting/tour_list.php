@@ -55,7 +55,7 @@ class tour_list extends moon_com
 					$page->set_global($this->my('fullname'), $gData);
 				}
 
-				$saved = $this->saveEntry_($data);
+				$saved = $this->saveEntry($data);
 				if (NULL === $saved) {
 					foreach (array(
 						'logo_mid',
@@ -93,21 +93,16 @@ class tour_list extends moon_com
 				$form->fill($_POST);
 				$data = $form->get_values();
 				ob_start();
-				$this->deleteEntry_(explode(',', $data['ids']));
+				$this->deleteEntry(explode(',', $data['ids']));
 				$this->redirect('#');
 				break;
 
 			case 'new':
 				$this->set_var('render', 'entry');
 				break;
-/*
-			case 'recalc':
-				$calc = $this->object('calc');
-				$calc->recalc();
-				exit;*/
 
 			default:
-				if (isset($argv[0]) && NULL !== ($id = $this->getInteger_($argv[0]))) {
+				if (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -143,11 +138,11 @@ class tour_list extends moon_com
 		$e = NULL;
 		switch ($argv['render']) {
 			case 'entry':
-				$output = $this->renderEntry_($argv, $e);
+				$output = $this->renderEntry($argv, $e);
 				break;
 
 			default:
-				$output = $this->renderList_($argv, $e);
+				$output = $this->renderList($argv, $e);
 				break;
 		}
 
@@ -161,10 +156,10 @@ class tour_list extends moon_com
 		}
 	}
 
-	function renderList_($argv, &$e)
+	private function renderList($argv, &$e)
 	{
-		$page     = &moon::page();
-		$tpl      = &$this->load_template();
+		$page     = moon::page();
+		$tpl      = $this->load_template();
 
 		$page->js('/js/modules_adm/ng-list.js');
 
@@ -198,7 +193,7 @@ class tour_list extends moon_com
 		return $tpl->parse('list:main', $mainArgv);
 	}
 
-	function getTours()
+	private function getTours()
 	{
 		$tours = $this->db->array_query_assoc('
 			SELECT t.id, t.from_date, t.timezone, t.duration, t.name, t.state, t.is_live, COUNT(e.id) events, COUNT(e.id) - COUNT(w.id) misswinners
@@ -214,16 +209,16 @@ class tour_list extends moon_com
 		return $tours;
 	}
 
-	function renderEntry_($argv, &$e)
+	private function renderEntry($argv, &$e)
 	{
-		$page     = &moon::page();
-		$tpl      = &$this->load_template();
+		$page     = moon::page();
+		$tpl      = $this->load_template();
+		$locale   = moon::locale();
 		$mainArgv  = array(
 			'url.back' => $this->linkas('#'),
 			'event.save' => $this->my('fullname') . '#save',
 			'stayhere' => !empty($argv['form-stay'])
 		);
-		$locale = &moon::locale();
 
 
 		$page->js('/js/modules_adm/ng-entry.js');
@@ -262,7 +257,7 @@ class tour_list extends moon_com
 			);
 			$mainArgv['title'] = 'New tournament';
 		} else {
-			if (NULL === ($entryData = $this->getEntry_($argv['id']))) {
+			if (NULL === ($entryData = $this->getEntry($argv['id']))) {
 				$messages = $tpl->parse_array('messages');
 				$e  = $messages['e.entry_not_found'];
 				return ;
@@ -272,7 +267,7 @@ class tour_list extends moon_com
 			foreach (array('from_date') as $key) {
 				$entryData[$key] += $tzOffset;
 			}
-			$entryData = $this->extendArray_($entryData, array(
+			$entryData = array_merge($entryData, array(
 				'from_date' => gmdate('Y-m-d', $entryData['from_date']),
 				'logo_big_bg' => !empty($entryData['logo_big_bg'])
 					? $this->get_dir('web:LogosBigBg') . $entryData['logo_big_bg']
@@ -300,7 +295,9 @@ class tour_list extends moon_com
 			}
 		}
 		if (isset($argv['failed-form-data'])) {
-			$entryData = $this->overwriteArray_($entryData, $argv['failed-form-data']);
+			$entryData = array_intersect_key(
+				array_merge($entryData, $argv['failed-form-data']),
+				$entryData);
 			$entryData['ad_rooms'] = is_array($entryData['ad_rooms'])
 				? implode(',', $entryData['ad_rooms'])
 				: $entryData['ad_rooms'];
@@ -397,9 +394,9 @@ class tour_list extends moon_com
 	}
 
 
-	function getEntry_($id)
+	private function getEntry($id)
 	{
-		if (NULL === $this->getInteger_($id)) {
+		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
@@ -413,7 +410,7 @@ class tour_list extends moon_com
 	}
 
 	/* data *must* be an array of strings */
-	function saveEntry_($data)
+	private function saveEntry($data)
 	{
 		$page     = &moon::page();
 		$tpl      = &$this->load_template();
@@ -455,7 +452,7 @@ class tour_list extends moon_com
 
 		$isInvalid = FALSE;
 		if (isset($saveData['id']) && '' !== $saveData['id']) {
-			$saveData['id'] = $this->getInteger_($saveData['id']);
+			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 			if (NULL === $saveData['id']) {
 				$page->alert($messages['e.invalid_id']);
 				$isInvalid = TRUE;
@@ -608,14 +605,14 @@ class tour_list extends moon_com
 		}
 	}
 
-	function deleteEntry_($ids)
+	private function deleteEntry($ids)
 	{
 		$deleteIds = array();
 		if (!is_array($ids)) {
 			$ids = array($ids);
 		}
 		foreach ($ids as $id) {
-			if (NULL !== ($id = $this->getInteger_($id))) {
+			if (NULL !== ($id = filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 				$deleteIds[] = $id;
 			}
 		}
@@ -634,35 +631,5 @@ class tour_list extends moon_com
 		}
 		blame($this->my('fullname'), 'Deleted', $deleteIds);
 		moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.tourns_uris');
-	}
-
-	function getInteger_($i) {
-		if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
-			return intval($i);
-		} else {
-			return NULL;
-		}
-	}
-
-	function overwriteArray_($base, $extend)
-	{
-		foreach ($base as $key => $value) {
-			if (isset($extend[$key])) {
-				$base[$key] = $extend[$key];
-			}
-		}
-
-		return $base;
-	}
-
-	function extendArray_($base, $extend)
-	{
-		if (!is_array($base)) {
-			$base = array();
-		}
-		if (!is_array($extend)) {
-			$extend = array();
-		}
-		return array_merge($base, $extend);
 	}
 }

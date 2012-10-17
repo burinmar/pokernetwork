@@ -36,7 +36,7 @@ class sync_reporting extends moon_com
 		}
 	}
 
-	function doImgsrvImport()
+	private function doImgsrvImport()
 	{
 		$tournaments = $this->db->array_query_assoc('
 			SELECT id FROM reporting_ng_tournaments
@@ -175,7 +175,7 @@ class sync_reporting extends moon_com
 		}
 	}
 
-	function doImgsrvLocalReimport()
+	private function doImgsrvLocalReimport()
 	{
 		$fn = tempnam("tmp", "lrep");
 		$fp = fopen($fn, 'wb');

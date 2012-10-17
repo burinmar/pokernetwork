@@ -15,7 +15,7 @@ class sync_reporting_v2 extends moon_com
 	/**
 	 * Sync all tournaments one by one
 	 */
-	function syncAll()
+	public function syncAll()
 	{
 		set_include_path(get_include_path() . PATH_SEPARATOR . MOON_CLASSES . 'pear');
 		require_once(MOON_CLASSES . 'pear/Archive/Tar.php');
@@ -1427,7 +1427,8 @@ class sync_reporting_v2 extends moon_com
 		}
 	}
 	
-	private function rmdir_rec($dir) {
+	private function rmdir_rec($dir)
+	{
 		$files = glob($dir . '*');
 		foreach ($files as $file) {
 			if (is_dir($file)) {
