@@ -543,10 +543,11 @@ class base_inplace_syncable extends moon_com
 	private function getTableData($table)
 	{
 		if (!isset($this->tableData[$table])) {
+			$database = moon::moon_ini()->get('database', 'database');
 			$this->tableData = $this->db->array_query_assoc('
 				SELECT column_name, column_default, data_type, character_maximum_length
 				FROM information_schema.columns 
-				WHERE table_name="' . $this->table($table) . '"	AND table_schema="' . $this->db->reconnectInfo['database'] . '"
+				WHERE table_name="' . $this->table($table) . '"	AND table_schema="' . $this->db->escape($database) . '"
 			', 'column_name');
 		}
 		return $this->tableData;
@@ -893,9 +894,10 @@ class base_inplace_syncable extends moon_com
 
 	protected function dbEnumList($table, $column)
 	{
+		$database = moon::moon_ini()->get('database', 'database');
 		$categories = $this->db->single_query_assoc('
 			SELECT column_type FROM information_schema.columns 
-			WHERE column_name="' . $this->db->escape($column) . '" and table_name="' . $this->db->escape($table) . '" AND table_schema="' . $this->db->reconnectInfo['database'] . '"
+			WHERE column_name="' . $this->db->escape($column) . '" and table_name="' . $this->db->escape($table) . '" AND table_schema="' . $this->db->escape($database) . '"
 		');
 		preg_match_all("~'([^']+)'~", $categories['column_type'], $ms);
 		return $ms[1];
