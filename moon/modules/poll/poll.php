@@ -133,11 +133,11 @@ class poll extends moon_com {
 		$sql = ($zone !== NULL)
 			? 'SELECT *, FIND_IN_SET("'.addslashes($zone).'", places) cz FROM '.$this->table('PollQuestions')
 			: 'SELECT *, 1 cz FROM '.$this->table('PollQuestions');
-		$qid = $this->getInteger_($qid);
+		$qid = filter_var($qid, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
 		if (NULL === $qid) {
 			$sql .= ' WHERE is_hidden=0' . ($isTrivia !== NULL
-				  ? ' AND is_trivia = ' . $this->getInteger_($isTrivia)
+				  ? ' AND is_trivia = ' . filter_var($isTrivia, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)
 				  : '');
 			if ($zone !== NULL) {
 				$sql .= ' AND FIND_IN_SET("'.addslashes($zone).'", places) ';
@@ -239,9 +239,9 @@ class poll extends moon_com {
 		$myCookie = $user->cookie_id();
 		$vals = $this->form->get_values();
 
-		$vals['question'] = $this->getInteger_($vals['question']);
+		$vals['question'] = filter_var($vals['question'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$vals['vote']     = str_replace('id-', '', $vals['vote']);
-		$vals['vote']     = $this->getInteger_($vals['vote']);
+		$vals['vote']     = filter_var($vals['vote'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
 		$question = $this->_getQuestion($vals['question']);
 
@@ -280,13 +280,4 @@ class poll extends moon_com {
 			break;
 		}
 	}
-
-   	function getInteger_($i) {
-		if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
-			return intval($i);
-		} else {
-			return NULL;
-		}
-	}
-
 }

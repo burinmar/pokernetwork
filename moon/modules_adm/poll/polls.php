@@ -76,7 +76,7 @@ class polls extends moon_com
 				break;
 
 			default:
-				if (isset($argv[0]) && NULL !== ($id = $this->getInteger_($argv[0]))) {
+				if (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -258,7 +258,7 @@ class polls extends moon_com
 				$e  = $messages['e.entry_not_found'];
 				return ;
 			}
-			$entryData = $this->extendArray_($entryData, array(
+			$entryData = array_merge($entryData, array(
 				'places' => explode(',', $entryData['places'])
 			));
 			$mainArgv['allow_add_answers'] = TRUE; // ?
@@ -315,14 +315,16 @@ class polls extends moon_com
 				// existing poll save error
 				foreach ($entryData['answers'] as $k=>$answer) {
 					if (isset($argv['failed-form-data']['position'][$answer['id']])) {
-						$entryData['answers'][$k]['position'] = $this->getInteger_($argv['failed-form-data']['position'][$answer['id']]);
+						$entryData['answers'][$k]['position'] = filter_var($argv['failed-form-data']['position'][$answer['id']], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 					}
 				}
 			} else {
 				unset($argv['failed-form-data']['position']);
 			}
 
-			$entryData = $this->overwriteArray_($entryData, $argv['failed-form-data']);
+			$entryData = array_intersect_key(
+				array_merge($entryData, $argv['failed-form-data']),
+				$entryData);
 		}
 		
 		foreach ($entryData['answers'] as $k => $answer) {
@@ -370,7 +372,7 @@ class polls extends moon_com
 
 	function getEntry_($id)
 	{
-		if (NULL === $this->getInteger_($id)) {
+		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
@@ -409,7 +411,7 @@ class polls extends moon_com
 
 		$isInvalid = FALSE;
 		if (isset($saveData['id']) && '' !== $saveData['id']) {
-			$saveData['id'] = $this->getInteger_($saveData['id']);
+			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 			if (NULL === $saveData['id']) {
 				$page->alert($messages['e.invalid_id']);
 				$isInvalid = TRUE;
@@ -443,7 +445,7 @@ class polls extends moon_com
 			$saveData['places'] = implode(',', $placesSaved);
 		}
 
-		if (isset($saveData['places']) && (!isset($saveData['is_hidden']) || (1 !==($this->getInteger_($saveData['is_hidden']))))) {
+		if (isset($saveData['places']) && (!isset($saveData['is_hidden']) || (1 !==(filter_var($saveData['is_hidden'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))))) {
 			foreach (explode(',', $saveData['places']) as $placeId) {
 				if ('' == $placeId) {
 					continue;
@@ -556,7 +558,7 @@ class polls extends moon_com
 			$ids = array($ids);
 		}
 		foreach ($ids as $id) {
-			if (NULL !== ($id = $this->getInteger_($id))) {
+			if (NULL !== ($id = filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
 				$deleteIds[] = $id;
 			}
 		}
@@ -576,35 +578,5 @@ class polls extends moon_com
 			WHERE id IN ('.implode(',', $deleteIds).')
 		');
 		blame($this->my('fullname'), 'Deleted', $deleteIds);
-	}
-
-	function getInteger_($i) {
-		if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
-			return intval($i);
-		} else {
-			return NULL;
-		}
-	}
-
-	function overwriteArray_($base, $extend)
-	{
-		foreach ($base as $key => $value) {
-			if (isset($extend[$key])) {
-				$base[$key] = $extend[$key];
-			}
-		}
-
-		return $base;
-	}
-
-	function extendArray_($base, $extend)
-	{
-		if (!is_array($base)) {
-			$base = array();
-		}
-		if (!is_array($extend)) {
-			$extend = array();
-		}
-		return array_merge($base, $extend);
 	}
 }
