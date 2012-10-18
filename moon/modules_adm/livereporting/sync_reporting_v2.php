@@ -9,9 +9,24 @@ include_class('moon_memcache');
 
 class sync_reporting_v2 extends moon_com
 {
+	private $version = '0.2';
 	private $pass = 'Covered in bees, send help';
-	private $version = '0.1';
-	
+	private $requestPrivKey = '-----BEGIN RSA PRIVATE KEY-----
+MIICWwIBAAKBgQCz/tOVp4V1g4V2Z6MUUbn5zbXdbUwOdv4sbaJgvD1+iMmrJbq6
+exC8JmIB53+z+2cv+6LO5n1i70JVgo89K0/61DJyT0ucCvlh/Dv97QZbI5RpSgAs
+cx8CXxImNjXv1IX3MdSnxTjp+JeQeOCUHLqWl141JvmSgCci+sWTWFPaCwIDAQAB
+AoGAP9NBpdSUT3pGrhjLzB26y6i1L4JdMNfjA1AQ/ypgx+irUkP7tbqD0aPupuw2
+7VRdX7dkIOe8WIOsyvOT5UXhguDEpIPZ5apnBlF2o382tDmmE2i7peO4qSIHuOw1
+pHO6jivMG1sAs6Pa4g2kM+H/ugGg7qyuztTc7a02ViFxjkECQQDdCAXT7KWXuirk
+MZh7JDVRM00Xrx1ivl8N9ZIjxZ+qq1814q3BQAqUlq/TvOO/pag7LnL+Rqof/4zw
+t9EYA7RhAkEA0HjPa//HcRdZ/LMP6FMn2xnFJodnngPDkzKwHpJ0kTHO5RWDL2Ks
+g0WhEPBWdciq4icCJ6tHbMrnIFEeHaNl6wJAAv6w1YZHWB71pdHmNwTulAMV8FQ3
+Gbdqok3JhSKQX0ejKp+/qvarLgg8qanNjDM6bFLczAU5GOXliv1yn9itAQJAPaj9
+8LueidyWSR/NPLIbv7pHjbXO9/W1CvybCu/Went47lkGjCVrUQhvM0tix0OrB2jy
+QjluzsbUxcI4XhvOMQJAfnVuvHVQui1lIpphX/kNNq3DFCSk0GphwPo3VaL13w1C
+kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
+-----END RSA PRIVATE KEY-----';
+
 	/**
 	 * Sync all tournaments one by one
 	 */
@@ -107,8 +122,9 @@ class sync_reporting_v2 extends moon_com
 		$this->_sendBase($requestDir . '/00_base');
 		$this->_sendEventMisc($requestDir . '/05_event_misc');
 		$this->_sendReporting($requestDir . '/10_reports');
+		file_put_contents($requestDir . '/timestamp.txt', time());
 		
-		// Pack & send
+		// Pack, encrypt, sign
 		$tar = new Archive_Tar($requestDir. '.tbz2', 'bz2');
 		$tar->createModify($requestDir, '', $requestDir);	
 		$this->rmdir_rec($requestDir . '/');
@@ -144,6 +160,7 @@ class sync_reporting_v2 extends moon_com
 		unlink($requestDir. '.tbz2');
 		echo '	sending ' . round(filesize($requestDir. '.tbz2.enc')/1024, 2) . "kb,\n";
 
+		// Send & receive response
 		$receiveFile = $workDir. '/response.tbz2.enc';
 		$fh = fopen($receiveFile,'wb');
 		$ch = curl_init($url);
@@ -155,6 +172,7 @@ class sync_reporting_v2 extends moon_com
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, array(
 			'request' => '@' . realpath($requestDir. '.tbz2.enc'),
+			'signature' => $this->signFile($this->requestPrivKey, realpath($requestDir. '.tbz2.enc')),
 			'site' => _SITE_ID_
 		));
 		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
@@ -1450,5 +1468,20 @@ class sync_reporting_v2 extends moon_com
 			$this->rmdir_rec($file . '/');
 			moon::error()->error('Reporting: removed failed sync dir "' . $file . '/"');
 		}
+	}
+
+	private function signFile($privKey, $file) 
+	{
+		$digest = hash_file('sha1', $file, true);
+		$asn1  = chr(0x30).chr(0x21); // SEQUENCE, 33
+		$asn1 .= chr(0x30).chr(0x09); // SEQUENCE, 9
+		$asn1 .= chr(0x06).chr(0x05); // OBJECT IDENTIFIER, 5
+		$asn1 .= chr(0x2b).chr(0x0e).chr(0x03).chr(0x02).chr(0x1a); // 1.3.14.3.2.26 (SHA1)
+		$asn1 .= chr(0x05).chr(0x00); // NULL
+		$asn1 .= chr(0x04).chr(0x14); // OCTET STRING, 20
+		$asn1 .= $digest;
+
+		openssl_private_encrypt($asn1, $signature, $privKey);
+		return $signature;
 	}
 }
