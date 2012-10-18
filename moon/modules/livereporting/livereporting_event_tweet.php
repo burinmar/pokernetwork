@@ -96,7 +96,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 		$homeURL = preg_replace('~/$~', '', $homeURL);
 
 		$url = $homeURL . $this->lrep()->makeUri('event#view', array(
-				'event_id' => getInteger($message['event_id']),
+				'event_id' => filter_var($message['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 				'path' => $this->getUriPath(),
 				'type' => 'tweet',
 				'id' => $message['id']
@@ -236,8 +236,8 @@ class livereporting_event_tweet extends livereporting_event_pylon
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tTweets') . ' d
 				ON l.id=d.id
-			WHERE l.id=' . getInteger($id) . ' AND l.type="tweet"
-				AND l.event_id=' . getInteger($eventId));
+			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND l.type="tweet"
+				AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT));
 		if (empty($entry)) {
 			return NULL;
 		}

@@ -1,5 +1,6 @@
 <% messages %>
 e.invalid_id=Invalid id
+e.save_error=Save error
 e.entry_not_found=Entry not found
 e.invalid_file=Invalid file
 e.file_save_error=File save error
@@ -152,8 +153,14 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 
 		<dt></dt>
-		<dd><label><input type="checkbox" id="i-priority" name="priority" style="height:12pt;" value="1" <%if {entry.priority} %>checked="checked"<%end%> /> High priority (sorting)</label></dd>
+		<dd>
+			<label><input type="checkbox" name="priority" value="1" <%if {entry.priority} %>checked="checked"<%end%> /> High priority (sorting)</label>
+		</dd>
 
+		<dt></dt>
+		<dd>
+			<label><input type="checkbox" name="show_wsop_eod" value="1" <%if {entry.show_wsop_eod} %>checked="checked"<%end%> /> WSOP.com provides EOD chips for this tournament</label>
+		</dd>
 
 		<dt><label>Synchronization</label></dt>
 		<dd><input type="text" maxlength="20" size="15" name="sync_id" value="{entry.sync_id}" />

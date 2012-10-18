@@ -20,7 +20,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 				));
 				$profileId = $this->save($data);
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 					'type' => 'profile',
 					'id' => $profileId
@@ -30,7 +30,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 				$this->forget();
 				$profileId = $this->instEventChips()->deleteSingleSrcProfile($argv['uri']['argv'][3]);
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 					'type' => 'profile',
 					'id' => $profileId
@@ -41,7 +41,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 					moon::page()->page404();
 				}
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath($this->requestArgv('day_id'))
 				), $this->getUriFilter(NULL, TRUE));
 				exit;
@@ -147,8 +147,8 @@ class livereporting_event_profile extends livereporting_event_pylon
 		$profile = $this->db->single_query_assoc('
 			SELECT p.id, p.name, p.card, p.is_pnews, p.sponsor_id, p.status, p.country_id
 			FROM ' . $this->table('Players') . ' p
-			WHERE p.id=' . getInteger($id) . '
-				AND p.event_id=' . getInteger($eventId)
+			WHERE p.id=' . filter_var($id, FILTER_VALIDATE_INT) . '
+				AND p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT)
 		);
 		if (0 == count($profile)) {
 			return NULL;
@@ -203,10 +203,10 @@ class livereporting_event_profile extends livereporting_event_pylon
 			FROM ' . $this->table('Chips') . ' c
 			LEFT JOIN ' . $this->table('Log') . ' l
 				ON l.id=c.import_id AND l.type="chips"
-			WHERE c.player_id=' . getInteger($playerId) . '
+			WHERE c.player_id=' . filter_var($playerId, FILTER_VALIDATE_INT) . '
 				AND ' . (is_array($dayId)
 					? 'c.day_id IN (' . implode(',', $dayId) . ')'
-					: 'c.day_id=' . getInteger($dayId)
+					: 'c.day_id=' . filter_var($dayId, FILTER_VALIDATE_INT)
 				) . '
 				AND (l.' . $isHiddenSql . ' OR l.is_hidden IS NULL)
 			ORDER BY c.created_on
@@ -290,7 +290,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 			));
 		}
 
-		return getInteger($argv['id']);
+		return filter_var($argv['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 	}
 
 	private function updatePlayerPPRels($id, $name)
@@ -329,7 +329,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 			INNER JOIN ' . $this->table('tChips') . ' sc
 				ON sc.id=l.id
 			INNER JOIN ' . $this->table('Chips') . ' c
-				ON c.import_id=l.id AND c.player_id=' . getInteger($playerId) . '
+				ON c.import_id=l.id AND c.player_id=' . filter_var($playerId, FILTER_VALIDATE_INT) . '
 			WHERE l.type="chips"
 		');
 		foreach ($imports as $import) {
@@ -366,11 +366,11 @@ class livereporting_event_profile extends livereporting_event_pylon
 
 		$this->db->query('
 			DELETE FROM ' . $this->table('Players') . '
-			WHERE id=' . getInteger($playerId) . '
+			WHERE id=' . filter_var($playerId, FILTER_VALIDATE_INT) . '
 		');
 		$this->db->query('
 			DELETE FROM ' . $this->table('Chips') . '
-			WHERE player_id=' . getInteger($playerId) . '
+			WHERE player_id=' . filter_var($playerId, FILTER_VALIDATE_INT) . '
 		');
 	}
 

@@ -53,9 +53,6 @@ function livereporting_adm_alt_log($trnId = 0, $evId = 0, $dayId = 0, $type = 'o
 		$currentUserId = moon::user()->id();
 		$db = moon::db();
 	}
-	if (0) {
-		return ;
-	}
 	$userId = $userId == NULL
 		? $currentUserId
 		: intval($userId); // null => 0

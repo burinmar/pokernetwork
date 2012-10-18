@@ -33,7 +33,7 @@ class livereporting_event_day extends livereporting_event_pylon
 				$this->lrep()->instEventModel('_src_event')
 					->unsetDefaultDayCache($argv['event_id']);
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath($this->requestArgv('day_id'))
 				), $this->getUriFilter(NULL, TRUE));
 				exit;
@@ -132,11 +132,11 @@ class livereporting_event_day extends livereporting_event_pylon
 			return ;
 		}
 		$user = moon::user();
-		$dayId = getInteger($argv['day_id']);
+		$dayId = filter_var($argv['day_id'], FILTER_VALIDATE_INT);
 		
 		$dayData = $this->db->single_query_assoc('
 			SELECT * FROM ' . $this->table('Days') . '
-			WHERE event_id=' . getInteger($argv['event_id']) . '
+			WHERE event_id=' . filter_var($argv['event_id'], FILTER_VALIDATE_INT) . '
 				AND id=' . $dayId . '
 		');
 		if (empty($dayData)) {

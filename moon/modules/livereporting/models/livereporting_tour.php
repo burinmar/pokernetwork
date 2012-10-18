@@ -25,7 +25,7 @@ class livereporting_model_tour extends livereporting_model_pylon
 		$result = $this->db->single_query_assoc('
 			SELECT meta_title,meta_keywords,meta_description,about_html,news_tag
 			FROM ' . $this->table('Tours') . '
-			WHERE id=' . getInteger($id) . ' AND is_hidden=0
+			WHERE id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND is_hidden=0
 		');
 		return !empty($result)
 			? $result
@@ -69,7 +69,7 @@ class livereporting_model_tour extends livereporting_model_pylon
 				ON t.id=e.tournament_id
 			LEFT JOIN ' . $this->table('Winners') . ' w
 				ON w.event_id=e.id
-			WHERE t.is_live=1 AND t.tour=' . getInteger($tourId) . '
+			WHERE t.is_live=1 AND t.tour=' . filter_var($tourId, FILTER_VALIDATE_INT) . '
 			GROUP BY t.id
 			ORDER BY from_date DESC'
 		);

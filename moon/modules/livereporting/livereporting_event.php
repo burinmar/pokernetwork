@@ -442,9 +442,9 @@ class livereporting_event extends moon_com
 		}
 
 		return array(
-			'tournament_id' => getInteger($argv['tournament_id']),
-			'event_id' => getInteger($argv['event_id']),
-			'day_id' => getInteger($dayId),
+			'tournament_id' => filter_var($argv['tournament_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
+			'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
+			'day_id' => filter_var($dayId, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 			'filter_day' => $dayName,
 			'filter' => $filter,
 			'tab' => NULL, // see eSpecialPages
@@ -1290,7 +1290,7 @@ class livereporting_event extends moon_com
 				array('write-tweet', 'tweet'),
 			) as $swc) {
 				$mainArgv['url.' . $swc[0]] = $lrep->makeUri('event#view', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 					), $this->getUriFilter(array(
 						'master' => $swc[1]
@@ -1301,11 +1301,11 @@ class livereporting_event extends moon_com
 				$mainArgv['url.write-tweet'] = null;
 			}
 			$mainArgv['url.upload-photos'] = $lrep->makeUri('event#ipn-upload', array(
-				'event_id' => getInteger($argv['event_id']),
+				'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 				'path' => $cUriPath,
 			), array('x' => 'photos-inst'));
 			$mainArgv['url.review-photos'] = $lrep->makeUri('event#ipn-review', array(
-				'event_id' => getInteger($argv['event_id']),
+				'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 				'path' => $cUriPath,
 			));
 		}
@@ -1323,7 +1323,7 @@ class livereporting_event extends moon_com
 			if ($argv['day_id'] && $days[$argv['day_id']]['state'] == '0') {
 				$mainArgv += array(
 					'url.dprogress' => $lrep->makeUri('event#save', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 						'type' => 'day.start',
 						'id' => $argv['day_id']
@@ -1334,13 +1334,13 @@ class livereporting_event extends moon_com
 			} elseif ($argv['day_id'] && $days[$argv['day_id']]['state'] == '1') {
 				$mainArgv += array(
 					'url.dprogress' => $lrep->makeUri('event#save', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 						'type' => 'day.complete',
 						'id' => $argv['day_id']
 					), $this->getUriFilter(NULL, TRUE)),
 					'url.dregress' => $lrep->makeUri('event#save', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 						'type' => 'day.stop',
 						'id' => $argv['day_id']
@@ -1352,7 +1352,7 @@ class livereporting_event extends moon_com
 			} elseif ($argv['day_id'] && $days[$argv['day_id']]['state'] == '2') {
 				$mainArgv += array(
 					'url.dregress' => $lrep->makeUri('event#save', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 						'type' => 'day.resume',
 						'id' => $argv['day_id']
@@ -1370,7 +1370,7 @@ class livereporting_event extends moon_com
 				$mainArgv['show_event_progress_change'] = true;
 				$mainArgv += array(
 					'url.eprogress' => $lrep->makeUri('event#save', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 						'type' => 'event.complete',
 						'id' => $argv['event_id']
@@ -1381,7 +1381,7 @@ class livereporting_event extends moon_com
 				$mainArgv['show_event_progress_change'] = true;
 				$mainArgv += array(
 					'url.eregress' => $lrep->makeUri('event#save', array(
-						'event_id' => getInteger($argv['event_id']),
+						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 						'path' => $cUriPath,
 						'type' => 'event.resume',
 						'id' => $argv['event_id']

@@ -21,7 +21,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 			SELECT name, logo_mid logo, skin, tour, currency, intro, timezone,
 				sync_id sync_origin, ad_rooms, autopublish
 			FROM ' . $this->table('Tournaments') . '
-			WHERE id="' . getInteger($id) . '"
+			WHERE id=' . filter_var($id, FILTER_VALIDATE_INT) . '
 		');
 		if (0 == count($data)) {
 			return NULL;
@@ -38,7 +38,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 			FROM ' . $this->table('Events') . ' e
 			INNER JOIN  ' . $this->table('Days') . ' d
 				ON d.event_id=e.id
-			WHERE e.tournament_id=' . getInteger($tournamentId) . '
+			WHERE e.tournament_id=' . filter_var($tournamentId, FILTER_VALIDATE_INT) . '
 				AND e.is_live=1
 				AND (e.state=0 OR e.state=1)
 				AND d.is_live=1
@@ -63,7 +63,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 				ON pw.title=w.winner AND pw.hidden=0
 			LEFT JOIN ' . $this->table('PlayersPoker') . ' pl
 				ON pl.title=w.runner_up AND pl.hidden=0
-			WHERE e.tournament_id=' . getInteger($tournamentId) . '
+			WHERE e.tournament_id=' . filter_var($tournamentId, FILTER_VALIDATE_INT) . '
 				AND e.is_live=1
 				AND e.state=2
 				AND d.is_live=1
@@ -88,7 +88,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 				ON pw.title=w.winner AND pw.hidden=0
 			LEFT JOIN ' . $this->table('PlayersPoker') . ' pl
 				ON pl.title=w.runner_up AND pl.hidden=0
-			WHERE e.tournament_id=' . getInteger($tournamentId) . '
+			WHERE e.tournament_id=' . filter_var($tournamentId, FILTER_VALIDATE_INT) . '
 				AND e.is_live=1
 				AND d.is_live=1
 				AND e.bluff_id IS NOT NULL
@@ -407,7 +407,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 			FROM ' . $this->table('Events') . ' e
 			INNER JOIN  ' . $this->table('Days') . ' d
 				ON d.event_id=e.id
-			WHERE e.tournament_id=' . getInteger($tournamentId) . '
+			WHERE e.tournament_id=' . filter_var($tournamentId, FILTER_VALIDATE_INT) . '
 				AND e.is_live=1
 				AND d.is_live=1
 			GROUP BY e.id
@@ -495,15 +495,6 @@ class livereporting_model_tournament extends livereporting_model_pylon
 		'id');
 
 		return $days;
-	}
-
-	private function getInteger_($i)
-	{
-		if (preg_match('/^[\-+]?[0-9]+$/', $i)) {
-			return intval($i);
-		} else {
-			return NULL;
-		}
 	}
 }
 

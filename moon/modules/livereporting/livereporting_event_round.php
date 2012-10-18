@@ -58,7 +58,7 @@ class livereporting_event_round extends livereporting_event_pylon
 					break;
 				}
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath($this->requestArgv('day_id'))
 				), $this->getUriFilter(array('master'=>'round'), TRUE));
 				exit;
@@ -164,8 +164,8 @@ class livereporting_event_round extends livereporting_event_pylon
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tRounds') . ' d
 			ON l.id=d.id
-			WHERE l.id=' . getInteger($id) . ' AND l.type="round"
-				AND l.event_id=' . getInteger($eventId));
+			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND l.type="round"
+				AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT));
 		if (empty($entry)) {
 			return NULL;
 		}
@@ -457,8 +457,8 @@ class livereporting_event_round extends livereporting_event_pylon
 			SELECT d1.event_id FROM ' . $this->table('Days') . ' d1
 			INNER JOIN ' . $this->table('Days') . ' d2
 				ON d1.event_id=d2.event_id
-			WHERE d1.id=' . getInteger($argv['day_from_id']) . '
-				AND d2.id=' . getInteger($argv['day_to_id']) . '
+			WHERE d1.id=' . filter_var($argv['day_from_id'], FILTER_VALIDATE_INT) . '
+				AND d2.id=' . filter_var($argv['day_to_id'], FILTER_VALIDATE_INT) . '
 		');
 		if (empty($sameEvent)) {
 			return ;
@@ -476,7 +476,7 @@ class livereporting_event_round extends livereporting_event_pylon
 		}
 		$this->db->query('
 			UPDATE ' . $this->table('Log') . '
-			SET day_id=' . getInteger($argv['day_to_id']) . ', updated_on=' . time() . '
+			SET day_id=' . filter_var($argv['day_to_id'], FILTER_VALIDATE_INT) . ', updated_on=' . time() . '
 			WHERE id IN(' . implode(',', $rounds) . ') AND type="round"
 		');
 	}

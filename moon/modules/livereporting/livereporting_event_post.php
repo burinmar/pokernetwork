@@ -269,15 +269,15 @@ class livereporting_event_post extends livereporting_event_pylon
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tPosts') . ' d
 				ON l.id=d.id
-			WHERE l.id=' . getInteger($id) . ' AND l.type="post"
-				AND l.event_id=' . getInteger($eventId));
+			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND l.type="post"
+				AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT));
 		if (empty($entry)) {
 			return NULL;
 		}
 		$entry['tags'] = array();
 		$tags = $this->db->array_query_assoc('
 			SELECT tag FROM ' . $this->table('Tags') . '
-			WHERE id=' . getInteger($id) . ' AND type="post"
+			WHERE id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND type="post"
 		');
 		foreach ($tags as $tag) {
 			$entry['tags'][] = $tag['tag'];

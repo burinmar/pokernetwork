@@ -26,7 +26,7 @@ class livereporting_event_event extends livereporting_event_pylon
 					moon::page()->page404();
 				}
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath()
 				), $this->getUriFilter((!empty($_POST['master'])
 						? array('master' => 'misc')
@@ -54,7 +54,7 @@ class livereporting_event_event extends livereporting_event_pylon
 					moon::page()->page404();
 				}
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath($this->requestArgv('day_id'))
 				), $this->getUriFilter(NULL, TRUE));
 				moon_close();
@@ -164,7 +164,7 @@ class livereporting_event_event extends livereporting_event_pylon
 					}
 				}
 				$this->redirect('event#view', array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath()
 				), $this->getUriFilter($add, TRUE));
 				moon_close();
@@ -358,7 +358,7 @@ class livereporting_event_event extends livereporting_event_pylon
 		), $this->getUriFilter(NULL, TRUE));
 		$controlsArgv['ce.sponsors'] = json_encode($this->getSponsors());
 
-		if (in_array($argv['tournament_id'], $this->get_var('wsopxml'))) {
+		if ($argv['show_wsop_eod']) {
 			$controlsArgv['ce.special_import'] = true;
 		}
 
@@ -378,7 +378,7 @@ class livereporting_event_event extends livereporting_event_pylon
 			SELECT id, name FROM (
 				SELECT @ROW:=@ROW+1 AS rk, p.id, p.name
 				FROM ' . $this->table('Players') . ' p
-				WHERE p.event_id=' . getInteger($eventId) . '
+				WHERE p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 				ORDER BY name
 			) i
 			GROUP BY FLOOR(rk/' . $this->listPageBy . ')
@@ -390,7 +390,7 @@ class livereporting_event_event extends livereporting_event_pylon
 		return $this->db->array_query_assoc('
 			SELECT id , card, name, is_pnews, sponsor_id, status
 			FROM ' . $this->table('Players') . ' 
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			ORDER BY name
 		', 'id');
 	}
@@ -409,7 +409,7 @@ class livereporting_event_event extends livereporting_event_pylon
 		$rPlayers = $this->db->query('
 			SELECT @ROW:=@ROW+1 AS nr, p.id , p.card, p.name, p.is_pnews pn, p.sponsor_id sp, p.status st
 			FROM ' . $this->table('Players') . ' p
-			WHERE p.event_id=' . getInteger($eventId) . '
+			WHERE p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			ORDER BY name
 		');
 		$players = array();
@@ -497,7 +497,7 @@ class livereporting_event_event extends livereporting_event_pylon
 	{
 		$placesSeq = $this->db->array_query_assoc('
 			SELECT * FROM ' . $this->table('Payouts') . '
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			ORDER BY place
 		');
 		$winners = $this->db->array_query_assoc('
@@ -509,7 +509,7 @@ class livereporting_event_event extends livereporting_event_pylon
 				LEFT JOIN ' . $this->table('PlayersPoker') . ' pp
 					ON pp.title=p.name AND pp.hidden=0
 				' : '') . '
-			WHERE wl.event_id=' . getInteger($eventId) . '
+			WHERE wl.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 		', 'place');
 
 		$payouts = array();
@@ -577,7 +577,7 @@ class livereporting_event_event extends livereporting_event_pylon
 		$names = array();
 		$players = $this->db->array_query_assoc('
 			SELECT id, name FROM ' . $this->table('Players') . '
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 		');
 		foreach ($players as $player) {
 			$names[$player['id']] = $player['name'];
@@ -591,9 +591,6 @@ class livereporting_event_event extends livereporting_event_pylon
 			moon::page()->page404();
 		}
 		list ($location) = $prereq;
-		if (!in_array($location['tournament_id'], $this->get_var('wsopxml'))) {
-			moon::page()->page404();
-		}
 
 		$playerNames = array();
 		foreach ($this->getPlayersData($location['event_id']) as $player) {
@@ -667,7 +664,7 @@ class livereporting_event_event extends livereporting_event_pylon
 		if (0 != count($omitDays)) {
 			$omitPlayers = $this->db->array_query_assoc('
 				SELECT id FROM ' . $this->table('Players') . '
-				WHERE event_id=' . getInteger($location['event_id']) . '
+				WHERE event_id=' . filter_var($location['event_id'], FILTER_VALIDATE_INT) . '
 				  AND day_enter_id IN (' . implode(',', $omitDays) . ')
 			');
 			foreach ($omitPlayers as $omitPlayer) {
@@ -895,8 +892,8 @@ class livereporting_event_event extends livereporting_event_pylon
 		');
 		$this->db->query('
 			UPDATE ' . $this->table('Events') . '
-			SET players_left=' . getInteger($totalPlayers['cid']) . ', players_total=' . getInteger($totalPlayers['cid']) . '
-			WHERE id=' . getInteger($data['event_id']) . ' AND players_left=0'
+			SET players_left=' . filter_var($totalPlayers['cid'], FILTER_VALIDATE_INT) . ', players_total=' . filter_var($totalPlayers['cid'], FILTER_VALIDATE_INT) . '
+			WHERE id=' . filter_var($data['event_id'], FILTER_VALIDATE_INT) . ' AND players_left=0'
 		); */
 	}
 
@@ -983,8 +980,8 @@ class livereporting_event_event extends livereporting_event_pylon
 			// seems ok but not wanted
 			$this->db->query('
 				UPDATE ' . $this->table('Events') . '
-				SET players_left=' . getInteger($playersLeft) . '
-				WHERE id=' . getInteger($data['event_id'])
+				SET players_left=' . filter_var($playersLeft, FILTER_VALIDATE_INT) . '
+				WHERE id=' . filter_var($data['event_id'], FILTER_VALIDATE_INT)
 			);
 		} */
 

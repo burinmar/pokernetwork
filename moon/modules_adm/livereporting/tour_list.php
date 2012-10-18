@@ -25,7 +25,7 @@ class tour_list extends moon_com
 				$form->names('id', 'name', 'from_date', 'duration',
 				    'currency', 'intro', 'tour', 'is_live', 'alias', 'logo_bgcolor', 'logo_is_dark',
 				    'delete_logo_big_bg', 'delete_logo_small', 'timezone', 'place', 'address', 'geolocation',
-				    'sync_id','is_syncable','autopublish',
+				    'sync_id','is_syncable','autopublish','show_wsop_eod',
 				    'delete_logo_mid', 'delete_logo_idx', 'delete_logo_mobile_1', 'delete_logo_mobile_2',
 				    'skin', 'ad_rooms', 'priority', 'stayhere');
 				$form->fill($_POST);
@@ -253,6 +253,7 @@ class tour_list extends moon_com
 				'sync_id' => '',
 				'is_syncable' => '',
 				'autopublish' => '',
+				'show_wsop_eod'=>'',
 				'priority' => ''
 			);
 			$mainArgv['title'] = 'New tournament';
@@ -421,7 +422,7 @@ class tour_list extends moon_com
 				'id', 'alias', 'name', 'place', 'address', 'geolocation',
 				'ad_rooms', 'skin', 'is_live', 'currency', 'intro', 'tour',
 				'timezone', 'from_date', 'duration', 'logo_bgcolor', 'logo_is_dark',
-				'sync_id', 'is_syncable', 'autopublish', 'priority'
+				'sync_id', 'is_syncable', 'autopublish', 'priority', 'show_wsop_eod'
 			) as $key) {
 			if (isset($data[$key])) {
 				$saveData[$key] = $data[$key];

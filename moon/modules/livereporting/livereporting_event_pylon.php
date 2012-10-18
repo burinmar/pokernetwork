@@ -89,7 +89,7 @@ class livereporting_event_pylon extends livereporting_event
 		
 		// $this->redirect does not work for the same reason as $this->linkas()
 		$this->redirect_('event#view', array(
-			'event_id' => getInteger($eventId),
+			'event_id' => filter_var($eventId, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 			'path' => $this->getUriPath($dayId)
 		), $this->getUriFilter($filterAdd, TRUE));
 	}
@@ -194,7 +194,7 @@ class livereporting_event_pylon extends livereporting_event
 		$controlsArgv['url.ipnpreview'] = 
 			$this->lrep()->makeUri('event#ipn-browse',
 				array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 				),
 				array('x' => $xApp)
@@ -202,7 +202,7 @@ class livereporting_event_pylon extends livereporting_event
 		$controlsArgv['url.ipnupload'] =
 			$this->lrep()->makeUri('event#ipn-upload',
 				array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 				),
 				array('x' => $xApp)
@@ -425,7 +425,7 @@ class livereporting_event_pylon extends livereporting_event
 
 		$location = $this->db->single_query_assoc('
 			SELECT tournament_id, event_id, id day_id, name day_name FROM ' . $this->table('Days') . '
-			WHERE id=' . getInteger($dayId) . '
+			WHERE id=' . filter_var($dayId, FILTER_VALIDATE_INT) . '
 		');
 		if (empty($location)) {
 			return ;
@@ -449,7 +449,7 @@ class livereporting_event_pylon extends livereporting_event
 
 		$location = $this->db->single_query_assoc('
 			SELECT tournament_id, id event_id FROM ' . $this->table('Events') . '
-			WHERE id=' . getInteger($eventId) . '
+			WHERE id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 		');
 		if (empty($location)) {
 			return ;
@@ -491,13 +491,13 @@ class livereporting_event_pylon extends livereporting_event
 					: ''
 				) . 
 				' FROM ' . $this->table('Log') . '
-				WHERE id=' . getInteger($rowId) . ' AND type="' . addslashes($rowType) . '"
+				WHERE id=' . filter_var($rowId, FILTER_VALIDATE_INT) . ' AND type="' . addslashes($rowType) . '"
 			');
 			if (empty($entry)) {
 				return ;
 			}
-			$entry['id'] = getInteger($entry['id']);
-			$entry['is_hidden'] = getInteger($entry['is_hidden']);
+			$entry['id'] = filter_var($entry['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+			$entry['is_hidden'] = filter_var($entry['is_hidden'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		}
 		
 		return array(
@@ -623,7 +623,7 @@ class livereporting_event_pylon extends livereporting_event
 
 		$location = $this->db->single_query_assoc('
 			SELECT tournament_id, event_id, day_id FROM ' . $this->table('Log') . '
-			WHERE id=' . getInteger($rowId) . ' AND type="' . addslashes($rowType) . '"
+			WHERE id=' . filter_var($rowId, FILTER_VALIDATE_INT) . ' AND type="' . addslashes($rowType) . '"
 		');
 		if (empty($location)) {
 			return ;
@@ -649,21 +649,21 @@ class livereporting_event_pylon extends livereporting_event
 
 		$this->db->query('
 			DELETE FROM ' . $this->table('Log') . '
-			WHERE id=' . getInteger($rowId) . ' AND type="' . addslashes($rowType) . '"
+			WHERE id=' . filter_var($rowId, FILTER_VALIDATE_INT) . ' AND type="' . addslashes($rowType) . '"
 		');
 		$deletedRows[] = $this->db->affected_rows();
 
 		if ($rowTable) {
 			$this->db->query('
 				DELETE FROM ' . $this->table($rowTable) . '
-				WHERE id=' . getInteger($rowId) . '
+				WHERE id=' . filter_var($rowId, FILTER_VALIDATE_INT) . '
 			');
 			$deletedRows[] = $this->db->affected_rows();
 		}
 		if ($withTags) {
 			$this->db->query('
 				DELETE FROM ' . $this->table('Tags') . '
-				WHERE id=' . getInteger($rowId) . ' AND type="' . addslashes($rowType) . '"
+				WHERE id=' . filter_var($rowId, FILTER_VALIDATE_INT) . ' AND type="' . addslashes($rowType) . '"
 			');
 			$deletedRows[] = $this->db->affected_rows();
 		}

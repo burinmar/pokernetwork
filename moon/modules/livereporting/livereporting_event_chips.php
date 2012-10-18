@@ -88,8 +88,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 	{
 		switch ($argv['variation']) {
 		case 'logControl':
+			
 			return $this->renderControl(array_merge($data, array(
-				'wsopimport' => in_array($data['tournament_id'], $this->get_var('wsopxml')),
 				'unhide' => (!empty($_GET['master']) && $_GET['master'] == 'chips'),
 				'is_keyhand' => 0,
 				'is_exportable' => 1
@@ -565,9 +565,11 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.custom_tz' => $argv['tzName'],
 			'cc.fullist_change_disabled' => !empty($argv['fullist_change_disabled'])
 		);
-		if (!empty($argv['wsopimport'])) {
+
+		if ($argv['show_wsop_eod']) {
 			$controlsArgv['cc.wsopimport'] = true;
 		}
+		
 		if (is_object( $rtf = $this->object('rtf') )) {
 			$rtf->setInstance($this->get_var('rtf') . ':1');
 			$controlsArgv['cc.toolbar'] = $rtf->toolbar('rq-wc-body', isset($argv['import_id']) ? intval($argv['import_id']) : '', array('noarticle'=>true));
@@ -585,7 +587,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$controlsArgv['cc.url.ipnpreview'] = 
 			$lrep->makeUri('event#ipn-browse',
 				array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 				),
 				array('x' => 'chips')
@@ -593,7 +595,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$controlsArgv['cc.url.ipnupload'] =
 			$lrep->makeUri('event#ipn-upload',
 				array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 				),
 				array('x' => 'chips')
@@ -626,9 +628,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 			moon::page()->page404();
 		}
 		list ($location) = $prereq;
-		if (!in_array($location['tournament_id'], $this->get_var('wsopxml'))) {
-			moon::page()->page404();
-		}
 
 		$eventId = $this->object('livereporting_bluff')->bluffEventId($location['event_id']);
 
@@ -636,6 +635,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		curl_setopt($ch, CURLOPT_HEADER, 0);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 		curl_setopt($ch, CURLOPT_TIMEOUT, 60*20);
 		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 		$gotData = curl_exec($ch);
@@ -720,7 +720,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		if ($data['datetime'] === NULL) {
 			$entry = $this->db->single_query_assoc('
 				SELECT created_on FROM  ' . $this->table('Log') . '
-				WHERE id=' . getInteger($data['import_id']) . ' AND type="chips"
+				WHERE id=' . filter_var($data['import_id'], FILTER_VALIDATE_INT) . ' AND type="chips"
 			');
 			if (empty($entry)) {
 				echo 'error';
@@ -849,8 +849,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tChips') . ' d
 			ON l.id=d.id
-			WHERE l.id=' . getInteger($id) . ' AND l.type="chips"
-				AND l.event_id=' . getInteger($eventId));
+			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND l.type="chips"
+			  AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT));
 		if (empty($entry)) {
 			return NULL;
 		}
@@ -917,7 +917,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$entry['tags'] = array();
 		$tags = $this->db->array_query_assoc('
 			SELECT tag FROM ' . $this->table('Tags') . '
-			WHERE id=' . getInteger($id) . ' AND type="chips"
+			WHERE id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND type="chips"
 		');
 		foreach ($tags as $tag) {
 			$entry['tags'][] = $tag['tag'];
@@ -936,13 +936,13 @@ class livereporting_event_chips extends livereporting_event_pylon
 				ON ce.id=(
 					SELECT id FROM ' . $this->table('Chips') . '
 					WHERE player_id=p.id
-					AND event_id=' . getInteger($eventId) . '
-					AND created_on<' . getInteger($datetime) . '
+					AND event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
+					AND created_on<' . filter_var($datetime, FILTER_VALIDATE_INT) . '
 					AND is_hidden=0
 					ORDER BY ' . ($includeIntermediate == TRUE ? '' : 'is_full_import DESC,') . 'created_on DESC
 					LIMIT 1
 				)
-			WHERE p.event_id=' . getInteger($eventId);
+			WHERE p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 		// do not delete {
 		//$sql = '
 		//SELECT p.id, p.card, p.sponsor_id, p.name, ce.chips, ce.chips-ceo.chips diff
@@ -951,8 +951,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 		//	ON ce.id=(
 		//		SELECT id FROM ' . $this->table('Chips') . '
 		//		WHERE player_id=p.id
-		//		AND day_id=' . getInteger($dayId) . '
-		//		AND created_on<' . getInteger($datetime) . '
+		//		AND day_id=' . filter_var($dayId, FILTER_VALIDATE_INT) . '
+		//		AND created_on<' . filter_var($datetime, FILTER_VALIDATE_INT) . '
 		//		ORDER BY created_on DESC
 		//		LIMIT 1
 		//	)
@@ -960,14 +960,14 @@ class livereporting_event_chips extends livereporting_event_pylon
 		//	ON ceo.id=(
 		//		SELECT id FROM ' . $this->table('Chips') . '
 		//		WHERE player_id=p.id
-		//		AND day_id=' . getInteger($dayId) . '
+		//		AND day_id=' . filter_var($dayId, FILTER_VALIDATE_INT) . '
 		//		AND created_on<ce.created_on
 		//		ORDER BY is_full_import DESC, created_on DESC
 		//		LIMIT 1
 		//	)
 		//LEFT JOIN ' . $this->table('tChips') . ' co
 		//	ON co.id=ceo.import_id
-		//WHERE p.event_id=' . getInteger($eventId);
+		//WHERE p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 		// }
 		return $this->db->array_query_assoc($sql, 'id');
 	}
@@ -978,9 +978,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 		if (!isset($lastFullChips[$eventId . '-' . $dayId])  || $forceFresh) {
 			$where = array();
 			if (!empty($dayId)) {
-				$where[] = 'l.day_id=' . getInteger($dayId);
+				$where[] = 'l.day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
 			} else {
-				$where[] = 'l.event_id=' . getInteger($eventId);
+				$where[] = 'l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 			}
 			$where[] = 'l.type="chips"';
 			if (!$includeHidden) {
@@ -1016,7 +1016,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$deletedRows = $this->helperDeleteDbDelete($importId, 'chips', 'tChips');
 		$this->db->query('
 			DELETE FROM ' . $this->table('Chips') . '
-			WHERE import_id=' . getInteger($importId) . '
+			WHERE import_id=' . filter_var($importId, FILTER_VALIDATE_INT) . '
 		');
 
 		if ($deletedRows[0]) {
@@ -1171,10 +1171,10 @@ class livereporting_event_chips extends livereporting_event_pylon
 
 		$players = $this->getPlayersData($data['event_id'], $data['day_id'], time(), TRUE);
 		foreach ($data['data'] as $playerId => $chips) {
-			if (($chips = getInteger($chips)) === NULL) {
+			if (($chips = filter_var($chips, FILTER_VALIDATE_INT)) === false) {
 				continue;
 			}
-			if (($playerId = getInteger($playerId)) === NULL || !isset($players[$playerId])) {
+			if (($playerId = filter_var($playerId, FILTER_VALIDATE_INT)) === false || !isset($players[$playerId])) {
 				continue;
 			}
 			$player = $players[$playerId];
@@ -1214,7 +1214,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$eventData = $lrep->instEventModel('_src_event')->getEventData($location['event_id']);
 
 		if ($data['import_id'] != '') {
-			$entryId = getInteger($data['import_id']);
+			$entryId = filter_var($data['import_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 			if ($data['datetime'] === NULL) { // if not changing `created on`, use old
 				$data['datetime'] = $entry['created_on'];
 			}
@@ -1617,7 +1617,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		if (0 != count($omitDays)) {
 			$omitPlayers = $this->db->array_query_assoc('
 				SELECT id FROM ' . $this->table('Players') . '
-				WHERE event_id=' . getInteger($location['event_id']) . '
+				WHERE event_id=' . filter_var($location['event_id'], FILTER_VALIDATE_INT) . '
 				  AND day_enter_id IN (' . implode(',', $omitDays) . ')
 			');
 			foreach ($omitPlayers as $omitPlayer) {

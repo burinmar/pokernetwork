@@ -6,6 +6,7 @@ class event_list extends moon_com
 {
 	function onload()
 	{
+		// doesn't take into account the case, when e.g. bluff_id is needed to be filled in without an ability to export
 		$this->bluffable = in_array(_SITE_ID_, array('com', 'fr'));
 		$this->starsable = in_array(_SITE_ID_, array('com'));
 		$this->wptable   = in_array(_SITE_ID_, array('com'));

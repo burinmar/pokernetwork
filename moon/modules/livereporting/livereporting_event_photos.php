@@ -194,7 +194,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 			'cx.url.ipn' => $ipnReadBase,
 			'cx.url.ipnpreview' => $this->linkas('event#ipn-browse',
 				array(
-					'event_id' => getInteger($argv['event_id']),
+					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 					'path' => $this->getUriPath(),
 				),
 				array('x' => 'photos')
@@ -244,7 +244,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 		$paginator  = moon::shared('paginate');
 		$paginator->set_curent_all_limit(
 			isset($_GET['page'])
-				? getInteger($_GET['page'])
+				? filter_var($_GET['page'], FILTER_VALIDATE_INT)
 				: 1,
 			$this->getPhotosCount($data['event_id'], 0), 120 // 0 => $data['day_id']
 		);
@@ -308,9 +308,9 @@ class livereporting_event_photos extends livereporting_event_pylon
 	{
 		$where = array();
 		if (!empty($dayId)) {
-			$where[] = 'day_id=' . getInteger($dayId);
+			$where[] = 'day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
 		} else {
-			$where[] = 'event_id=' . getInteger($eventId);
+			$where[] = 'event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 		}
 		$where[] = 'is_hidden=0';
 		$count = $this->db->single_query_assoc('
@@ -324,9 +324,9 @@ class livereporting_event_photos extends livereporting_event_pylon
 	{
 		$where = array();
 		if (!empty($dayId)) {
-			$where[] = 'day_id=' . getInteger($dayId);
+			$where[] = 'day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
 		} else {
-			$where[] = 'event_id=' . getInteger($eventId);
+			$where[] = 'event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 		}
 		$where[] = 'is_hidden=0';
 		return $this->db->array_query_assoc('
@@ -507,11 +507,11 @@ class livereporting_event_photos extends livereporting_event_pylon
 		$this->db->query('
 			UPDATE ' . $this->table('Photos') . '
 			SET is_hidden=1
-			WHERE id="' . getInteger($imageId) . '" AND import_id IS NULL
+			WHERE id=' . filter_var($imageId, FILTER_VALIDATE_INT) . ' AND import_id IS NULL
 		');
 		$this->db->query('
 			DELETE FROM ' . $this->table('Tags') . '
-			WHERE id=' . getInteger($imageId) . ' AND type="photo"
+			WHERE id=' . filter_var($imageId, FILTER_VALIDATE_INT) . ' AND type="photo"
 		');
 	}
 
@@ -527,11 +527,11 @@ class livereporting_event_photos extends livereporting_event_pylon
 		$deletedRows = $this->helperDeleteDbDelete($photosId, 'photos', 'tPhotos');
 		$affectedPhotos = array_keys($this->db->array_query_assoc('
 			SELECT id FROM ' . $this->table('Photos') . '
-			WHERE import_id="' . getInteger($photosId) . '"
+			WHERE import_id=' . filter_var($photosId, FILTER_VALIDATE_INT) . '
 		', 'id'));
 		$this->db->query('
 			DELETE FROM ' . $this->table('Photos') . '
-			WHERE import_id=' . getInteger($photosId) . '
+			WHERE import_id=' . filter_var($photosId, FILTER_VALIDATE_INT) . '
 		');
 		if (count($affectedPhotos) > 0) {
 			$this->db->query('
@@ -557,15 +557,15 @@ class livereporting_event_photos extends livereporting_event_pylon
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tPhotos') . ' x
 			ON l.id=x.id
-			WHERE l.id=' . getInteger($id) . ' AND l.type="photos"
-				AND l.event_id=' . getInteger($eventId));
+			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND l.type="photos"
+				AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT));
 		if (empty($entry)) {
 			return NULL;
 		}
 		$entry['xphotos'] = array();
 		$rPhotos = $this->db->array_query_assoc('
 			SELECT id, image_misc, image_src, image_alt FROM ' . $this->table('Photos') . '
-			WHERE import_id="' . getInteger($id) . '"
+			WHERE import_id=' . filter_var($id, FILTER_VALIDATE_INT) . '
 			ORDER BY id
 		');
 		foreach ($rPhotos as $rPhoto) {

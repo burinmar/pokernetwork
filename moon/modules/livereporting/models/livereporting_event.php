@@ -41,7 +41,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		$data = $this->db->single_query_assoc('
 			SELECT id FROM ' . $this->table('Days') . '
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			    AND is_live=1
 			    AND state!=0
 			ORDER BY is_empty, (0+name) DESC, name DESC
@@ -50,7 +50,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		if (empty($data['id'])) { // when no day is started (almost never)
 			$data = $this->db->single_query_assoc('
 				SELECT id FROM ' . $this->table('Days') . '
-				WHERE event_id=' . getInteger($eventId) . '
+				WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 				    AND is_live=1
 				ORDER BY is_empty, (0+name) ASC, name ASC
 				LIMIT 1
@@ -76,7 +76,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$data = $this->db->single_query_assoc('
 			SELECT id,is_live FROM ' . $this->table('Days') . '
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			    AND name="' . addslashes(str_replace('day', '', $name)) . '"
 			    AND is_live>=0
 			');
@@ -91,13 +91,13 @@ class livereporting_model_event extends livereporting_model_pylon
 	 */
 	protected function countUpdates($eventId, $dayId, $since)
 	{
-		$eventId = getInteger($eventId);
-		$dayId   = getInteger($dayId);
-		$since   = getInteger($since);
+		$eventId = filter_var($eventId, FILTER_VALIDATE_INT);
+		$dayId   = filter_var($dayId, FILTER_VALIDATE_INT);
+		$since   = filter_var($since, FILTER_VALIDATE_INT);
 		$updates = $this->db->single_query_assoc('
 			SELECT COUNT(id) cnt FROM ' . $this->table('Log') . '
-			WHERE ' . ($dayId ? 'day_id="' . $dayId : 'event_id="' . $eventId)  . '"
-				AND (created_on>"' . $since . '" OR updated_on>"' . $since . '") 
+			WHERE ' . ($dayId ? 'day_id=' . $dayId : 'event_id=' . $eventId)  . '
+				AND (created_on>' . $since . ' OR updated_on>' . $since . ') 
 				AND is_hidden=0
 		');
 		return $updates['cnt'];
@@ -116,11 +116,12 @@ class livereporting_model_event extends livereporting_model_pylon
 		$eventsData[$eventId] = $this->db->single_query_assoc('
 			SELECT t.name tname, t.timezone, t.currency, t.ad_rooms, t.tour, e.name ename, e.is_live, t.geolocation,
 			       e.players_left pleft, e.players_total ptotal, e.prizepool ppool, e.chipspool cp, t.state tstate, e.state, 
-			       t.is_syncable&e.is_syncable synced, t.sync_id sync_origin, t.autopublish, e.buyin, e.fee, e.rebuy, e.addon
+			       t.is_syncable&e.is_syncable synced, t.sync_id sync_origin, t.autopublish, e.buyin, e.fee, e.rebuy, e.addon,
+			       t.show_wsop_eod and e.bluff_id IS NOT NULL show_wsop_eod
 			FROM ' . $this->table('Tournaments') . ' t
 			INNER JOIN ' . $this->table('Events') . ' e
 				ON t.id=e.tournament_id
-			WHERE e.id="' . getInteger($eventId) . '"
+			WHERE e.id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			HAVING e.is_live!=-1
 		');
 		if (0 == count($eventsData[$eventId])) {
@@ -148,9 +149,9 @@ class livereporting_model_event extends livereporting_model_pylon
 		$where = array();
 
 		if (!empty($dayId)) {
-			$where[] = 'l.day_id=' . getInteger($dayId);
+			$where[] = 'l.day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
 		} else {
-			$where[] = 'l.event_id=' . getInteger($eventId);
+			$where[] = 'l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 		}
 		if (!empty($filter['showHidden'])) {
 			$where[] = 'l.is_hidden!=2';
@@ -171,7 +172,7 @@ class livereporting_model_event extends livereporting_model_pylon
 			}
 		}
 		if (!empty($filter['newerThan'])) {
-			$where[] = 'l.created_on>' . getInteger($filter['newerThan']) . '';
+			$where[] = 'l.created_on>' . filter_var($filter['newerThan'], FILTER_VALIDATE_INT) . '';
 		}
 		return $where;
 	}
@@ -235,9 +236,9 @@ class livereporting_model_event extends livereporting_model_pylon
 		$entry = $this->db->single_query_assoc('
 			SELECT l.*, "" author_name
 			FROM ' . $this->table('Log') . ' l
-			WHERE l.id=' . getInteger($id) . '
+			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . '
 				AND l.type="' . addslashes($type) . '"
-				AND l.event_id=' . getInteger($eventId) . '
+				AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 				AND ' . $isHiddenSql
 		);
 		if (empty($entry)) {
@@ -255,7 +256,7 @@ class livereporting_model_event extends livereporting_model_pylon
 				ON p.is_keyhand=1 AND p.id=l.id AND l.type="post"
 			LEFT JOIN ' . $this->table('tChips') . ' c
 				ON c.is_keyhand=1 AND c.id=l.id AND l.type="chips"
-			WHERE l.event_id=' . getInteger($eventId) . ' AND l.is_hidden=0
+			WHERE l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . ' AND l.is_hidden=0
 				AND COALESCE(p.id, c.id) IS NOT NULL 
 			ORDER BY l.created_on DESC 
 			LIMIT 20'
@@ -280,7 +281,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		$days = $this->db->array_query_assoc('
 			SELECT id, name, is_live, is_empty, state FROM ' . $this->table('Days') . '
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			    AND is_live>=0
 			ORDER BY name 
 		');
@@ -309,7 +310,7 @@ class livereporting_model_event extends livereporting_model_pylon
 			FROM ' . $this->table('Events') . ' e
 			INNER JOIN  ' . $this->table('Days') . ' d
 				ON d.event_id=e.id
-			WHERE e.tournament_id=' . getInteger($tournamentId) . '
+			WHERE e.tournament_id=' . filter_var($tournamentId, FILTER_VALIDATE_INT) . '
 				AND e.is_live=1
 				AND d.is_live=1
 			GROUP BY e.id ' . ($includeEmpty 
@@ -400,7 +401,7 @@ class livereporting_model_event extends livereporting_model_pylon
 			FROM ' . $this->table('Winners') . ' w
 			LEFT JOIN ' . $this->table('PlayersPoker') . ' pw
 				ON pw.title=w.winner AND pw.hidden=0
-			WHERE w.event_id=' . getInteger($eventId) . '
+			WHERE w.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 				AND w.winner!=""
 			LIMIT 1
 		');
@@ -416,7 +417,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$winner = $this->db->single_query_assoc('
 			SELECT p.id, p.name FROM ' . $this->table('Players') . ' p
-			WHERE event_id=' . getInteger($eventId) . '
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 				AND place=1
 		');
 
@@ -432,7 +433,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $this->db->array_query_assoc('
 			SELECT image_src, image_alt
 			FROM ' . $this->table('Photos') . '
-			WHERE event_id=' . getInteger($eventId) . ' AND is_hidden=0
+			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . ' AND is_hidden=0
 			ORDER BY created_on DESC
 			LIMIT 9');
 	}
@@ -442,7 +443,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $this->db->array_query_assoc('
 			SELECT id, image_src, image_alt title
 			FROM ' . $this->table('Photos') . '
-			WHERE day_id=' . getInteger($dayId) . ' AND is_hidden=0
+			WHERE day_id=' . filter_var($dayId, FILTER_VALIDATE_INT) . ' AND is_hidden=0
 			ORDER BY created_on DESC
 			LIMIT 30');
 	}
@@ -1126,7 +1127,7 @@ class livereporting_model_event_src_mobileapp extends livereporting_model_event
 	{
 		$data = $this->db->single_query_assoc('
 			SELECT event_id FROM ' . $this->table('Days') . '
-			WHERE id=' . getInteger($dayId) . '
+			WHERE id=' . filter_var($dayId, FILTER_VALIDATE_INT) . '
 			    AND is_live>=0
 		');
 		if (empty($data)) {

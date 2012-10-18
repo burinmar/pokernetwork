@@ -120,10 +120,6 @@ $cfg['livereporting'] = array(
 		'tours' =>  '/img/live_poker/tours/%s.png',
 	),
 
-	'var.wsopxml' => array(
-		148, 167, 194, 253
-	),
-	
 	'var.hotelsLanguageConfig' => array(
 		'com' => array('en_US'),
 		'pt' => array('pt_PT')
@@ -137,9 +133,7 @@ if (_SITE_ID_ == 'com' && moon::page()->get_global('adminView')) {
 	}
 }
 
-if (is_dev()) {
-	$cfg['livereporting']['var.wsopxml'] = array(150, 156, 154, 253);
-} else {
+if (!is_dev()) {
 	unset($cfg['livereporting']['var.hotelsLanguageConfig']['pt']);
 }
 if (moon::user()->i_admin())
