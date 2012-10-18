@@ -40,7 +40,7 @@ class tour_list extends moon_com
 					'logo_mobile_2',
 				) as $k) {
 					$file[$k] = new moon_file;
-					$data[$k] = $file[$k]->is_upload($k, $fe = NULL)
+					$data[$k] = $file[$k]->is_upload($k, $fe)
 						? $file[$k]
 						: NULL;
 				}
@@ -102,7 +102,7 @@ class tour_list extends moon_com
 				break;
 
 			default:
-				if (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -397,7 +397,7 @@ class tour_list extends moon_com
 
 	private function getEntry($id)
 	{
-		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
@@ -476,7 +476,7 @@ class tour_list extends moon_com
 		}
 		$uriDupe = $this->db->single_query_assoc('
 			SELECT COUNT(id) cid FROM ' . $this->table('Tournaments') . '
-			WHERE is_live>0 AND alias="' . addslashes($saveData['alias'])  . '"' .
+			WHERE is_live>0 AND alias="' . $this->db->escape($saveData['alias'])  . '"' .
 			(($saveData['id'] !== NULL)
 				? ' AND id!=' . $saveData['id']
 				: '') . '
@@ -613,7 +613,7 @@ class tour_list extends moon_com
 			$ids = array($ids);
 		}
 		foreach ($ids as $id) {
-			if (NULL !== ($id = filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+			if (false !== ($id = filter_var($id, FILTER_VALIDATE_INT))) {
 				$deleteIds[] = $id;
 			}
 		}

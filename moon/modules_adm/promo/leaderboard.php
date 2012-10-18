@@ -22,7 +22,7 @@ class leaderboard extends moon_com
 			$this->redirect('#', $data['id']);
 			exit;
 		}
-		if (isset($argv[0]) && NULL !== ($id = getInteger($argv[0]))) {
+		if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 			$this->set_var('id', $id);
 		} else {
 			moon::page()->page404();
@@ -81,7 +81,7 @@ class leaderboard extends moon_com
 
 	private function getEntry_($id)
 	{
-		if (NULL === getInteger($id)) {
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('

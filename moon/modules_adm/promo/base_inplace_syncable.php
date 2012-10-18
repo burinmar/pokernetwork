@@ -59,7 +59,7 @@ class base_inplace_syncable extends moon_com
 				foreach ($this->getEntryImageFields() as $field) {
 					$k = $field[0];
 					$file[$k] = new moon_file;
-					$data[$k] = $file[$k]->is_upload($k, $fe = NULL)
+					$data[$k] = $file[$k]->is_upload($k, $fe)
 						? $file[$k]
 						: NULL;
 				}
@@ -111,7 +111,7 @@ class base_inplace_syncable extends moon_com
 				break;
 
 			default:
-				if (isset($argv[0]) && NULL !== ($id = getInteger($argv[0]))) {
+				if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -513,7 +513,7 @@ class base_inplace_syncable extends moon_com
 
 	protected function getEntry($id)
 	{
-		if (NULL === getInteger($id)) {
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
 			return NULL;
 		}
 		$fields = array('*');
@@ -654,7 +654,7 @@ class base_inplace_syncable extends moon_com
 
 		$isInvalid = FALSE;
 		if (isset($saveData['id']) && '' !== $saveData['id']) {
-			$saveData['id'] = getInteger($saveData['id']);
+			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 			if (NULL === $saveData['id']) {
 				$page->alert($messages['e.invalid_id']);
 				$isInvalid = TRUE;
@@ -675,7 +675,7 @@ class base_inplace_syncable extends moon_com
 			foreach ($this->getSaveNoDupeFields() as $key) {
 				$uriDupe = $this->db->single_query_assoc('
 					SELECT COUNT(id) cid FROM ' . $this->table('Entries') . '
-					WHERE ' . $key . '="' . addslashes($saveData[$key])  . '"' .
+					WHERE ' . $key . '="' . $this->db->escape($saveData[$key])  . '"' .
 					(($saveData['id'] !== NULL)
 						? ' AND id!=' . $saveData['id']
 						: '') . '
@@ -822,7 +822,7 @@ class base_inplace_syncable extends moon_com
 			$ids = array($ids);
 		}
 		foreach ($ids as $id) {
-			if (NULL !== ($id = getInteger($id))) {
+			if (false !== ($id = filter_var($id, FILTER_VALIDATE_INT))) {
 				$deleteIds[] = $id;
 			}
 		}

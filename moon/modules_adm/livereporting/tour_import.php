@@ -23,7 +23,7 @@ class tour_import extends moon_com
 				exit;
 
 			default:
-				if (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -155,7 +155,7 @@ class tour_import extends moon_com
 		$locale = &moon::locale();
 
 
-		if (NULL === ($entryData = $this->getEntry_($argv['id']))) {
+		if (NULL === ($entryData = $this->getEntry($argv['id']))) {
 			$messages = $tpl->parse_array('messages');
 			$e  = $messages['e.entry_not_found'];
 			return ;
@@ -184,7 +184,7 @@ class tour_import extends moon_com
 
 	private function getEntry($id)
 	{
-		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
 			return ;
 		}
 

@@ -60,7 +60,7 @@ class winner_list extends moon_com
 
 			case 'new':
 				if (isset($argv[1]) && $argv[0] == 'by-event'
-				    && NULL !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				    && false !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT))) {
 					$this->set_var('event-id', $id);
 					$this->set_var('render', 'entry');
 				}
@@ -68,9 +68,9 @@ class winner_list extends moon_com
  
 			default:
 				if (isset($argv[1]) && $argv[0] == 'by-event'
-				    && NULL !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				    && false !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT))) {
 					$this->set_var('event-id', $id);
-				} elseif (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				} elseif (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -132,7 +132,7 @@ class winner_list extends moon_com
 			FROM ' . $this->table('Tournaments') . ' t
 			LEFT JOIN ' . $this->table('Events') . ' e
 				ON t.id=e.tournament_id
-			WHERE e.id="' . addslashes($id) . '" AND e.is_live>=0 AND t.is_live>=0
+			WHERE e.id="' . $this->db->escape($id) . '" AND e.is_live>=0 AND t.is_live>=0
 		');
 		if (empty($tour)) {
 			return NULL;
@@ -224,7 +224,7 @@ class winner_list extends moon_com
 
 	function getEntry_($id)
 	{
-		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
@@ -254,11 +254,11 @@ class winner_list extends moon_com
 			}
 		}
 		
-		if (NULL !== filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
+		if (false !== filter_var($saveData['id'], FILTER_VALIDATE_INT)) {
 			$check = $this->db->single_query_assoc('
 				SELECT id FROM ' . $this->table('Events') . '
-				WHERE tournament_id="' .addslashes($data['tournament_id']). '"
-					AND id="' . addslashes($data['event_id']) . '"
+				WHERE tournament_id="' .$this->db->escape($data['tournament_id']). '"
+					AND id="' . $this->db->escape($data['event_id']) . '"
 			');
 			if (empty($check)) {
 				return ;

@@ -131,7 +131,7 @@ class custom_pages extends base_inplace_syncable
 		$errors = array();
 		$uriDupe = $this->db->single_query_assoc('
 			SELECT COUNT(id) cid FROM ' . $this->table('Entries') . '
-			WHERE promo_id=' . $this->promoId . ' AND alias="' . addslashes($saveData['alias'])  . '"' .
+			WHERE promo_id=' . $this->promoId . ' AND alias="' . $this->db->escape($saveData['alias'])  . '"' .
 			(($saveData['id'] !== NULL)
 				? ' AND id!=' . $saveData['id']
 				: '') . '

@@ -79,7 +79,7 @@ class event_list extends moon_com
 
 			case 'new':
 				if (isset($argv[1]) && $argv[0] == 'by-tour'
-				    && NULL !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				    && false !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT))) {
 					$this->set_var('tour-id', $id);
 					$this->set_var('render', 'entry');
 				}
@@ -87,9 +87,9 @@ class event_list extends moon_com
  
 			default:
 				if (isset($argv[1]) && $argv[0] == 'by-tour'
-				    && NULL !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				    && false !== ($id = filter_var($argv[1], FILTER_VALIDATE_INT))) {
 					$this->set_var('tour-id', $id);
-				} elseif (isset($argv[0]) && NULL !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				} elseif (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
@@ -215,7 +215,7 @@ class event_list extends moon_com
 			FROM ' . $this->table('Tournaments') . ' t
 			LEFT JOIN ' . $this->table('Events') . ' e
 				ON t.id=e.tournament_id
-			WHERE t.id="' . addslashes($id) . '" AND t.is_live>=0
+			WHERE t.id="' . $this->db->escape($id) . '" AND t.is_live>=0
 			GROUP BY t.id
 		');
 		if (empty($tour)) {
@@ -241,7 +241,7 @@ class event_list extends moon_com
 				ON e.id=d.event_id
 			LEFT JOIN ' . $this->table('Winners') . ' w
 				ON e.id=w.event_id
-			WHERE e.is_live>=0 AND e.tournament_id="' . addslashes($id) . '"
+			WHERE e.is_live>=0 AND e.tournament_id="' . $this->db->escape($id) . '"
 			GROUP BY e.id
 			ORDER BY e.from_date DESC, e.id DESC
 		');
@@ -420,7 +420,7 @@ class event_list extends moon_com
 
 	function getEntry($id)
 	{
-		if (NULL === filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
 			return NULL;
 		}
 		$entry = $this->db->single_query_assoc('
@@ -460,11 +460,11 @@ class event_list extends moon_com
 			}
 		}
 
-		if (NULL !== filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE)) {
+		if (false !== filter_var($saveData['id'], FILTER_VALIDATE_INT)) {
 			$check = $this->db->single_query_assoc('
 				SELECT id FROM ' . $this->table('Events') . '
-				WHERE tournament_id="' .addslashes($data['tournament_id']). '"
-					AND id="' . addslashes($data['id']) . '"
+				WHERE tournament_id="' .$this->db->escape($data['tournament_id']). '"
+					AND id="' . $this->db->escape($data['id']) . '"
 			');
 			if (empty($check)) {
 				return ;
@@ -482,8 +482,8 @@ class event_list extends moon_com
 
 		$isInvalid = FALSE;
 		if (isset($saveData['id']) && '' !== $saveData['id']) {
-			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-			if (NULL === $saveData['id']) {
+			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT);
+			if (false === $saveData['id']) {
 				$page->alert($messages['e.invalid_id']);
 				$isInvalid = TRUE;
 			}
@@ -511,7 +511,7 @@ class event_list extends moon_com
 
 		$uriDupe = $this->db->single_query_assoc('
 			SELECT COUNT(id) cid FROM ' . $this->table('Events') . '
-			WHERE is_live>0 AND tournament_id="'. addslashes($saveData['tournament_id']) .'" AND alias="' . addslashes($saveData['alias'])  . '"' .
+			WHERE is_live>0 AND tournament_id="'. $this->db->escape($saveData['tournament_id']) .'" AND alias="' . $this->db->escape($saveData['alias'])  . '"' .
 			(($saveData['id'] !== NULL)
 				? ' AND id!=' . $saveData['id']
 				: '') . '
@@ -524,7 +524,7 @@ class event_list extends moon_com
 		if ($this->bluffable && !empty($saveData['bluff_id'])) {
 		$bluffDupe = $this->db->single_query_assoc('
 			SELECT COUNT(id) cid FROM ' . $this->table('Events') . '
-			WHERE bluff_id="' . addslashes($saveData['bluff_id'])  . '"' .
+			WHERE bluff_id="' . $this->db->escape($saveData['bluff_id'])  . '"' .
 			(($saveData['id'] !== NULL)
 				? ' AND id!=' . $saveData['id']
 				: '') . '
@@ -542,7 +542,7 @@ class event_list extends moon_com
 		if ($this->starsable && !empty($saveData['stars_id'])) {
 		$bluffDupe = $this->db->single_query_assoc('
 			SELECT COUNT(id) cid FROM ' . $this->table('Events') . '
-			WHERE stars_id="' . addslashes($saveData['stars_id'])  . '"' .
+			WHERE stars_id="' . $this->db->escape($saveData['stars_id'])  . '"' .
 			(($saveData['id'] !== NULL)
 				? ' AND id!=' . $saveData['id']
 				: '') . '
@@ -560,7 +560,7 @@ class event_list extends moon_com
 		if ($this->wptable && !empty($saveData['wpt_id'])) {
 		$bluffDupe = $this->db->single_query_assoc('
 			SELECT COUNT(id) cid FROM ' . $this->table('Events') . '
-			WHERE wpt_id="' . addslashes($saveData['wpt_id'])  . '"' .
+			WHERE wpt_id="' . $this->db->escape($saveData['wpt_id'])  . '"' .
 			(($saveData['id'] !== NULL)
 				? ' AND id!=' . $saveData['id']
 				: '') . '
@@ -583,7 +583,7 @@ class event_list extends moon_com
 			$this->db->query('
 				UPDATE ' . $this->table('Events') . '
 				SET is_main=0
-				WHERE is_main=1 AND tournament_id="'. addslashes($saveData['tournament_id']) .'"
+				WHERE is_main=1 AND tournament_id="'. $this->db->escape($saveData['tournament_id']) .'"
 			');
 		}
 
@@ -774,10 +774,10 @@ class event_list extends moon_com
 		foreach ($ids as $id) {
 			if (strpos($id, '.') !== FALSE) {
 				$id = explode('.', $id);
-				if (NULL !== ($id = filter_var($id[1], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+				if (false !== ($id = filter_var($id[1], FILTER_VALIDATE_INT))) {
 					$deleteDIds[] = $id;
 				}
-			} elseif (NULL !== ($id = filter_var($id, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE))) {
+			} elseif (false !== ($id = filter_var($id, FILTER_VALIDATE_INT))) {
 				$deleteEIds[] = $id;
 			}
 		}
