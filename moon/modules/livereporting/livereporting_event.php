@@ -1446,7 +1446,6 @@ class livereporting_event extends moon_com
 	{
 		$page = moon::page();
 		$user = moon::user();
-		$key = $this->requestArgv('tournament_id') . '.' . $this->requestArgv('event_id') . '.' . $this->requestArgv('day_id');
 
 		$eventInfo = $this->lrepEv()->getEventData($this->requestArgv('event_id'));
 		$days      = $this->lrepEv()->getDaysData($this->requestArgv('event_id'));
@@ -1459,13 +1458,15 @@ class livereporting_event extends moon_com
 		if (!is_array($sid)) {
 			$sid = array();
 		}
-		$sessStarted = isset($sid[$key][1])
-			? $sid[$key][1]
-			: time();
+		foreach ($sid as $k => $v) {
+			if ($sid[$k][1] < time() - 1800) {
+				unset($sid[$k]);
+			}
+		}
 
 		$error = false;
-
-		if ($sessStarted < time() - 180 || empty($sid[$key])) {
+		$key = $this->requestArgv('tournament_id') . '.' . $this->requestArgv('event_id') . '.' . $this->requestArgv('day_id');
+		if (empty($sid[$key])) {
 			$sendData = array(
 				'ns' => 'lrep',
 				'src' => _SITE_ID_,
@@ -1508,7 +1509,7 @@ class livereporting_event extends moon_com
 			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
 				'event' => 'core.login#remotelogin',
 				'data' => $sendData,
-				'signature' => $signature
+				'signature' => base64_encode($signature)
 			));
 			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
 			$gotData = curl_exec($ch);
@@ -1526,12 +1527,6 @@ class livereporting_event extends moon_com
 			}
 		}
 		
-		foreach ($sid as $k => $v) {
-			if ($sid[$k][1] < time() - 1800) {
-				unset($sid[$k]);
-			}
-		}
-
 		$page->set_global($this->my('fullname') . '_ipnSid', $sid);
 
 		if (!empty($sid[$key]) && !$error) {

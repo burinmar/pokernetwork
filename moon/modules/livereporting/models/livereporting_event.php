@@ -327,73 +327,76 @@ class livereporting_model_event extends livereporting_model_pylon
 	}
 	
 	/**
-	 * @todo cache, query looks not-so-good
+	 * @todo cache, maybe
 	 */
 	protected function getLastRound($eventId, $dayId)
 	{
-		/* $round = $this->db->single_query_assoc('
-			SELECT r.id, r.round, r.duration, r.small_blind, r.big_blind, r.ante FROM ' . $this->table('Log') . ' l
-			INNER JOIN ' . $this->table('tRounds') . ' r
-				ON r.id=l.id
-			WHERE l.event_id=' . intval($eventId) . ' AND l.type="round" AND l.is_hidden=0
-			ORDER BY r.round DESC
+		// $daysData = $this->getDaysData($eventId);
+		// $omitDays = $this->dayParallel($daysData, $dayId);
+		$roundId = $this->db->single_query_assoc('
+			SELECT sr.id mid 
+			FROM reporting_ng_sub_rounds sr 
+			INNER JOIN reporting_ng_log l 
+				ON sr.id=l.id AND l.type="round" 
+			WHERE l.event_id=' . intval($eventId) . '
+				AND l.day_id=' . intval($dayId) . '
+			AND l.is_hidden!=2 
+			ORDER BY l.day_id=' . intval($dayId) /* may be 0, but ok */ . ' DESC, l.created_on DESC
 			LIMIT 1
-		'); */
-		$daysData = $this->getDaysData($eventId);
-		$omitDays = $this->dayParallel($daysData, $dayId);
+		');
+		//	WHERE l.event_id=' . intval($eventId) .
+		//	(0 != count($omitDays)
+		//		? ' AND l.day_id NOT IN(' . implode(',', $omitDays) . ')' : '')  .'
+		if (!isset($roundId['mid']))
+			return null;
+
+		return $this->getRoundData($roundId['mid']);
+	}
+	
+	protected function getCurrentRound($eventId, $dayId)
+	{
+		return $this->getRound($eventId, $dayId, time());;
+	}
+	
+	protected function getRound($eventId, $dayId, $timestamp)
+	{
+		// $daysData = $this->getDaysData($eventId);
+		// $omitDays = $this->dayParallel($daysData, $dayId);
+		$id = $this->db->single_query_assoc('
+			SELECT id FROM reporting_ng_log
+			WHERE event_id=' . intval($eventId) . '
+				AND day_id=' . intval($dayId) . '
+			AND type="round" AND is_hidden!=2 AND created_on<' . intval($timestamp) . '
+			ORDER BY created_on DESC
+			LIMIT 1
+		');
+		//	WHERE event_id=' . intval($eventId) . 
+		//	(0 != count($omitDays)
+		//		? ' AND day_id NOT IN(' . implode(',', $omitDays) . ')' : '')  .'
+		if (!isset($id['id']))
+			return null;
+
+		if (null == ($round = $this->getRoundData($id['id'])))
+			return null;
+
+		return array_intersect_key($round, array_flip(array('id', 'round', 'small_blind', 'big_blind', 'ante')));
+	}
+
+	private function getRoundData($id)
+	{
 		$round = $this->db->single_query_assoc('
-			SELECT r.id, r.round, r.duration, r.small_blind, r.big_blind, r.limit_not_blind, r.ante
-			FROM (
-				SELECT sr.id mid FROM reporting_ng_sub_rounds sr 
-				INNER JOIN reporting_ng_log l 
-					ON sr.id=l.id 
-				WHERE l.event_id=' . $eventId . 
-				(0 != count($omitDays)
-					? ' AND l.day_id NOT IN(' . implode(',', $omitDays) . ')' : '')  .'
-				AND l.type="round" 
-				AND l.is_hidden=0 
-				ORDER BY l.day_id=' . $dayId /* may be 0, but ok */ . ' DESC, l.created_on DESC
-				LIMIT 1
-			) a
-			INNER JOIN reporting_ng_sub_rounds r 
-			ON r.id=a.mid
+			SELECT id, round, duration, small_blind, big_blind, limit_not_blind, ante
+			FROM reporting_ng_sub_rounds
+			WHERE id=' . intval($id) . '
 		');
 
-		if ($round == null) {
+		if (0 == count($round)) {
 			return null;
 		}
 
 		return $round;
 	}
-	
-	protected function getCurrentRound($eventId, $dayId)
-	{
-		$id = $this->db->single_query_assoc('
-			SELECT r.id, r.round, r.small_blind, r.big_blind, r.ante FROM ' . $this->table('Log') . ' l
-			INNER JOIN ' . $this->table('tRounds') . ' r
-				ON r.id=l.id
-			WHERE l.event_id=' . intval($eventId) . ' AND l.day_id=' . intval($dayId) . ' AND l.type="round" AND l.is_hidden=0
-			ORDER BY r.round DESC
-			LIMIT 1
-		');
-		return isset($id['id'])
-			? $id
-			: null;
-	}
-	
-	protected function getRound($id)
-	{
-		$id = $this->db->single_query_assoc('
-			SELECT r.id, r.round, r.small_blind, r.big_blind, r.ante FROM ' . $this->table('Log') . ' l
-			INNER JOIN ' . $this->table('tRounds') . ' r
-				ON r.id=l.id
-			WHERE r.id=' . intval($id) . ' AND l.type="round"
-		');
-		return isset($id['id'])
-			? $id
-			: null;
-	}
-	
+
 	protected function getWinner($eventId)
 	{
 		$winner = $this->db->single_query_assoc('
@@ -988,8 +991,8 @@ class livereporting_model_event_src_event_post extends livereporting_model_event
 {
 	function getCurrentRound($eventId, $dayId)
 		{ return parent::getCurrentRound($eventId, $dayId); }
-	function getRound($id)
-		{ return parent::getRound($id); }
+	function getRound($eventId, $dayId, $timestamp)
+		{ return parent::getRound($eventId, $dayId, $timestamp); }
 
 }
 

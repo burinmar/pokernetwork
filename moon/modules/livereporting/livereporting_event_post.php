@@ -143,7 +143,7 @@ class livereporting_event_post extends livereporting_event_pylon
 
 	private function save($data)
 	{
-		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $data['post_id'], 'post'))) {
+		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $data['post_id'], 'post', array('created_on')))) {
 			return FALSE;
 		}
 		list (
@@ -187,7 +187,8 @@ class livereporting_event_post extends livereporting_event_pylon
 		$this->helperSaveAssignCommonLogAttrs($saveDataLog, $userId, $entry, $data, $location);
 
 		if ($entry['id'] != NULL) { // update
-			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_post')->getRound($data['round_id']);
+			$createdOn = array_intersect_key(array_merge($entry, $saveDataLog), array('created_on' => '')); // was [+ saving]
+			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_post')->getRound($location['event_id'], $location['day_id'], $createdOn['created_on']);
 			$saveDataPost['round_id'] = @$saveDataLog['contents']['round']['id'];
 		} else { // create
 			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_post')->getCurrentRound($location['event_id'], $location['day_id']);
