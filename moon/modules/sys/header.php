@@ -34,6 +34,15 @@ class header extends moon_com
 			return $res;
 		}
 
+// PokerNews PKR StakeChases
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/pokernews-pkr-stakechases/',
+'imgPath'=> '/img/wallpaper/pkr_stakechases_wallpaper.jpg',
+'bgColor'=> '#000',
+'endDate'=> '2012-11-28 23:59:59',
+)
+)) return $res;
+
 // $6,000 WPT Depositor Freerolls 
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/6-000-wpt-depositor-freerolls/',
