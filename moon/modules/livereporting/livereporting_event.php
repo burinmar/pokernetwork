@@ -90,12 +90,13 @@ class livereporting_event extends moon_com
 			    'save-tweet',
 			    'save-photos',
 			    'save-round',
+			    'save-round-datetime',
 			    'save-chips',
 			    'save-event',
 			    'save-misc',      // -> eventObj
 			    'save-sbplayers', // -> eventObj
 			    'save-profile',
-			    'save-day'))) {
+			    'save-day-datetime'))) {
 			// recreating environment as much as needed
 			// (mainly for redirectToLogEntry)
 			// {
@@ -897,7 +898,7 @@ class livereporting_event extends moon_com
 				$round['round'], // round
 				number_format($round['small_blind']),
 				number_format($round['big_blind']),
-				$round['limit_not_blind'],
+				$round['variety'] == 'limits-round',
 				number_format($round['ante']),
 			);
 		}

@@ -15,10 +15,10 @@ class livereporting_event_round extends livereporting_event_pylon
 		switch ($event) {
 			case 'save-round':
 				$data = $this->helperEventGetData(array(
-					'round_id', 'round', 'day_id', 'duration', 'format', 'limit_not_blind', 'small_blind', 'big_blind', 'small_limit', 'big_limit', 'ante', 'description', 'datetime_options'
+					'round_id', 'round', 'day_id', 'duration', 'limit_not_blind', 'small_blind', 'big_blind', 'small_limit', 'big_limit', 'ante', 'description', 'has_break', 'break_duration'
 				));
-				
-				$roundId = $this->save($data);
+				$data['datetime'] = null;
+				$roundId = $this->saveRoundAndBreak($data);
 				$this->redirectAfterSave($roundId, 'round', array(
 					'add' => (!empty($_POST['master'])
 						? array('master' => 'round')
@@ -26,6 +26,13 @@ class livereporting_event_round extends livereporting_event_pylon
 					),
 					'noanchor' => !empty($_POST['master'])
 				));
+				exit;
+			case 'save-round-datetime':
+				$_POST['datetime_options'] = 'sct_dt';
+				$data = $this->helperEventGetData(array('round_id', 'day_id', 'datetime_options'));
+				
+				$roundId = $this->saveDatetime($data);
+				$this->redirectAfterSave($roundId, 'round');
 				exit;
 			case 'save-start': // states
 			case 'save-stop':
@@ -75,7 +82,7 @@ class livereporting_event_round extends livereporting_event_pylon
 				$this->forget();
 				echo json_encode(array(
 					'status' => 0,
-					'data' => $this->renderSubcontrol($argv['event_id'], $argv['uri']['argv'][2])
+					'data' => $this->subRenderRoundAndBreakList($argv['event_id'], $argv['uri']['argv'][2])
 				));
 				moon_close();
 				exit;
@@ -87,7 +94,7 @@ class livereporting_event_round extends livereporting_event_pylon
 	protected function render($data, $argv = NULL)
 	{
 		if ($argv['variation'] == 'logControl') {
-			return $this->renderControl(array_merge($data, array(
+			return $this->renderRoundAndBreakControl(array_merge($data, array(
 				'unhide' => (!empty($_GET['master']) && $_GET['master'] == 'round')
 			)));
 		}
@@ -100,13 +107,14 @@ class livereporting_event_round extends livereporting_event_pylon
 
 		$rArgv += array(
 			'round' => $data['contents']['round'],
-			'ante' => $data['contents']['ante'],
-			'custom' => !empty($data['contents']['desciption']),
-			'description' => $data['contents']['desciption'],
-			'limit_not_blind' => !empty($data['contents']['limit_not_blind']),
-			'small_blind' => @$data['contents']['small_blind'],
-			'big_blind' => @$data['contents']['big_blind'],
+			'duration' => $data['contents']['duration'],
+			'custom' => !empty($data['contents']['description']),
 		);
+		foreach (array('ante', 'description', 'small_blind', 'big_blind') as $optionalKey) {
+			$rArgv[$optionalKey] = isset($data['contents'][$optionalKey])
+				? $data['contents'][$optionalKey]
+				: '';
+		}
 
 		if ($argv['variation'] == 'logEntry') {
 			$rArgv += array(
@@ -115,8 +123,8 @@ class livereporting_event_round extends livereporting_event_pylon
 			if (!empty($rArgv['show_controls'])) {
 				unset($rArgv['url.delete']);
 				$eventInfo = $lrep->instEventModel('_src_event')->getEventData($data['event_id']);
+				// if last round?
 				$rArgv += array(
-					'show_fullcontrols' => $eventInfo['synced'] == '0',
 					'url.stop' => $this->linkas('event#save', array(
 						'event_id' => $data['event_id'],
 						'path' => $this->getUriPath(),
@@ -125,47 +133,59 @@ class livereporting_event_round extends livereporting_event_pylon
 					), $this->getUriFilter(array('master' => 'round'), true)),
 				);
 			}
-			return $tpl->parse('logEntry:round', $rArgv);
+			return $tpl->parse('logEntry:round.' . $this->helperGetRoundVariety($data['contents']), $rArgv);
 		} elseif ($argv['variation'] == 'individual') {
 			if ($argv['action'] == 'view') {
 				$page->page404();
 			}
 			if ($rArgv['show_controls']) {
-				$entry = $this->getEditableData($data['id'], $data['event_id']);
-				$rArgv['control'] = $this->renderControl(array(
-					'round_id' => $entry['id'],
-					'keep_old_dt' => true,
-					'day_id'  => $entry['day_id'],
-					'event_id'  => $entry['event_id'],
-					'post_id' => $entry['id'],
-					'created_on' => $entry['created_on'],
-					'tzName' => $data['tzName'],
-					'tzOffset' => $data['tzOffset'],
-					'unhide' => true,
-					'master' => (isset($_GET['master']) && $_GET['master'] == 'round'),
-					'show_single_entry' => 'true',
-					'round' => $entry['round'],
-					'big_blind' => $entry['big_blind'],
-					'small_blind' => $entry['small_blind'],
-					'limit_not_blind' => $entry['limit_not_blind'],
-					'ante' => $entry['ante'],
-					'description' => $entry['description'],
-					'duration' => $entry['duration'],
-				));
+				if (isset($_GET['display']) && $_GET['display'] == 'full') {
+					$entry = $this->getEditableData($data['id'], $data['event_id']);
+					// depends on subtype (should be round-breaks or round-limits), which is not auto-checked
+					if (empty($entry))
+						$page->page404();
+					$rArgv['control'] = $this->renderRoundAndBreakControl(array_merge($entry, array(
+						'unhide' => true,
+						'master' => (isset($_GET['master']) && $_GET['master'] == 'round'),
+					)));
+				} else {
+					$rArgv['control'] = $this->renderDatetimeControl($data);
+				}
 			}
 			return $tpl->parse('entry:round', $rArgv);
 		}
 	}
 
+	private function helperGetRoundVariety($dataContents)
+	{
+		$roundVariety = isset($dataContents['variety'])
+			? $dataContents['variety']
+			: (!empty($dataContents['limit_not_blind'])
+				? 'limits-round'
+				: 'blinds-round');
+		if (!empty($dataContents['description']))
+			$roundVariety = 'custom';
+		return $roundVariety;
+	}
+
 	private function getEditableData($id, $eventId)
 	{
 		$entry = $this->db->single_query_assoc('
-			SELECT l.tournament_id, l.event_id, l.day_id, l.created_on, l.updated_on, l.is_hidden, d.*
+			SELECT l.tournament_id, l.event_id, l.day_id, l.created_on, l.updated_on, l.is_hidden, r.*, rb.id break_id, rb.duration break_duration
 			FROM ' . $this->table('Log') . ' l
-			INNER JOIN ' . $this->table('tRounds') . ' d
-			ON l.id=d.id
-			WHERE l.id=' . filter_var($id, FILTER_VALIDATE_INT) . ' AND l.type="round"
-				AND l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT));
+			INNER JOIN ' . $this->table('tRounds') . ' r
+				ON l.id=r.id AND r.variety IN("blinds-round", "limits-round")
+			LEFT JOIN (
+				SELECT rb.id, rb.round, rb.duration, lb.day_id
+				FROM ' . $this->table('Log') . ' lb
+				INNER JOIN ' . $this->table('tRounds') . ' rb
+					ON rb.id=lb.id AND rb.variety IN("break")
+				WHERE lb.event_id=' . intval($eventId) . ' AND lb.type="round" 
+			) rb
+				ON (r.round=rb.round AND l.day_id=rb.day_id)
+			WHERE l.id=' . intval($id) . ' AND l.type="round"
+				AND l.event_id=' . intval($eventId)
+		);
 		if (empty($entry)) {
 			return NULL;
 		}
@@ -176,36 +196,98 @@ class livereporting_event_round extends livereporting_event_pylon
 	private function getRounds($dayId)
 	{
 		return $this->db->array_query_assoc('
-			SELECT l.is_hidden, l.created_on, r.* FROM ' . $this->table('Log') . ' l
+			SELECT l.is_hidden, l.created_on, r.*, rb.id break_id, rb.duration break_duration, rb.is_hidden break_is_hidden
+			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tRounds') . ' r
-				ON r.id=l.id
-			WHERE l.day_id=' . intval($dayId) . ' AND l.type="round"
+				ON r.id=l.id AND r.variety IN("blinds-round", "limits-round")
+			LEFT JOIN (
+				SELECT rb.id, rb.round, rb.duration, lb.is_hidden
+				FROM ' . $this->table('Log') . ' lb
+				INNER JOIN ' . $this->table('tRounds') . ' rb
+					ON rb.id=lb.id AND rb.variety IN("break")
+				WHERE lb.day_id=' . intval($dayId) . ' AND lb.type="round" 
+			) rb
+				ON (r.round=rb.round)
+			WHERE l.day_id=' . intval($dayId) . ' AND l.type="round" 
 			ORDER BY r.round ASC
 		');
 	}
 
-	private function renderControl($argv)
+	private function renderDatetimeControl($argv)
+	{
+		if (empty($argv['id'])) {
+			return ;
+		}
+
+		$controlsArgv = array(
+			'cr.save_event'      => $this->parent->my('fullname') . '#save-round-datetime',
+			'cr.round_id'        => $argv['id'],
+			'cr.day_id'          => $argv['day_id'],
+			'cr.custom_datetime' => $this->lrep()->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
+			'cr.custom_tz'       => $argv['tzName'],
+		);
+
+		return $this->load_template()->parse('controls.datetime:round', $controlsArgv);
+	}
+
+	private function saveDatetime($data)
+	{
+		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $data['round_id'], 'round'))) {
+			return FALSE;
+		}
+		list (
+			$location,
+			$entry
+		) = $prereq;
+
+		$saveDataLog = array(
+			'updated_on' => time(),
+		);
+		if (NULL != $data['datetime']) {
+			$saveDataLog['created_on'] = $data['datetime'];
+		}
+
+		$this->db->update($saveDataLog, $this->table('Log'), array(
+			'id' => $entry['id'],
+			'type' => 'round'
+		));
+			
+		// for sync: unhide hidden rounds on save
+		$this->db->update(array(
+			'is_hidden' => 0,
+			'author_id' => intval(moon::user()->get_user_id())
+		), $this->table('Log'), array(
+			'id' => $entry['id'],
+			'type' => 'round',
+			'is_hidden' => 1
+		));
+
+		return $entry['id'];
+	}
+
+	private function renderRoundAndBreakControl($argv)
 	{
 		if (empty($argv['day_id'])) {
 			return ;
 		}
-		$lrep = $this->lrep();
 
 		$controlsArgv = array(
 			'cr.save_event' => $this->parent->my('fullname') . '#save-round',
-			'cr.round_id' => isset($argv['round_id'])
-				? intval($argv['round_id'])
+			'cr.round_id' => isset($argv['id'])
+				? intval($argv['id'])
 				: '',
 			'cr.day_id' => $argv['day_id'],
 			'cr.unhide' => !empty($argv['unhide']),
+			'cr.limit_not_blind' => !empty($argv['variety']) && $argv['variety'] == 'limits-round',
+			'cr.has_break' => !empty($argv['break_id'])
 		);
-		foreach (array('round', 'duration', 'small_blind', 'big_blind', 'limit_not_blind', 'ante', 'description') as $cname) {
+		foreach (array('round', 'duration', 'small_blind', 'big_blind', 'ante', 'description', 'break_duration') as $cname) {
 			$controlsArgv['cr.' . $cname] = isset($argv[$cname])
 				? htmlspecialchars($argv[$cname])
 				: '';
 		}
 		
-		if (empty($argv['show_single_entry'])) { // list control
+		if (empty($argv['id'])) { // list control
 			$controlsArgv += array(
 				'cr.url.ajax_rounds' => htmlspecialchars_decode($this->linkas('event#load', array(
 					'event_id' => $argv['event_id'],
@@ -214,17 +296,11 @@ class livereporting_event_round extends livereporting_event_pylon
 					'id' => $argv['day_id']
 				), $this->getUriFilter(NULL, TRUE))),
 				'rounds' => !empty($argv['unhide'])
-					? $this->renderSubcontrol($argv['event_id'], $argv['day_id'])
-					: '',
+					? $this->subRenderRoundAndBreakList($argv['event_id'], $argv['day_id'])
+					: 'Loading', // not empty
 				'cr.master' => 'round', // show list after save
 			);
 		} else {
-			list(
-				$controlsArgv['cr.datetime_options'],
-				$controlsArgv['cr.custom_datetime'],
-				$controlsArgv['cr.custom_tz']
-			) = $this->helperRenderControlDatetime($argv, $lrep);
-			$controlsArgv['cr.show_single_entry'] = true;
 			if (!empty($argv['master'])) {
 				$controlsArgv['cr.master'] = 'round'; // show list after save
 			}
@@ -234,23 +310,24 @@ class livereporting_event_round extends livereporting_event_pylon
 			->parse('controls:round', $controlsArgv);
 	}
 
-	private function renderSubcontrol($eventId, $dayId)
+	private function subRenderRoundAndBreakList($eventId, $dayId)
 	{
 		$rounds = $this->getRounds($dayId);
 		$lrep = $this->lrep();
 		$text = moon::shared('text');
 		$tpl  = $this->load_template();
 		$eventData = $lrep->instEventModel('_src_event')->getEventData($eventId);
-		$lastStartedRound = NULL;
+
+		$lastStartedRoundNr = -1;
 		foreach ($rounds as $k => $round) {
 			if ($round['is_hidden'] == 0) {
-				$lastStartedRound = $k;
+				$lastStartedRoundNr = $k;
 			}
 		}
 
+		$moveDays = array();
 		$moveDayCandidates = array_reverse($lrep->instEventModel('_src_event')->getDaysData($eventId), true);
 		$moveDayName = preg_replace('~[a-z]~i', '', $moveDayCandidates[$dayId]['name']);
-		$moveDays = array();
 		foreach ($moveDayCandidates as $moveDayCandidate) {
 			if ($moveDayCandidate['id'] == $dayId || strpos($moveDayCandidate['name'], $moveDayName) === 0) {
 				break;
@@ -258,53 +335,55 @@ class livereporting_event_round extends livereporting_event_pylon
 			$moveDays[] = $moveDayCandidate;
 		}
 		$moveDays = array_reverse($moveDays);
+		$moveDays = array_slice($moveDays, 0, 1);
 
 		$tRounds = '';
+		// var_dump($lastStartedRoundNr);
 		foreach ($rounds as $k => $round) {
-			$rounderArgv = array(
+			$roundArgv = array(
 				'round' => $round['round'],
 				'small_blind' => $round['small_blind'],
 				'big_blind' => $round['big_blind'],
-				'limit_not_blind' => $round['limit_not_blind'],
+				'limit_not_blind' => $round['variety'] == 'limits-round',
 				'ante' => $round['ante'],
 				'duration' => $round['duration'],
 				'description' => nl2br(htmlspecialchars($round['description'])),
 				'custom' => ($round['description'] != ''),
-				'url.delete' => $this->linkas('event#delete', array(
-					'event_id' => $eventId,
-					'path' => $this->getUriPath($dayId),
-					'type' => 'round',
-					'id' => $round['id']
-				), $this->getUriFilter(array('master' => 'round'), true)),
+				'has_break' => $round['break_id'] != null,
+				'break_duration' => $round['break_duration'],
 				'url.edit' => $this->linkas('event#edit', array(
 					'event_id' => $eventId,
 					'path' => $this->getUriPath($dayId),
 					'type' => 'round',
 					'id' => $round['id']
-				), $this->getUriFilter(array('master' => 'round'), true))
+				), $this->getUriFilter(array('master' => 'round', 'display' => 'full'), true))
 			);
-			if ($round['is_hidden'] == 2) {
-				$rounderArgv += array(
+			if ($round['is_hidden'] == 2) { // round not started
+				$roundArgv += array(
 					'started_on' => '',
-					'url.start' => $this->linkas('event#save', array(
+					'moveDay' => '',
+					'url.delete' => $this->linkas('event#delete', array(
+						'event_id' => $eventId,
+						'path' => $this->getUriPath($dayId),
+						'type' => 'round',
+						'id' => $round['id']
+					), $this->getUriFilter(array('master' => 'round'), true)),
+				);
+				if (($k <= $lastStartedRoundNr + 1)) {
+					$roundArgv['url.start'] = $this->linkas('event#save', array(
 						'event_id' => $eventId,
 						'path' => $this->getUriPath($dayId),
 						'type' => 'round',
 						'id' => 'start.' . $round['id']
-					), $this->getUriFilter(array('master' => 'round'), true)),
-					'url.stop' => '',
-					'start' => ($k <= $lastStartedRound + 1),
-					'stop' => false,
-					'move' => false,
-					'moveDay' => '',
-				);
+					), $this->getUriFilter(array('master' => 'round'), true));
+				}
 				if (count($moveDays)) {
-					$rounderArgv['move'] = $lastStartedRound === NULL
+					$roundArgv['move'] = $lastStartedRoundNr === NULL
 						? $k == 0
-						: $k == $lastStartedRound + 1;
-					if ($rounderArgv['move']) {
+						: $k == $lastStartedRoundNr + 1;
+					if ($roundArgv['move']) {
 						foreach ($moveDays as $moveDay) {
-							$rounderArgv['moveDay'] .= $tpl->parse('controls:round.item.moveDay', array(
+							$roundArgv['moveDay'] .= $tpl->parse('controls:round.item.moveDay', array(
 								'name' => htmlspecialchars($moveDay['name']),
 								'url.move' => $this->linkas('event#save', array(
 									'event_id' => $eventId,
@@ -316,33 +395,48 @@ class livereporting_event_round extends livereporting_event_pylon
 						}
 					}
 				}
-			} else {
-				$rounderArgv += array(
+			} else { // round started
+				$roundArgv += array(
 					'started_on' => $text->ago($round['created_on']),
-					'url.start' => '',
-					'url.stop' => $this->linkas('event#save', array(
+				);
+				if (($k == $lastStartedRoundNr)) {
+					$roundArgv['url.stop'] = $this->linkas('event#save', array(
 						'event_id' => $eventId,
 						'path' => $this->getUriPath($dayId),
 						'type' => 'round',
 						'id' => 'stop.' . $round['id']
-					), $this->getUriFilter(array('master' => 'round'), true)),
-					'start' => false,
-					'stop' => true,
-					'move' => false,
-					'moveDay' => '',
-				);
-				if ($rounderArgv['started_on'] == '' || $round['created_on'] > time()) {
-					$rounderArgv['started_on'] = moon::locale()->gmdatef($round['created_on'] + $eventData['tzOffset'], 'Reporting') . ' ' . $eventData['tzName'];
+					), $this->getUriFilter(array('master' => 'round'), true));
+					if ($round['break_id']) {
+						if ($round['break_is_hidden'] == 2) { // break not started
+							$roundArgv['url.start_break'] = $this->linkas('event#save', array(
+								'event_id' => $eventId,
+								'path' => $this->getUriPath($dayId),
+								'type' => 'round',
+								'id' => 'start.' . $round['break_id']
+							), $this->getUriFilter(array('master' => 'round'), true));
+						} else { // break started
+							$roundArgv['url.stop_break'] = $this->linkas('event#save', array(
+								'event_id' => $eventId,
+								'path' => $this->getUriPath($dayId),
+								'type' => 'round',
+								'id' => 'stop.' . $round['break_id']
+							), $this->getUriFilter(array('master' => 'round'), true));
+							unset($roundArgv['url.stop']);
+						}
+					}
+				}
+				if ($roundArgv['started_on'] == '' || $round['created_on'] > time()) {
+					$roundArgv['started_on'] = moon::locale()->gmdatef($round['created_on'] + $eventData['tzOffset'], 'Reporting') . ' ' . $eventData['tzName'];
 				}
 			}
-			$tRounds .= $tpl->parse('controls:round.item', $rounderArgv);
+			$tRounds .= $tpl->parse('controls:round.item', $roundArgv);
 		}
 		return $tpl->parse('controls:round.round_list', array(
 			'rounds' => $tRounds
 		));
 	}
 
-	private function save($data)
+	private function saveRoundAndBreak($data)
 	{
 		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $data['round_id'], 'round'))) {
 			return FALSE;
@@ -351,37 +445,28 @@ class livereporting_event_round extends livereporting_event_pylon
 			$location,
 			$entry
 		) = $prereq;
-		
+
 		$userId = intval(moon::user()->get_user_id());
 
 		$rtf = $this->object('rtf');
 		$rtf->setInstance($this->get_var('rtf') . ':4');
-		list(,$description_compiled) = $rtf->parseText($entry['id'], $data['description']);
+		list(, $description_compiled) = $rtf->parseText($entry['id'], $data['description']);
 
-		$saveDataRound = array(
+		$saveDataRound = $serData = array(
 			'round' => $data['round'],
 			'duration' => $data['duration'],
-			'limit_not_blind' => !empty($data['limit_not_blind']),
 			'ante' => $data['ante'],
-			'description' => $data['description']
 		);
-		$serData = array(
-			'round' => $data['round'],
-			'duration' => $data['duration'],
-			'limit_not_blind' => !empty($data['limit_not_blind']),
-			'ante' => $data['ante'],
-			'desciption' => $description_compiled 
-		);
+		$saveDataRound['description'] = $data['description'];
+		$serData['description'] = $description_compiled;
 		if (!empty($data['limit_not_blind'])) {
-			$serData['small_blind'] = $data['small_limit'];
-			$serData['big_blind'] = $data['big_limit'];
-			$saveDataRound['small_blind'] = $data['small_limit'];
-			$saveDataRound['big_blind'] = $data['big_limit'];
+			$saveDataRound['variety']     = $serData['variety']     = 'limits-round';
+			$saveDataRound['small_blind'] = $serData['small_blind'] = $data['small_limit'];
+			$saveDataRound['big_blind']   = $serData['big_blind']   = $data['big_limit'];
 		} else {
-			$serData['small_blind'] = $data['small_blind'];
-			$serData['big_blind'] = $data['big_blind'];
-			$saveDataRound['small_blind'] = $data['small_blind'];
-			$saveDataRound['big_blind'] = $data['big_blind'];
+			$saveDataRound['variety']     = $serData['variety']     = 'blinds-round';
+			$saveDataRound['small_blind'] = $serData['small_blind'] = $data['small_blind'];
+			$saveDataRound['big_blind']   = $serData['big_blind']   = $data['big_blind'];
 		}
 		$saveDataLog = array(
 			'type' => 'round',
@@ -400,14 +485,6 @@ class livereporting_event_round extends livereporting_event_pylon
 				'id' => $entry['id'],
 				'type' => 'round'
 			));
-			// for sync: unhide hidden rounds on save
-			$this->db->update(array(
-				'is_hidden' => 0
-			), $this->table('Log'), array(
-				'id' => $entry['id'],
-				'type' => 'round',
-				'is_hidden' => 1
-			));
 		} else { // create
 			$this->db->insert($saveDataRound, $this->table('tRounds'));
 			if (!($entry['id'] = $saveDataLog['id'] = $this->db->insert_id())) {
@@ -416,7 +493,56 @@ class livereporting_event_round extends livereporting_event_pylon
 			$this->db->insert($saveDataLog, $this->table('Log'));
 		}
 
+		$this->saveRoundAndBreakAttachBreak($entry['id'], $userId, $location, $data);
+
 		return $entry['id'];
+	}
+
+	// sigh... hope it doesn't break too much
+	private function saveRoundAndBreakAttachBreak($roundId, $userId, $location, $data)
+	{
+		$entry = $this->getEditableData($roundId, $location['event_id']);
+		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $entry['break_id'], 'round'))) {
+			return FALSE;
+		}
+		list (,	$breakEntry) = $prereq;
+
+		if (!empty($data['has_break'])) { // has break
+			// should be alsmost a clone of saveRoundAndBreak() saving bit
+			$saveDataBreak = $serData = array(
+				'round' => $data['round'],
+				'duration' => $data['break_duration'],
+				'variety' => 'break'
+			);
+			$saveDataLog = array(
+				'type' => 'round',
+				'contents' => serialize($serData),
+				'is_hidden' => $breakEntry['id'] == NULL
+					? 2
+					: $breakEntry['is_hidden']
+			);
+			$this->helperSaveAssignCommonLogAttrs($saveDataLog, $userId, $breakEntry, $data, $location);
+
+			if ($breakEntry['id'] != NULL) { // update
+				$this->db->update($saveDataBreak, $this->table('tRounds'), array(
+					'id' => $breakEntry['id']
+				));
+				$this->db->update($saveDataLog, $this->table('Log'), array(
+					'id' => $breakEntry['id'],
+					'type' => 'round'
+				));
+			} else { // create
+				$this->db->insert($saveDataBreak, $this->table('tRounds'));
+				if (!($breakEntry['id'] = $saveDataLog['id'] = $this->db->insert_id())) {
+					return;
+				}
+				$this->db->insert($saveDataLog, $this->table('Log'));
+			}
+		} else { // no break
+			if (null != $breakEntry['id']) { // delete
+				$this->helperDeleteDbDelete($breakEntry['id'], 'round', 'tRounds');
+			}
+		}
 	}
 
 	private function saveStart($argv)
@@ -467,6 +593,8 @@ class livereporting_event_round extends livereporting_event_pylon
 		$rounds = array();
 		foreach ($roundCandidates as $round) {
 			$rounds[] = $round['id'];
+			if ($round['break_id'])
+				$rounds[] = $round['break_id'];
 			if ($round['id'] == $argv['round_id']) {
 				break;
 			}
@@ -486,7 +614,14 @@ class livereporting_event_round extends livereporting_event_pylon
 		if (NULL == ($prereq = $this->helperDeleteCheckPrerequisites($roundId, 'round'))) {
 			return FALSE;
 		}
-		
+		list ($location) = $prereq;
+		$entry = $this->getEditableData($roundId, $location['event_id']);
+
+		// break
+		if (!empty($entry['break_id'])) {
+			$this->helperDeleteDbDelete($entry['break_id'], 'round', 'tRounds');
+		}
+
 		$this->helperDeleteDbDelete($roundId, 'round', 'tRounds', TRUE);
 	}
 }

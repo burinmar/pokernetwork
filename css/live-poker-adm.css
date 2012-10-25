@@ -445,3 +445,6 @@ p.blocky {margin-top: 15px;}
 	color: #fff;
 	margin: 0;
 }
+#rq-wr-rounds table.rounds tr {
+	height: 28px;
+}

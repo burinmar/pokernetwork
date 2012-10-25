@@ -878,7 +878,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$logRow['sync_id'] = $logRow['id'];
 		unset($logRow['id']);
 		$syncId = $logRow['sync_id'] . '-' . $logRow['type'];
-		if (empty($this->lAutopublish)) {
+		if (empty($this->lAutopublish) && $logRow['is_hidden'] == 0) {
 			$logRow['is_hidden'] = 1;
 		}
 		// $logRow['updated_on'] must be reset later
@@ -905,6 +905,8 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				if ($logRow['type'] == 'chips') {
 					$this->replicateLogRowSpecialBumpChips($row, $msgMethod);
 				}
+				// @todo probably should bump publish dates, post rounds and some other non-translatable info
+				// @todo force hiding rounds (no translation), if hidden on master
 				return ;
 			}
 			unset($exists);

@@ -847,12 +847,12 @@ class livereporting_bluff extends moon_com
 			);
 		}
 		$rPosts = $this->db->array_query_assoc('
-			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.round, p.limit_not_blind, p.small_blind, p.big_blind, p.ante, p.description
+			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.round, p.small_blind, p.big_blind, p.ante, p.description
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('Days') . ' d
 				ON l.day_id=d.id
 			INNER JOIN ' . $this->table('tRounds') . ' p
-				ON l.id=p.id
+				ON l.id=p.id AND p.variety IN ("limits-round", "blinds-round")
 			WHERE l.type="round"
 				AND l.event_id=' . intval($argv['event_id']) .
 				(intval($argv['day_id'])
@@ -957,12 +957,12 @@ class livereporting_bluff extends moon_com
 			');
 		}
 		$rPosts = $this->db->array_query_assoc('
-			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.round, p.limit_not_blind, p.small_blind, p.big_blind, p.ante, p.description
+			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.round, p.small_blind, p.big_blind, p.ante, p.description
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('Days') . ' d
 				ON l.day_id=d.id
 			INNER JOIN ' . $this->table('tRounds') . ' p
-				ON l.id=p.id
+				ON l.id=p.id IN ("limits-round", "blinds-round")
 			WHERE l.type="round"
 				AND l.event_id=' . intval($argv['event_id']) .
 				(intval($argv['day_id'])

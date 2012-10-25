@@ -1,5 +1,5 @@
 <?php
-class shared_rss extends moon_com {
+class shared_rss {
 
 function shared_rss($path)
 {

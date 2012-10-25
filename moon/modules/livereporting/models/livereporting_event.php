@@ -334,13 +334,14 @@ class livereporting_model_event extends livereporting_model_pylon
 		// $daysData = $this->getDaysData($eventId);
 		// $omitDays = $this->dayParallel($daysData, $dayId);
 		$roundId = $this->db->single_query_assoc('
-			SELECT sr.id mid 
-			FROM reporting_ng_sub_rounds sr 
-			INNER JOIN reporting_ng_log l 
-				ON sr.id=l.id AND l.type="round" 
+			SELECT r.id mid 
+			FROM reporting_ng_log l
+			INNER JOIN reporting_ng_sub_rounds r
+				ON r.id=l.id AND l.type="round"
 			WHERE l.event_id=' . intval($eventId) . '
-				AND l.day_id=' . intval($dayId) . '
-			AND l.is_hidden!=2 
+			  AND l.day_id=' . intval($dayId) . '
+			  AND l.is_hidden!=2
+			  AND r.variety IN("limits-round", "blinds-round")
 			ORDER BY l.day_id=' . intval($dayId) /* may be 0, but ok */ . ' DESC, l.created_on DESC
 			LIMIT 1
 		');
@@ -363,11 +364,14 @@ class livereporting_model_event extends livereporting_model_pylon
 		// $daysData = $this->getDaysData($eventId);
 		// $omitDays = $this->dayParallel($daysData, $dayId);
 		$id = $this->db->single_query_assoc('
-			SELECT id FROM reporting_ng_log
-			WHERE event_id=' . intval($eventId) . '
-				AND day_id=' . intval($dayId) . '
-			AND type="round" AND is_hidden!=2 AND created_on<' . intval($timestamp) . '
-			ORDER BY created_on DESC
+			SELECT l.id FROM reporting_ng_log l
+			INNER JOIN reporting_ng_sub_rounds r
+				ON r.id=l.id AND l.type="round" 
+			WHERE l.event_id=' . intval($eventId) . '
+			  AND l.day_id=' . intval($dayId) . '
+			  AND l.is_hidden!=2 AND l.created_on<' . intval($timestamp) . '
+			  AND r.variety IN("limits-round", "blinds-round")
+			ORDER BY l.created_on DESC
 			LIMIT 1
 		');
 		//	WHERE event_id=' . intval($eventId) . 
@@ -385,7 +389,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	private function getRoundData($id)
 	{
 		$round = $this->db->single_query_assoc('
-			SELECT id, round, duration, small_blind, big_blind, limit_not_blind, ante
+			SELECT id, round, duration, small_blind, big_blind, variety, ante
 			FROM reporting_ng_sub_rounds
 			WHERE id=' . intval($id) . '
 		');

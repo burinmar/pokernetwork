@@ -13,11 +13,11 @@ class livereporting_event_day extends livereporting_event_pylon
 	protected function synthEvent($event, $argv)
 	{
 		switch ($event) {
-			case 'save-day':
+			case 'save-day-datetime':
 				$_POST['datetime_options'] = 'sct_dt';
 				$data = $this->helperEventGetData(array('id', 'datetime_options'));
 				
-				$dayId = $this->save($data);
+				$dayId = $this->saveDatetime($data);
 				$this->redirectAfterSave($dayId, 'day');
 				exit;
 			case 'save-complete': // states
@@ -95,7 +95,7 @@ class livereporting_event_day extends livereporting_event_pylon
 		$controlsArgv = array(
 			'cd.unhide'          => !empty($argv['unhide']),
 			'cd.bundled_control' => !empty($argv['bundled_control']),
-			'cd.save_event'      => $this->parent->my('fullname') . '#save-day',
+			'cd.save_event'      => $this->parent->my('fullname') . '#save-day-datetime',
 			'cd.id'              => $argv['id'],
 			'cd.custom_datetime' => $this->lrep()->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
 			'cd.custom_tz'       => $argv['tzName'],
@@ -104,7 +104,7 @@ class livereporting_event_day extends livereporting_event_pylon
 		return $this->load_template()->parse('controls:day', $controlsArgv);
 	}
 
-	private function save($argv)
+	private function saveDatetime($argv)
 	{
 		if (!$this->lrep()->instTools()->isAllowed('writeContent')) {
 			return ;

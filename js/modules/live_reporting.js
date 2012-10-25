@@ -349,6 +349,9 @@ var livePokerAdm = function() {
 			} else {
 				mandatory = ["Round", "Duration", "Small_Blind", "Big_Blind", "Ante"];
 			}
+			if ($('#rq-wr-has-break')[0].checked) {
+				mandatory.push('Break_Duration');
+			}
 			for (var q in mandatory) {
 				if ($.trim($('#rq-wr [name=' + mandatory[q].toLowerCase() + ']').val()) === '') {
 					alert(mandatory[q].replace(/_/, ' ') + ' is empty');
@@ -481,6 +484,18 @@ var livePokerAdm = function() {
 		}
 		$('#rq-wr-limit-not-blind').click(rqWrBlindLimitToggle);
 		rqWrBlindLimitToggle();
+		function rqWrBreakToggle(){
+			if ($('#rq-wr-has-break').length === 0) {
+				return;
+			}
+			if ($('#rq-wr-has-break')[0].checked) {
+				$('#rq-wr-break-data').show();
+			} else {
+				$('#rq-wr-break-data').hide();
+			}
+		}
+		$('#rq-wr-has-break').click(rqWrBreakToggle);
+		rqWrBreakToggle();
 
 		if ($('#rq-wt-body').length) {
 			document.getElementById('tweet-limit').innerHTML = $('#rq-wt-body').val().length;
@@ -836,7 +851,7 @@ var livePokerAdm = function() {
 			});
 			hugeEditables.setupPlayersFilter();
 
-			var dts = ['#rq-wp-datetime-options', '#rq-wr-datetime-options', '#rq-wc-datetime-options', '#rq-wx-datetime-options'];
+			var dts = ['#rq-wp-datetime-options', '#rq-wc-datetime-options', '#rq-wx-datetime-options'];
 			$(dts.join(',')).change(customDatetimeChange);
 			customDatetimeChange(dts);
 		},
