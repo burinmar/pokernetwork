@@ -1485,8 +1485,11 @@ class livereporting_event_chips extends livereporting_event_pylon
 					$evProfileObj->notifyPlayerSaved($iId, $chip['uname']);
 					$newPlayerIds[strtolower($chip['uname'])] = $iId;
 				} else {
+					// resaves flag for existing players each time - fix
 					$this->db->update(array(
-						'country_id' => $chip['country_id'],
+						'country_id' => isset($chip['country_id'])
+							? $chip['country_id']
+							: null,
 					), $this->table('Players'), array(
 						'id' => $chip['player_id']
 					));

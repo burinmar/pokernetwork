@@ -27,6 +27,10 @@ QjluzsbUxcI4XhvOMQJAfnVuvHVQui1lIpphX/kNNq3DFCSk0GphwPo3VaL13w1C
 kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 -----END RSA PRIVATE KEY-----';
 
+	const lockfileTimeLimit = 2400; // 40 min
+	const perTournamentHardTimeLimit = 1800; // 30 min (excluding net wait)
+	const overallSoftTimeLimit = 1200; // 20 min (checked before each tournament)
+
 	/**
 	 * Sync all tournaments one by one
 	 */
@@ -34,19 +38,40 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 	{
 		set_include_path(get_include_path() . PATH_SEPARATOR . MOON_CLASSES . 'pear');
 		require_once(MOON_CLASSES . 'pear/Archive/Tar.php');
-		
+		include_class('lock');
+
 		if (isset($_GET['debug'])) {
 			Header('content-type: text/plain; charset=utf8');
 			Header('Cache-Control: no-cache');
 			ini_set("html_errors","off");
 		}
+		ignore_user_abort();
+
+		$lock = SunLock::fileLock('tmp/reporting_import.pnw.lock', self::lockfileTimeLimit);
+		if (!$lock->tryLock()) {
+			echo 'Lock file in place' . "\n";
+			return ;
+		}
+
 		$tournaments = $this->db->array_query_assoc('
 			SELECT id, name, sync_id, autopublish, state, updated_on FROM reporting_ng_tournaments
 			WHERE is_syncable=1 AND is_live>=0 
 			ORDER BY from_date DESC
 		');
 		echo 'Pending ' . count($tournaments) . ' item(s).' . "\n";
+
+		$globalSoftTimer = time();
+
 		foreach ($tournaments as $tournament) {
+			// Be very generous and let each tournament sync for 25 minutes before *hard* abort
+			// Don't forget it does not include e.g. network wait
+			set_time_limit(self::perTournamentHardTimeLimit);
+			// But only let the sync run at most 20 minutes before *soft* abort (as soon as possible)
+			if ((time() - $globalSoftTimer) > self::overallSoftTimeLimit) {
+				echo $tournament['name'] . ' global soft timer abort (do not start)' . "\n";
+				break;
+			}
+
 			// This does not check if the tournament contents have changed recently, but the tournament itself
 			// Since state change triggers updated_on, it is good enough
 			if ($tournament['state'] == 2 && $tournament['updated_on'] < (time() - 7*24*3600)) {
@@ -78,6 +103,9 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				$tournament['autopublish']
 			);
 		}
+
+		$lock->unlock();
+
 		echo 'All done. (' . round(memory_get_peak_usage() / 1024 / 1024, 3) . 'MiB maxmem)' . "\n";
 	}
 	
@@ -484,8 +512,8 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		echo "\tmsg: " . trim(file_get_contents($responseDir . '/note.txt')) . "\n";
 		
 		$this->_replicateBase($responseDir . '/00_base');
-		moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.tourns_uris');
-		moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.events_uris');
+		moon::cache('memcache')->delete('reporting.tourns_uris');
+		moon::cache('memcache')->delete('reporting.events_uris');
 		$this->_replicateEventMisc($responseDir . '/05_event_misc');
 		$this->_replicateReporting($responseDir . '/10_reports');
 	
