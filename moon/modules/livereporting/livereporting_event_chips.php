@@ -190,6 +190,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 
 		if ($rArgv['show_controls']) {
 			$lastFullChips = $this->getLastFullChipsId($data['event_id']);
+			$eventInfo = $lrep->instEventModel('_src_event')->getEventData($data['event_id']);
 			$rArgv['control'] = $this->renderControl(array(
 				'unhide' => ($argv['action'] == 'edit'),
 				'bundled_control' => ($argv['action'] != 'edit'),
@@ -207,6 +208,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'fulllist'  => !empty($entry['is_full_import']),
 				'tzName' => $data['tzName'],
 				'tzOffset' => $data['tzOffset'],
+				'show_wsop_eod' => $eventInfo['show_wsop_eod'],
+				'synced' => $eventInfo['synced'],
 				'chips_txt' => implode("\n", $chipsTxt),
 				'fullist_change_disabled' => intval($lastFullChips) == intval($entry['id']),
 				'i_src' => $entry['image_src'],
@@ -531,7 +534,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 		$tpl = $this->load_template();
 		$lrep = $this->lrep();
-		$eventInfo = $lrep->instEventModel('_src_event')->getEventData($this->requestArgv('event_id'));
 
 		$controlsArgv = array(
 			'cc.unhide'     => !empty($argv['unhide']),
@@ -542,7 +544,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.import_id'  => isset($argv['import_id'])
 				? intval($argv['import_id'])
 				: '',
-			'cc.show_full_controls' => !$eventInfo['synced'],
+			'cc.show_full_controls' => !$argv['synced'],
 			'cc.skip_must_preview' => isset($argv['import_id']),// && empty($argv['fulllist']),
 			'cc.chips'	=> !empty($argv['chips_txt'])
 				? $argv['chips_txt']

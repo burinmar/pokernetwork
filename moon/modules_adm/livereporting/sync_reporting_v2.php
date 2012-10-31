@@ -47,6 +47,8 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		');
 		echo 'Pending ' . count($tournaments) . ' item(s).' . "\n";
 		foreach ($tournaments as $tournament) {
+			// This does not check if the tournament contents have changed recently, but the tournament itself
+			// Since state change triggers updated_on, it is good enough
 			if ($tournament['state'] == 2 && $tournament['updated_on'] < (time() - 7*24*3600)) {
 				echo $tournament['name'] . ' skipped' . "\n";
 				continue;
@@ -1485,5 +1487,21 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 
 		openssl_private_encrypt($asn1, $signature, $privKey);
 		return $signature;
+	}
+
+	public function getTodoTasks()
+	{
+		$tasks = array();
+		$tournaments = $this->db->array_query_assoc('
+			SELECT id, name FROM reporting_ng_tournaments
+			WHERE is_syncable=1 AND is_live>=0 AND state=2 AND updated_on<' . (time() - 7*24*3600) . '
+		');
+		foreach ($tournaments as $tournament) {
+			$tasks[] = array(
+				'title' => $tournament['name'],
+				'uri' => 'livereporting.tour_list#edit|' . $tournament['id']
+			);
+		}
+		return $tasks;
 	}
 }

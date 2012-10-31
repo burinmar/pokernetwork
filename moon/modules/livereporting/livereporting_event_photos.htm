@@ -2,7 +2,7 @@
 <div class="article <%if{is_hidden}%>article-hidden<%end%>" id="photos-{id}">
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
 	<div class="meta">{!posted} <span class="date">{created_on}</span> {!posted_by} {sociallinks}
-		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a></span><%end%>
+		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if{url.delete}%><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a><%end%></span><%end%>
 	</div>
 	{body}
 	<%if {is_preview} %><p><a href="{url.view}">{!read_full}</a></p><%end%>

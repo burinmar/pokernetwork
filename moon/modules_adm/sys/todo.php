@@ -85,6 +85,13 @@ class todo extends moon_com {
 			}
 		}
 
+		/* reporting */
+		if ($user->i_admin('content') && is_object($lrepSync = & $this->object('livereporting.sync_reporting_v2'))) {
+			foreach ($lrepSync->getTodoTasks() as $task) {
+				$this->task('reporting_sync', $task['title'], $task['uri']);
+			}
+		}
+
 		/* output */
 		$m['class'] = '';
 		$m['count'] = 0;

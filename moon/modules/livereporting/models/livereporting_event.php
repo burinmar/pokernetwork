@@ -98,6 +98,7 @@ class livereporting_model_event extends livereporting_model_pylon
 			SELECT COUNT(id) cnt FROM ' . $this->table('Log') . '
 			WHERE ' . ($dayId ? 'day_id=' . $dayId : 'event_id=' . $eventId)  . '
 				AND (created_on>' . $since . ' OR updated_on>' . $since . ') 
+				AND created_on<' . (ceil(time() / 60) * 60) . '
 				AND is_hidden=0
 		');
 		return $updates['cnt'];
@@ -149,14 +150,15 @@ class livereporting_model_event extends livereporting_model_pylon
 		$where = array();
 
 		if (!empty($dayId)) {
-			$where[] = 'l.day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
+			$where[] = 'day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
 		} else {
-			$where[] = 'l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
+			$where[] = 'event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
 		}
 		if (!empty($filter['showHidden'])) {
-			$where[] = 'l.is_hidden!=2';
+			$where[] = 'is_hidden!=2';
 		} else {
-			$where[] = 'l.is_hidden=0';
+			$where[] = 'is_hidden=0';
+			$where[] = 'created_on<' . (ceil(time() / 60) * 60);
 		}
 		if (!empty($filter['show'])) {
 			$typeFilterData = $this->getAvailableFilterTypes();
@@ -168,11 +170,11 @@ class livereporting_model_event extends livereporting_model_pylon
 				}
 			}
 			if (0 != count($typeFilter)) {
-				$where[] = 'l.type IN (' . implode(',', $typeFilter) . ')';
+				$where[] = 'type IN (' . implode(',', $typeFilter) . ')';
 			}
 		}
 		if (!empty($filter['newerThan'])) {
-			$where[] = 'l.created_on>' . filter_var($filter['newerThan'], FILTER_VALIDATE_INT) . '';
+			$where[] = 'created_on>' . filter_var($filter['newerThan'], FILTER_VALIDATE_INT) . '';
 		}
 		return $where;
 	}
@@ -181,10 +183,10 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$where = $this->getLogEntriesSqlWhere($eventId, $dayId, $filter);
 		$entries = $this->db->array_query_assoc('
-			SELECT l.id, l.event_id, l.type, l.is_hidden, l.created_on, l.author_id, l.contents, l.sync_id IS NOT NULL synced
+			SELECT id, event_id, type, is_hidden, created_on, author_id, contents, sync_id IS NOT NULL synced
 			FROM ' . $this->table('Log') . ' l 
 			WHERE ' . implode(' AND ', $where) . '
-			ORDER BY l.created_on ' . (!empty($filter['rsort']) ? '' : 'DESC ') .
+			ORDER BY created_on ' . (!empty($filter['rsort']) ? '' : 'DESC ') .
 			($limit != NULL
 				? $limit
 				: '')
@@ -222,7 +224,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		$where = $this->getLogEntriesSqlWhere($eventId, $dayId, $filter);
 
 		$count = $this->db->single_query_assoc('
-		SELECT COUNT(l.id) cid FROM ' . $this->table('Log') . ' l
+		SELECT COUNT(id) cid FROM ' . $this->table('Log') . '
 		WHERE ' . implode(' AND ', $where));
 
 		return $count['cid'];

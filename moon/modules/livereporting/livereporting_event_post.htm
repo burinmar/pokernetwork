@@ -3,7 +3,7 @@
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
 	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {round_id} %> &bull; {!round} {round_nr}<%if {round_details} %>: {round_small_blind}-{round_big_blind}, {round_ante} ante<%end%><%end%> {sociallinks}
-		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a></span><%end%>
+		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if{url.delete}%><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a><%end%></span><%end%>
 	</div>
 	<% if {image} %><div class="fl10">
 		<div><img src="{image_src}" alt="{image_description}" /></div>

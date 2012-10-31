@@ -270,6 +270,7 @@ class livereporting_event_pylon extends livereporting_event
 				? htmlspecialchars($data['contents']['title'])
 				: NULL,
 			'is_hidden' => $data['is_hidden'],
+			'is_temporally_hidden' => $data['created_on'] > time(),
 			'created_on' => $createdOn,
 			'author_name' => htmlspecialchars($data['author_name']),
 			'author_url'  => $usersUrl . rawurlencode($data['author_name']) . '/',
@@ -351,7 +352,11 @@ class livereporting_event_pylon extends livereporting_event
 							'type' => $data['type'],
 							'id' => $data['id']
 						), $this->getUriFilter(NULL, true)),
-					'url.delete'   => $this->lrep()->makeUri('event#delete', array(
+				);
+			}
+			if ($allowWrite && empty($data['synced'])) {
+				$rArgv += array(
+					'url.delete' => $this->lrep()->makeUri('event#delete', array(
 							'event_id' => $data['event_id'],
 							'path' => $this->getUriPath(),
 							'type' => $data['type'],

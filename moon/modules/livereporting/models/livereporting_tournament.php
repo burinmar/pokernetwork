@@ -284,6 +284,7 @@ class livereporting_model_tournament extends livereporting_model_pylon
 				WHERE event_id IN (' . implode(',', array_keys($events)) . ') 
 					AND is_hidden=0
 					AND type IN ("post","photos","chips")
+					AND created_on<' . (ceil(time() / 60) * 60) . '
 				GROUP BY event_id
 			) l2
 			INNER JOIN ' . $this->table('Log') . ' l

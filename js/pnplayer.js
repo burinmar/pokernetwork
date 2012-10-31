@@ -8,6 +8,10 @@ var autoId = 1;
 var contexts = {};
 
 function attach(args) {
+	if (typeof swfobject == 'undefined') {
+		window.console && console.log('pnplayer: Missing SWFObject.js');
+		return this;
+	}
 	var $video = $('.pnVideo', this);
 	var $preroll = $('.pnPreroll', this);
 	var $videoObjectContainer = $('.pnVideoObjectContainer', this);

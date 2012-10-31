@@ -496,7 +496,7 @@ class ctags_updater extends moon_com
 			);
 		}
 		$sql = "INSERT " . $hint . " INTO `". $table . "` (`" . implode("`, `", array_keys($row)) . "`) VALUES (" . implode(',', array_values($row)) . ')';
-		$r = &$this->db->query($sql);
+		$r = $this->db->query($sql);
 		return $r
 			? $this->db->insert_id()
 			: FALSE;

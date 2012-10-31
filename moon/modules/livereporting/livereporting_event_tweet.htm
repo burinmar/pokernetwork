@@ -7,7 +7,7 @@
 	<p class="tweetContent">{body}</p>
 	<p class="tweetDate">
 		{!posted} <span class="date">{created_on}</span> 
-		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a></span><%end%>
+		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if{url.delete}%><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a><%end%></span><%end%>
 	</p>
 </div>
 

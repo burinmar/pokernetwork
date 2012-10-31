@@ -2,7 +2,13 @@
 .clrfix:before, .clrfix:after {content: ""; display: block; clear: both;}
 
 /* article */
-.livePoker .article-hidden {
+.article-temporally-hidden {
+	border: 1px solid #ccc;
+	background: #ccc !important;
+	padding: 0 4px 0 4px;
+	margin-top:16px;
+}
+.article-hidden {
 	border: 1px solid #BEC5C9;
 	background: #fcc;
 	padding: 0 4px 0 4px;
@@ -368,7 +374,7 @@ p.blocky {margin-top: 15px;}
 	#rq-sidebar ul li {padding: 2px 0}
 	#rq-sidebar ul ul {margin: 3px 0 0 15px}
 		#rq-sidebar ul ul li{padding: 0}
-#rq-sidebar .eventStates a {display: inline-block; width: 50px}
+#rq-sidebar .eventStates a {display: inline-block; padding-right: 10px; min-width: 40px}
 
 
 .playersLeft {margin-top: 10px;}

@@ -1,5 +1,5 @@
 <% logEntry:day %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="day-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="day-{id}">
 	<h3 class="articleTitle" id="no{id}">
 		<%if {is_started} %>{day_name} {!started}<%end%>
 		<%if {is_completed} %>{day_name} {!completed}<%end%>

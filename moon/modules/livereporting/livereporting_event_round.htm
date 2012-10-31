@@ -1,5 +1,5 @@
 <% logEntry:round.limits-round %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="round-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="round-{id}">
 	<h3 class="articleTitle" id="no{id}">{!round} {round} {!started}</h3>
 	<p class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {show_controls} %><span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a></span><%end%>
@@ -13,7 +13,7 @@
 </div>
 
 <% logEntry:round.blinds-round %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="round-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="round-{id}">
 	<h3 class="articleTitle" id="no{id}">{!round} {round} {!started}</h3>
 	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {show_controls} %><span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a></span><%end%>
@@ -27,7 +27,7 @@
 </div>
 
 <% logEntry:round.custom %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="round-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="round-{id}">
 	<h3 class="articleTitle" id="no{id}">{!round} {round} {!started}</h3>
 	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {show_controls} %><span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a></span><%end%>
@@ -40,7 +40,7 @@
 </div>
 
 <% logEntry:round.break %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="round-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="round-{id}">
 	<h3 class="articleTitle" id="no{id}">Break {!started}</h3>
 	<p class="articleMeta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {show_controls} %><span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a></span><%end%>
