@@ -1,5 +1,5 @@
 <% logEntry:post %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="post-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="post-{id}">
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}</a></h3>
 	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%>
 		<%if {round_id} %> &bull; {!round} {round_nr}<%if {round_details} %>: {round_small_blind}-{round_big_blind}, {round_ante} ante<%end%><%end%> {sociallinks}

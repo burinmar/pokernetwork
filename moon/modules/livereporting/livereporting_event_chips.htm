@@ -1,5 +1,5 @@
 <% logEntry:chips %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%>" id="chips-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%>" id="chips-{id}">
 	<h3 class="articleTitle" id="no{id}"><a href="{url.view}">{title}<%if {is_full} %> ({!full})<%end%></a></h3>
 	<div class="meta">{!posted} <span class="date">{created_on}</span> <%if {author_name} %>{!posted_by}<%end%> {sociallinks}
 		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if{url.delete}%><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a><%end%></span><%end%>

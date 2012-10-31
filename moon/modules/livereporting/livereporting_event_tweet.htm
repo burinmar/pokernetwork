@@ -1,5 +1,5 @@
 <% logEntry:tweet %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%> tweet" id="tweet-{id}">
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%> tweet" id="tweet-{id}">
 	<h3 class="articleTitle">PokerNews_Live Tweet</h3>
 	<p class="tweetAuthor">
 		<%if {author_name} %><a href="http://twitter.com/pokernews_live"><img height="48" width="48" alt="PokerNews_Live" src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" class="fl10 tweetAuthorPhoto"> @PokerNews_live</a><%end%>
