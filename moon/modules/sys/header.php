@@ -70,15 +70,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-// UnibetPoker RaceTrack
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/13-000-pokernews-racetrack/',
-'imgPath'=> '/img/wallpaper/unibet_racetrack_wallpaper.jpg',
-'bgColor'=> '#000',
-'endDate'=> '2012-10-31 23:59:59',
-)
-)) return $res;
-
 //  $67,500 PokerStars PokerNews Freeroll Series 
 if ($this->wallpaper($res, array(
 'url'=> '/pokerstars/freerolls/?upcoming',
