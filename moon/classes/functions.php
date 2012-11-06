@@ -14,6 +14,10 @@ function moon_reconfig() {
 		//$e->ini_set('dir.cache',$e->ini('dir.cache'));
 		moon::cache()->on(FALSE);
 	}
+	if (isset($_GET['geo']) && (is_dev() || moon::user()->get_ip()=='85.206.22.121')) {
+		list($c,$r) = explode('-', $_GET['geo'] . '-');
+		$p->set_global('geo.id.forced',  $c);
+	}
 
 }
 
@@ -355,7 +359,10 @@ function geo_my_country() {
 	static $id;//$id='us';
 	if (is_null($id)) {
 		$page = & moon :: page();
-		if ($id = $page->get_global('geo.id')) {
+		if ($id = $page->get_global('geo.id.forced')) {
+			$page->set_global('geo.id', ''); // do not confuse regular cache
+			$page->set_global('geo.id.forced', '');
+		} elseif ($id = $page->get_global('geo.id')) {
 			if ($page->history_step() % 10 == 0) {
 				$id = '';
 			}
