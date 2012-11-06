@@ -95,7 +95,8 @@ class review extends moon_com {
 			return array();
 		}
 		if (is_null($this->roomData)) {
-			$q = "SELECT r.*, t.bonus_code FROM " . $this->table('Rooms') . " r, " . $this->table('Trackers') . " t WHERE r.id=" . $this->roomID ."  AND r.id=t.parent_id AND t.alias=''";
+			$and = in_array(geo_my_country(), array('au', 'nz')) ? ' AND id<>217' : '';
+			$q = "SELECT r.*, t.bonus_code FROM " . $this->table('Rooms') . " r, " . $this->table('Trackers') . " t WHERE r.id=" . $this->roomID ."  AND r.id=t.parent_id AND t.alias=''".$and;
 			$data = $this->db->single_query_assoc($q);
 			if (!count($data)) {
 				$this->roomID = 0;

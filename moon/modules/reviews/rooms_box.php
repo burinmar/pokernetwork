@@ -48,9 +48,10 @@ class rooms_box extends moon_com {
 
 
 	function getTopRooms() {
+		$and = in_array(geo_my_country(), array('au', 'nz')) ? ' AND id<>217' : '';
 		$sql = 'SELECT `id`, `name`, r.`alias`, `favicon`, `editors_rating`,`ratings`
 			FROM ' . $this->table('Rooms') . ' r, ' . $this->table('Trackers') . " t
-			WHERE is_hidden = 0 AND r.id=t.parent_id AND t.alias=''".'
+			WHERE is_hidden = 0 AND r.id=t.parent_id AND t.alias=''".$and.'
 			ORDER BY editors_rating DESC, sort_1 ASC
 			LIMIT 10
 			';

@@ -181,6 +181,7 @@ class rooms extends moon_com {
 				$order = 'sort_1 ASC';
 				$where = '';
 		}
+		$where .= in_array(geo_my_country(), array('au', 'nz')) ? ' AND id<>217' : '';
 
 		$sql = '
 			SELECT r.id, name, r.alias, logo, bonus_code, software_os,bonus_text,editors_rating,ratings
