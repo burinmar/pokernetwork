@@ -308,7 +308,7 @@ function wallpaper(&$res, $w) {
 		$bgColor = empty($w['bgColor']) ? '#000000' : $w['bgColor'];
 		if (!empty($w['imgPath'])) {
 			$res .= '<script type="text/javascript">var bgURL = "'.$bgURL.'";</script>';
-			moon::page()->css('<style type="text/css">/*<![CDATA[*/ body {background: '.$bgColor.' url(\''.$w['imgPath'].'\') no-repeat fixed top} html {background: '.$bgColor.'; cursor: pointer} #bodyBlock, #footerBlock {cursor: default} /*]]>*/</style>');
+			moon::page()->css('<style type="text/css">/*<![CDATA[*/ body {background: '.$bgColor.' url(\''.$w['imgPath'].'\') no-repeat top} html {background: '.$bgColor.'; cursor: pointer} #bodyBlock, #footerBlock {cursor: default} /*]]>*/</style>');
 		}
 
 		/* Toliau baneris */
