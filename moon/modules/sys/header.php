@@ -34,6 +34,25 @@ class header extends moon_com
 			return $res;
 		}
 
+// FullTilt TakeOver 2012
+$imgURL = '/img/wallpaper/fulltilt2012_wallpaper_1700x850_2.jpg';
+$trID = 'EN';
+if ($this->wallpaper($res, array(
+'url'=> 'http://pokerstars.com/'.$trID.'/ad/11468444/1000x150ftptakeover.gif.click?rq=noscript&vs=',
+'imgPath'=> $imgURL,
+'bgColor'=> '#000',
+'geoTarget'=> '-us, es, fr, it',
+//'startDate'=> '2012-11-06 00:00:01',
+'endDate'=> '2012-11-12 00:00:00',
+)
+)) {
+	$psb =$tpl->parse('fulltilt', array('siteID'=>$trID));
+	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px">' .$psb. '</div>';
+	$res = $tb . $res;
+	return $res;
+}
+
+
 // PokerNews PKR StakeChases
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/pokernews-pkr-stakechases/',
