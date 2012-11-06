@@ -17,7 +17,7 @@ class homepage_rooms extends moon_com {
 		$oReview = $this->object('review');
 		if (count($rooms = $this->getTopRooms())) {
 			$page = & moon :: page();
-			$page->js($page->home_url() . 'homepage-rooms/js.php');
+			$page->js($page->home_url() . 'homepage-rooms/js.php'. (in_array(geo_my_country(), array('au', 'nz')) ? '?g=au' : ''));
 			$m = array('items' => '', 'intro' => '');
 
 			/*promotions*/
@@ -131,7 +131,6 @@ class homepage_rooms extends moon_com {
 	//           --- DB AND OTHER ---
 	//***************************************
 	function getTopRooms() {
-		echo geo_my_country();
 		$and = in_array(geo_my_country(), array('au', 'nz')) ? ' AND id<>217' : '';
 		$sql = 'SELECT `id`, `name`, r.`alias`, `favicon`, `logo`, `editors_rating`,`ratings`
 			FROM ' . $this->table('Rooms') . ' r, ' . $this->table('Trackers') . " t
