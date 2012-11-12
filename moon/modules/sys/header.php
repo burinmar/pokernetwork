@@ -43,7 +43,7 @@ if ($this->wallpaper($res, array(
 'bgColor'=> '#000',
 'geoTarget'=> '-us, es, fr, it',
 //'startDate'=> '2012-11-06 00:00:01',
-'endDate'=> '2012-11-12 00:00:00',
+'endDate'=> '2012-11-13 00:00:00',
 )
 )) {
 	$psb =$tpl->parse('fulltilt', array('siteID'=>$trID));
