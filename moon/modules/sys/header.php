@@ -34,24 +34,20 @@ class header extends moon_com
 			return $res;
 		}
 
-// FullTilt TakeOver 2012
-$imgURL = '/img/wallpaper/fulltilt2012_wallpaper_1700x850_2.jpg';
-$trID = 'EN';
+// PS FlashBack takeOver
 if ($this->wallpaper($res, array(
-'url'=> 'http://pokerstars.com/'.$trID.'/ad/11468444/1000x150ftptakeover.gif.click?rq=noscript&vs=',
-'imgPath'=> $imgURL,
+'url'=> 'http://www.pokernetwork.com/leagues/6-000-pokerstars-pca-flashback/',
+'imgPath'=> '/img/wallpaper/ps_flashback_wallpaper.jpg',
 'bgColor'=> '#000',
-'geoTarget'=> '-us, es, fr, it',
-//'startDate'=> '2012-11-06 00:00:01',
-'endDate'=> '2012-11-13 00:00:00',
+'startDate'=> 'Fri, 16 Nov 2012 12:00:00 GMT',
+'endDate'=> 'Mon, 19 Nov 2012 12:00:00 GMT',
 )
 )) {
-	$psb =$tpl->parse('fulltilt', array('siteID'=>$trID));
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px">' .$psb. '</div>';
+	$psb =$tpl->parse('fulltilt'); 
+	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.pokernetwork.com/leagues/6-000-pokerstars-pca-flashback/"><img src="/img/wallpaper/ps_flashback_takeover_1000x150.gif" width="1000" height="150" border="0" alt="$6,000 PokerStars PCA Flashback" /></a></div>';
 	$res = $tb . $res;
 	return $res;
 }
-
 
 // PokerNews PKR StakeChases
 if ($this->wallpaper($res, array(
@@ -62,32 +58,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-// $6,000 WPT Depositor Freerolls 
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/6-000-wpt-depositor-freerolls/',
-'imgPath'=> '/img/wallpaper/wpt_6k_wallpaper.jpg?1',
-'bgColor'=> '#000',
-'endDate'=> '2012-11-04 23:59:59',
-)
-)) return $res;
-
-// Partypoker Ipad
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/partypoker-ipad-raffle/',
-'imgPath'=> '/img/wallpaper/partypoker_ipad_wallpaper.jpg',
-'bgColor'=> '#000',
-'endDate'=> '2012-10-23 23:59:59',
-)
-)) return $res;
-
-// Partypoker Ipad
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/partypoker-ipad-raffle/',
-'imgPath'=> '/img/wallpaper/partypoker_ipad_wallpaper.jpg',
-'bgColor'=> '#000',
-'endDate'=> '2012-10-23 23:59:59',
-)
-)) return $res;
 
 //  $67,500 PokerStars PokerNews Freeroll Series 
 if ($this->wallpaper($res, array(
