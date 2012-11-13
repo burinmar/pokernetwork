@@ -39,8 +39,7 @@ if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/6-000-pokerstars-pca-flashback/',
 'imgPath'=> '/img/wallpaper/ps_flashback_wallpaper.jpg',
 'bgColor'=> '#000',
-'startDate'=> 'Fri, 16 Nov 2012 12:00:00 GMT',
-'endDate'=> 'Mon, 19 Nov 2012 12:00:00 GMT',
+'endDate'=> 'Fri, 16 Nov 2012 12:00:00 GMT',
 )
 )) {
 	$psb =$tpl->parse('fulltilt'); 
