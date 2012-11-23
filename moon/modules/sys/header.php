@@ -34,19 +34,15 @@ class header extends moon_com
 			return $res;
 		}
 
-// PS FlashBack takeOver
+// Bet365 Vaults
 if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/6-000-pokerstars-pca-flashback/',
-'imgPath'=> '/img/wallpaper/ps_flashback_wallpaper.jpg',
+'url'=> '/leagues/10-000-bet365-open-vaults-freerolls/',
+'imgPath'=> '/img/wallpaper/bet365_openvaults_wallpaper.jpg',
 'bgColor'=> '#000',
-'endDate'=> 'Fri, 16 Nov 2012 12:00:00 GMT',
+'startDate'=> '2012-11-24 00:00:01',
+'endDate'=> '2012-11-28 23:59:59',
 )
-)) {
-	$psb =$tpl->parse('fulltilt'); 
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.pokernetwork.com/leagues/6-000-pokerstars-pca-flashback/"><img src="/img/wallpaper/ps_flashback_takeover_1000x150.gif" width="1000" height="150" border="0" alt="$6,000 PokerStars PCA Flashback" /></a></div>';
-	$res = $tb . $res;
-	return $res;
-}
+)) return $res;
 
 // PokerNews PKR StakeChases
 if ($this->wallpaper($res, array(
