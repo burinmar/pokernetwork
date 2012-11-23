@@ -122,3 +122,15 @@
 #landing.pca2012 .download:hover {background-position: bottom}
 #landing.pca2012 .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/pca2012/logo.png'); width: 128px; height: 20px}
 #landing.pca2012 .head td, #landing.pca2012 h1 {color: #000;}
+
+#landing.vault365 {background-image: url('/img/landing/vault365/intro.jpg')}
+#landing.vault365 .download {
+	background-image: -moz-linear-gradient(top, #fffcbc 0%, #efe722 100%);
+	background-image: -webkit-linear-gradient(top, #fffcbc 0%, #efe722 100%);
+	background-image: -o-linear-gradient(top, #fffcbc 0%, #efe722 100%);
+	background-image: -ms-linear-gradient(top, #fffcbc 0%, #efe722 100%);
+	background-color: #efe722; line-height: 40px; height: 40px; font-size: 14px; color: #323232 !important; position: relative; }
+#landing.vault365 .download:hover {background: #efe722}
+#landing.vault365 .download:after {position: absolute; top: 6px; right: -120px; content: ''; background: url('/img/landing/vault365/logo.png'); width: 98px; height: 23px}
+#landing.vault365 a {color: #00c482;}
+#landing.vault365 a:hover {color: #ffff0c;}
