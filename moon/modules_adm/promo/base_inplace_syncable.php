@@ -764,7 +764,7 @@ class base_inplace_syncable extends moon_com
 			$this->dbUpdate($saveData, $this->table('Entries'), array(
 				'id' => $saveData['id']
 			));
-			if (mysql_errno($this->db->dblink)) {
+			if ($this->db->error()) {
 				$page->alert($messages['e.save_error']);
 				return NULL;
 			}

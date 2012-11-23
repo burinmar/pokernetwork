@@ -137,7 +137,7 @@ class cleanup extends moon_com
 			DELETE FROM _delchips_ WHERE id IN (' . implode(',', $dids) . ')
 		');
 		// stop on db error, otherwise all chips are deleted for selected days
-		if (mysql_error($this->db->dblink) || !$delete) {
+		if ($this->db->error() || !$delete) {
 			return ;
 		}
 
