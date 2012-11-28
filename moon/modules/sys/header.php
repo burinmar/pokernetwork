@@ -59,7 +59,7 @@ if ($this->wallpaper($res, array(
 'url'=> 'http://poker770.pokernews.com/',
 'imgPath'=> '/img/wallpaper/poker70_free50_wallpaper.jpg',
 'bgColor'=> '#000',
-'showIn'=> '/poker770/'
+'showIn'=> '/poker-770/'
 )
 )) return $res;
 
