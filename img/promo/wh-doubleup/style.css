@@ -1,0 +1,82 @@
+#promo {background: #000 url('bg.jpg') no-repeat top left}
+#promo .head {
+	padding: 30px 60px 0;
+	width: 600px;
+	position: relative;
+	margin: 0;
+	min-height: 240px;
+
+}
+#promo .head h1 {
+	font-size: 35px;
+	line-height: 36px;
+}
+#promo .head p {font-size: 20px; color: #fff; margin: 20px 0 40px 0}
+#promo .menu {background: #676767 url('menu.png') repeat-x top right}
+#promo .menu a {background: url('menu-sep.png') no-repeat top right; color: #fff}
+#promo .menu a:hover {color:#fff}
+#promo .menu .active a {color: #fff}
+#promo .menu .active, #promo .menu .active:hover {background: url('menu.png') repeat-x 0px -43px; color: #fff}
+#promo .menu li:hover {background: url('menu.png') repeat-x bottom left}
+#promo .prize {
+	border-bottom: 0 none;
+	padding-bottom: 0;
+}
+#promo .prize a,
+#promo .content a {color: #00ab40}
+#promo .prize a:hover,
+#promo .content a:hover {color: #00f268}
+#promo .content h2 {color: #fff}
+#promo table th {background: #016b38; color: #fff}
+#promo table td {
+	background: #363636;
+	border-bottom: 1px dotted #001416;
+}
+#promo table.results td {background: #3d3d3d; border-bottom: 1px dotted #001416}
+#promo table.results tr:nth-child(odd) td {background: #363636}
+
+#promo .download {
+	display: inline-block;
+	min-width: 150px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 10px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	background-image: -moz-linear-gradient(top, #8e8e8e 0%, #666666 100%);
+	background-image: -webkit-linear-gradient(top, #8e8e8e 0%, #666666 100%);
+	background-image: -o-linear-gradient(top, #8e8e8e 0%, #666666 100%);
+	background-image: -ms-linear-gradient(top, #8e8e8e 0%, #666666 100%);
+	background-color: #666666;
+	border: 1px solid #868c89;
+} #promo .download:hover {
+	background-image: -moz-linear-gradient(top, #02c969 0%, #016b38 100%);
+	background-image: -webkit-linear-gradient(top, #02c969 0%, #016b38 100%);
+	background-image: -o-linear-gradient(top, #02c969 0%, #016b38 100%);
+	background-image: -ms-linear-gradient(top, #02c969 0%, #016b38 100%);
+	background-color: #016b38;
+	border-color: #02d36e;
+}
+	#promo .download:after {
+		content: '';
+		position: absolute;
+		top: 5px;
+		right: -170px;
+		background: url('logo.png') no-repeat top right;
+		height: 33px;
+		width: 154px;
+	}
+
+#promo .usertable {margin-bottom: 20px}
+#promo .usertable td {padding: 10px}
+#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
+#promo .content .paging {background-color: #016b38}
+
+#promo .archive {border-top: 0 none}
+#promo .show-archive {border-bottom: 1px dashed #00ab40}
+#promo .show-archive:hover {border-color:#00f268}
