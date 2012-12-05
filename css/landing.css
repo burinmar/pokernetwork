@@ -135,3 +135,14 @@
 #landing.ps-sm .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/ps-sm/logo.png'); width: 124px; height: 19px}
 #landing.ps-sm a {color: #fff;}
 #landing.ps-sm a:hover {color: #ff0000;}
+
+#landing.ps-10k {background-image: url('/img/landing/ps-10k/intro.jpg')}
+#landing.ps-10k .download {
+	background-image: -moz-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
+	background-image: -webkit-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
+	background-image: -o-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
+	background-image: -ms-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
+	background-color: #ffe3a7; line-height: 40px; height: 40px; font-size: 14px; color: #000 !important; position: relative; }
+#landing.ps-10k .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/ps-10k/logo.png'); width: 124px; height: 19px}
+#landing.ps-10k a {color: #fff;}
+#landing.ps-10k a:hover {color: #ff0000;}
