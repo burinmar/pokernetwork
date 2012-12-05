@@ -106,17 +106,6 @@
 #landing.pokerstars5k {background-image: url('/img/landing/pokerstars5k/intro.jpg?1'); padding: 40px 35px 65px 65px}
 #landing.pokerstars5k .download {background-image: url('/img/landing/pokerstars5k/download.png?1'); line-height: 60px; width: 306px; height: 60px; font-size: 29px; text-transform: none; font-weight: normal}
 
-#landing.wpt {background-image: url('/img/landing/wpt/intro.jpg')}
-#landing.wpt .download {background: url('/img/landing/wpt/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #002c7d; position: relative; }
-#landing.wpt .download:hover {background: #fff}
-#landing.wpt .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/wpt/logo.png'); width: 141px; height: 25px}
-
-#landing.magnificent {background-image: url('/img/landing/magnificent/intro.jpg?1')}
-#landing.magnificent h1 {color: #281600;}
-#landing.magnificent .download {background: url('/img/landing/magnificent/download.png?1') repeat-x; line-height: 39px; height: 39px; font-size: 14px; color: #fff; position: relative; }
-#landing.magnificent .download:hover {background-position: bottom left}
-#landing.magnificent .download:after {position: absolute; top: -3px; right: -130px; content: ''; background: url('/img/landing/magnificent/logo.png'); width: 105px; height: 29px}
-
 #landing.pca2012 {background-image: url('/img/landing/pca2012/intro.jpg?1'); padding: 40px 35px 65px 65px}
 #landing.pca2012 .download {background: url('/img/landing/pca2012/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #fff; position: relative; }
 #landing.pca2012 .download:hover {background-position: bottom}
@@ -134,3 +123,15 @@
 #landing.vault365 .download:after {position: absolute; top: 6px; right: -120px; content: ''; background: url('/img/landing/vault365/logo.png'); width: 98px; height: 23px}
 #landing.vault365 a {color: #00c482;}
 #landing.vault365 a:hover {color: #ffff0c;}
+
+#landing.ps-sm {background-image: url('/img/landing/ps-sm/intro.jpg')}
+#landing.ps-sm .download {
+	background-image: -moz-linear-gradient(top, #ff0000 0%, #810000 100%);
+	background-image: -webkit-linear-gradient(top, #ff0000 0%, #810000 100%);
+	background-image: -o-linear-gradient(top, #ff0000 0%, #810000 100%);
+	background-image: -ms-linear-gradient(top, #ff0000 0%, #810000 100%);
+	background-color: #ff0000; line-height: 40px; height: 40px; font-size: 14px; color: #fff !important; position: relative; }
+#landing.ps-sm .download:hover {background: #810000}
+#landing.ps-sm .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/ps-sm/logo.png'); width: 124px; height: 19px}
+#landing.ps-sm a {color: #fff;}
+#landing.ps-sm a:hover {color: #ff0000;}
