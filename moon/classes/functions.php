@@ -576,7 +576,7 @@ class smtpMail extends moon_mail {
 }
 
 class moon extends moon_core {
-static function mail() {
+static function &mail() {
 	$a=new smtpMail;
 	return $a;
 }
