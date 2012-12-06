@@ -1,6 +1,6 @@
 #<?die();?>
 [database]
-dbclass=mysql4
+dbclass=mysql
 server=192.168.0.11:3307
 user=pnteam
 password=8yWYJa
@@ -10,7 +10,7 @@ page503=503.htm
 
 
 [database-vb]
-dbclass=mysql4
+dbclass=mysql
 server=192.168.0.11:3307
 user=pnteamvb
 password=8yWYJa

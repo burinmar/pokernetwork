@@ -36,6 +36,7 @@ template.5=Šablonų faile {file} nerasta skiltis <b>{match}</b>.
 template.old_template_file=Šablonų failas {file} užrašytas senu formatu, kuris jau nebepalaikomas.
 template.ifs_not_closed=Klaida šablonų faile {file} - bloke <b>{block}</b> klaidinga "if" sintaksė.
 template.dublicate_block=Klaida šablonų faile {file} - pasikartojantis blokas <b>{block}</b>.
+template.file404=Nerastas failas <b>{failas}</b> šablonui <i>{forFile}</i>.
 #log
 log.cant_write=Nepavyko įrašyti log failo <b>{file}</b>.
 #xml

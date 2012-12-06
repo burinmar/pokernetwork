@@ -147,11 +147,7 @@ function have_permissions($id, $access = FALSE) {
 		}
 	}
 	//reikia perdaryt i_admin funkcijai
-	$n = array();
-	foreach ($m as $v) {
-		$n[$v] = 1;
-	}
-	return $n;
+	return $m;
 }
 
 function cookie($value, $time)

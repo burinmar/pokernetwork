@@ -1,11 +1,9 @@
 <?/*************************************************
-modified: 2010-11-30 09:19
-version: 2.9.1
+modified: 2012-12-06 11:01
+version: 2.12
 project: Moon
-author: Audrius Naslenas, audrius@vpu.lt
+author: Audrius Naslenas, a.naslenas@gmail.com
 *************************************************/
-
-define('MOON_VERSION','2.9.1');
 if (!defined('MOON_CLASSES')) define('MOON_CLASSES',dirname(__FILE__).'/');
 function include_class($name)
 {switch($name){
@@ -27,6 +25,7 @@ case 'moon_xml_read': break;
 case 'moon_xml_write': break;
 case 'moon_paginate': break;
 case 'mysql4': break;
+case 'mysql': break;
 default:
 include_once(MOON_CLASSES.$name.'.php');
 }}function moon_headers($sendHeaders=true)
@@ -47,10 +46,9 @@ define('MOON_MODULES',(string)$modDir);
 if (!($localeFile=$eng->ini('locale.file')))  $localeFile=MOON_CLASSES.'locale.ini';
 $loc->load_file($localeFile);
 $loc->set_locale($eng->ini('locale'));
-if (!($sid=$eng->ini('session.name'))) $sid='PSID';
-if ($sid!='') {
+if ($sid=$eng->ini('session.name')) {
 session_name ($sid);
-if ( isset($_GET['SI']) ) $id=session_id($_GET['SI']);
+if ( isset($_GET[$sid]) ) $id=session_id($_GET[$sid]);
 session_start();
 }$ini=&moon::cfg();
 $ini->read_cfg($eng->ini('modules.cfg'));
@@ -79,71 +77,74 @@ $err->save($errFile," [$ev]");
 }$p=&moon::page();
 $p->close();
 }class moon_core {
-function &moon_ini()
+static function &moon_ini()
 {if (is_null($out = &$GLOBALS['MoonGlobalIni'])) {
 include_class('moon_ini');
 $out=new moon_ini();
 }return $out;
-}function &ini() {return moon::cfg();}
-function &cfg()
+}static function &ini() {return moon::cfg();}
+static function &cfg()
 {if (is_null($out = &$GLOBALS['MoonIni'])) {
 include_class('moon_cfg');
 $out=new moon_cfg();
 }return $out;
-}function &page()
+}static function &page()
 {if (is_null($out = &$GLOBALS['MoonPage'])) {
 include_class('moon_page');
 $out=new moon_page();
 }return $out;
-}function &engine()
+}static function &engine()
 {if (is_null($out = &$GLOBALS['MoonEngine'])) {
 include_class('moon_engine');
 $out=new moon_engine;
 }return $out;
-}function &user()
+}static function &user()
 {if (is_null($out = &$GLOBALS['MoonUser'])) {
 include_class('moon_user');
 $out=new moon_user;
 }return $out;
-}function &error($msg=FALSE, $type = 'W')
+}static function &error($msg=FALSE, $type = 'W')
 {if (is_null($out = &$GLOBALS['MoonError'])) {
 include_class('moon_error');
 $out=new moon_error;
 }if (FALSE !== $msg) {
 $out->error($msg, $type);
 }return $out;
-}function &locale()
+}static function &locale()
 {if (is_null($out = &$GLOBALS['MoonLocale'])) {
 include_class('moon_locale');
 $out=new moon_locale;
 }return $out;
-}function &log()
+}static function &log()
 {if (is_null($out = &$GLOBALS['MoonLog'])) {
 include_class('moon_log');
 $out=new moon_log;
 }return $out;
-}function &cache()
-{if (is_null($out = &$GLOBALS['MoonCache'])) {
+}static function &cache($name='default')
+{if (is_null($out = &$GLOBALS['MoonCache_'.$name])) {
 include_class('moon_cache');
-$out=new moon_cache;
+$out=new moon_cache($name);
 }return $out;
-}function &xml_read()
+}static function &xml_read()
 {include_class('moon_xml_read');
 $a=new moon_xml_read;
 return $a;
-}function &xml_write()
+}static function &xml_write()
 {include_class('moon_xml_write');
 $a=new moon_xml_write;
 return $a;
-}function &file()
+}static function &file()
 {include_class('moon_file');
 $a=new moon_file;
 return $a;
-}function &mail()
+}static function &template($tplFile, $zodFile='', $zodLang = FALSE)
+{$t = new moon_template($tplFile, $zodFile, $zodLang);
+return $t;
+}static function &mail()
 {include_class('moon_mail');
 $a=new moon_mail;
 return $a;
-}function &shared($name='')
+}static function &shared($name='')
 {$out =&$GLOBALS['MoonShared_'.$name];
 if (is_null($out)) {
 $cname='shared_'.$name;
@@ -155,7 +156,7 @@ include_once($fname);
 $out=new $cname(MOON_MODULES.$whereIs);
 }} elseif (method_exists($out,'init')) $out->init();
 return $out;
-}function &db($con='',$lastOwner='')
+}static function &db($con='')
 {$out = &$GLOBALS['MoonDB'.$con];
 if (is_null($out)) {
 $ini =&moon::moon_ini();
@@ -171,8 +172,19 @@ if (!class_exists($name) && file_exists(MOON_CLASSES.$name.'.php')) include_clas
 if (class_exists($name)) {
 $out=new $name;
 $out->moon_connect($ini->read_group($group));
-}}}if (is_object($out)) $out->lastOwner=$lastOwner;
-return $out;
+}}}return $out;
+}static function chmod($filename, $mode = FALSE)
+{if ($mode === FALSE) {
+switch (filetype($filename)) {
+case 'dir': $mode = 0777; break;
+case 'file': $mode = 0666; break;
+default: return FALSE;
+}}$old = umask(0);
+$ok = chmod($filename, $mode);
+umask($old);
+if (!$ok) {
+moon::error('Unable to chmod ' . $filename);
+}return $ok;
 }}class moon_engine {
 var $loadedComponents;
 var $components;
@@ -373,18 +385,7 @@ $compMod=($tsk===false) ? $this->unknownModule:substr($name,0,$tsk);
 $compName=($tsk===false) ? $name:substr($name,$tsk+1);
 return array('module'=>$compMod,'name'=>$compName,'id'=>$id);
 }function &load_template($fileName,$langFile='')
-{$t=new moon_template();
-if ($this->dirCache) {
-$cacheFile=$this->dirCache.substr(md5(dirname($fileName)),-8).'-'.basename($fileName);
-if (file_exists($cacheFile)) {
-$t->load_file($cacheFile,true);
-return $t;
-}}if ($langFile) {
-$loc=&moon::locale();
-$t->use_language_pack($langFile,$loc->current_locale());
-}if (file_exists($fileName)) $t->load_file($fileName);
-if ($this->dirCache) $t->save($cacheFile);
-return $t;
+{return moon::template($fileName,$langFile,moon::locale()->current_locale());
 }function map_find_alias($event)
 {if (isset($this->eventsMap[$event])) return $this->eventsMap[$event];
 else return false;
@@ -434,7 +435,7 @@ $page->set_request_mask($mask,substr($url,strlen($mask)));
 }if (substr($par,-4)=='.htm') $par=substr($par,0,-4);
 return array($ev,$par);
 }function url_construct($ev,$par)
-{if ($k=strpos($ev,'?')) {
+{if (FALSE!==($k=strpos($ev,'?'))) {
 $get=substr($ev,$k+1);
 $ev=substr($ev,0,$k);
 } else $get='';
@@ -657,7 +658,7 @@ $this->currVar=$this->currGroup.'['.$key.']';
 $this->multiLineVar=rtrim(substr($row,0,-3));
 $this->multiLineValue='';
 }}}function _error($code,$tipas,$line,$m='')
-{if (defined('MOON_VERSION')) {
+{if (is_callable('moon::error')) {
 moon :: error(array("@ini.$code",$m), $tipas);
 } else echo 'ini['.$code.'] '.serialize($m);
 }}class moon_cfg {
@@ -719,19 +720,27 @@ $this->memory[$gr]=$cfg[$g];
 $sim=isset($cfg[$g]['sys.cfgFile']) ? trim($cfg[$g]['sys.cfgFile']):'';
 if ($sim) $this->simLink[$gr]=$sim;
 }}if (!isset($this->memory[$gr]['sys.moduleDir']) && !isset($this->simLink[$gr])) $this->memory[$gr]['sys.moduleDir']=$gr.'/';
-}}}function get($module,$group='',$name=false)
+}}}private $getCache = array();
+function get($module,$group='',$name=false) {
+if (isset($this->getCache[$module][$group][$name])) {
+return $this->getCache[$module][$group][$name];
+}return ($this->getCache[$module][$group][$name] = $this->realGet($module,$group,$name));
+}function realGet($module,$group='',$name=false)
 {$module=strtolower($module);
-if (isset($this->simLink[$module])) $this->read_cfg($this->simLink[$module]);
-if (isset($this->memory[$module])) $m=$this->memory[$module];
-else $m=array();
-if ($group=='') return $m;
-elseif ($name===false) {
+if (isset($this->simLink[$module])) {
+$this->read_cfg($this->simLink[$module]);
+if (isset($this->simLink[$module])) {
+unset($this->simLink[$module]);
+}}$m = isset($this->memory[$module]) ? $this->memory[$module] : array();
+if ($group=='') {
+return $m;
+}elseif ($name===false) {
 $gr=array();
 $group.='.';
 $ilg=strlen($group);
-foreach ($m as $k=>$v)
+foreach ($m as $k=>$v) {
 if (substr($k,0,$ilg)==$group) $gr[substr($k,$ilg)]=$v;
-return $gr;
+}return $gr;
 } else {
 if (($vname=rtrim($group.'.'.$name,'.')) && isset($m[$vname])) return $m[$vname];
 else return '';
@@ -821,8 +830,10 @@ parent::moon_module($module);
 {$fName = $htmName==='' ? $this->moonRealName : $htmName;
 if (!isset($this->moonTemplate[$fName])) {
 $engine=&moon::engine();
-$htmFile=MOON_MODULES.$this->my('location').$fName.'.htm';
-if ($txtFile) {
+$htmFile=MOON_MODULES.$this->my('location').$fName;
+if ('.htm' != substr($htmFile,-4)) {
+$htmFile .= '.htm';
+}if ($txtFile) {
 $langFile = $txtFile;
 }elseif ($this->moonMultiLang) {
 switch ($this->moonMultiLang) {
@@ -841,7 +852,7 @@ $a = array(
 '{dir.multilang}' => $engine->ini('dir.multilang'),
 '{dir.modules}' => MOON_MODULES,
 '{dir.current}' => MOON_MODULES.$this->my('location'),
-'{module}' => $this->moonRealModule,
+'{module}' => $this->my('module'),
 '{name}' => $fName,
 '{language}' => $locale->language(),
 '{locale}' => $locale->current_locale(),
@@ -853,7 +864,7 @@ $this->moonMultiLang
 );
 }}else {
 $langFile = '';
-}$this->moonTemplate[$fName]=&$engine->load_template($htmFile,$langFile);
+}$this->moonTemplate[$fName]= moon::template($htmFile,$langFile, moon::locale()->current_locale());
 }return $this->moonTemplate[$fName];
 }function link($ev='',$par='',$arrayGET=false)
 {return htmlspecialchars($this->url($ev,$par,$arrayGET));
@@ -959,11 +970,18 @@ $engine->pgCompInsert=$this->my('fullname');
 }function message($msgID,$info='')
 {moon :: error( 'Method "message" is removed.', 'N');
 return $msgID;
-}function main() {return '';}
-function events() {}
-function properties() {return '';}
-function onload() {}
-function _get_mycfg($what,$name)
+}function __call($name, $arguments) {
+$name = strtolower($name);
+switch ($name) {
+case 'main':
+case 'events':
+case 'onload':
+return '';
+case 'properties':
+return array();
+default:
+trigger_error("Calling undefined method '$name'");
+}}function _get_mycfg($what,$name)
 {$ini=&moon::cfg();
 if ($name === '') {
 $c = $ini->get($this->moonMyModule, $what . '{'. $this->moonMyName . '}', '' );
@@ -1101,7 +1119,7 @@ $s.="\r\n";
 foreach ($this->err_msgs as $msg) $s.=' * '.$msg."\r\n";
 $r=fputs($f,$s);
 fclose($f);
-if ($chmod) @chmod ($file, 0666);
+if ($chmod) moon::chmod($file);
 }}}function _add_msg($tipas,$err,$where)
 {$err=str_replace(array("\r","\n"),array('',' '),$err);
 switch($tipas){
@@ -1197,7 +1215,7 @@ preg_match_all('/%({[mMwW]([^}]*)}|.?)/', $tpl, $m);
 $this->cache[$tpl] = $mas = isset($m[1]) ? array_unique($m[1]) : array();
 }foreach ($mas as $v) {
 switch($v){
-case 'Y':$r=$d['y']; break;
+case 'Y':$r = $d['y'] ? $d['y'] : '0000'; break;
 case 'y':$r=substr($d['y'], 2 ); break;
 case 'D':$r=$this->zero( $d['d'] ); break;
 case 'd':$r=(int)$d['d']; break;
@@ -1318,7 +1336,7 @@ break;
 return $y.'-'.($m<10 ? '0':'').$m.'-'.($d<10 ? '0':'').$d;
 }function now()
 {return $this->now;
-}function is_est($time,$tzID=0) {return $this->is_dst($time,$tzID=0);}
+}function is_est($time,$tzID=0) {return $this->is_dst($time,$tzID);}
 function is_dst($time,$tzID=0)
 {$nuo=1167609600; $iki=1483228800;
 if ($time<$nuo || $time>$iki || !$tzID) return false;
@@ -1472,7 +1490,7 @@ flock($fp,2);
 $re = fputs($fp, "$s\r\n");
 flock($fp,3);
 fclose($fp);
-if ($chmod) @chmod ($filename, 0666);
+if ($chmod) moon::chmod ($filename);
 } else {
 moon :: error( array("@log.cant_write", array('file'=>$filename)) );
 }}function _encode($s)
@@ -1514,8 +1532,9 @@ $this->id=$u['id'];
 $this->voter_id=$u['voter_id'];
 $this->logins_number=$u['logins_number'];
 $this->udata=$u;
-if (!strlen($this->voter_id)) $this->voter_id=$this->cookie_id();
-}function dump_to_session()
+if (!strlen($this->voter_id)) {
+$this->voter_id=substr($this->cookie_id(),-13);
+}}function dump_to_session()
 {$u=$this->udata;
 $u['id']=$this->id;
 $u['voter_id']=$this->voter_id;
@@ -1523,17 +1542,21 @@ $u['logins_number']=$this->logins_number;
 $p=&moon::page();
 $p->save_in_memory('user',$u);
 }function voter(){return $this->cookie_id();}
-function cookie_id()
-{if (strlen($this->voter_id)) return $this->voter_id;
-$cook=&$_COOKIE;
-if (isset($cook['voter2']) && strlen($cook['voter2'])) return $cook['voter2'];
-$this->voternew=true;
-if (defined('MOON_HEADERS') && !MOON_HEADERS) $id='0';
-else {
-$id=uniqid('');
-setcookie('voter2',$id,time()+86400*500,'/');
-}$this->voter_id=$id;
-return $id;
+function cookie_id($setValue = NULL) {
+if (!is_null($setValue)) {
+$this->voter_id = $setValue;
+setcookie('voter2',$setValue,time()+86400*500,'/');
+}if (strlen($this->voter_id)) {
+return $this->voter_id;
+}elseif (!empty($_COOKIE['voter2'])) {
+return $_COOKIE['voter2'];
+}$this->voternew=true;
+$id = '';
+$a = array('HTTP_USER_AGENT', 'REMOTE_ADDR', 'HTTP_X_FORWARDED_FOR');
+foreach ($a as $v) {
+if (!empty($_SERVER[$v])) {
+$id .= $_SERVER[$v];
+}}return ($this->voter_id=substr(md5($id), -13));
 }function is_newbie()
 {return $this->voternew;
 }function get_language()
@@ -1596,17 +1619,14 @@ $this->udata=$m;
 }function logout()
 {$this->id='';
 $this->udata=array();
-}function i_admin($zone=false,$level=1)
+}function i_admin($key=false)
 {$a=$this->get_user('admin');
-if (is_array($a)) {
-if ($zone===false) return (count($a) ? true:false);
-else {
-if (strpos($zone,':')) list($zone,$level)=explode(':',$zone);
-return ( isset($a[$zone]) && intval($a[$zone])>=intval($level) ? true:false);
-}} else {
-if (!($a=intval($a))) return false;
-if ($zone===false) return ($a ? true:false);
-else return ($a>=intval($zone) ? true:false);
+if (empty($a)) {
+return FALSE;
+}elseif (is_array($a)) {
+return ($key===FALSE ? TRUE : in_array($key, $a));
+} else {
+return ($key===FALSE || '*'===$a ? TRUE : ($key == $a));
 }}}class moon_page{
 var $title,$home_url;
 var $device;
@@ -1631,8 +1651,9 @@ $this->varLocal=$this->cssArray=$this->jsArray=$this->metaArray=$this->headLinkA
 $this->info=$this->vars=array();
 $eng=&moon::engine();
 $this->urlFunction=$eng->ini('url.function');
-$this->home_url=$eng->ini('home_url');
-$this->php_script= $eng->ini('php_script');
+if ('' == ($this->home_url = $eng->ini('home_url')) && !empty($_SERVER['SERVER_NAME'])) {
+$this->home_url = 'http://' . $_SERVER['SERVER_NAME'] . '/';
+}$this->php_script= $eng->ini('php_script');
 $this->dirHtml=$eng->ini('dir.html');
 $this->lastModified=0;
 $this->memory = isset($_SESSION['moonMemory']) ? $_SESSION['moonMemory'] : array();
@@ -1876,20 +1897,19 @@ if ($r!='') $this->was_refresh=$this->_post_was_refresh($r);
 $this->forget();
 }}function _post_was_refresh($id)
 {$ini=&moon::cfg();
-$table=$ini->get('sys','tb','Refresh');
-if ($table=='') return false;
-$db=&moon::db($ini->get('sys','sys','db'),'moon_page');
-$id=addslashes(substr($id,0,13));
-$laikas=time();
-$mas=$db->single_query("SELECT count(*) FROM $table WHERE ID_='$id'");
-if (rand(1,100)==1)
+if (!$ini->has('sys','tb.Refresh') || '' == ($table=$ini->get('sys','tb','Refresh'))) {
+return FALSE;
+}$db=&moon::db($ini->get('sys','sys','db'));
+$id=$db->escape(substr($id,0,13));
+$laikas=moon::locale()->now();
+$m=$db->single_query("SELECT 1 FROM $table WHERE ID_='$id' LIMIT 1");
+if (rand(1,100)==1) {
 $db->query("DELETE FROM $table WHERE TIME_<".($laikas-86400));
-if (!isset($mas[0])) return false;
-if ($mas[0]){
-return true;
+}if (isset($m[0])){
+return TRUE;
 }else{
 $db->query("INSERT INTO $table(ID_,TIME_) VALUES('$id','$laikas')");
-return false;
+return FALSE;
 }}function referer($showLocal=false)
 {$referer=(isset($_SERVER['HTTP_REFERER'])) ? trim($_SERVER['HTTP_REFERER']):'';
 if ($referer==='') return '';
@@ -1918,13 +1938,45 @@ var $zodLang,$zodFile, $words;
 var $oldVersion;
 var $file;
 var $wasError=false;
-function moon_template($file='')
-{$this->bodies=array();
-$this->isMoon=(defined('MOON_VERSION')) ? true:false;
-$this->zodLang=false;
-$this->zodFile='';
+function __construct($tplFile, $zodFile='', $zodLang = FALSE)
+{$this->isMoon = is_callable('moon::error');
+$this->bodies = array();
+$this->zodLang = $zodLang === FALSE && $this->isMoon ? moon::locale()->current_locale() : $zodLang;
+$this->zodFile = $zodFile;
 $this->words = array();
-if ($file) $this->load_file($file);
+if ($tplFile != '') {
+$this->file = $tplFile;
+$this->load($tplFile);
+}}function load() {
+$this->wasError=false;
+if ($this->isMoon && ($dirCache = moon::engine()->ini('dir.chtm'))) {
+$cName = rtrim($this->file . substr(md5($this->zodFile),-8) . $this->zodLang, '.');
+$cache = moon::cache($dirCache);
+if (FALSE !== ($str = $cache->get($cName, $this->getContextTS())) && is_array($str)) {
+$this->bodies = $str;
+return;
+}}$str = $this->get_file_content($this->file);
+if ('' != $this->zodFile) {
+$this->use_language_pack($this->zodFile,$this->zodLang);
+$this->_translate($str);
+}$this->_load_text($str);
+if ($this->isMoon && !$this->wasError && $dirCache) {
+$cache->save($cName, $this->bodies, '24h');
+}}function load_file($file,$fromCache=false)
+{$this->file = $file;
+$this->load();
+}protected function getContextTS()
+{$maxTS = 0;
+$files = '' != $this->zodFile ? explode(';', $this->zodFile) : array();
+$files[] = $this->file;
+foreach ($files as $file) {
+if ('' === ($file = trim($file))) {
+continue;
+}if (file_exists($file)) {
+$maxTS = max($maxTS,filemtime(trim($file)));
+}else {
+$this->error('file404','N',__LINE__, array('failas'=>$file, 'forFile'=>$this->file));
+}}return $maxTS;
 }function use_language_pack($fileName,$lang)
 {if ($this->isMoon || class_exists('moon_ini') ) {
 $this->words = array();
@@ -1943,16 +1995,7 @@ $this->words += $zod->read_group($lng);
 }}}$this->zodLang=$lang;
 }$this->zodLang=$lang;
 $this->zodFile=$fileName;
-}function load_file($file,$fromCache=false)
-{$this->wasError=false;
-$this->file=$file;
-$str=&$this->get_file_content($file);
-if ($str===false) return;
-if ($fromCache) $this->bodies=unserialize($str);
-else {
-if ($this->zodLang!==false) $this->_translate($str);
-$this->_load_text($str);
-}}function explode_ini($name) {return $this->parse_array($name);}
+}function explode_ini($name) {return $this->parse_array($name);}
 function parse_array($name,$vars='')
 {$s=$this->parse($name,$vars);
 $p=explode("\n",$s);
@@ -2013,20 +2056,13 @@ $this->bodies[$as]=$block;
 {return isset($this->bodies[$name]);
 }function &get_file_content($file)
 {if ( file_exists( $file ) ) {
-$s = @file_get_contents($file);
+$s = file_get_contents($file);
 }else{
 $s = FALSE;
 moon_template::error(1,'F',__LINE__,array("file"=>$file));
 }return $s;
 }function save($fileName='')
-{$s=serialize($this->bodies);
-if ($fileName && $f=fopen($fileName,'wb')) {
-flock($f,2);
-$r=fputs($f,$s);
-flock($f,3);
-fclose($f);
-} else return $s;
-}function _load_text_old(&$str)
+{}function _load_text_old(&$str)
 {$this->parse_links($str);
 $reg = '/<!--([!]*)begin ([.\w]+)([!\s]*)-->(.*)<!--([!]*)end \\2([!\s]*)-->/sm';
 preg_match_all($reg, $str, $m);
@@ -2136,47 +2172,45 @@ $words += $this->words;
 $str = str_replace("{!$k}", (string)$v, $str);
 }return true;
 }function parse_links(&$str)
-{if (strpos($str,"{!link:")===FALSE || !$this->isMoon) return false;
+{static $tplCache = array();
+if (strpos($str,"{!link:")===FALSE || !$this->isMoon) return false;
 $p=&moon::page();
 preg_match_all('/\{!link:([^\}]+)\}/', $str, $m);
+$m[1] = array_unique($m[1]);
 foreach ($m[1] as $j=>$v) {
+$i = (string)$m[0][$j];
+if (isset($tplCache[$i])) {
+$replaceto = $tplCache[$i];
+}else {
 $parts=explode('|',$v);
 if (!isset($parts[1])) $parts[1]='';
-$replaceto=$p->sys_linkas($parts[0],$parts[1]);
-$str=str_replace( (string)$m[0][$j],$replaceto,$str);
+$tplCache[$i] = $replaceto=$p->sys_linkas($parts[0],$parts[1]);
+}$str=str_replace( $i,$replaceto,$str);
 }return true;
 }function error($code,$tipas,$line,$m='')
 {$m['file']=$this->file;
-if (defined('MOON_VERSION')) {
+if (is_callable('moon::error')) {
 moon :: error(array("@template.$code",$m), $tipas);
 } else echo 'template['.$code.'] '.serialize($m);
 }}class moon_xml {
 var $info;
 var $comp;
 var $dirCxml;
-function moon_xml()
-{$eng=&moon::engine();
-$this->dirCxml=$eng->ini('dir.cxml');
-}function load_xml($name)
-{if ($this->dirCxml) {
-$file=$this->dirCxml.$name.'.cxml';
-if (file_exists($file)) {
-$str=@file_get_contents($file);
-$inf=@unserialize($str);
-if (is_array($inf)) return $inf;
+function load_xml($name)
+{if ($dirCache = moon::engine()->ini('dir.cxml')) {
+$xmlF = $this->_get_path($name);
+$ts = $xmlF && file_exists($xmlF) ? filemtime($xmlF) : 0;
+$cache = moon::cache($dirCache);
+if (FALSE !== ($str = $cache->get($name.'.cxml', $ts)) && is_array($str)) {
+return $str;
 }}$this->_reset();
 include_class('moon_xml_read');
 $this->_add_xml($name);
 $this->info['name']=$name;
 $this->info['com']=$this->comp;
-if ($this->dirCxml){
-$f=fopen($file,'wb');
-if ($f) {
-flock($f,2);
-$r=fputs($f,serialize($this->info));
-flock($f,3);
-fclose($f);
-}}return $this->info;
+if ($dirCache){
+$cache->save($name.'.cxml', $this->info, '24h');
+}return $this->info;
 }function _reset()
 {$this->info=array('name'=>'','title'=>'','layout'=>'','parent'=>'','set_local'=>'','forget'=>'');
 $this->comp=array();
@@ -2233,49 +2267,108 @@ $eng=&moon::engine();
 $eng->_error('noxml','F',__LINE__,array('name'=>$name));
 $filename='';
 }return $filename;
-}}class moon_cache{
-var $cacheOn=true;
-var $now=0;
-var $fileName='';
+}}class moon_cache {
+var $cacheOn = TRUE;
+var $now = 0;
+var $fileName = '';
 var $dirCache;
-function moon_cache()
-{$this->now= isset($_SERVER['REQUEST_TIME']) ?  (int)$_SERVER['REQUEST_TIME'] : time();
-$eng=&moon::engine();
-$this->dirCache= $eng->ini('dir.cache');
-$this->cacheOn= $this->dirCache===false ? false : true;
-}function file($name)
-{$name=trim($name);
-if ($name!=='')	$this->fileName=$this->dirCache.trim($name).'.cache';
-}function get($name=false)
-{if ($name!=false) $this->file($name);
-$s=($this->cacheOn && $this->fileName && file_exists($this->fileName) ?
-file_get_contents($this->fileName) : false);
-if ($s!==false) {
-$expires=trim(substr($s,0,12));
-if (is_numeric($expires) && $this->now<(int)$expires) return substr($s,12);
-}return false;
-}function save($content,$expires='24h')
-{if ($this->cacheOn && $this->fileName){
-if (($expires=$this->_laikas($expires)) && ($fp = fopen($this->fileName,"wb"))) {
-flock($fp,LOCK_EX );
-fputs($fp, str_pad($expires,12).$content);
-flock($fp,LOCK_UN );
-fclose ($fp);
-chmod($this->fileName,0666);
-}}}function delete($name=false)
-{if ($name!=false) $this->file($name);
-if ($this->fileName && file_exists($this->fileName)) unlink($this->fileName);
-}function clean($name)
-{foreach(glob($this->dirCache.$name.'.cache') as $file) unlink($file);
-}function on($isOn=true)
-{return ($this->cacheOn=$isOn);
-}function _laikas($in)
-{$l=strtoupper(substr($in=trim($in),-1));
-$in=intval($in);
-if ($l==='H') $in=3600*$in;
-elseif ($l==='M') $in=60*$in;
-if ($in>86400) $in=86400;
-return ($in>0 ? ($this->now + $in) : 0);
+var $memcache = FALSE;
+var $memcachePrefix = '';
+function moon_cache($location = '') {
+static $memcacheConnections;
+$this->dirCache = FALSE;
+$this->now = isset ($_SERVER['REQUEST_TIME']) ? (int) $_SERVER['REQUEST_TIME']:time();
+if ('default' === $location) {
+$eng = & moon :: engine();
+$this->dirCache = $eng->ini('dir.cache');
+}elseif ($location) {
+$this->dirCache = $location;
+}if ('memcache' == substr($this->dirCache, 0, 8) && moon :: moon_ini()->has($this->dirCache)) {
+$cfg = moon :: moon_ini()->read_group($this->dirCache);
+$this->dirCache = empty ($cfg['failover']) ? FALSE:$cfg['failover'];
+if (!empty ($cfg['server']) && function_exists('memcache_connect')) {
+$port = isset ($cfg['port']) && '' != $cfg['port'] ? 11211:$cfg['port'];
+if (isset($memcacheConnections[$conID = $cfg['server'].':'.$port])) {
+$this->memcache = $memcacheConnections[$conID];
+}else {
+$this->memcache = @memcache_connect($cfg['server'], $port);
+if (!is_object($this->memcache)) {
+moon :: error('Can not connect to memcache: ' . $cfg['server'] . ':' . $port);
+$this->memcache = FALSE;
+}$memcacheConnections[$conID] = $this->memcache;
+}}}$this->memcachePrefix = isset ($cfg['prefix']) && '' != $cfg['prefix'] ? $cfg['prefix'] : '';
+if (isset($_SERVER['SERVER_NAME'])) {
+$this->memcachePrefix .= $_SERVER['SERVER_NAME'];
+}$this->memcachePrefix .= ':'.$location.':';
+if ($this->dirCache != FALSE && !file_exists($this->dirCache)) {
+moon :: error('Cache directory ' . $this->dirCache . ' does not exist.');
+$this->dirCache = FALSE;
+}$this->cacheOn = $this->dirCache === false && $this->memcache == FALSE ? false:true;
+}function file($name) {
+$name = trim($name);
+if ($name !== '') {
+$dir = dirname($name);
+if ($dir) {
+$name = basename($name) . '-' . substr(md5($this->memcachePrefix . $dir), - 20);
+}}$this->fileName = $name . '.cache';
+}function get($name = false, $changed = 0) {
+if ($name != false) {
+$this->file($name);
+}if ($this->cacheOn && '' != $this->fileName) {
+if ($this->memcache) {
+$s = memcache_get($this->memcache, $this->fileName);
+}elseif (file_exists($file = $this->dirCache . $this->fileName)) {
+$s = file_get_contents($file);
+}else {
+$s = FALSE;
+}if ($s !== FALSE) {
+$ts = explode('+', trim($this->memcache && is_array($s) ? $s[0] : substr($s, 0, 17)));
+$saved = (int) $ts[0];
+$expires = isset ($ts[1]) ? $saved + $ts[1]:$saved;
+if ($saved && $saved > abs($changed + 3) && $this->now < $expires) {
+return $this->memcache && is_array($s) ? $s[1] : unserialize(substr($s, 17));
+}}}return false;
+}function save($content, $expires = '24h') {
+if (func_num_args()===3) {
+list($name, $content, $expires) = func_get_args();
+if ($name != false) {
+$this->file($name);
+}}if ($this->cacheOn && $this->fileName) {
+if (($expires = $this->_laikas($expires))) {
+$ts = str_pad($this->now . '+' . $expires, 17);
+if ($this->memcache) {
+$ok = memcache_set($this->memcache, $this->fileName, array($ts, $content), MEMCACHE_COMPRESSED, $expires);
+if (!$ok) {
+$this->memcache = FALSE;
+$this->cacheOn = $this->dirCache === false ? false:true;
+}}else {
+$r = file_put_contents($file = $this->dirCache . $this->fileName, $ts . serialize($content));
+if (FALSE !== $r) {
+moon :: chmod($file);
+}}}}}function delete($name = false) {
+if ($name != false) {
+$this->file($name);
+}if ($this->cacheOn && '' != $this->fileName) {
+if ($this->memcache) {
+memcache_delete($this->memcache, $this->fileName);
+}elseif (file_exists($file = $this->dirCache . $this->fileName)) {
+unlink($file);
+}}}function clean($name) {
+if ($this->memcache) {
+memcache_flush($this->memcache);
+}elseif (FALSE !== $this->dirCache) {
+foreach (glob($this->dirCache . $name . '.cache') as $file) {
+unlink($file);
+}}}function on($isOn = true) {
+return ($this->cacheOn = $isOn);
+}function _laikas($in) {
+$l = strtoupper(substr($in = trim($in), - 1));
+$in = intval($in);
+if ($l === 'H') {
+$in = 3600 * $in;
+}elseif ($l === 'M') {
+$in = 60 * $in;
+}return ($in > 86400 ? 86400 : $in);
 }}class moon_file{
 var $curlOptions;
 var $mode;
@@ -2339,7 +2432,7 @@ $this->fileExt=$d['ext'];
 $this->fileWH=$d['wh'];
 return true;
 }function is_url_content($url,$saveAs,$timeout=20)
-{$this->get_url_content($url,$saveAs);
+{$this->get_url_content($url, $saveAs, $timeout);
 return $this->is_file($saveAs);
 }function get_url_content($url,$saveAs=false, $timeout=20)
 {if ($saveAs) {
@@ -2367,7 +2460,7 @@ if ($saveAs && !$err) $r = fputs($f, $s);
 }if ($saveAs) {
 flock($f,LOCK_UN);
 fclose($f);
-@chmod($saveAs,0666);
+moon::chmod($saveAs);
 if ($err) @unlink($saveAs);
 return ($err ? false : true);
 } else return $s;
@@ -2395,7 +2488,7 @@ return $this->info_pack($d);
 }function copy($pathTo)
 {$r=copy($this->path, $pathTo);
 if ($r && $this->is_file($pathTo)) {
-chmod($pathTo,0666);
+moon::chmod($pathTo);
 return true;
 }else return false;
 }function save_as($pathTo)
@@ -2405,9 +2498,9 @@ elseif ($this->mode==='upload') $r=move_uploaded_file( $this->path, $pathTo );
 else {
 $r=rename($this->path, $pathTo);
 }if ($r && $this->is_file($pathTo)) {
-chmod($pathTo,0666);
+moon::chmod($pathTo);
 $this->file_name($oldName);
-$a->isClone=false;
+$this->isClone=false;
 return true;
 }else return false;
 }function delete()
@@ -2559,7 +2652,7 @@ $this->doc=$this->_build_branch(-1,'');
 return $this->doc;
 }function &parse_file($file)
 {$this->fileName = $file;
-$s=file_get_contents($file);
+$s=''==$file ? FALSE : file_get_contents($file);
 if ($s===false) {
 $this->_error( 'not_found','F',__LINE__,array('file'=>$file));
 $this->doc=array();
@@ -2629,7 +2722,7 @@ foreach ($d as $k=>$r) if ($r!=='*' && $r!=$ds[$k]) return false;
 return true;
 }}}}return false;
 }function _error($code,$tipas,$line,$m='')
-{if (defined('MOON_VERSION')) {
+{if (is_callable('moon::error')) {
 moon :: error(array("@xml.$code",$m), $tipas);
 } else echo 'xml['.$code.'] '.serialize($m);
 }}class moon_xml_write{
@@ -2800,6 +2893,7 @@ var $dblink;
 var $lastOwner = '';
 var $reconnectInfo = NULL;
 var $newLink = FALSE;
+private $error = FALSE;
 function moon_connect($vars) {
 $check = array('server', 'user', 'password', 'database');
 foreach ($check as $v) {
@@ -2842,13 +2936,16 @@ return TRUE;
 }$this->_error(2, 'F', array('database' => $dbname, 'error' => mysql_error($this->dblink)));
 }return FALSE;
 }function & query($sql, $unbuffered = FALSE) {
-$r = FALSE;
+$r = $this->error = FALSE;
 if ($this->dblink) {
 $r = $unbuffered ? mysql_unbuffered_query($sql, $this->dblink) : mysql_query($sql, $this->dblink);
 if (!$r) {
+$this->error = mysql_errno($this->dblink) . ': ' . mysql_error($this->dblink);
 $info = array('sql' => $sql, 'error' => mysql_error($this->dblink));
 $this->_error(3, 'F', $info);
-}}return $r;
+}}else {
+$this->error = 'Connection does not exist';
+}return $r;
 }function escape($s, $escapeSpec = FALSE) {
 if ($this->dblink) {
 $s = mysql_real_escape_string($s, $this->dblink);
@@ -2860,13 +2957,16 @@ $s = addcslashes($s, '%_');
 }function insert($m, $table, $returnID = FALSE) {
 if (count($m)) {
 foreach ($m as $k => $v) {
-$m[$k] = is_null($v) ? 'NULL' : ("'" . $this->escape($v) . "'");
+$m[$k] = is_null($v) ? 'NULL' : (is_array($v) ? $v[0] : "'" . $this->escape($v) . "'");
 }$sql = "INSERT INTO `$table` (`" . implode("`, `", array_keys($m)) . "`) VALUES (" . implode(',', array_values($m)) . ')';
 $r = & $this->query($sql);
 return ($returnID && $r ? $this->insert_id() : FALSE);
+}else {
+$this->error = 'Invalid query.';
 }return FALSE;
 }function update($m, $table, $id = FALSE) {
 if (!count($m)) {
+$this->error = 'Invalid query.';
 return FALSE;
 }$set = array();
 foreach ($m as $k => $v) {
@@ -2888,6 +2988,8 @@ $m[$k] = is_null($v) ? 'NULL' : ("'" . $this->escape($v) . "'");
 }$sql = "REPLACE INTO `$table` (`" . implode('`, `', array_keys($m)) . '`) VALUES (' . implode(',', array_values($m)) . ')';
 $r = & $this->query($sql);
 return ($r ? $this->affected_rows() : 0);
+}else {
+$this->error = 'Invalid query.';
 }return 0;
 }function insert_query($mas, $table, $returnID = FALSE) {
 return $this->insert($mas, $table, $returnID);
@@ -2964,9 +3066,11 @@ $this->moon_connect($this->reconnectInfo);
 if ($this->dblink) {
 mysql_close($this->dblink);
 }$this->dblink = FALSE;
+}function error() {
+return $this->error;
 }function _error($code, $tipas, $m = '') {
 $file = $this->_whereError();
-if (!defined('MOON_VERSION')) {
+if (!is_callable('moon::error')) {
 echo $code . '(mysql4) ' . basename($file) . ' ' . serialize($m);
 return;
 }$m['where'] = $file;
@@ -2979,6 +3083,231 @@ $c = empty($v['class']) ? '' : $v['class'];
 if ($c == __CLASS__ || $c == get_class($this) ) {
 $failas = $v['file'];
 $line = $v['line'];
+continue;
+}break;
+}return $failas . ':' .  $line;
+}}class mysql {
+protected $ready = false;
+protected $dblink;
+protected $connectInfo = NULL;
+protected $error = FALSE;
+protected $throwExceptions = FALSE;
+function __destruct() {
+$this->close();
+}function moon_connect($vars) {
+$this->connectInfo = $vars;
+}protected function handshake() {
+$this->ready = TRUE;
+$vars = $this->connectInfo;
+$check = array('server', 'user', 'password', 'database');
+foreach ($check as $v) {
+if (!isset ($vars[$v])) {
+$this->dblink = FALSE;
+return;
+}}$this->dblink = $this->connect($vars['server'], $vars['user'], $vars['password'], $vars['database']);
+if (!$this->dblink) {
+$this->_error(1, 'F', array('server' => $vars['server'], 'error' => mysqli_connect_error()));
+$pg503 = isset ($vars['page503']) ? $vars['page503'] : '';
+if ($pg503 == 0 || strtolower($pg503) == 'false') {
+return;
+}header('HTTP/1.1 503 Service Temporarily Unavailable', true, 503);
+header('Status: 503 Service Temporarily Unavailable');
+if (function_exists('moon_close')) {
+moon_close();
+}if ($pg503 && file_exists($pg503)) {
+require ($pg503);
+}exit;
+}$set = array();
+if (!empty ($vars['charset'])) {
+$m = explode(':', $vars['charset']);
+$collate = isset ($m[1]) ? trim($m[1]) : '';
+mysqli_set_charset($this->dblink, trim($m[0]));
+$set[] = " NAMES '" . $this->escape(trim($m[0])) . "'" . ($collate != '' ? " COLLATE '" . $this->escape($collate) . "'" : '');
+}if (!empty ($vars['timezone'])) {
+$set[] = " time_zone='" . $this->escape($vars['timezone']) . "'";
+}if (isset ($set[0])) {
+$this->query('SET ' . implode(', ', $set));
+}}function connect($server, $user, $password, $dbname) {
+if (strpos($server,':')) {
+list($server, $port) = explode(':', $server, 2);
+}else {
+$port = ini_get('mysqli.default_port');
+}$r = @ mysqli_connect($server, $user, $password, $dbname, $port);
+if (mysqli_connect_errno()) {
+$this->_error(1, 'F', array('server' => $server, 'error' => mysqli_connect_error()));
+$r = FALSE;
+}return $r;
+}function select_db($dbname) {
+$this->ready || $this->handshake();
+if ($this->dblink) {
+if (mysqli_select_db($this->dblink,$dbname)) {
+return TRUE;
+}$this->_error(2, 'F', array('database' => $dbname, 'error' => mysqli_error($this->dblink)));
+}return FALSE;
+}function query($sql, $unbuffered = FALSE) {
+$this->ready || $this->handshake();
+$r = $this->error = FALSE;
+if ($this->dblink) {
+$r = $unbuffered ? mysqli_query($this->dblink, $sql, MYSQLI_USE_RESULT) : mysqli_query($this->dblink, $sql );
+if (!$r) {
+$this->error = mysqli_errno($this->dblink) . ': ' . mysqli_error($this->dblink);
+$info = array('sql' => $sql, 'error' => mysqli_error($this->dblink));
+$this->_error(3, 'F', $info);
+if ($this->throwExceptions) {
+throw new Exception('Bad query: ' . $sql . ' Error: ' . $info['error']);
+}}}else {
+$this->error = 'Connection does not exist';
+if ($this->throwExceptions) {
+throw new Exception($this->error);
+}}return $r;
+}function escape($s, $escapeSpec = FALSE) {
+$this->ready || $this->handshake();
+if ($this->dblink) {
+$s = mysqli_real_escape_string($this->dblink, $s);
+}else {
+$s = addslashes($s);
+}if ($escapeSpec) {
+$s = addcslashes($s, '%_');
+}return $s;
+}function insert($m, $table, $returnID = FALSE) {
+if (count($m)) {
+foreach ($m as $k => $v) {
+$m[$k] = is_null($v) ? 'NULL' : (is_array($v) ? $v[0] : "'" . $this->escape($v) . "'");
+}$sql = "INSERT INTO `$table` (`" . implode("`, `", array_keys($m)) . "`) VALUES (" . implode(',', array_values($m)) . ')';
+$r = $this->query($sql);
+return ($returnID && $r ? $this->insert_id() : FALSE);
+}else {
+$this->error = 'Invalid query.';
+}return FALSE;
+}function update($m, $table, $id = FALSE) {
+if (!count($m)) {
+$this->error = 'Invalid query.';
+return FALSE;
+}$set = array();
+foreach ($m as $k => $v) {
+$set[] = "`$k`=" . (is_null($v) ? 'NULL' : (is_array($v) ? $v[0] : "'" . $this->escape($v) . "'"));
+}$where = '';
+if (is_array($id)) {
+foreach ($id as $k => $v) {
+$where .= $where === '' ? ' WHERE ' : ' AND ';
+$where .= "(`$k`='" . $this->escape($v) . "')";
+}}elseif (is_numeric($id)) {
+$where = " WHERE `id`='" . $this->escape($id) . "'";
+}elseif (is_string($id)) {
+$where = ' WHERE ' . $id;
+}$this->query("UPDATE `$table` SET " . implode(',', $set) . $where);
+}function replace($m, $table) {
+if (count($m)) {
+foreach ($m as $k => $v) {
+$m[$k] = is_null($v) ? 'NULL' : ("'" . $this->escape($v) . "'");
+}$sql = "REPLACE INTO `$table` (`" . implode('`, `', array_keys($m)) . '`) VALUES (' . implode(',', array_values($m)) . ')';
+$r = $this->query($sql);
+return ($r ? $this->affected_rows() : 0);
+}else {
+$this->error = 'Invalid query.';
+}return 0;
+}function insert_query($mas, $table, $returnID = FALSE) {
+return $this->insert($mas, $table, $returnID);
+}function update_query($mas, $table, $id = FALSE) {
+return $this->update($mas, $table, $id);
+}function replace_query($mas, $table) {
+return $this->replace($mas, $table);
+}function array_query($sql, $indexField = FALSE) {
+$array = array();
+if (is_object($sql) && 'mysqli_result' === get_class($sql)) {
+$r = & $sql;
+}else {
+$r = $this->query($sql, TRUE);
+}if (is_object($r)) {
+$first = TRUE;
+while ($row = mysqli_fetch_row($r)) {
+if ($first) {
+if ($indexField !== FALSE) {
+if (($indexField === TRUE && !isset ($row[1])) || ($indexField !== TRUE && !isset ($row[$indexField]))) {
+$indexField = FALSE;
+}}$first = FALSE;
+}if ($indexField === FALSE) {
+$array [] = $row;
+}elseif ($indexField === TRUE) {
+$array [$row[0]] = $row[1];
+}else {
+$array [$row[$indexField]] = $row;
+}}mysqli_free_result($r);
+}return $array;
+}function array_query_assoc($sql, $indexField = FALSE) {
+$array = array();
+if (is_object($sql) && 'mysqli_result' === get_class($sql)) {
+$r = & $sql;
+}else {
+$r = $this->query($sql, TRUE);
+}if (is_object($r)) {
+$first = TRUE;
+while ($row = mysqli_fetch_assoc($r)) {
+if ($first) {
+if (!isset ($row[$indexField])) {
+$indexField = FALSE;
+}$first = FALSE;
+}if ($indexField === FALSE) {
+$array [] = $row;
+}else {
+$array [$row[$indexField]] = $row;
+}}mysqli_free_result($r);
+}return $array;
+}function single_query($sql) {
+$array = $this->array_query($sql);
+if ($kiek = count($array)) {
+$array = $array [0];
+if ($kiek > 1) {
+$this->_error(4, 'N', array('sql' => $sql));
+}}return $array;
+}function single_query_assoc($sql) {
+$array = $this->array_query_assoc($sql);
+if ($kiek = count($array)) {
+$array = $array [0];
+if ($kiek > 1) {
+$this->_error(4, 'N', array('sql' => $sql));
+}}return $array;
+}function free_result($result) {
+mysqli_free_result($result);
+}function fetch_row_assoc($result) {
+return ($result ? mysqli_fetch_assoc($result) : FALSE);
+}function num_rows($result) {
+return ($result ? mysqli_num_rows($result) : 0);
+}function affected_rows() {
+return ($this->dblink ? mysqli_affected_rows($this->dblink) : 0);
+}function insert_id() {
+return ($this->dblink ? mysqli_insert_id($this->dblink) : '');
+}function ping() {
+if ($this->dblink && !@mysqli_ping($this->dblink)) {
+$this->handshake();
+}}function close() {
+if ($this->dblink) {
+mysqli_close($this->dblink);
+}$this->dblink = FALSE;
+}function connection($info = FALSE) {
+if ($info === FALSE) {
+$this->ready || $this->handshake();
+return $this->$this->dblink;
+}else {
+return (isset($this->connectInfo[$info]) ? $this->connectInfo[$info] : FALSE);
+}}function error() {
+return $this->error;
+}function exceptions($on) {
+$this->throwExceptions = $on;
+}protected function _error($code, $tipas, $m = '') {
+$m['where'] = $this->_whereError();
+if (is_callable('moon::error')) {
+moon :: error(array("@mysql.$code",$m), $tipas);
+} else {
+echo 'mysql['.$code.'] '.serialize($m);
+}}protected function _whereError()
+{$a = version_compare(PHP_VERSION, '5.3.6', '>=') ? debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS) : debug_backtrace();
+$failas = $line = '';
+foreach ($a as $v) {
+$c = empty($v['class']) ? '' : $v['class'];
+if ($c == __CLASS__ || $c == get_class($this) ) {
+$failas = isset($v['file']) ? $v['file'] : '?';
+$line =  isset($v['line']) ? $v['line'] : '?';
 continue;
 }break;
 }return $failas . ':' .  $line;

@@ -1,8 +1,8 @@
 <?/*************************************************
-modified: 2010-11-30 09:19
-version: 2.9.1
+modified: 2012-12-06 11:01
+version: 2.12
 project: Moon
-author: Audrius Naslenas, audrius@vpu.lt
+author: Audrius Naslenas, a.naslenas@gmail.com
 *************************************************/
 class moon_mail {
 var $eol = "\r\n";

@@ -55,7 +55,7 @@ class cron extends moon_com {
 
 			case 'background' :
 				$user = & moon :: user();
-				$user->set('admin', 1);
+				$user->set('admin', '*');
 				$id = intval($_SERVER['argv'][1]);
 				if ($id) {
 					$this->run($id, $background = true);
@@ -66,7 +66,7 @@ class cron extends moon_com {
 
 			case 'jobs' :
 				$user = & moon :: user();
-				$user->set('admin', 1);
+				$user->set('admin', '*');
 				$this->start_jobs();
                 // toliau nebeateinama
 				break;
