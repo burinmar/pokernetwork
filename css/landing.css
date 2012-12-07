@@ -160,7 +160,7 @@
 
 
 
-#landing.ps-10k {background-image: url('/img/landing/ps-10k/intro.jpg')}
+#landing.ps-10k {background-image: url('/img/landing/ps-10k/intro.jpg?1')}
 #landing.ps-10k .download {
 	background-image: -moz-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
 	background-image: -webkit-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
