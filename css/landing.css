@@ -7,7 +7,7 @@
 	color: #fff;
 	padding: 40px 65px 65px;
 }
-	#landing .article, #landing .article p {color: #fff}
+	#landing .article, #landing .article p {color: inherit}
 	#landing a {color: #8feaf5}
 	#landing a:hover {color: #fff}
 	#landing .head {
@@ -34,6 +34,20 @@
 		color: #fff;
 		display: inline-block;
 		margin-bottom: 25px;
+		position: relative;
+	}	#landing .download:hover {
+		text-decoration: none;
+		box-shadow: 0 0 5px #000;
+	}
+	#landing .download:after {
+		position: absolute;
+		content: '';
+		top: 0;
+		right: -160px;
+		height: 40px;
+		width: 160px;
+		background-repeat: no-repeat;
+		background-position: center right;
 	}
 	#landing .head table {
 		margin-bottom: 10px;
@@ -41,7 +55,7 @@
 	}
 	#landing .head tr td:first-child {padding-right: 50px;}
 	#landing .head tr:first-child td {padding-bottom: 10px;}
-	#landing .head td {color: #fff; text-transform: uppercase; vertical-align: top}
+	#landing .head td {color: inherit; text-transform: uppercase; vertical-align: top}
 	#landing .bonusCode span {
 			display: inline-block;
 			background: #fff9c4;
@@ -69,7 +83,7 @@
 		font-weight: bold;
 		padding-left: 16px;
 	}
-	#landing .article table th {color: #fff}
+	#landing .article table th {color: inherit}
 	#landing .article table tr.even, #landing .article table th {background: none}
 	#landing .article table tr.odd {
 		background: rgba(255, 255, 255, 0.2);
@@ -91,26 +105,34 @@
 			padding: 0 10px 10px;
 			vertical-align: top;
 		}
-		#upcomingFreerolls .title {padding-top: 10px;}
-		#upcomingFreerolls .expandable {font-size: 14px}
+		#upcomingFreerolls .title {padding-top: 10px; font-size: 14px}
 		#upcomingFreerolls th {
 			font-weight: normal;
 			line-height: 14px;
 			padding: 10px 10px 3px;
 			text-align: left;
 			vertical-align: bottom;
-		} #upcomingFreerolls th span {color: #fff; opacity: 0.5}
+		} #upcomingFreerolls th span {color: inherit; opacity: 0.5}
 
 
 /*SKINS*/
-#landing.pokerstars5k {background-image: url('/img/landing/pokerstars5k/intro.jpg?1'); padding: 40px 35px 65px 65px}
-#landing.pokerstars5k .download {background-image: url('/img/landing/pokerstars5k/download.png?1'); line-height: 60px; width: 306px; height: 60px; font-size: 29px; text-transform: none; font-weight: normal}
+#landing.pca2012 {background-image: url('/img/landing/pca2012/intro.jpg?1'); padding: 40px 35px 65px 65px;}
+#landing.pca2012 .head {color: #000}
+#landing.pca2012 .download {
+	background-image: -moz-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
+	background-image: -webkit-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
+	background-image: -o-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
+	background-image: -ms-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
+	background-color: #00a3c7}
+#landing.pca2012 .download:after {background-image: url('/img/landing/pca2012/logo.png')}
 
-#landing.pca2012 {background-image: url('/img/landing/pca2012/intro.jpg?1'); padding: 40px 35px 65px 65px}
-#landing.pca2012 .download {background: url('/img/landing/pca2012/download.png?1') repeat-x; line-height: 40px; height: 40px; font-size: 14px; color: #fff; position: relative; }
-#landing.pca2012 .download:hover {background-position: bottom}
-#landing.pca2012 .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/pca2012/logo.png'); width: 128px; height: 20px}
-#landing.pca2012 .head td, #landing.pca2012 h1 {color: #000;}
+
+
+#landing.pokerstars-fr-300 {background-image: url('/img/landing/pokerstars-fr-300/intro.jpg')}
+#landing.pokerstars-fr-300 .download {background: #c20000}
+#landing.pokerstars-fr-300 .download:after {background-image: url('/img/landing/pokerstars-fr-300/logo.png')}
+
+
 
 #landing.vault365 {background-image: url('/img/landing/vault365/intro.jpg')}
 #landing.vault365 .download {
@@ -118,11 +140,14 @@
 	background-image: -webkit-linear-gradient(top, #fffcbc 0%, #efe722 100%);
 	background-image: -o-linear-gradient(top, #fffcbc 0%, #efe722 100%);
 	background-image: -ms-linear-gradient(top, #fffcbc 0%, #efe722 100%);
-	background-color: #efe722; line-height: 40px; height: 40px; font-size: 14px; color: #323232 !important; position: relative; }
-#landing.vault365 .download:hover {background: #efe722}
-#landing.vault365 .download:after {position: absolute; top: 6px; right: -120px; content: ''; background: url('/img/landing/vault365/logo.png'); width: 98px; height: 23px}
+	background-color: #efe722;
+	color: #323232 !important}
+#landing.vault365 .download:after {background-image: url('/img/landing/vault365/logo.png')}
 #landing.vault365 a {color: #00c482;}
 #landing.vault365 a:hover {color: #ffff0c;}
+
+
+
 
 #landing.ps-sm {background-image: url('/img/landing/ps-sm/intro.jpg')}
 #landing.ps-sm .download {
@@ -130,11 +155,10 @@
 	background-image: -webkit-linear-gradient(top, #ff0000 0%, #810000 100%);
 	background-image: -o-linear-gradient(top, #ff0000 0%, #810000 100%);
 	background-image: -ms-linear-gradient(top, #ff0000 0%, #810000 100%);
-	background-color: #ff0000; line-height: 40px; height: 40px; font-size: 14px; color: #fff !important; position: relative; }
-#landing.ps-sm .download:hover {background: #810000}
-#landing.ps-sm .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/ps-sm/logo.png'); width: 124px; height: 19px}
-#landing.ps-sm a {color: #fff;}
-#landing.ps-sm a:hover {color: #ff0000;}
+	background-color: #ff0000;}
+#landing.ps-sm .download:after {background-image: url('/img/landing/ps-sm/logo.png')}
+
+
 
 #landing.ps-10k {background-image: url('/img/landing/ps-10k/intro.jpg')}
 #landing.ps-10k .download {
@@ -142,7 +166,12 @@
 	background-image: -webkit-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
 	background-image: -o-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
 	background-image: -ms-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
-	background-color: #ffe3a7; line-height: 40px; height: 40px; font-size: 14px; color: #000 !important; position: relative; }
-#landing.ps-10k .download:after {position: absolute; top: 8px; right: -160px; content: ''; background: url('/img/landing/ps-10k/logo.png'); width: 124px; height: 19px}
+	background-color: #ffe3a7;
+	color: #000 !important;}
+#landing.ps-10k .download:after {background-image: url('/img/landing/ps-10k/logo.png')}
 #landing.ps-10k a {color: #fff;}
 #landing.ps-10k a:hover {color: #ff0000;}
+
+#landing.pokerace5k {background-image: url('/img/landing/pokerace5k/intro.jpg'); background-color: #b4b4b4; color: #000;}
+#landing.pokerace5k .download {background: #b70000}
+#landing.pokerace5k .download:after {background-image: url('/img/landing/pokerace5k/logo.png')}
