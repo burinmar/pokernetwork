@@ -8,6 +8,11 @@ database=pokernetwork
 charset=utf8
 page503=503.htm
 
+[memcache]
+server=
+port=11211
+failover=
+prefix=
 
 [database-vb]
 dbclass=mysql
