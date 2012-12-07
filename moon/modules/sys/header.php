@@ -34,6 +34,27 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// FullTilt TakeOver 2012
+$imgURL = '/img/wallpaper/ftops-xxi.jpg';
+$trID = 'EN';
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.fulltiltpoker.com/?key=MDAwMTkwN0QwMDAzQzM1MjAwMDAwMDAwMDAwMDAwMDA-',
+'imgPath'=> $imgURL,
+'bgColor'=> '#000',
+'geoTarget'=> '-us, es, fr, it',
+'startDate'=> '2012-12-09 00:00:01',
+'endDate'=> '2012-12-16 23:59:59',
+'showIn'=> 'home',
+)
+)) {
+	$psb =$tpl->parse('fulltilt', array('siteID'=>$trID));
+	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.fulltiltpoker.com/?key=MDAwMTkwN0QwMDAzQzM1MjAwMDAwMDAwMDAwMDAwMDA-" target="_blank"><img src="/img/wallpaper/en_pushdown_1000x150.gif" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
+	$res = $tb . $res;
+	return $res;
+}
+
+
+
 // PS PCA FlashBack
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/6-000-pokerstars-pca-flashback/',
@@ -41,6 +62,7 @@ if ($this->wallpaper($res, array(
 'bgColor'=> '#000',
 'endDate'=> '2012-12-25 23:59:59',
 'showIn'=> 'home, /pokerstars/'
+
 )
 )) return $res;
 
