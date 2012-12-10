@@ -88,8 +88,13 @@ var livePokerAdm = function() {
 			rqWrHide : stdHide,
 			rqWmShow : stdShow, // event: misc
 			rqWmHide : stdHide,
-			rqWeShow : function() { // event: prizepool and payouts (helper)
-				var subSectControls = ['#rq-we-sect-prizepool-c', '#rq-we-sect-winners-c', '#rq-we-sect-list-c'];
+			rqWlShow : function (id) {
+				hugeEditables.loadPlayersPage();
+				stdShow(id);
+			}, // list-profiles (players info)
+			rqWlHide : stdHide,
+			rqWeShow : function() { // event: winners, prizepool'n'payouts (helper)
+				var subSectControls = ['#rq-we-sect-prizepool-c', '#rq-we-sect-winners-c'];
 				for (var q in subSectControls) {
 					$(subSectControls[q] + '2').hide();
 					$(subSectControls[q].replace(/-c$/, '')).hide();
@@ -124,13 +129,10 @@ var livePokerAdm = function() {
 					}
 				});
 			},
-			rqWeppShow : function() {
+			rqWeppShow : function() { // event: prizepool'n'payouts
 				eventSubShow('prizepool', 'pp');
 			},
-			rqWepShow : function() {
-				eventSubShow('list', 'p');
-			},
-			rqWewShow : function() {
+			rqWewShow : function() { // event: winners
 				eventSubShow('winners', 'w');
 			},
 			rqWeppHide : function() {
@@ -138,9 +140,6 @@ var livePokerAdm = function() {
 			},
 			rqWewHide : function() {
 				eventSubHide('w');
-			},
-			rqWepHide : function() {
-				eventSubHide('p');
 			}
 		};}();
 
@@ -153,7 +152,7 @@ var livePokerAdm = function() {
 				return m.substr(1,1).toUpperCase();
 			};
 			var controlFunc;
-			var sectControls = ['#rq-wr', '#rq-wp', '#rq-wt', '#rq-wc', '#rq-wx', '#rq-wm', '#rq-wepp', '#rq-wew', '#rq-wep'];
+			var sectControls = ['#rq-wr', '#rq-wp', '#rq-wt', '#rq-wc', '#rq-wx', '#rq-wm', '#rq-wl', '#rq-wepp', '#rq-wew'];
 			for (var q in sectControls) { // hide all
 				if (sectControls[q] != controlId) {
 					controlFunc = sectControls[q].replace(/\-[a-z]/, getIdIdx).substr(1);
@@ -180,12 +179,8 @@ var livePokerAdm = function() {
 					var id = this.id;
 					rqSectChange(e, id);
 				});
-				$('#rq-wep-start').click(function() {
-					hugeEditables.loadPlayersPage();
-				});
-				if (typeof write_event_sect_list_launch != 'undefined') {
-					rqSubsectShow('rq-we', 'rq-we-sect-list-c', 'p');
-					hugeEditables.loadPlayersPage();
+				if (typeof write_list_profiles_launch != 'undefined') {
+					hugeEditables.loadPlayersPage(); // exception: others display initial content statically when loaded, but not this one
 				} else if (typeof write_event_sect_winners_launch != 'undefined') {
 					rqSubsectShow('rq-we', 'rq-we-sect-winners-c', 'w');
 				} else if (typeof write_event_sect_prizepool_launch != 'undefined') {
@@ -201,88 +196,90 @@ var livePokerAdm = function() {
 	
 	var hugeEditables = function() {
 		// tpl parser
-		var rqWeListList = false;
-		function rqWeSectListStep(i) {
-			var sponsor = rqWeListList[i][5] && write_event_list_sponsors[rqWeListList[i][5]] ?
-				write_event_list_sponsors[rqWeListList[i][5]].name : '';
-			var status  = rqWeListList[i][6] ?
-				rqWeListList[i][6] : '';
-			$('#rq-we-list-data').append(rqWeListTpl
-				.replace(/-id-/g, rqWeListList[i][1])
-				.replace('-card-', rqWeListList[i][2])
-				.replace('-name-', rqWeListList[i][3])
+		var rqWlListList = false;
+		function rqWlSectListStep(i) {
+			var hidden  = rqWlListList[i][3] ?
+				'red' : '';
+			var sponsor = rqWlListList[i][4] && write_list_profiles_sponsors[rqWlListList[i][4]] ?
+				write_list_profiles_sponsors[rqWlListList[i][4]].name : '';
+			var status  = rqWlListList[i][5] ?
+				rqWlListList[i][5] : '';
+			$('#rq-wl-data').append(rqWlListTpl
+				.replace(/-id-/g, rqWlListList[i][1])
+				.replace('-name-', rqWlListList[i][2])
 				.replace('-sponsor-', sponsor)
 				.replace('-status-',  status)
+				.replace('-hidden-',  hidden)
 			);
 		}
 		// load players
-		function rqWeSectList(page) {
+		function rqWlSectList(page) {
 			if (typeof page == 'undefined') {
 				page = 0;
 			}
-			if (!!rqWeListList === false) { // lol
-				$('#rq-we-list-load').show();
+			if (!rqWlListList) {
+				$('#rq-wl-load').show();
 				$.ajax({
 					type: "POST",
 					data: {page: page},
-					url: write_event_load_list_url,
+					url: write_list_profiles_load_url,
 					dataType: 'json',
 					timeout: 30000,
 					success: function(resp) {
 						if (resp.status === 0) {
-							$('#rq-we-list-load').hide();
-							rqWeListList = resp.data;
-							rqWeSectList(resp.page);
+							$('#rq-wl-load').hide();
+							rqWlListList = resp.data;
+							rqWlSectList(resp.page);
 						}
 					},
 					error: function() {
-						$('#rq-we-list-load').hide();
+						$('#rq-wl-load').hide();
 					}
 				});
 			} else {
-				if (typeof rqWeListTpl == 'undefined') {
-					rqWeListTpl = $('#rq-we-list-data').html();
+				if (typeof rqWlListTpl == 'undefined') {
+					rqWlListTpl = $('#rq-wl-data').html();
 				}
-				if ($('#rq-we-list-pager').length) {
-					$('#rq-we-list-pager')[0].selectedIndex = page;
+				if ($('#rq-wl-pager').length) {
+					$('#rq-wl-pager')[0].selectedIndex = page;
 				}
-				var min = Math.min(write_event_list_page_by * page, rqWeListList.length);
-				var max = Math.min(write_event_list_page_by * page + write_event_list_page_by, rqWeListList.length);
-				$('#rq-we-list-data').html('').show();
+				var min = Math.min(write_list_profiles_page_by * page, rqWlListList.length);
+				var max = Math.min(write_list_profiles_page_by * page + write_list_profiles_page_by, rqWlListList.length);
+				$('#rq-wl-data').html('').show();
 				for (i = min; i < max; i ++) {
-					rqWeSectListStep(i);
+					rqWlSectListStep(i);
 				}
 			}
 		}
 		// players filter
-		function rqWeSectListFilter() {
-			$('#rq-we-list-filter').keypress(function(e){
+		function rqWlSectListFilter() {
+			$('#rq-wl-filter').keypress(function(e){
 				if(e.keyCode == 13) {
 					e.preventDefault();
 				}
 			});
-			$('#rq-we-list-filter').keyup(function(e) {
+			$('#rq-wl-filter').keyup(function(e) {
 				if (typeof rqWeListFilterTimer != 'undefined') {
 					clearTimeout(rqWeListFilterTimer);
 				}
-				if (rqWeListList === false) {
+				if (rqWlListList === false) {
 					return;
 				}
 				rqWeListFilterTimer = setTimeout(function() {
 					var i;
-					var search = $('#rq-we-list-filter').val().toLowerCase();
+					var search = $('#rq-wl-filter').val().toLowerCase();
 					var limit = 200;
 					if (search === '') {
-						rqWeSectList($('#rq-we-list-pager').val());
+						rqWlSectList($('#rq-wl-pager').val());
 						return ;
 					}
-					$('#rq-we-list-data').html('').show();
-					for (i = 0; i < rqWeListList.length; i++) {
+					$('#rq-wl-data').html('').show();
+					for (i = 0; i < rqWlListList.length; i++) {
 						if (limit === 0) {
 							break;
 						}
-						if (rqWeListList[i][3].toLowerCase().indexOf(search) != -1 || rqWeListList[i][2].toLowerCase().indexOf(search) != -1) {
-							rqWeSectListStep(i);
+						if (rqWlListList[i][2].toLowerCase().indexOf(search) != -1) {
+							rqWlSectListStep(i);
 							limit--;
 						}
 					}
@@ -292,10 +289,10 @@ var livePokerAdm = function() {
 		return {
 			/* Event players list dynamic load */
 			loadPlayersPage : function(page) {
-				rqWeSectList(page);
+				rqWlSectList(page);
 			},
 			setupPlayersFilter : function() {
-				rqWeSectListFilter();
+				rqWlSectListFilter();
 			}
 		};
 	}();
@@ -309,9 +306,9 @@ var livePokerAdm = function() {
 				}
 			});
 			if (noneChecked) {
-				$('.js-row-mark-sc', parent).hide();
+				$('.js-row-mark-sc', parent).hide().prop('disabled', true);
 			} else {
-				$('.js-row-mark-sc', parent).show();
+				$('.js-row-mark-sc', parent).show().prop('disabled', false);
 			}
 		}
 		$('input.js-row-mark').click(function(){
@@ -359,63 +356,66 @@ var livePokerAdm = function() {
 				}
 			}
 		});
-		function rqWcSectBatchAfterPreview(r) {
-			$('#rq-wc-sect-batch-previewarea').html(r).show();
-			$('#rq-wc-sect-batch-submitarea input').removeAttr('disabled');
-			$('#rq-wc-sect-batch-submitarea-notice').hide();
-		}
-		$('#rq-wc #rq-wc-sect-batch-preview').click(function(event){
-			event.preventDefault();
-			$('#rq-wc form').ajaxSubmit({
-				iframe: true,
-				type: 'post',
-				success: function(r) {
-					rqWcSectBatchAfterPreview(r);
-				}
-			});
-		});
-		$('#rq-wc #rq-wc-sect-batch-import').click(function(event){
-			event.preventDefault();
-			$('#rq-wc-sect-batch-import-hid').val('1');
-			$('#action_import_new_chips_loading').show();
-			$('#rq-wc form').ajaxSubmit({
-				iframe: false,
-				type: 'post',
-				dataType: 'json',
-				success: function(r) {
-					$('#rq-wc-sect-batch-import-hid').val('0');
-					$('#action_import_new_chips_loading').hide();
-					$('#rq-wc textarea[name=import_textarea]').val(r.data);
-					$('#rq-wc select[name=column_order]').val('1.2');
-					rqWcSectBatchAfterPreview(r.preview);
-				}, error: function() {
-					$('#rq-wc-sect-batch-import-hid').val('0');
-					$('#action_import_new_chips_loading').hide();
-				}
-			});
-		});
-		$('#rq-wc form').submit(function(e){
-			if ($.trim($('input[name=title]', this).val()) === '') {
-				alert('Title is empty');
-				return e.preventDefault();
+		(function(){
+			function rqWcSectBatchAfterPreview(r) {
+				$('#rq-wc-sect-batch-previewarea').html(r).show();
+				$('#rq-wc-sect-batch-submitarea input').removeAttr('disabled');
+				$('#rq-wc-sect-batch-submitarea-notice').hide();
 			}
-		});
-		$('#rq-we #rq-we-list-preview, #rq-we #rq-we-list-import').click(function(event){
+			$('#rq-wc #rq-wc-sect-batch-preview').click(function(event){
+				event.preventDefault();
+				$('#rq-wc form').ajaxSubmit({
+					iframe: true,
+					type: 'post',
+					skipServerAbortCheck: true,
+					success: function(r) {
+						rqWcSectBatchAfterPreview(r);
+					}
+				});
+			});
+			$('#rq-wc #rq-wc-sect-batch-import').click(function(event){
+				event.preventDefault();
+				$('#rq-wc-sect-batch-import-hid').val('1');
+				$('#action_import_new_chips_loading').show();
+				$('#rq-wc form').ajaxSubmit({
+					type: 'post',
+					dataType: 'json',
+					success: function(r) {
+						$('#rq-wc-sect-batch-import-hid').val('0');
+						$('#action_import_new_chips_loading').hide();
+						$('#rq-wc textarea[name=import_textarea]').val(r.data);
+						$('#rq-wc select[name=column_order]').val('1.2');
+						rqWcSectBatchAfterPreview(r.preview);
+					}, error: function() {
+						$('#rq-wc-sect-batch-import-hid').val('0');
+						$('#action_import_new_chips_loading').hide();
+					}
+				});
+			});
+			$('#rq-wc form').submit(function(e){
+				if ($.trim($('input[name=title]', this).val()) === '') {
+					alert('Title is empty');
+					return e.preventDefault();
+				}
+			});
+		})();
+
+		$('#rq-wl #rq-wl-preview, #rq-wl #rq-wl-import').click(function(event){
 			event.preventDefault();
 			var addData = {};
 			addData[$(this).attr('name')] = '';
 			$('.action_new_plist_loading', $(this).parent()).show();
-			$('#rq-we form').ajaxSubmit({
+			$('#rq-wl form').ajaxSubmit({
 				type: 'post',
 				dataType : 'json',
 				data: addData,
 				success: function(r) {
-					$('#rq-we-list-previewarea').html(r.preview).show();
+					$('#rq-wl-previewarea').html(r.preview).show();
 					if (typeof r.data != 'undefined') {
 						$('#new_players_list_ta').val(r.data);
 					}
-					$('#rq-we-list-save').removeAttr('disabled');
-					$('#rq-we-list-save-p').show();
+					$('#rq-wl-save').removeAttr('disabled');
+					$('#rq-wl-save-p').show();
 					$('.action_new_plist_loading').hide();
 				}, error : function() {
 					$('.action_new_plist_loading').hide();
@@ -470,33 +470,34 @@ var livePokerAdm = function() {
 			$('#' + nid).toggle();
 			e.preventDefault();
 		});
-		function rqWrBlindLimitToggle(){
-			if ($('#rq-wr-limit-not-blind').length === 0) {
-				return;
+		(function(){
+			function rqWrBlindLimitToggle(){
+				if ($('#rq-wr-limit-not-blind').length === 0) {
+					return;
+				}
+				if ($('#rq-wr-limit-not-blind')[0].checked) {
+					$('#rq-wr-small-blind-p, #rq-wr-big-blind-p').hide();
+					$('#rq-wr-small-limit-p, #rq-wr-big-limit-p').show();
+				} else {
+					$('#rq-wr-small-blind-p, #rq-wr-big-blind-p').show();
+					$('#rq-wr-small-limit-p, #rq-wr-big-limit-p').hide();
+				}
 			}
-			if ($('#rq-wr-limit-not-blind')[0].checked) {
-				$('#rq-wr-small-blind-p, #rq-wr-big-blind-p').hide();
-				$('#rq-wr-small-limit-p, #rq-wr-big-limit-p').show();
-			} else {
-				$('#rq-wr-small-blind-p, #rq-wr-big-blind-p').show();
-				$('#rq-wr-small-limit-p, #rq-wr-big-limit-p').hide();
+			$('#rq-wr-limit-not-blind').click(rqWrBlindLimitToggle);
+			rqWrBlindLimitToggle();
+			function rqWrBreakToggle(){
+				if ($('#rq-wr-has-break').length === 0) {
+					return;
+				}
+				if ($('#rq-wr-has-break')[0].checked) {
+					$('#rq-wr-break-data').show();
+				} else {
+					$('#rq-wr-break-data').hide();
+				}
 			}
-		}
-		$('#rq-wr-limit-not-blind').click(rqWrBlindLimitToggle);
-		rqWrBlindLimitToggle();
-		function rqWrBreakToggle(){
-			if ($('#rq-wr-has-break').length === 0) {
-				return;
-			}
-			if ($('#rq-wr-has-break')[0].checked) {
-				$('#rq-wr-break-data').show();
-			} else {
-				$('#rq-wr-break-data').hide();
-			}
-		}
-		$('#rq-wr-has-break').click(rqWrBreakToggle);
-		rqWrBreakToggle();
-
+			$('#rq-wr-has-break').click(rqWrBreakToggle);
+			rqWrBreakToggle();
+		})();
 		if ($('#rq-wt-body').length) {
 			document.getElementById('tweet-limit').innerHTML = $('#rq-wt-body').val().length;
 		}
@@ -543,7 +544,7 @@ var livePokerAdm = function() {
 				});
 			}})($scope, this)();
 		});
-		$('#rq-wp .js-tag-suggestions a, #rq-wc .js-tag-suggestions a').live('click', function(){
+		$('#rq-wp .js-tag-suggestions, #rq-wc .js-tag-suggestions').live('click', function(){
 			var $scope = $(this).parents('#rq-wp, #rq-wc');
 			var $tgt = $('.js-tag-suggestable', $scope);
 			var currentTags = [], currentTagsLC = [];
@@ -561,16 +562,19 @@ var livePokerAdm = function() {
 	}
 	
 	function setupChipsTabControl() {
-		$('input.newctchips').keypress(function(e){
-			if(e.keyCode == 13 && !$('#newctchips')[0].disabled) {
-				$('#newctchips').click();
-			}
-		});
-		$('#newctplayer').keypress(function(e){
-			if(e.keyCode == 13 && !$('#newctplayerb')[0].disabled) {
-				$('#newctplayerb').click();
-			}
-		});
+		function chipsRowsControlsInit() {
+			$('input.newctchips').keypress(function(e){
+				if(e.keyCode == 13 && !$('#newctchips')[0].disabled) {
+					$('#newctchips').click();
+				}
+			});
+			$('#newctplayer, #newctplayerchips').keypress(function(e){
+				if(e.keyCode == 13 && !$('#newctplayerb')[0].disabled) {
+					$('#newctplayerb').click();
+				}
+			});
+		}
+		chipsRowsControlsInit();
 		$('#newctchips, #newctplayerb, #delctplayerb').click(function(){
 			var data = {};
 			switch (this.id) {
@@ -594,11 +598,12 @@ var livePokerAdm = function() {
 					
 				case 'newctplayerb':
 					var name=$.trim($('#newctplayer').val());
-					if (name === '') {
+					var chips=$.trim($('#newctplayerchips').val());
+					if (name === '' || chips === '') {
 						return;
 					}
 					data = {
-						'data' : name,
+						'data' : name + ';' + chips,
 						'sub' : 'newplayer',
 						'sort_key' : $('#cts_sort').val()
 					};
@@ -642,6 +647,7 @@ var livePokerAdm = function() {
 					$('#newctchips, #newctplayerb, #delctplayerb').removeAttr('disabled');
 					$('#newctplayer').val('');
 					$('#delctchipsmark').attr('checked', false);
+					chipsRowsControlsInit();
 				}
 			});
 		});
@@ -660,7 +666,7 @@ var livePokerAdm = function() {
 			}
 		});
 		$('#rSbPSave').click(function(){
-			$('#rSbPleft, #rSbPTotal').attr('disabled', 'disabled');
+			$('#rSbPleft, #rSbPTotal').attr('disabled', 'disabled').css('background-color', 'silver');
 			$.ajax({
 				type: "POST",
 				url: write_sbplayers_url,
@@ -672,7 +678,7 @@ var livePokerAdm = function() {
 				dataType: 'json',
 				timeout: 30000,
 				success: function(resp) {
-					$('#rSbPleft, #rSbPTotal').removeAttr('disabled');
+					$('#rSbPleft, #rSbPTotal').removeAttr('disabled').css('background-color', 'transparent');
 				}
 			});
 		});
@@ -741,7 +747,7 @@ var livePokerAdm = function() {
 			$(context + ' input[name=ipnimageid]').val(id);
 			$(context + ' input[name=ipnimagemisc]').val(misc);
 			$(context + ' input[name=ipnimagesrc]').val(src);
-			$(context + ' textarea[name=ipnimagetitle]').val(description);
+			$(context + ' input[name=ipnimagetitle]').val(description);
 			$(context + '-ipndelete').show();
 			$(context + '-ipndelete2').show();
 			$(context + '-ipnpreview').show();
@@ -749,6 +755,7 @@ var livePokerAdm = function() {
 		}
 		function rwIpnAutosavePhotosInst() {
 			$('#rq-wx form').ajaxSubmit({
+				type: 'post',
 				dataType : 'json',
 				data : {
 					ajax : 1,
@@ -780,7 +787,7 @@ var livePokerAdm = function() {
 			$('#rq-wp input[name=ipnimageid]').val('');
 			$('#rq-wp input[name=ipnimagemisc]').val('');
 			$('#rq-wp input[name=ipnimagesrc]').val('');
-			$('#rq-wp textarea[name=ipnimagetitle]').val('');
+			$('#rq-wp input[name=ipnimagetitle]').val('');
 			$('#rq-wp-ipndelete').hide();
 			$('#rq-wp-ipnpreview').hide();
 		});
@@ -789,7 +796,7 @@ var livePokerAdm = function() {
 			$('#rq-wc input[name=ipnimageid]').val('');
 			$('#rq-wc input[name=ipnimagemisc]').val('');
 			$('#rq-wc input[name=ipnimagesrc]').val('');
-			$('#rq-wc textarea[name=ipnimagetitle]').val('');
+			$('#rq-wc input[name=ipnimagetitle]').val('');
 			$('#rq-wc-ipndelete').hide();
 			$('#rq-wc-ipnpreview').hide();
 		});
@@ -846,7 +853,7 @@ var livePokerAdm = function() {
 			setuptAltEditHandles();
 			setupTogglableLists();
 
-			$('#rq-we-list-pager').change(function() {
+			$('#rq-wl-pager').change(function() {
 				hugeEditables.loadPlayersPage(this.value);
 			});
 			hugeEditables.setupPlayersFilter();

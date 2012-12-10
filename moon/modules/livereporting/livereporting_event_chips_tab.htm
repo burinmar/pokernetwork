@@ -23,14 +23,19 @@
 </table>
 <%if {adm} %>
 <label style="margin-left: 9px"><input type="checkbox" id="delctchipsmark" /> Mark all</label><span class="clr"></span>
-<div class="list-footer fr"><input type="button" id="delctplayerb" class="button fr btDel" value="Delete selected" /></div>
+<div class="list-footer fr">
+	<input type="button" id="delctplayerb" class="button fr btDel" value="Delete selected" /><br />
+	<p class="explain fr">removes player(s) from chips tab in *all* days</p>
+</div>
 <div class="formButton"><input type="submit" id="newctchips" value="Update" /></div>
-<small class="fr" style="color: 333">(will delete player and corresponding chips)</small>
 <span class="clr"></span>
 <div class="aform clrfix" style="margin-top: 30px">
 	<dl>
 		<dt><label>Add new player</label></dt>
-		<dd><input type="text" value="" id="newctplayer" /></dd>
+		<dd>
+			<input type="text" value="" id="newctplayer" />
+			<input type="text" value="" class="newctplayer-chips" id="newctplayerchips" />
+		</dd>
 	</dl>
 	<div class="formButton"><input type="submit" id="newctplayerb" value="Add" /></div>
 </div>
@@ -77,7 +82,7 @@
 &nbsp; <input type="checkbox" class="delctchips" name="delctplayer[{playerid}]" />
 
 <% logTab:chips.chips.item.new_ctrl %>
-<td class="numeric"><input type="text" size="10" style="width: 50px; height: 16px; line-height: 16px" class="newctchips" name="newctchips[{playerid}]" value="" /></td>
+<td class="numeric"><input type="text" size="10" style="" class="newctchips" name="newctchips[{playerid}]" value="" /></td>
 
 <% logTab:chips.chips.item.dt_ctrl %>
 <td <%if {created_on_old} %> class="old"<%end%>>{created_on}</td>

@@ -71,7 +71,6 @@
 			Event:
 			<span id="rq-we-sect-prizepool-c2">Prizepool and payouts</span>
 			<span id="rq-we-sect-winners-c2">Winners order finetune</span>
-			<span id="rq-we-sect-list-c2">Players info</span>
 			<span class="edge"></span></li>
 		</ul>
 		<script type="text/javascript">
@@ -83,7 +82,7 @@
 			<div id="rq-we-places">
 				{ce.sc.places}
 			</div>
-			<div class="list-footer"><input type="submit" name="action_delete_prizepool" id="action_delete_prizepool" value="Delete marked" style="display:none" class="button btDel fr js-row-mark-sc" /></div>
+			<div class="list-footer"><input type="submit" name="action_delete_prizepool" id="action_delete_prizepool" disabled="disabled" value="Delete marked" style="display:none" class="button btDel fr js-row-mark-sc" /></div>
 			<div class="formButton"><input type="submit" name="action_save_prizepool" id="action_save_prizepool" value="Save" style="margin-top: 0" /></div>
 			<span class="clr"></span>
 		</div>
@@ -96,112 +95,13 @@
 			<br />
 			<div class="formButton clrfix"><input type="submit" name="action_save_winners" id="action_save_winners" value="Save"/></div>
 		</div>
-
-		<div id="rq-we-sect-list" <%if {ce.sect_list_active}%>style="display:block;"<%end%>>
-			<div id="rq-we-list-load" style="display:none;"><img src="/img/load-wgite.gif" alt="" /></div>
-			<script type="text/javascript">
-			var write_event_list_page_by = {ce.list.page_by};
-			var write_event_load_list_url = '{ce.url.ajax_list_load}';
-			var write_event_list_sponsors = {ce.sponsors};
-			<%if {ce.sect_list_active}%> var write_event_sect_list_launch = true;<%end%>
-			<%if {ce.sect_winners_active}%>	var write_event_sect_winners_launch = true;<%end%>
-			<%if {ce.sect_prizepool_active}%> var write_event_sect_prizepool_launch = true; <%end%>
-			</script>
-			<div id="rq-we-list">
-				<div class="filterForm" style="margin-top: 10px">
-				<table>
-					<tr>
-						<td><%if {ce.sect_list_paging} %><label>Filter by name index: <select id="rq-we-list-pager" style="width: 170px">{ce.sect_list_paging}</select></label><% end %></td>
-						<td><label>Filter by name: <input type="text" id="rq-we-list-filter" value="" style="width: 170px" /></label></td>
-					</tr>
-				</table>
-				</div>
-				<table class="longtable list">
-					<thead>
-						<tr>
-							<th></th>
-							<th><span>Player Name</span></th>
-							<th><span>Sponsor</span></th>
-							<th></th>
-						</tr>
-					</thead>
-					<tbody id="rq-we-list-data" style="display:none;">
-					<tr id="rq-we-list-row--id-">
-						<td><a href="{ce.sect_list.evurl}">-card-</a></td>
-						<td><a href="{ce.sect_list.evurl}">-name-</a></td>
-						<td>-sponsor-</td>
-						<td>-status-</td>
-					</tr>
-					</tbody>
-				</table>
-
-				<h3>Import Records From Excel File</h3>
-				<p class="explain">Import records from Excel file &ndash; Select &amp; Paste new players data into the text area:</p>
-				<dl>
-					<dd class="w100" style="padding: 10px">
-						<select><option>player [, id, sponsor, initial_chips]</option></select><br /><br />
-						<textarea name="new_players_list" id="new_players_list_ta" rows="5" cols="40"></textarea>
-					</dd>
-				</dl>
-				<div class="formButton clrfix">
-					<input type="button" value="Preview data" id="rq-we-list-preview" name="action_preview_new_plist" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" />
-				</div>
-				
-				<p id="rq-we-list-previewarea"></p>
-				<div class="formButton clrfix" id="rq-we-list-save-p" style="display:none"><input type="submit" name="action_save_new_plist" disabled="disabled" value="Save" id="rq-we-list-save" /></div>
-				<!--# <% if {ce.special_import} %>
-					<br /><h3>Import Records From WSOP.com</h3>
-					<p class="explain">Wsop.com provides pokernews.com with a special feed of event players. You can import it here.</p>
-					<div class="formButton clrfix"  id="rq-we-list-import-p"><input type="button" name="action_import_new_plist" value="Import WSOP players preview" id="rq-we-list-import" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" />
-					</div>
-				<% end %> -->
-			</div>
-		</div>
 	</div>
 </form>
+<script type="text/javascript">
+	<%if {ce.sect_winners_active}%>	var write_event_sect_winners_launch = true;<%end%>
+	<%if {ce.sect_prizepool_active}%> var write_event_sect_prizepool_launch = true; <%end%>
+</script>
 </div>
-
-
-<% controls:event.statuses_delete_me %>
-1=Pro
-2=Online Qualifier
-3=Sponsored Player
-11=* Team PokerStars Pro
-22=* Team PokerStars PRO: Argentina
-23=* Team PokerStars PRO: Australia
-44=* Team PokerStars PRO: Austria
-47=* Team PokerStars PRO: Belarus
-40=* Team PokerStars PRO: Belgium
-24=* Team PokerStars PRO: Brazil
-25=* Team PokerStars PRO: Canada
-26=* Team PokerStars PRO: Costa Rica
-48=* Team PokerStars PRO: Denmark
-42=* Team PokerStars PRO: Finland
-27=* Team PokerStars PRO: France
-28=* Team PokerStars PRO: Germany
-29=* Team PokerStars PRO: Italy
-30=* Team PokerStars PRO: Mexico
-31=* Team PokerStars PRO: Netherlands
-32=* Team PokerStars PRO: Nordics
-46=* Team PokerStars PRO: Norway
-33=* Team PokerStars PRO: South Africa
-34=* Team PokerStars PRO: Spain
-41=* Team PokerStars PRO: Sweden
-45=* Team PokerStars PRO: Switzerland
-35=* Team PokerStars PRO: USA
-36=* Team PokerStars PRO: Poland
-37=* Team PokerStars PRO: Russia
-38=* Team PokerStars PRO: Portugal
-39=* Team PokerStars PRO: UK/Ireland
-43=* Team PokerStars PRO: Ukraine
-12=* Friend of PokerStars
-13=* PokerStars Player
-14=* Team PokerStars Sports Star
-15=* Team PokerStars Online
-
-
-<% controls:event.sect_list_paging.item %>
-<option value="{page}">{name}</option>
 
 
 <% controls:event.place_list %>
@@ -253,38 +153,18 @@ var rq_we_pl_newplace={rq_we_pl_newplace};
 
 
 <% controls:event.winner_list %>
-<p class="explain" style="margin: 10px 0; line-height: 16px">Take note that any player in this list may be auto-reordered anytime he is mentioned in &quot;full players listing&quot; batch chipcount import. <br />You should also normally not enter players in the list by hand, but manage existing ones when necessary (this is possible though, whenever the player was mentioned at least in one chipcount update).</p>
+<%if {rows}%>
 <table class="colsym2">
 <tr>
 	<td style="width:30px;padding:2px 10px 0 0;"><%loop {rows += controls:event.winner_list.row} %>{nr}<br/><%end%></td>
 	<td><textarea name="winner_list" style="height:{height}px;" cols="20" rows="2">{winners}</textarea></td>
 </tr>
 </table>
+<%else {rows}%>
+<p>Payouts are not assigned yet</p>
+<%end%>
 
 
-<% controls:plist.save_preview %>
-<div class="scrollDiv" style="margin-top: 30px">
-	<table class="list">
-		<thead>
-		<tr>
-			<th style="width:100px"><span>Id</span></th>
-			<th><span>Name</span></th>
-			<th><span>Sponsor</span></th>
-		</tr>
-		</thead>
-		<tbody>
-			<%loop {cc.plist += controls:plist.save_preview.item} %>
-			<tr class="<%if {is_new_player} %>green<%end%> <%if {is_del_player} %>red<%end%>">
-				<td>{id}</td>
-				<td>{name}</td>
-				<td>{sponsor}</td>
-			</tr>
-		</tbody>
-		<%end%>
-	</table>
-</div>
-<div class="fr legend"><span class="green">New player</span><span class="red">Busted player</span></div>
-<span class="clr"></span>
 
 
 

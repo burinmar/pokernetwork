@@ -7,6 +7,7 @@
 <div class="aform clrfix">
 	<h3>{cu.name}</h3>
 	<%if {cu.is_pnews} %><p>Is PokerNews player</p><%end%>
+	<%if {cu.is_hidden} %><p class="article-hidden">Is hidden / removed</p><%end%>
 	<%if {cu.sponsor} %>
 	<p>
 		<% if {cu.sponsorurl} %>
@@ -33,7 +34,7 @@
 
 <% cu.chips_list.item %>
 <tr <%if {busted} %> class="busted"<%end%>>
-	<td <%if {is_full} %> style="font-weight:bold;"<%end%>>{chips}</td>
+	<td>{chips}</td>
 	<td><%if {chips_change_direction} %><img src="/img/live_poker/chip_{chips_change_direction}.gif" alt="" /> <%end%>{chips_change}</td>
 	<td><%if {import_url} %><a href="{import_url}">{created_on}</a><%else {import_url} %>{created_on} &nbsp;&nbsp;<a href="{delete_url}">delete</a><%end%></td>
 </tr>
@@ -80,11 +81,107 @@
 				<dt><label>City (WSOP)</label></dt>
 				<dd><input type="text" name="city" value="{cu.bluff.city}" /></dd>
 			<%end%>
+
+			<dt></dt>
+			<dd><label><input type="checkbox" class="checkbox" name="is_hidden" value="1" <%if {cu.is_hidden}%> checked="checked"<%end%> /> Is hidden / removed</label></dd>
 		</dl>
 		<div class="formButton clrfix">
-			<a href="{cu.playerdelete}" class="rq-confirm-delete button fr btDel" style="color: #000; margin-top: 10px">Delete player</a>
 			<input type="submit" value="Save" />
 		</div>
 	</div>
 </form>
 </div>
+
+<% control:list-profiles %>
+<div id="rq-wl" style="<%if {cl.unhide} %><%else {cl.unhide} %>display:none;<%end%>">
+<form method="post" class="control js-row-mark-container" action="{!action}">
+	<input type="hidden" name="event" value="{cl.save_event}" />
+	<input type="hidden" name="event_id" value="{cl.event_id}" />
+	<input type="hidden" name="day_id" value="{cl.day_id}" />
+	<div class="aform clrfix">
+		<div id="rq-wl-load" style="display:none;"><img src="/img/load-wgite.gif" alt="" /></div>
+		<script>
+			<%if {cl.unhide} %>var write_list_profiles_launch = true;<%end%>
+			var write_list_profiles_page_by = {cl.page_by};
+			var write_list_profiles_load_url = '{cl.url.ajax_load}';
+			var write_list_profiles_sponsors = {cl.sponsors};
+		</script>
+		<div id="rq-wl">
+			<div class="filterForm" style="margin-top: 10px">
+			<table>
+				<tr>
+					<td><%if {cl.paging} %><label>Filter by name index: <select id="rq-wl-pager" style="width: 170px">{cl.paging}</select></label><% end %></td>
+					<td><label>Filter by name: <input type="text" id="rq-wl-filter" value="" style="width: 170px" /></label></td>
+				</tr>
+			</table>
+			</div>
+			<table class="longtable list">
+				<thead>
+					<tr>
+						<th><span>Player Name</span></th>
+						<th><span>Sponsor</span></th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody id="rq-wl-data" style="display:none;">
+				<tr class="-hidden-">
+					<td><a href="{cl.profile_url}">-name-</a></td>
+					<td>-sponsor-</td>
+					<td>-status-</td>
+				</tr>
+				</tbody>
+			</table>
+
+			<h3>Import Records From Excel File</h3>
+			<p class="explain">
+				Import records from Excel file &ndash; Select &amp; Paste new players data into the text area.
+				<ul class="explain">
+					<li>Sponsor name is optional, initial chips is not.</li>
+					<li>If a previosly hidden player is imported, the corresponding profile will be unhidden/undeleted.</li>
+					<li>If player name starts with # symbol, the corresponding profile will be hidden/deleted.</li>
+				</ul>
+			</p>
+			<dl>
+				<dd class="w100" style="padding: 10px">
+					<select><option>player, initial-chips [, sponsor]</option></select><br /><br />
+					<textarea name="new_players_list" id="new_players_list_ta" rows="5" cols="40"></textarea>
+				</dd>
+			</dl>
+			<div class="formButton clrfix">
+				<input type="button" value="Preview data" id="rq-wl-preview" name="action_preview_new_plist" /> <img src="/img/loading_small.gif" style="vertical-align:middle;display:none" class="action_new_plist_loading" alt="" />
+			</div>
+			
+			<p id="rq-wl-previewarea"></p>
+			<div class="formButton clrfix" id="rq-wl-save-p" style="display:none"><input type="submit" name="action_save_new_plist" disabled="disabled" value="Save" id="rq-wl-save" /></div>
+		</div>
+	</div>
+</form>
+</div>
+
+
+<% controls:list-profiles.save-preview %>
+<div class="scrollDiv" style="margin-top: 30px">
+	<table class="list">
+		<thead>
+		<tr>
+			<th><span>Name</span></th>
+			<th><span>Chips</span></th>
+			<th><span>Sponsor</span></th>
+		</tr>
+		</thead>
+		<tbody>
+			<%loop {cc.plist += controls:list-profiles.save-preview.item} %>
+			<tr class="<%if {is_new_player} %>green<%end%> <%if {is_del_player} %>red<%end%>">
+				<td>{name}</td>
+				<td>{chips}</td>
+				<td>{sponsor}</td>
+			</tr>
+		</tbody>
+		<%end%>
+	</table>
+</div>
+<div class="fr legend"><span class="green">New player</span><span class="red">Busted player</span></div>
+<span class="clr"></span>
+
+<% controls:event.list-profiles.paging.item %>
+<option value="{page}">{name}</option>

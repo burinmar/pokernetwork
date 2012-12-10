@@ -27,14 +27,14 @@ class livereporting_event_chips extends livereporting_event_pylon
 						moon_close();
 						exit;
 
-					case 'newplayer':
+					case 'newplayer': // redirects to event_profile with loopback
 						if (FALSE !== ($result = $this->renderSaveNewPlayer($data))) {
 							echo json_encode($result);
 						}
 						moon_close();
 						exit;
 
-					case 'delplayer':
+					case 'delplayer': // redirects to event_profile
 						if (FALSE !== ($result = $this->renderSaveDelPlayer($data))) {
 							echo json_encode($result);
 						}
@@ -47,11 +47,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 				$data = $this->helperEventGetData(array(
 					'day_id', 'import_id', 'column_order', 'is_full_listing', 'published', 'import_textarea', 'title', 'intro', 'tags', 'is_exportable', 'is_keyhand', 'datetime_options'
 				));
-				$this->helperEventGetLeadingImage($data);
-				$this->helperEventGetChipsData($data);
-				$this->chipsSort($data['chips']);
 				
 				// import wsop feed chips (does not need all $data)
+				// will wind up into renderSavePreview
 				if (isset($_POST['import']) && $_POST['import'] == '1') {
 					header('content-type: text/plain; charset=utf-8');
 					echo json_encode(
@@ -60,6 +58,13 @@ class livereporting_event_chips extends livereporting_event_pylon
 					moon_close();
 					exit;
 				}
+
+				$data['chips'] = $this->helperParseChipsImportData($data);
+				unset($data['column_order']);
+				unset($data['import_textarea']);
+
+				$this->chipsSort($data['chips']);
+
 				// preview
 				if (!isset($_POST['save'])) {
 					header('content-type: text/html; charset=utf-8');
@@ -68,6 +73,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 					exit;
 				}
 				
+				$this->helperEventGetLeadingImage($data);
 				$chipsId = $this->save($data);
 				$this->redirectAfterSave($chipsId, 'chips');
 				exit;
@@ -83,12 +89,64 @@ class livereporting_event_chips extends livereporting_event_pylon
 				moon::page()->page404();
 		}
 	}
+
+	protected function preRender(&$data, $args)
+	{
+		switch ($args['variation']) {
+		case 'logEntry':
+			return $this->collectPlayerIds($data);
+		}
+	}
+
+	private $playerIdsOnPage = array();
+	private function collectPlayerIds(&$data)
+	{
+		$data['contents'] = unserialize($data['contents']);
+		foreach($data['contents']['chips'] as $chip) {
+			if (!isset($chip['uname'])) // if new format
+				$this->playerIdsOnPage[] = intval($chip['id']);
+		}
+	}
+
+	private $playersOnPage;
+	private function populatePrefetchedPlayers()
+	{
+		if (null !== $this->playersOnPage)
+			return;
+		$this->playersOnPage = array();
+		if (!count($this->playerIdsOnPage))
+			return;
+		$this->playersOnPage = $this->db->array_query_assoc('
+			SELECT id, name, status, sponsor_id, is_pnews, country_id
+			FROM ' . $this->table('Players') . '
+			WHERE id IN (' . implode(',', $this->playerIdsOnPage) . ')
+		', 'id');
+
+		$sponsorIds = array();
+		foreach ($this->playersOnPage as $player) {
+			if (!empty($player['sponsor_id']))
+				$sponsorIds[] = $player['sponsor_id'];
+		}
+		$sponsors = $this->lrep()->instEventModel('_src_event')->getSponsorsById($sponsorIds);
+		foreach ($this->playersOnPage as $k => $player) {
+			if (isset($sponsors[$player['sponsor_id']])) {
+				$sponsor = $sponsors[$player['sponsor_id']];
+				$add = array();
+				$add['sponsor.name'] = $sponsor['name'];
+				$add['sponsor.img'] = $sponsor['favicon'];
+				$add['sponsor.url'] = !$sponsor['is_hidden'] && !empty($sponsor['alias'])
+					? '/' . $sponsor['alias'] . '/'
+					: null;
+
+				$this->playersOnPage[$k] += $add;
+			}
+		}
+	}
 	
 	protected function render($data, $argv = NULL)
 	{
 		switch ($argv['variation']) {
 		case 'logControl':
-			
 			return $this->renderControl(array_merge($data, array(
 				'unhide' => (!empty($_GET['master']) && $_GET['master'] == 'chips'),
 				'is_keyhand' => 0,
@@ -127,31 +185,58 @@ class livereporting_event_chips extends livereporting_event_pylon
 
 		//if (!$data['contents']['is_full_import'])
 		$this->chipsSort($data['contents']['chips']);
+		$this->populatePrefetchedPlayers();
 		
 		$rArgv['entries'] = '';
 		foreach ($data['contents']['chips'] as $k => $chip) {
 			$chipsArgv = $this->helperRenderChipArgv($chip, $k, !empty($data['contents']['is_full_import']));
-			$chipsArgv = array_merge($chipsArgv, array(
-				'player' => htmlspecialchars($chip['uname']),
-				'player_url' => $playerUrl && $chip['id']
-					? str_replace('{}', $chip['id'], $playerUrl)
-					: '',
-				'player_sponsorimg' => isset($chip['sponsor']['ico'])
-					? (isset($chip['sponsor']['id']) && $chip['sponsor']['id'] > 0
-						? img('rw', $chip['sponsor']['id'], $chip['sponsor']['ico'])
-						: $chip['sponsor']['ico'])
-					: NULL,
-				'player_sponsor' => $lrepTools->helperPlayerStatus(
-					isset($chip['status'])  ? $chip['status'] : '',
-					isset($chip['sponsor'])	? $chip['sponsor']['name'] : ''),
-				'player_is_pnews' => !empty($chip['ispn']),
-				'country' => !empty($chip['country_id'])
-					? htmlspecialchars($chip['country_id'])
-					: '',
-				'country_id' => !empty($chip['country_id'])
-					? htmlspecialchars(strtolower($chip['country_id']))
-					: ''
-			));
+			if (isset($this->playersOnPage[$chip['id']])) {
+				$player = $this->playersOnPage[$chip['id']];
+				$chipsArgv = array_merge($chipsArgv, array(
+					'player' => htmlspecialchars($player['name']),
+					'player_url' => $playerUrl
+						? str_replace('{}', $chip['id'], $playerUrl)
+						: '',
+					'player_is_pnews' => $player['is_pnews'],
+				));
+				if (!empty($player['country_id']))
+				$chipsArgv = array_merge($chipsArgv, array(
+					'country' => htmlspecialchars($player['country_id']),
+					'country_id' => htmlspecialchars(strtolower($player['country_id']))
+				));
+				if (!empty($player['sponsor.name']))
+				$chipsArgv = array_merge($chipsArgv, array(
+					'player_sponsorimg' => $player['sponsor_id'] > 0
+							? img('rw', $player['sponsor_id'], $player['sponsor.img'])
+							: $player['sponsor.img'],
+					'player_sponsor' => $lrepTools->helperPlayerStatus(
+						$player['status'],
+						$player['sponsor.name']),
+
+				));
+			} elseif (isset($chip['uname'])) {
+				$chipsArgv = array_merge($chipsArgv, array(
+					'player' => htmlspecialchars($chip['uname']),
+					'player_url' => $playerUrl && $chip['id']
+						? str_replace('{}', $chip['id'], $playerUrl)
+						: '',
+					'player_sponsorimg' => isset($chip['sponsor']['ico'])
+						? (isset($chip['sponsor']['id']) && $chip['sponsor']['id'] > 0
+							? img('rw', $chip['sponsor']['id'], $chip['sponsor']['ico'])
+							: $chip['sponsor']['ico'])
+						: NULL,
+					'player_sponsor' => $lrepTools->helperPlayerStatus(
+						isset($chip['status'])  ? $chip['status'] : '',
+						isset($chip['sponsor'])	? $chip['sponsor']['name'] : ''),
+					'player_is_pnews' => !empty($chip['ispn']),
+					'country' => !empty($chip['country_id'])
+						? htmlspecialchars($chip['country_id'])
+						: '',
+					'country_id' => !empty($chip['country_id'])
+						? htmlspecialchars(strtolower($chip['country_id']))
+						: ''
+				));
+			}
 			$rArgv['entries'] .= $tpl->parse('logEntry:chips.chips.item', $chipsArgv);
 		}
 		
@@ -181,15 +266,14 @@ class livereporting_event_chips extends livereporting_event_pylon
 				$rArgv['title'] = '(adm: damaged entry)';
 			}
 		};
-		$chipsTxt = array();
-		foreach ($entry['chips'] as $nr => $chip) {
-			$chipsTxt[] = isset($chip['uname'])
-				? htmlspecialchars($chip['uname']) . "\t" . $chip['chips']
-				: '???(unknown ' . (-$nr + 1) . ')' . "\t" . $chip['chips'];
-		}
 
 		if ($rArgv['show_controls']) {
-			$lastFullChips = $this->getLastFullChipsId($data['event_id']);
+			$chipsTxt = array();
+			foreach ($entry['chips'] as $nr => $chip) {
+				$chipsTxt[] = isset($chip['uname'])
+					? htmlspecialchars($chip['uname']) . "\t" . $chip['chips']
+					: '???(unknown ' . (-$nr + 1) . ')' . "\t" . $chip['chips'];
+			}			
 			$eventInfo = $lrep->instEventModel('_src_event')->getEventData($data['event_id']);
 			$rArgv['control'] = $this->renderControl(array(
 				'unhide' => ($argv['action'] == 'edit'),
@@ -209,9 +293,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'tzName' => $data['tzName'],
 				'tzOffset' => $data['tzOffset'],
 				'show_wsop_eod' => $eventInfo['show_wsop_eod'],
-				'synced' => $eventInfo['synced'],
+				'synced' => $entry['synced'],
 				'chips_txt' => implode("\n", $chipsTxt),
-				'fullist_change_disabled' => intval($lastFullChips) == intval($entry['id']),
 				'i_src' => $entry['image_src'],
 				'i_alt' => $entry['image_alt'],
 				'i_misc'=> $entry['image_misc']
@@ -296,12 +379,13 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$text   = moon::shared('text');
 		$eventInfo = $lrep->instEventModel('_src_event')->getEventData($this->requestArgv('event_id'));
 		$isAdm = $page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent');
-		$isActiveDay = false;
-
-		if ($isAdm && !$eventInfo['synced']) {
-			$days = $lrep->instEventModel('_src_event')->getDaysData($data['event_id']);
-			$isActiveDay = isset($days[$data['day_id']]) && $days[$data['day_id']]['state'] == 1;
-		}
+		$showSingleChipsControls = 
+			$isAdm 
+			&& ($days = $lrep->instEventModel('_src_event')->getDaysData($data['event_id']))
+			&& $lrep->instTools()->isAllowed('viewSingleChipsControl', array(
+			'event_synced' => $eventInfo['synced'],
+			'day_state' => $days[$data['day_id']]['state']
+		));
 
 		$entry['chips'] = $lrep->instEventModel('_src_event')->getLastTodayChips($data['event_id'], $data['day_id']);
 		$rArgv = array();
@@ -364,7 +448,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$k = 0;
 		foreach ($entry['chips'] as $chip) {
 			$chipsArgv = array(
-				'adm' => $isAdm && $isActiveDay,
+				'adm' => $isAdm && $showSingleChipsControls,
 				'evenodd' => $k % 2
 					? 'even'
 					: 'odd',
@@ -382,7 +466,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			);
 
 			if (isset($chip['uname'])) {
-				if ($isAdm && $isActiveDay) {
+				if ($isAdm && $showSingleChipsControls) {
 					$newCtrl = $tpl->parse('logTab:chips.chips.item.new_ctrl', array('playerid' => $chip['id']));
 					$delCtrl = $tpl->parse('logTab:chips.chips.item.del_ctrl', array('playerid' => $chip['id']));
 					$dtCtrl = '';
@@ -404,6 +488,10 @@ class livereporting_event_chips extends livereporting_event_pylon
 						$dtCtrl = $tpl->parse('logTab:chips.chips.item.dt_ctrl', array(
 							'created_on' => $createdOn,
 							'created_on_old' => $createdOnOld,
+						));
+					} else {
+						$dtCtrl = $tpl->parse('logTab:chips.chips.item.dt_ctrl', array(
+							'created_on' => ''
 						));
 					}
 				} else {
@@ -449,7 +537,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 		$rArgv['entries'] = $chips;
 		
-		$rArgv['adm'] = $isAdm && $isActiveDay;
+		$rArgv['adm'] = $isAdm && $showSingleChipsControls;
 		if ($rArgv['adm']) {
 			$rArgv['write_ctchips_url'] = htmlspecialchars_decode($lrep->makeUri('event#save', array(
 				'event_id' => $data['event_id'],
@@ -482,11 +570,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 		return strcasecmp($a[$key], $b[$key]);
 	}
 
-	private function chipsNameSort(&$chips)
-	{
-		usort($chips, array($this, 'chipsNameCmp'));
-	}
-
 	private function helperLogTabSort(&$chips, $sortKey)
 	{
 		$nameDesc = NULL;
@@ -499,11 +582,11 @@ class livereporting_event_chips extends livereporting_event_pylon
 				break;
 			case 3:
 				$nameDesc = TRUE;
-				$this->chipsNameSort($chips);
+				usort($chips, array($this, 'chipsNameCmp'));
 				break;
 			case 4:
 				$nameDesc = FALSE;
-				$this->chipsNameSort($chips);
+				usort($chips, array($this, 'chipsNameCmp'));
 				$chips = array_reverse($chips);
 				break;
 			case 1:
@@ -544,7 +627,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.import_id'  => isset($argv['import_id'])
 				? intval($argv['import_id'])
 				: '',
-			'cc.show_full_controls' => !$argv['synced'],
+			'cc.show_full_controls' => empty($argv['synced']),
 			'cc.skip_must_preview' => isset($argv['import_id']),// && empty($argv['fulllist']),
 			'cc.chips'	=> !empty($argv['chips_txt'])
 				? $argv['chips_txt']
@@ -565,7 +648,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'cc.datetime_options' => '',
 			'cc.custom_datetime' => $lrep->instTools()->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (isset($argv['created_on']) ? intval($argv['created_on']) : time()) + $argv['tzOffset'], $argv['tzOffset']),
 			'cc.custom_tz' => $argv['tzName'],
-			'cc.fullist_change_disabled' => !empty($argv['fullist_change_disabled'])
 		);
 
 		if ($argv['show_wsop_eod']) {
@@ -624,228 +706,18 @@ class livereporting_event_chips extends livereporting_event_pylon
 		return $tpl->parse('controls:chips', $controlsArgv);
 	}
 
-	private function renderChipSavePreviewWXML($data)
-	{
-		if (NULL == ($prereq = $this->helperSaveCheckPrerequisitesLocationByDay($data['day_id']))) {
-			moon::page()->page404();
-		}
-		list ($location) = $prereq;
-
-		$eventId = $this->object('livereporting_bluff')->bluffEventId($location['event_id']);
-
-		$ch = curl_init('http://www.wsop.com/data/xml/wsop2010/EOD.aspx?EventID=' . $eventId . '&day=' . $location['day_name']);
-		curl_setopt($ch, CURLOPT_HEADER, 0);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-		curl_setopt($ch, CURLOPT_TIMEOUT, 60*20);
-		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-		$gotData = curl_exec($ch);
-		if (curl_errno($ch)) {
-			curl_close($ch);
-			moon::page()->page404();
-		}
-		curl_close($ch);
-
-		$xml = new SimpleXMLElement($gotData);
-
-		if (!isset($xml->chip_count)) {
-			moon::page()->page404();
-		}
-		
-		// silently update players_bluff as well
-		foreach ($xml->chip_count as $row) {
-			$this->db->query('
-				DELETE FROM ' . $this->table('PlayersBluff') . '
-				WHERE event_id=' . intval($location['event_id']) . '
-				  AND name="' . addslashes(trim((string)$row->player)) . '"
-			');
-			$this->db->query('
-				DELETE FROM ' . $this->table('PlayersBluff') . '
-				WHERE event_id=' . intval($location['event_id']) . '
-				  AND bluff_id="' . intval($row->player['id']) . '"
-			');
-			$this->db->insert(array(
-					'event_id' => $location['event_id'],
-					'bluff_id' => (int)$row->player['id'],
-					'name' => trim((string)$row->player),
-					'city' => trim((string)$row->city),
-					'country' => trim((string)$row->country),
-					'state' => trim((string)$row->state)
-				), $this->table('PlayersBluff'));
-		}
-		// and update reporting player profiles too
-		$this->db->query('
-			UPDATE ' . $this->table('Players') . ' p
-			INNER JOIN (
-				SELECT name, event_id, country FROM ' . $this->table('PlayersBluff') . '
-				WHERE event_id=' . $location['event_id'] . '
-			) pb
-				ON p.event_id=pb.event_id AND p.name=pb.name
-			SET p.country_id=pb.country
-		');
-
-		$data['chips'] = array();
-		$chipss = array();
-		foreach ($xml->chip_count as $row) {
-			$data['chips'][] = array(
-				1 => trim((string)$row->player),
-				2 => (int)$row->amount
-			);
-			$chipss[] = trim((string)$row->player) . "\t" . (int)$row->amount;
-		}
-
-		return array(
-			'preview' => $this->renderSavePreview($data),
-			'data' => implode("\n", $chipss)
-		);
-	}
-
-	/**
-	 * @todo probably should drop place/position code
-	 */
-	private function renderSavePreview($data)
-	{
-		if (NULL == ($prereq = $this->helperSaveCheckPrerequisitesLocationByDay($data['day_id']))) {
-			return;
-		}
-		list (
-			$location
-		) = $prereq;
-
-		$lrep = $this->lrep();
-		$tpl = $this->load_template();
-		$previewArgv = array(
-			'cc.chips' => ''
-		);
-
-		if ($data['datetime'] === NULL) {
-			$entry = $this->db->single_query_assoc('
-				SELECT created_on FROM  ' . $this->table('Log') . '
-				WHERE id=' . filter_var($data['import_id'], FILTER_VALIDATE_INT) . ' AND type="chips"
-			');
-			if (empty($entry)) {
-				echo 'error';
-				return;
-			}
-			$data['datetime'] = $entry['created_on'];
-		}
-
-		$players = $this->getPlayersData($location['event_id'], $location['day_id'], $data['datetime'], TRUE);
-		$playerNames = array();
-		foreach ($players as $k => $player) {
-			$playerNames[$k] = strtolower($player['name']);
-		}
-
-		// always sync this section with save(preprocess) !
-		$place = 1;
-		$mentionedPlayers = array();
-		$newPlayerNames = array();
-		$oldPlayerNames = array();
-		$lastFullChips = $this->getLastFullChipsId($location['event_id']);
-		foreach ($data['chips'] as $row) {
-			if (in_array(strtolower($row[1]), $playerNames)) {
-				if (in_array(strtolower($row[1]), $oldPlayerNames)) {
-					continue;
-				}
-				$oldPlayerNames[] = strtolower($row[1]);
-				$player = $players[array_search(strtolower($row[1]), $playerNames)];
-				$mentionedPlayers[] = $player['id'];
-				if ($player['chips'] == NULL) {
-					$player['chips_change'] = NULL;
-				} else {
-					$player['chips_change'] = $row[2] - $player['chips'];
-				}
-				$player['chips']  = isset($row[2])
-						? intval($row[2])
-						: NULL;
-			} else {
-				if (in_array(strtolower($row[1]), $newPlayerNames)) {
-					continue;
-				}
-				$newPlayerNames[] = strtolower($row[1]);
-				$player = array(
-					'id' => NULL,
-					'card' => NULL,
-					'name' => $row[1],
-					'chips' => isset($row[2])
-						? intval($row[2])
-						: NULL,
-					'chips_change' => NULL,
-					'sponsor_id' => NULL
-				);
-			}
-			if ($data['is_full_listing'] && intval($player['chips']) == 0 && 
-				($data['import_id'] == '' || intval($lastFullChips) == intval($data['import_id']))) { // checkme
-				$player['place'] = $place;
-				$player['chips'] = '';
-			} else {
-				$player['place'] = NULL;
-			}
-			if (substr($player['name'], 0, 3) != '???') {
-				$previewArgv['cc.chips'] .= $tpl->parse('controls:chips.save_preview.item', array(
-					'is_new_player' => !$player['id'],
-					'is_busted' => intval($player['chips']) == 0,
-					'id' => htmlspecialchars($player['card']),
-					'name' => htmlspecialchars($player['name']),
-					'chips' => $player['chips'],
-					'place' => isset($player['place'])
-						? $player['place']
-						: NULL,
-					'amount' => isset($player['amount'])
-						? $player['amount']
-						: NULL,
-					'chips_change' => $player['chips_change'],
-					'url' => $player['id']
-						? $lrep->makeUri('event#edit', array(
-							'event_id' => $location['event_id'],
-							'type' => 'profile',
-							'id' => $player['id']
-						)) : ''
-				));
-			}
-			$place++;
-		}
-		if (!empty($data['is_full_listing'])) {
-			$this->helperSaveGetBustablePlayers($players, $mentionedPlayers, $location);
-			foreach ($players as $player) {
-				if ($player['chips'] === '0') {
-					continue;
-				}
-				$previewArgv['cc.chips'] .= $tpl->parse('controls:chips.save_preview.item', array(
-					'is_busted' => 1,
-					'id' => htmlspecialchars($player['card']),
-					'name' => htmlspecialchars($player['name']),
-					'chips' => 0,
-					'place' => NULL,
-					'amount' => NULL,
-					'chips_change' => $player['chips'] != NULL
-						? -1 * intval($player['chips'])
-						: NULL ,
-					'url' => $lrep->makeUri('event#edit', array(
-							'event_id' => $location['event_id'],
-							'type' => 'profile',
-							'id' => $player['id']
-						))
-				));
-			}
-		}
-
-		return $tpl->parse('controls:chips.save_preview', $previewArgv);
-	}
-	
 	/**
 	 * Chips data. 
 	 * Returns array with players ids as keys, or non-positive numbers for ones which were definitely deleted. 
 	 * Player data _may_ be missing either way.
-	 * @todo return more meaningful filed names
+	 * @todo return more meaningful field names
 	 */
 	private function getEditableData($id, $eventId, $full)
 	{
 		$entry = $this->db->single_query_assoc('
 			SELECT l.tournament_id, l.event_id, l.day_id, l.created_on, l.updated_on, l.is_hidden, ' . (
 				$full
-					? 'd.*'
+					? 'd.*, l.sync_id IS NOT NULL synced'
 					: 'd.chips'
 			) . '
 			FROM ' . $this->table('Log') . ' l
@@ -928,108 +800,125 @@ class livereporting_event_chips extends livereporting_event_pylon
 		return $entry;
 	}
 
-	private function getPlayersData($eventId, $dayId, $datetime, $includeIntermediate = FALSE)
+	// Slmost plain redirect, with loopback to saveSingleChipSrcEvent.
+	// saveSingleChipSrcEvent could be called without loopback, but `Players info` control
+	// needs chips insertion anyway.
+	private function renderSaveNewPlayer($data)
 	{
-		// $includeIntermediate = no chips change / chips change since last major update
-		$sql = '
-			SELECT p.id, p.card, p.sponsor_id, p.status, p.is_pnews, p.name, p.place, p.country_id, ce.chips
-			FROM ' . $this->table('Players') . ' p
-			LEFT JOIN ' . $this->table('Chips') . ' ce
-				ON ce.id=(
-					SELECT id FROM ' . $this->table('Chips') . '
-					WHERE player_id=p.id
-					AND event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
-					AND created_on<' . filter_var($datetime, FILTER_VALIDATE_INT) . '
-					AND is_hidden=0
-					ORDER BY ' . ($includeIntermediate == TRUE ? '' : 'is_full_import DESC,') . 'created_on DESC
-					LIMIT 1
-				)
-			WHERE p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
-		// do not delete {
-		//$sql = '
-		//SELECT p.id, p.card, p.sponsor_id, p.name, ce.chips, ce.chips-ceo.chips diff
-		//FROM ' . $this->table('Players') . ' p
-		//LEFT JOIN ' . $this->table('Chips') . ' ce
-		//	ON ce.id=(
-		//		SELECT id FROM ' . $this->table('Chips') . '
-		//		WHERE player_id=p.id
-		//		AND day_id=' . filter_var($dayId, FILTER_VALIDATE_INT) . '
-		//		AND created_on<' . filter_var($datetime, FILTER_VALIDATE_INT) . '
-		//		ORDER BY created_on DESC
-		//		LIMIT 1
-		//	)
-		//LEFT JOIN ' . $this->table('Chips') . ' ceo
-		//	ON ceo.id=(
-		//		SELECT id FROM ' . $this->table('Chips') . '
-		//		WHERE player_id=p.id
-		//		AND day_id=' . filter_var($dayId, FILTER_VALIDATE_INT) . '
-		//		AND created_on<ce.created_on
-		//		ORDER BY is_full_import DESC, created_on DESC
-		//		LIMIT 1
-		//	)
-		//LEFT JOIN ' . $this->table('tChips') . ' co
-		//	ON co.id=ceo.import_id
-		//WHERE p.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
-		// }
-		return $this->db->array_query_assoc($sql, 'id');
-	}
-
-	private function getLastFullChipsId($eventId, $forceFresh = FALSE, $dayId = NULL, $includeHidden = TRUE)
-	{
-		static $lastFullChips = array();
-		if (!isset($lastFullChips[$eventId . '-' . $dayId])  || $forceFresh) {
-			$where = array();
-			if (!empty($dayId)) {
-				$where[] = 'l.day_id=' . filter_var($dayId, FILTER_VALIDATE_INT);
-			} else {
-				$where[] = 'l.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT);
-			}
-			$where[] = 'l.type="chips"';
-			if (!$includeHidden) {
-				$where[] = 'l.is_hidden=0';
-			}
-			$where[] = 'c.is_full_import=1';
-			$chips = $this->db->single_query_assoc('
-				SELECT l.id FROM ' . $this->table('Log') . ' l
-				INNER JOIN ' . $this->table('tChips') . ' c
-					ON l.id=c.id
-				WHERE ' . implode(' AND ', $where) . '
-				ORDER BY l.created_on DESC
-				LIMIT 1
-			');
-			if (empty($chips)) {
-				$lastFullChips[$eventId . '-' . $dayId] = NULL;
-			} else {
-				$lastFullChips[$eventId . '-' . $dayId] = $chips['id'];
-			}
-		}
-		return $lastFullChips[$eventId . '-' . $dayId];
-	}
-	
-	private function delete($importId)
-	{
-		if (NULL == ($prereq = $this->helperDeleteCheckPrerequisites($importId, 'chips'))) {
+		$evProObj = $this->object('livereporting_event')->instEventProfile();
+		if (FALSE === $evProObj->savePlayersSrcChips(array(
+			'day_id'   => $data['day_id'],
+			'event_id' => $data['event_id'],
+			'del_players_list' => array(),
+			'new_players_list' => array(explode(';', $data['data']))
+		))) {
 			return FALSE;
 		}
-		list (
-			$location
-		) = $prereq;
+		return $this->partialRenderChips($data);
+	}
 
-		$deletedRows = $this->helperDeleteDbDelete($importId, 'chips', 'tChips');
-		$this->db->query('
-			DELETE FROM ' . $this->table('Chips') . '
-			WHERE import_id=' . filter_var($importId, FILTER_VALIDATE_INT) . '
-		');
+	/**
+	 * Saves initial chip
+	 * renderSaveNewPlayer / renderSaveDelPlayer -> _profile.savePlayersSrcChips -> _profile.savePlayers -> this
+	 */
+	private $saveSingleChipsSrcEventTimes = array();
+	public function saveSingleChipSrcEvent($data)
+	{
+		if (!isset($this->saveSingleChipsSrcEventTimes[$data['day_id']]))
+			$this->saveSingleChipsSrcEventTimes[$data['day_id']] = $this->lrep()->instEventModel('_src_event_chips')->getDayChipsTimeCap($data['event_id'], $data['day_id']);
+		$this->db->insert(array(
+			'import_id' => NULL,
+			'day_id' => $data['day_id'],
+			'player_id' => $data['player_id'],
+			'is_hidden' => 0,
+			'chips' => $data['chips'],
+			'chips_change' => NULL,
+			'created_on' => $this->saveSingleChipsSrcEventTimes[$data['day_id']]
+		), $this->table('Chips'));
+	}
 
-		if ($deletedRows[0]) {
-			$this->lrep()->altLog($location['tournament_id'], $location['event_id'], $location['day_id'], 'delete', 'log', $importId);
+	// plain redirect
+	private function renderSaveDelPlayer($data)
+	{
+		$evProObj = $this->object('livereporting_event')->instEventProfile();
+		$delPlayers = array();
+		foreach ($data['data'] as $playerId => $null) {
+			$delPlayers[] = array('id:' . $playerId);
 		}
-		if ($deletedRows[1]) {
-			$this->lrep()->altLog($location['tournament_id'], $location['event_id'], $location['day_id'], 'delete', 'sub_chips', $importId);
+		if (FALSE === $evProObj->savePlayersSrcChips(array(
+			'day_id' => $data['day_id'],
+			'event_id' => $data['event_id'],
+			'del_players_list' => $delPlayers,
+			'new_players_list' => array()
+		))) {
+			return FALSE;
+		}
+		return $this->partialRenderChips($data);
+	}
+
+	private function renderSaveSingle($data)
+	{
+		$lrep = $this->lrep();
+		if (!$lrep->instTools()->isAllowed('writeContent')) {
+			return FALSE;
 		}
 
-		$this->helperDeleteNotifyEvent($location);
-		$this->helperUpdateNotifyCTags($importId, 'chips');
+		$days = $lrep->instEventModel('_src_event')->getDaysData($data['event_id']);
+
+		// day does not exist
+		if (!isset($days[$data['day_id']]))
+			return FALSE;
+		$day = $days[$data['day_id']];
+
+		// only allow running days
+		if ($day['state'] != 1)
+			return FALSE;
+
+		$singleChipTime = $lrep->instEventModel('_src_event_chips')->getDayChipsTimeCap($data['event_id'], $data['day_id']);
+		$playerIds = array();
+		foreach ($data['data'] as $playerId => $chips) {
+			$playerIds[] = $playerId;
+		}
+		$players = $lrep->instEventModel('_src_event_chips')->getPreviousChipsByPlayerId($data['event_id'], $playerIds, $singleChipTime);
+		foreach ($data['data'] as $playerId => $chips) {
+			$chips = str_replace(array(',', '.'), '', $chips);
+			$chips = filter_var($chips, FILTER_VALIDATE_INT);
+			if ($chips === false)
+				continue;
+			if (!isset($players[$playerId]))
+				continue;
+			$player = $players[$playerId];
+			$this->db->insert(array(
+				'import_id' => NULL,
+				'day_id' => $data['day_id'],
+				'player_id' => $playerId,
+				'is_hidden' => 0,
+				'chips' => $chips,
+				'chips_change' => $player['chips'] == NULL
+					? NULL
+					: $chips - $player['chips'],
+				'created_on' => $singleChipTime
+			), $this->table('Chips'));
+		}
+
+		return array(
+			'status' => 0
+		) + $this->partialRenderChips($data);
+	}
+
+	private function partialRenderChips($data)
+	{
+		$eventInfo = $this->lrep()->instEventModel('_src_event')->getEventData($data['event_id']);
+		return array(
+			'data' => $this->renderLogTab(array(
+				'event_id' => $data['event_id'],
+				'day_id' => $data['day_id'],
+				'tzOffset' => $eventInfo['tzOffset'],
+			), array(
+				'only_entries' => true,
+				'sort_key' => $data['sort_key']
+			))
+		);
 	}
 
 	public function deleteSingleSrcProfile($chipId)
@@ -1055,191 +944,243 @@ class livereporting_event_chips extends livereporting_event_pylon
 		return $chip['player_id'];
 	}
 
-	private function partialRenderChips($data)
+	private function renderChipSavePreviewWXML($data)
 	{
-		$eventInfo = $this->lrep()->instEventModel('_src_event')->getEventData($data['event_id']);
+		if (NULL == ($prereq = $this->helperSaveCheckPrerequisitesLocationByDay($data['day_id']))) {
+			moon::page()->page404();
+		}
+		list ($location) = $prereq;
+
+		$eventId = $this->object('livereporting_bluff')->bluffEventId($location['event_id']);
+
+		$ch = curl_init('http://www.wsop.com/data/xml/wsop2010/EOD.aspx?EventID=' . $eventId . '&day=' . $location['day_name']);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 60*20);
+		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+		$gotData = curl_exec($ch);
+		if (curl_errno($ch)) {
+			curl_close($ch);
+			moon::page()->page404();
+		}
+		curl_close($ch);
+
+		$xml = new SimpleXMLElement($gotData);
+
+		if (!isset($xml->chip_count)) {
+			moon::page()->page404();
+		}
+		
+		// silently update players_bluff as well
+		foreach ($xml->chip_count as $row) {
+			$this->db->query('
+				DELETE FROM ' . $this->table('PlayersBluff') . '
+				WHERE event_id=' . intval($location['event_id']) . '
+				  AND name="' . addslashes(trim((string)$row->player)) . '"
+			');
+			$this->db->query('
+				DELETE FROM ' . $this->table('PlayersBluff') . '
+				WHERE event_id=' . intval($location['event_id']) . '
+				  AND bluff_id="' . intval($row->player['id']) . '"
+			');
+			$this->db->insert(array(
+					'event_id' => $location['event_id'],
+					'bluff_id' => (int)$row->player['id'],
+					'name' => trim((string)$row->player),
+					'city' => trim((string)$row->city),
+					'country' => trim((string)$row->country),
+					'state' => trim((string)$row->state)
+				), $this->table('PlayersBluff'));
+		}
+		// and update reporting player profiles too
+		$this->db->query('
+			UPDATE ' . $this->table('Players') . ' p
+			INNER JOIN (
+				SELECT name, event_id, country FROM ' . $this->table('PlayersBluff') . '
+				WHERE event_id=' . $location['event_id'] . '
+			) pb
+				ON p.event_id=pb.event_id AND p.name=pb.name
+			SET p.country_id=pb.country
+		');
+
+		$data['chips'] = array();
+		$chipss = array();
+		foreach ($xml->chip_count as $row) {
+			$data['chips'][] = array(
+				1 => trim((string)$row->player),
+				2 => (int)$row->amount
+			);
+			$chipss[] = trim((string)$row->player) . "\t" . (int)$row->amount;
+		}
+
 		return array(
-			'data' => $this->renderLogTab(array(
-				'event_id' => $data['event_id'],
-				'day_id' => $data['day_id'],
-				'tzOffset' => $eventInfo['tzOffset'],
-			), array(
-				'only_entries' => true,
-				'sort_key' => $data['sort_key']
-			))
+			'preview' => $this->renderSavePreview($data),
+			'data' => implode("\n", $chipss)
 		);
 	}
 
-	// plain workaround, maybe reimplement later
-	private function renderSaveDelPlayer($data)
+	private function renderSavePreview($data)
 	{
-		$evEvObj = $this->object('livereporting_event')->instEventEvent();
-		$players = $evEvObj->getPlayersDataSrcChips($data['event_id']);
-		$delPlayers = array();
-		$delPlayerIds = array_keys($data['data']);
-		foreach ($players as $player) {
-			if (in_array($player['id'], $delPlayerIds)) {
-				$delPlayers[] = array($player['name']);
-			}
-		}
-		if (FALSE ===$evEvObj->savePlayersSrcChips(array(
-			'day_id' => $data['day_id'],
-			'event_id' => $data['event_id'],
-			'del_players_list' => $delPlayers,
-			'new_players_list' => array()
-		))) {
-			return FALSE;
-		}
-		return $this->partialRenderChips($data);
-	}
-
-	// almost plain redirect
-	private function renderSaveNewPlayer($data)
-	{
-		$evEvObj = $this->object('livereporting_event')->instEventEvent();
-		if (FALSE ===$evEvObj->savePlayersSrcChips(array(
-			'day_id'   => $data['day_id'],
-			'event_id' => $data['event_id'],
-			'del_players_list' => array(),
-			'new_players_list' => array(array($data['data']))
-		))) {
-			return FALSE;
-		}
-		return $this->partialRenderChips($data);
-	}
-
-	/**
-	 * Saves initial (hidden) chip, used to simplify queries siginificantly.
-	 * renderSaveNewPlayer / renderSaveDelPlayer -> _event.savePlayersSrcChips -> _event.savePlayers -> this
-	 */
-	public function saveSingleInitialSrcEvent($data)
-	{
-		$register = false;
-		if (!empty($data['existing_player'])) {
-			// some big time BS going on
-			$dayId = $data['day_id'];
-			$eventId = $data['event_id'];
-			$daysData = $this->lrep()->instEventModel('_src_event')->getDaysData($eventId);
-			preg_match('~^([0-9]+)([a-d]+)~i', $daysData[$dayId]['name'], $tmpDayName);
-			if (isset($tmpDayName[2]) && $tmpDayName[1] == '1') {
-				$registered = $this->db->single_query_assoc('
-					SELECT 1 FROM reporting_ng_chips
-					WHERE player_id=' . intval($data['player_id']) . '
-					  AND day_id=' . intval($dayId) . '
-					LIMIT 1
-				');
-				if (empty($registered)) {
-					$register = true;
-				}
-			}
-		} else {
-			$register = true;
-		}
-
-		if (!$register) {
-			return ;
-		}
-		$this->db->insert(array(
-			'import_id' => NULL,
-			'day_id' => $data['day_id'],
-			'player_id' => $data['player_id'],
-			'is_full_import' => 0,
-			'is_hidden' => 0,
-			'chips' => $data['chips'],
-			'chips_change' => NULL,
-			'created_on' => time()
-		), $this->table('Chips'));
-	}
-
-	private function renderSaveSingle($data)
-	{
-		$lrep = $this->lrep();
-		if (!$lrep->instTools()->isAllowed('writeContent')) {
-			return FALSE;
-		}
-
-		$days = $lrep->instEventModel('_src_event')->getDaysData($data['event_id']);
-
-		// day exists
-		if (!isset($days[$data['day_id']])) {
-			return FALSE;
-		}
-		$day = $days[$data['day_id']];
-
-		// only allow running days
-		if ($day['state'] != 1) {
-			return FALSE;
-		}
-
-		$players = $this->getPlayersData($data['event_id'], $data['day_id'], time(), TRUE);
-		foreach ($data['data'] as $playerId => $chips) {
-			if (($chips = filter_var($chips, FILTER_VALIDATE_INT)) === false) {
-				continue;
-			}
-			if (($playerId = filter_var($playerId, FILTER_VALIDATE_INT)) === false || !isset($players[$playerId])) {
-				continue;
-			}
-			$player = $players[$playerId];
-			$this->db->insert(array(
-				'import_id' => NULL,
-				'day_id' => $data['day_id'],
-				'player_id' => $playerId,
-				'is_full_import' => 0,
-				'is_hidden' => 0,
-				'chips' => $chips,
-				'chips_change' => $player['chips'] == NULL
-					? NULL
-					: $chips - $player['chips'],
-				'created_on' => time()
-			), $this->table('Chips'));
-		}
-
-		return array(
-			'status' => 0
-		) + $this->partialRenderChips($data);
-	}
-
-	private function save($data)
-	{
-		$lrep = $this->lrep();
-
+		// synced mini-section 1 (alsmost)
 		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $data['import_id'], 'chips', array('created_on')))) {
-			return FALSE;
+			moon::page()->page404();
 		}
 		list (
 			$location,
 			$entry
-		) = $prereq;		
+		) = $prereq;
 
+		$tpl = $this->load_template();
+		$previewArgv = array(
+			'cc.chips' => ''
+		);
+		$lrep = $this->lrep();
+		// synced mini-section 2
 		$entryId = NULL;
-		$userId = intval(moon::user()->id());
-		$eventData = $lrep->instEventModel('_src_event')->getEventData($location['event_id']);
 
+		// synced mini-section 3
 		if ($data['import_id'] != '') {
-			$entryId = filter_var($data['import_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-			if ($data['datetime'] === NULL) { // if not changing `created on`, use old
+			if (false === ($entryId = filter_var($data['import_id'], FILTER_VALIDATE_INT)))
+				moon::page()->page404();
+			if ($data['datetime'] === NULL) // if not changing `created on`, use old
 				$data['datetime'] = $entry['created_on'];
+		}
+		if ($data['datetime'] === NULL)
+			moon::page()->page404();
+
+		$chips = $this->helperSaveGetPlayersData(
+			!empty($data['is_full_listing']),
+			$location['event_id'],
+			$location['day_id'],
+			$data['datetime'],
+			$data['chips']
+		);
+		foreach ($chips as $playerChip) {
+			list($playerId, $playerName, $chip, $chipChange, ) = $playerChip;
+			if (substr($playerName, 0, 3) != '???') {
+				$previewArgv['cc.chips'] .= $tpl->parse('controls:chips.save_preview.item', array(
+					'is_new_player' => null == $playerId,
+					'is_busted' => intval($chip) == 0,
+					'name' => htmlspecialchars($playerName),
+					'chips' => $chip,
+					'chips_change' => $chipChange,
+					'url' => null != $playerId
+						? $lrep->makeUri('event#edit', array(
+							'event_id' => $location['event_id'],
+							'type' => 'profile',
+							'id' => $playerId
+						)) : ''
+				));
 			}
 		}
-		if ($data['datetime'] === NULL) {
+	
+		return $tpl->parse('controls:chips.save_preview', $previewArgv);
+	}
+
+	private function save($data)
+	{
+		// synced mini-section 1
+		if (NULL == ($prereq = $this->helperSaveCheckPrerequisites($data['day_id'], $data['import_id'], 'chips', array('created_on', 'sync_id IS NOT NULL as synced')))) {
 			moon::page()->page404();
+		}
+		list (
+			$location,
+			$entry
+		) = $prereq;
+
+		$userId = intval(moon::user()->id());
+		// synced mini-section 2
+		$entryId = NULL;
+
+		// synced mini-section 3
+		if ($data['import_id'] != '') {
+			if (false === ($entryId = filter_var($data['import_id'], FILTER_VALIDATE_INT)))
+				moon::page()->page404();
+			if ($data['datetime'] === NULL) // if not changing `created on`, use old
+				$data['datetime'] = $entry['created_on'];
+		}
+		if ($data['datetime'] === NULL)
+			moon::page()->page404();
+
+		// alters db: creates players
+		if (empty($entry['synced'])) {
+			$chips = $this->helperSaveGetPlayersData(
+				!empty($data['is_full_listing']),
+				$location['event_id'],
+				$location['day_id'],
+				$data['datetime'],
+				$data['chips']
+			);
+
+			$evProfileObj = $this->instEventProfile();
+
+			$chipsBackupText = '';
+			$topChips = array();
+			$mentionedPlayersCnt = 0;
+			foreach ($chips as $k => $playerChip) {
+				list($playerId, $playerName, $chip, $chipChange, $explicit, $playerCountry) = $playerChip;
+				if (null == $playerId && substr($playerName, 0, 3) != '???') {
+					$playerId = $chips[$k][0] = $evProfileObj->savePlayerSrcChips($location, $playerName);
+					if (null == $playerId)
+						// most likely we screwed up calculating, which players should be created
+						continue;
+				}
+				if (null != $playerId) {
+					if (false !== $playerCountry)
+						$this->db->update(array( // move to _profile?
+							'country_id' => $playerCountry,
+							'updated_on' => time(),
+						), $this->table('Players'), array(
+							'id' => $playerId
+						));
+					if ($explicit && !$entryId)
+						$this->db->update(array( // move to _profile?
+							'is_hidden' => 0,
+							'updated_on' => time(),
+						), $this->table('Players'), array(
+							'id' => $playerId,
+							'is_hidden' => 1,
+						));
+					$mentionedPlayersCnt++;
+				}
+				if ($explicit) {
+					$chipsBackupText .= sprintf("%d,%d,%s\n",
+						$playerId, // null => 0
+						$chip,
+						$chipChange);
+					if (intval($chip) > 0 && count($topChips) <= 25)
+						$topChips[] = array(
+							'id' => intval($playerId), // null => 0
+							'chips'  => $chip,
+							'chipsc' => $chipChange,
+						);
+				}
+			}
+
+			// if 0 explicit chips, fuck off
+			if ('' == $chipsBackupText)
+				moon::page()->page404();
+		} else {
+			// must exist already. 
+			$old = $this->db->single_query_assoc('
+				SELECT contents FROM ' . $this->table('Log') . '
+				WHERE id=' . $entryId . ' AND type="chips"'
+			);
+			if (empty($old))
+				moon::page()->page404();
+
+			$old = unserialize($old['contents']);
+			$data['is_full_listing'] = $old['is_full_import'];
+			$topChips = $old['chips'];
+			$mentionedPlayersCnt = $old['chipstotal'];
 		}
 
 		$rtf = $this->object('rtf');
 		$rtf->setInstance($this->get_var('rtf') . ':1');
-		list(,$data['body_compiled']) = $rtf->parseText($entryId, $data['intro']);
+		list(, $data['body_compiled']) = $rtf->parseText($entryId, $data['intro']);
 
-		// alters db: creates players
-		if (NULL === ($preprocessed = $this->helperSavePreprocess(
-			$eventData['synced'] == '0', $location, $entryId, $data
-		))) {
-			return;
-		}
-		list(
-			$data, $chips, $topChips, 
-			$mentionedPlayersCnt, $chipsBackupText, $newPlayerIds
-		) = $preprocessed; unset($preprocessed);
-		
 		$tags = $this->helperSaveGetTags($data['tags']);
 
 		$saveDataChips = array(
@@ -1259,7 +1200,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 				? $data['image']['title']
 				: NULL,
 		);
-		if ($eventData['synced'] == '0') {
+		if (empty($entry['synced'])) {
 			$saveDataChips += array(
 				'chips' => $chipsBackupText,
 				'is_full_import' => $data['is_full_listing']
@@ -1318,32 +1259,27 @@ class livereporting_event_chips extends livereporting_event_pylon
 			}
 		}
 
-		if ($eventData['synced'] == '0') {
+		if (empty($entry['synced'])) { // @todo do not recreate everything
 			$this->db->query('
 				DELETE FROM ' . $this->table('Chips') . '
 				WHERE import_id=' . $entryId . '
 			');
 
-			foreach ($chips as $chipNr => $chip) {
-				if (substr($chip['uname'], 0, 3) == '???') {
+			foreach ($chips as $k => $playerChip) {
+				list($playerId, , $chip, $chipChange, $explicit, ) = $playerChip;
+				if (null == $playerId)
 					continue;
-				}
-				if ($chip['player_id'] == NULL) {
-					$chips[$chipNr]['player_id'] = $chip['player_id'] = $newPlayerIds[strtolower($chip['uname'])];
-				}
 				$this->db->insert(array(
 					'import_id' => $entryId,
 					'day_id' => $location['day_id'],
-					'player_id' => $chip['player_id'],
-					'is_full_import' => $data['is_full_listing'],
+					'player_id' => $playerId,
 					'is_hidden' => $saveDataLog['is_hidden'],
-					'chips' => $chip['chips'],
-					'chips_change' => $chip['chips_change'],
+					'chips' => $chip,
+					'chips_change' => $chipChange,
 					'created_on' => $saveDataLog['created_on'],
 					//'updated_on' => $saveDataLog['updated_on']
 				), $this->table('Chips'));
 			}
-
 			//if (!empty($data['is_full_listing'])) {
 			//    could assign places and positions
 			// could assign players_left
@@ -1361,232 +1297,69 @@ class livereporting_event_chips extends livereporting_event_pylon
 		return $entryId;
 	}
 
-	/**
-	 * Alters db: creates players
-	 */
-	private function helperSavePreprocess($isNotSyncedEvent, $location, $entryId, $data)
-	{
-		$evProfileObj = $this->instEventProfile();
-		/**
-		 * if synced, only update serialized `chips` field, and populate $mentionedPlayers
-		 * otherwise, do full supplimentary work (create players)
-		 */
-		if ($isNotSyncedEvent) {
-			$players = $this->getPlayersData($location['event_id'], $location['day_id'], $data['datetime'], TRUE);
-			$playerNames = array();
-			$sponsors = array();
-			foreach ($players as $k => $player) {
-				$playerNames[$k] = strtolower($player['name']);
-				if ($player['sponsor_id']) {
-					$sponsors[] = $player['sponsor_id'];
-				}
-			}
-			$sponsors = $this->lrep()->instEventModel('_src_event')->getSponsorsById($sponsors);
+	private function helperSaveGetPlayersData(
+		$bustMissingPlayers,
+		$eventId,
+		$dayId,
+		$dateTime,
+		$chips
+	) {
+		// post synced, not event synced
+		$players = array();
+		foreach ($chips as $k => $row)
+			$players[$k] = $row[self::importChipsName];
+		$players = $this->lrep()->instEventModel('_src_event_chips')->getPreviousChipsByPlayerName($eventId, $players, $dateTime);
 
-			// always sync this section with preview() !
-			// loop-populate variables below
-			$mentionedPlayers = array(); // old players, mentioned in this import (ids)
-			$newPlayerNames = array(); // names
-			$oldPlayerNames = array(); // names
-			$chips = array();
-			foreach ($data['chips'] as $row) {
-				$chip = array(
-					'chips' => intval($row[2]),
+		$result = array(
+			// player_id (null or int), player_name, chip, chip_change, is_explicit, country (false to leave as is, null or string)
+		);
+
+		foreach ($chips as $k => $row) {
+			$country = false;
+			if (isset($row[self::importChipsCountry])) {
+				$country = $this->helperGetCountryIdByName($row[self::importChipsCountry]);
+			}
+			if (null != $players[$k])
+				$result[] = array(
+					$players[$k]['id'],
+					$players[$k]['name'],
+					$row[self::importChipsChip],
+					$row[self::importChipsChip] - $players[$k]['chips'],
+					true,
+					$country
 				);
-				// existing players
-				if (in_array(strtolower($row[1]), $playerNames)) {
-					// if dupe name -- skip
-					if (in_array(strtolower($row[1]), $oldPlayerNames)) {
-						continue;
-					}
-					$oldPlayerNames[] = strtolower($row[1]);
-					$player = $players[array_search(strtolower($row[1]), $playerNames)];
-					$mentionedPlayers[] = $player['id'];
-					$chip['player_id'] = $player['id'];
-					$chip['uname'] = $player['name'];
-					if (isset($sponsors[$player['sponsor_id']])) {
-						$chip['sponsor'] = $sponsors[$player['sponsor_id']];
-					}
-					if (!empty($player['status'])) {
-						$chip['status'] = $player['status'];
-					}
-					if (!empty($player['country_id'])) {
-						$chip['country_id'] = $player['country_id'];
-					}
-					if (!empty($player['is_pnews'])) {
-						$chip['is_pnews'] = 1;
-					}
-					if ($player['chips'] == NULL) {
-						$chip['chips_change'] = NULL;
-					} else {
-						$chip['chips_change'] = $chip['chips'] - $player['chips'];
-					}
-				} else { // new players
-					// if dupe name -- skip
-					if (in_array(strtolower($row[1]), $newPlayerNames)) {
-						continue;
-					}
-					$newPlayerNames[]= strtolower($row[1]);
-					$chip['player_id'] = NULL;
-					$chip['uname'] = isset($row[1])
-						? $row[1]
-						: '';
-					$chip['ucard'] = isset($row[0])
-						? $row[0]
-						: '';
-					$chip['chips_change'] = NULL;
-				}
-				if (isset($row[3])) {
-					$chip['country_id'] = $this->helperGetCountryIdByName($row[3]);
-				}
-				$chips[] = $chip;
-			}
-			if (!empty($data['is_full_listing'])) {
-				$this->helperSaveGetBustablePlayers($players, $mentionedPlayers, $location);
-				// for what's left (aka busted players) create chip=0 entries
-				foreach ($players as $player) {
-					if ($player['chips'] === '0') { // do not rebust
-						continue;
-					}
-					$chip = array(
-						'chips' => 0,
-						'player_id' => $player['id'],
-						'uname' => $player['name'],
-						'autobusted' => TRUE
-					);
-					if ($player['chips'] == NULL) {
-						$chip['chips_change'] = NULL;
-					} else {
-						$chip['chips_change'] = -1 * $player['chips'];
-					}
-					$chips[] = $chip;
-				}
-			}
-
-			// create players as needed, except do not recreate deleted players on update
-			// also notify profiles
-			$newPlayerIds = array();
-			$dayEnterId = $location['day_id']; // unroll
-			foreach ($chips as $chip) {
-				if ($chip['player_id'] == NULL) {
-					if (substr($chip['uname'], 0, 3) == '???') {
-						continue;
-					}
-					$this->db->insert(array(
-						'tournament_id' => $location['tournament_id'],
-						'event_id' => $location['event_id'],
-						'name' => $chip['uname'],
-						'card' => $chip['ucard'],
-						'country_id' => $chip['country_id'],
-						'created_on' => time(),
-						'day_enter_id' => $dayEnterId
-					), $this->table('Players'));
-					$iId = $this->db->insert_id();
-					$evProfileObj->notifyPlayerSaved($iId, $chip['uname']);
-					$newPlayerIds[strtolower($chip['uname'])] = $iId;
-				} else {
-					// resaves flag for existing players each time - fix
-					$this->db->update(array(
-						'country_id' => isset($chip['country_id'])
-							? $chip['country_id']
-							: null,
-					), $this->table('Players'), array(
-						'id' => $chip['player_id']
-					));
-				}
-			}
-
-			$topChips = array();
-			foreach (array_slice($chips, 0, 25) as $chip) {
-				if (isset($chip['autobusted'])) {
-					continue;
-				}
-				if ($chip['player_id'] == NULL) {
-					$topChip = array(
-						'id' => substr($chip['uname'], 0, 3) != '???'
-							? $newPlayerIds[strtolower($chip['uname'])]
-							: '0',
-					);
-				} else {
-					$topChip = array(
-						'id' => $chip['player_id'],
-					);
-				}
-				$topChip += array(
-					'chips'  => $chip['chips'],
-					'chipsc' => $chip['chips_change'],
-					'uname'  => substr($chip['uname'], 0, 3) != '???'
-						? $chip['uname']
-						: ''
+			else
+				$result[] = array(
+					null,
+					$row[self::importChipsName],
+					$row[self::importChipsChip],
+					null,
+					true,
+					$country
 				);
-				if (isset($chip['sponsor'])) {
-					$topChip['sponsor'] = array(
-						'id'  => $chip['sponsor']['id'],
-						'uri'  => $chip['sponsor']['alias'],
-						'name' => $chip['sponsor']['name'],
-						'ico'  => $chip['sponsor']['favicon'],
-					);
-				}
-				if (isset($chip['status'])) {
-					$topChip['status'] = $chip['status'];
-				}
-				if (isset($chip['country_id'])) {
-					$topChip['country_id'] = $chip['country_id'];
-				}
-				if (isset($chip['is_pnews'])) {
-					$topChip['ispn'] = intval($chip['is_pnews']);
-				}
-				$topChips[] = $topChip;
-			}
-
-			$chipsBackupText = '';
-			foreach ($chips as $chip) {
-				if (isset($chip['autobusted'])) {
-					continue;
-				}
-				if ($chip['player_id'] == NULL) {
-					if (substr($chip['uname'], 0, 3) != '???') {
-						$chipsBackupText .= $newPlayerIds[strtolower($chip['uname'])];
-					} else {
-						$chipsBackupText .= '0';
-					}
-				} else {
-					$chipsBackupText .= $chip['player_id'];
-				}
-				$chipsBackupText .= ',' . $chip['chips'] . ',' .  $chip['chips_change'];
-				$chipsBackupText .= "\n";
-			}
-		} else {
-			// must exist already. 
-			$old = $this->db->single_query_assoc('
-				SELECT contents FROM ' . $this->table('Log') . '
-				WHERE id=' . intval($entryId) . ' AND type="chips"'
-			);
-			if (empty($old)) {
-				return ;
-			}
-			$old = unserialize($old['contents']);
-			$data['is_full_listing'] = $old['is_full_import'];
-			$topChips = $old['chips'];
-			$mentionedPlayers = array();
-			for ($i = 0; $i < $old['chipstotal']; $i++) {
-				$mentionedPlayers[] = 1;
-			}
-
-			// should not be used while saving, if event is synced
-			$chipsBackupText = NULL;
-			$newPlayerIds = NULL;
-			$chips = NULL;
 		}
-		
-		return array(
-			$data,
-			$chips,
-			$topChips,
-			count($mentionedPlayers),
-			$chipsBackupText,
-			$newPlayerIds
-		);		
+		if (!$bustMissingPlayers)
+			return $result;
+
+		$mentionedPlayerIds = array();
+		foreach ($chips as $k => $row)
+			if (null != $players[$k])
+				$mentionedPlayerIds[] = $players[$k]['id'];
+
+		$bustablePlayers = $this->lrep()->instEventModel('_src_event_chips')->getPreviousChipsByDayDT($eventId, $dayId, $dateTime);
+		foreach ($bustablePlayers as $k => $player) {
+			if (!in_array($player['id'], $mentionedPlayerIds))
+				$result[] = array(
+					$player['id'],
+					$player['name'],
+					0,
+					-1*$player['chips'],
+					false,
+					false
+				);
+		}
+
+		return $result;
 	}
 
 	private function helperGetCountryIdByName($name)
@@ -1610,32 +1383,17 @@ class livereporting_event_chips extends livereporting_event_pylon
 			: null;
 	}
 
-	private function helperSaveGetBustablePlayers(&$players, $mentionedPlayers, $location)
+	const importChipsName    = '1';
+	const importChipsLName   = '10';
+	const importChipsFName   = '11';
+	const importChipsChip    = '2';
+	const importChipsCountry = '3';
+	/**
+	 * Parses xls file or textarea, given actual data and column order
+	 */
+	private function helperParseChipsImportData($data)
 	{
-		// intention is to bust unmentioned players if full list
-		// from the full players list, delete mentioned
-		foreach ($mentionedPlayers as $mentionedPlayer) {
-			unset($players[$mentionedPlayer]);
-		}
-		// from the full players list, delete players from parallel days (1a => 1b, 1c). not super reliable
-		$omitDays = $this->lrep()->instEventModel('_src_event')->dayParallel($location['event_id'], $location['day_id']);
-		if (0 != count($omitDays)) {
-			$omitPlayers = $this->db->array_query_assoc('
-				SELECT id FROM ' . $this->table('Players') . '
-				WHERE event_id=' . filter_var($location['event_id'], FILTER_VALIDATE_INT) . '
-				  AND day_enter_id IN (' . implode(',', $omitDays) . ')
-			');
-			foreach ($omitPlayers as $omitPlayer) {
-				if (isset($players[$omitPlayer['id']])) {
-					unset($players[$omitPlayer['id']]);
-				}
-			}
-		}
-	}
-	
-	private function helperEventGetChipsData(&$data)
-	{
-		$data['chips'] = array();
+		$tools = $this->lrep()->instTools();
 		$chips = array();
 		include_class('moon_file');
 		$file = new moon_file;
@@ -1655,7 +1413,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 					for ($i = 0; $i < $numColumns; $i++) {
 						$newRow[$i] =
 							isset($row[$i + 1])
-								? rtrim($row[$i + 1], chr(160)) // no-break space (broken leftover)
+								? $row[$i + 1]
 								: '';
 					}
 					/*foreach ($row as $cell) {
@@ -1668,7 +1426,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 			$data['import_textarea'] = str_replace("\r", '', $data['import_textarea']);
 			$rows = explode("\n", $data['import_textarea']);
 			foreach ($rows as $row) {
-				$row = str_replace(chr(194).chr(160), ' ', $row); // no-break space
 				$row = preg_split("~\t|;|,~", $row);
 				$newRow = array();
 				foreach ($row as $cell) {
@@ -1677,8 +1434,8 @@ class livereporting_event_chips extends livereporting_event_pylon
 				$chips[] = $newRow;
 			}
 		}
+		$data['chips'] = array();
 		$columnOrder = explode('.', $data['column_order']);
-		// id, name, chipcount, sponsor
 		foreach ($chips as $chip) {
 			$newRow = array();
 			foreach ($columnOrder as $cok => $cov) {
@@ -1686,33 +1443,63 @@ class livereporting_event_chips extends livereporting_event_pylon
 					$chip[$cok] = '';
 					//continue(2);
 				}
-				if ($cov == '10') {
-					if (isset($newRow[1])) {
-						$chip[$cok] = trim($newRow[1] . ' ' . $chip[$cok]);
-					}
-					$cov = '1';
+				if ($cov == self::importChipsLName) {
+					if (isset($newRow[self::importChipsName]))
+						$chip[$cok] = $newRow[self::importChipsName] . ' ' . $chip[$cok];
+					$cov = self::importChipsName;
 				}
-				if ($cov == '11') {
-					if (isset($newRow[1])) {
-						$chip[$cok] = trim($chip[$cok] . ' ' . $newRow[1]);
-					}
-					$cov = '1';
+				if ($cov == self::importChipsFName) {
+					if (isset($newRow[self::importChipsName]))
+						$chip[$cok] = $chip[$cok] . ' ' . $newRow[self::importChipsName];
+					$cov = self::importChipsName;
 				}
 				$newRow[$cov] = $chip[$cok];
 			}
-			if (!empty($newRow[1])) { // name
+			if (!empty($newRow[self::importChipsName])) { // name
 				$data['chips'][] = $newRow;
 			}
 		}
-		unset($data['column_order']);
-		unset($data['import_textarea']);
+		foreach ($data['chips'] as $k => $chip) {
+			if (isset($chip[self::importChipsName]))
+				$data['chips'][$k][self::importChipsName] = $tools->helperNormalizeName($chip[self::importChipsName]);
+			if (isset($chip[self::importChipsChip]))
+				$data['chips'][$k][self::importChipsChip] = $tools->helperNormalizeName($chip[self::importChipsChip]);
+		}
+		return $data['chips'];
 	}
+
+	private function delete($importId)
+	{
+		if (NULL == ($prereq = $this->helperDeleteCheckPrerequisites($importId, 'chips'))) {
+			return FALSE;
+		}
+		list (
+			$location
+		) = $prereq;
+
+		$deletedRows = $this->helperDeleteDbDelete($importId, 'chips', 'tChips');
+		$this->db->query('
+			DELETE FROM ' . $this->table('Chips') . '
+			WHERE import_id=' . filter_var($importId, FILTER_VALIDATE_INT) . '
+		');
+
+		if ($deletedRows[0]) {
+			$this->lrep()->altLog($location['tournament_id'], $location['event_id'], $location['day_id'], 'delete', 'log', $importId);
+		}
+		if ($deletedRows[1]) {
+			$this->lrep()->altLog($location['tournament_id'], $location['event_id'], $location['day_id'], 'delete', 'sub_chips', $importId);
+		}
+
+		$this->helperDeleteNotifyEvent($location);
+		$this->helperUpdateNotifyCTags($importId, 'chips');
+	}
+
 	
 	private function chipsCmp($a, $b)
 	{
 		$key = isset($a['chips'])
 			? 'chips'
-			: 2;
+			: self::importChipsChip;
 		if ($a[$key] == $b[$key]) {
 			return 0;
 		}

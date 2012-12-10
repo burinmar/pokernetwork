@@ -422,21 +422,6 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $winner;	
 	}
 	
-	/* function getWinnerFallback($eventId)
-	{
-		$winner = $this->db->single_query_assoc('
-			SELECT p.id, p.name FROM ' . $this->table('Players') . ' p
-			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
-				AND place=1
-		');
-
-		if (empty($winner)) {
-			return NULL;
-		}
-		
-		return $winner;	
-	} */
-	
 	protected function getLastPhotos($eventId)
 	{
 		return $this->db->array_query_assoc('
@@ -458,8 +443,8 @@ class livereporting_model_event extends livereporting_model_pylon
 	}
 
 	/**
-	 * Returns previous days, except parallel
-	 * Days must be ordered
+	 * Returns previous days, including self, but excluding parallel and future days
+	 * Input days must be ordered
 	 * @todo check (1)
 	 * @todo check (2)
 	 */
@@ -628,86 +613,74 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $return;
 	}
 	
-	protected function getLastChips($eventId, $dayId, $tiny = FALSE, $onlyLastDay = FALSE)
+	// @todo name fields properly
+	const chipsTiny = 1;
+	protected function getLastChips($eventId, $dayId, $modifier = 0)
 	{
 		$daysData = $this->getDaysData($eventId);
 		if (0 == count($daysData)) {
 			return array();
 		}
 
-		$chipsWhere = '';
-		$finalWhere = array();
-		
-		if (!empty($dayId)) {
-			$chipsWhere = 'day_id IN (' . implode(',', 
-				$this->dayUnroll($daysData, $dayId)
-			) . ')';
-		} else {
-			$chipsWhere = 'day_id IN (' . implode(',', array_keys($daysData)) . ')';
-		}
+		$daysToQuery = !empty($dayId)
+			? $this->dayUnroll($daysData, $dayId)
+			: array_keys($daysData);
 
-		$chipsWhere .= ' AND is_hidden=0';
-		
-		//$finalWhere[] = 'p.event_id=' . intval($eventId); !! implied
-		if ($onlyLastDay && $dayId) {
-			$finalWhere[] = '(ce.day_id=' . intval($dayId) . ' OR ce.chips!=0)';
-		}
+		$tiny = $modifier == self::chipsTiny;
+
+		$outerWhere = array('true', /* 'p.event_id=' . intval($eventId); !! implied */);
+		$innerWhere = array('true');
+		$outerOrder = array(
+			'chips'  => 'ce.chips DESC', 
+			'date'   => 'ce.created_on DESC', 
+			'player' => 'ce.player_id'
+		);
+		$outerLimit = '';
 		if ($tiny) {
-			$finalWhere[] = 'ce.chips!=0';
+			unset($outerOrder['date']);
+			$innerWhere[] = 'c.chips!=0';
+			$outerLimit = ' LIMIT 10';
+		} else if ($dayId) {
+			$outerWhere[] = '(ce.day_id=' . intval($dayId) . ' OR ce.chips!=0)';
 		}
-		$finalWhere = implode(' AND ', $finalWhere);
 
-		/**
-		 * INNER JOIN ' . $this->table('Players') . ' p should really be
-		 * RIGHT JOIN reporting_ng_players p + WHERE p.event_id={}
-		 * right join is particularly slow, so ensure that every players has at least one (empty) chip
-		 */
 		$sql = '
-		SELECT p.id, ce.chips, p.name uname, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.card, p.pp_id, p.status, p.is_pnews, p.place, p.country_id' : '') . ' 
+		SELECT p.id, ce.chips, p.name uname, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.pp_id, p.status, p.is_pnews, p.country_id' : '') . ' 
 		FROM (
 			SELECT c.chips, c.player_id' . (!$tiny ? ', c.created_on, c.day_id, c.chips_change' : '' ) . ' FROM (
 				SELECT player_id, MAX(created_on) created_on FROM reporting_ng_chips
-				WHERE ' . $chipsWhere . '
+				WHERE day_id IN (' . implode(',', $daysToQuery) . ') AND is_hidden=0
 				GROUP BY player_id ORDER BY NULL
 			) x
 			INNER JOIN reporting_ng_chips c
 				ON c.player_id=x.player_id AND c.created_on=x.created_on
-			' . ($tiny ? 'WHERE c.chips!=0' : '') . '
+			WHERE ' . implode(' AND ', $innerWhere) . '
 		) ce
 		INNER JOIN ' . $this->table('Players') . ' p
-			ON p.id=ce.player_id 
-		' . ($finalWhere
-		? 'WHERE ' . $finalWhere
-		: '') . '
-		ORDER BY ce.chips DESC' . (!$tiny ? ', ce.created_on DESC' : '') . ', ce.player_id' .
-		($tiny 
-		    ? ' LIMIT 10' 
-		    : '')
-		;
+			ON p.id=ce.player_id AND p.is_hidden=0
+		WHERE ' . implode(' AND ', $outerWhere) . '
+		ORDER BY ' . implode(', ', $outerOrder) .
+		$outerLimit;
 
-		$res = $this->db->array_query_assoc($sql);
+		$chips = $this->db->array_query_assoc($sql);
 
-		// if ($tiny) {
-		// 	return $res;
-		// }
-		
 		$sponsorIds = array();
-		foreach ($res as $k => $row) {
+		foreach ($chips as $k => $row) {
 			if (!empty($row['sponsor_id'])) {
 				$sponsorIds[] = $row['sponsor_id'];
 			}
 		}
 		
 		$sponsors = $this->getSponsorsById($sponsorIds);
-		foreach ($res as $k => $row) {
+		foreach ($chips as $k => $row) {
 			if (isset($sponsors[$row['sponsor_id']])) {
-				$res[$k] += array(
+				$chips[$k] += array(
 					'sponsorimg' => $sponsors[$row['sponsor_id']]['favicon'],
 					'sponsorurl' => $sponsors[$row['sponsor_id']]['alias'],
 					'sponsor'    => $sponsors[$row['sponsor_id']]['name'],
 				);
 			} else {
-				$res[$k] += array(
+				$chips[$k] += array(
 					'sponsorimg' => NULL,
 					'sponsorurl' => NULL,
 					'sponsor' => NULL,
@@ -715,7 +688,160 @@ class livereporting_model_event extends livereporting_model_pylon
 			}
 		}
 
-		return $res;
+		return $chips;
+	}
+
+	// retains players array keys
+	// redirects to getPreviousChipsByPlayerId with some processing
+	protected function getPreviousChipsByPlayerName($eventId, $playerKNames, $datetime)
+	{
+		if (0 == count($playerKNames))
+			return array();
+
+		$names = array();
+		foreach ($playerKNames as $name)
+			$names[] = '"' . $this->db->escape($name) . '"';
+		$players = $this->db->array_query_assoc('
+			SELECT id, FIELD(name, ' . implode(',', $names) . ') nr 
+			FROM ' . $this->table('Players') . '
+			WHERE event_id=' . intval($eventId) . ' 
+			AND NAME IN(' . implode(',', $names) . ')
+		', 'id');
+
+		$previousChips = $this->getPreviousChipsByPlayerId($eventId, array_keys($players), $datetime);
+
+		$result = array();
+		foreach ($playerKNames as $k => $name)
+			$result[$k] = null;
+		foreach ($players as $player) {
+			$nr = intval($player['nr']) - 1;
+			if (!array_key_exists($nr, $result))
+				continue; // should not be possible at all, in theory
+			$playerId = $player['id'];
+			if (!isset($previousChips[$playerId])) 
+				continue; // should not be possible, unless db altered in between queries or bug in code
+			$result[$nr] = $previousChips[$playerId];
+		}
+
+		return $result;
+	}
+
+	// analogous to getLastChips, but matched by player ids instead of day, 
+	// and limited by datetime instead of plain last within the day
+	// return hidden players, players with no chips
+	protected function getPreviousChipsByPlayerId($eventId, $playerIds, $datetime)
+	{
+		// $includeIntermediate = no chips change / chips change since last major update
+		// $includeIntermediate == TRUE ? '' : 'is_full_import DESC,
+		$daysData = $this->getDaysData($eventId);
+		if (0 == count($daysData))
+			return array();
+		$daysToQuery = array_keys($daysData);
+
+		if (0 == count($playerIds))
+			return array();
+		foreach ($playerIds as $k => $id)
+			$playerIds[$k] = intval($id);
+
+		$sql = '
+		SELECT p.id, p.name, ce.chips
+		FROM ' . $this->table('Players') . ' p
+		LEFT JOIN (
+			SELECT c.chips, c.player_id FROM (
+				SELECT player_id, MAX(created_on) created_on FROM ' . $this->table('Chips') . '
+				WHERE day_id IN (' . implode(',', $daysToQuery) . ') AND is_hidden=0
+				  AND created_on<' . intval($datetime) . '
+				  AND player_id IN (' . implode(',', $playerIds) . ')
+				GROUP BY player_id ORDER BY NULL
+			) x
+			INNER JOIN ' . $this->table('Chips') . ' c
+				ON c.player_id=x.player_id AND c.created_on=x.created_on
+		) ce
+			ON p.id=ce.player_id
+		WHERE p.event_id=' . intval($eventId) . '
+			AND p.id IN (' . implode(',', $playerIds) . ')';
+		// p.event_id almost implied
+
+		return $this->db->array_query_assoc($sql, 'id');
+	}
+
+	// analogous to getLastChips with tiny on, but without limit=10,
+	// limited by datetime instead of plain last within the day
+	// return hidden players, do not return busted players at all (even todays)
+	protected function getPreviousChipsByDayDT($eventId, $dayId, $datetime)
+	{
+		$daysData = $this->getDaysData($eventId);
+		if (0 == count($daysData)) {
+			return array();
+		}
+
+		$daysToQuery = $this->dayUnroll($daysData, $dayId);
+
+		$sql = '
+		SELECT p.id, p.name, ce.chips
+		FROM ' . $this->table('Players') . ' p
+		INNER JOIN (
+			SELECT c.chips, c.player_id FROM (
+				SELECT player_id, MAX(created_on) created_on FROM ' . $this->table('Chips') . '
+				WHERE day_id IN (' . implode(',', $daysToQuery) . ') AND is_hidden=0
+				  AND created_on<' . intval($datetime) . '
+				GROUP BY player_id ORDER BY NULL
+			) x
+			INNER JOIN ' . $this->table('Chips') . ' c
+				ON c.player_id=x.player_id AND c.created_on=x.created_on
+			WHERE c.chips!=0
+		) ce
+			ON p.id=ce.player_id';
+		$chips = $this->db->array_query_assoc($sql);
+
+		return $chips;
+	}	
+
+	protected function getChipsHistory($playerId, $eventId)
+	{
+		$daysData = $this->getDaysData($eventId);
+		if (0 == count($daysData))
+			return array();
+		$daysToQuery = array_keys($daysData);
+
+		return $this->db->array_query_assoc('
+			SELECT id, chips, chips_change, import_id, created_on, day_id
+			FROM ' . $this->table('Chips') . '
+			WHERE player_id=' . intval($playerId) . '
+				AND day_id IN (' . implode(',', $daysToQuery) . ')
+			ORDER BY created_on
+		');
+	}	
+
+	protected function getDayChipsTimeCap($eventId, $dayId)
+	{
+		$daysData = $this->getDaysData($eventId);
+
+		$daysToQuery = array_diff(
+			array_keys($daysData), 
+			$this->dayUnroll($daysData, $dayId)
+		);
+		if (0 == count($daysToQuery)) {
+			return time();
+		}
+
+		// forward days
+		$capTop = $this->db->single_query_assoc('
+			SELECT MIN(created_on) `cap` FROM ' . $this->table('Chips') . '
+			WHERE day_id IN(' . implode(',', $daysToQuery) . ')
+		');
+		$cap = empty($capTop['cap'])
+			? time()
+			: $capTop['cap'] - 120;
+
+		$capBottom = $this->db->single_query_assoc('
+			SELECT MAX(created_on) `cap` FROM ' . $this->table('Chips') . '
+			WHERE day_id=' . intval($dayId) . '
+		');
+		if (!empty($capBottom['cap']))
+			$cap = max($cap, $capBottom['cap'] + 1);
+
+		return $cap;
 	}
 	
 	/**
@@ -963,9 +1089,9 @@ class livereporting_model_event_src_event extends livereporting_model_event
 	function getLastPhotos($eventId)
 		{ return parent::getLastPhotos($eventId); }
 	function getLastTinyChips($eventId, $dayId)
-		{ return parent::getLastChips($eventId, $dayId, TRUE, FALSE); }
+		{ return parent::getLastChips($eventId, $dayId, self::chipsTiny); }
 	function getLastTodayChips($eventId, $dayId)
-		{ return parent::getLastChips($eventId, $dayId, FALSE, TRUE); }
+		{ return parent::getLastChips($eventId, $dayId); }
 	function getPayoutBundle($eventId)
 		{ return parent::getPayoutBundle($eventId); }
 	function getTournamentSyncOrigin($eventId)
@@ -999,7 +1125,27 @@ class livereporting_model_event_src_event_post extends livereporting_model_event
 		{ return parent::getCurrentRound($eventId, $dayId); }
 	function getRound($eventId, $dayId, $timestamp)
 		{ return parent::getRound($eventId, $dayId, $timestamp); }
+}
 
+/**
+ * livereporting_model_event methods, accessed from ../livereporting_event_chips components
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_event_src_event_chips extends livereporting_model_event
+{
+	function getPreviousChipsByPlayerId($eventId, $playerIds, $datetime)
+		{ return parent::getPreviousChipsByPlayerId($eventId, $playerIds, $datetime); }
+	function getPreviousChipsByPlayerName($eventId, $playerKNames, $datetime)
+		{ return parent::getPreviousChipsByPlayerName($eventId, $playerKNames, $datetime); }
+	function getPreviousChipsByDayDT($eventId, $dayId, $datetime)
+		{ return parent::getPreviousChipsByDayDT($eventId, $dayId, $datetime); }
+	function getDayChipsTimeCap($eventId, $dayId) 
+		{ return parent::getDayChipsTimeCap($eventId, $dayId); }
+	function getCurrentRound($eventId, $dayId)
+		{ return parent::getCurrentRound($eventId, $dayId); }
+	function getRound($eventId, $dayId, $timestamp)
+		{ return parent::getRound($eventId, $dayId, $timestamp); }
 }
 
 /**
@@ -1011,6 +1157,8 @@ class livereporting_model_event_src_event_profile extends livereporting_model_ev
 {
 	function getSponsors()
 		{ return parent::getSponsors(); }
+	function getChipsHistory($playerId, $eventId)
+		{ return parent::getChipsHistory($playerId, $eventId); }
 }
 
 /**
@@ -1023,7 +1171,7 @@ class livereporting_model_event_src_bluff extends livereporting_model_event
 	function getDaysDefaultId($eventId)
 		{ return parent::getDaysDefaultId($eventId); }
 	function getChips($eventId, $dayId)
-		{ return parent::getLastChips($eventId, $dayId, FALSE, FALSE); }
+		{ return parent::getLastChips($eventId, $dayId); }
 	function getSponsorsById($ids)
 		{ return parent::getSponsorsById($ids); }
 }
@@ -1130,7 +1278,7 @@ class livereporting_model_event_src_mobileapp extends livereporting_model_event
 	function getLogEntries($eventId, $dayId, $filter = NULL, $limit = 5)
 		{ return parent::getLogEntries($eventId, $dayId, $filter, 'LIMIT ' . intval($limit)); }
 	function getChips($eventId, $dayId)
-		{ return parent::getLastChips($eventId, $dayId, FALSE, TRUE); }
+		{ return parent::getLastChips($eventId, $dayId); }
 
 	function getDayEvent($dayId)
 	{

@@ -891,7 +891,6 @@ class livereporting_index extends moon_com
 		$user = moon::user();
 
 		if (!$user->i_admin()) {
-			moon::error('redirectIPNNews: !i_admin');
 			$page->page404();
 		}
 
@@ -941,7 +940,6 @@ class livereporting_index extends moon_com
 					time()
 				);
 			} else {
-				moon::error('redirectIPNNews: error=1, `' . $rawData . '`, `' . $sendData . '`');
 				$error = true;
 			}
 		}

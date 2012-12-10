@@ -126,7 +126,8 @@ $cfg['livereporting'] = array(
 	)
 );
 
-if (_SITE_ID_ == 'com' && moon::page()->get_global('adminView')) {
+		
+if (moon::page()->get_global('adminView')) {
 	$db = moon::db();
 	if (method_exists($db, 'operateOnMaster')) {
 		$db->operateOnMaster();

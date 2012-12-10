@@ -12,7 +12,7 @@ class reporting_homebox_chips extends moon_com
 		$lrep = $this->object('livereporting');
 		$eventID = is_dev() ? 737 : 722;
 		$dayID = $lrep->instEventModel('_src_event')->getDaysDefaultId($eventID);
-		$chips = $lrep->instEventModel('_src_event')->getLastTodayChips($eventID, $dayID, FALSE);
+		$chips = $lrep->instEventModel('_src_event')->getLastTodayChips($eventID, $dayID);
 		$res = '';
 
 		if (count($chips)) {

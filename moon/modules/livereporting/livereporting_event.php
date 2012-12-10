@@ -96,6 +96,7 @@ class livereporting_event extends moon_com
 			    'save-misc',      // -> eventObj
 			    'save-sbplayers', // -> eventObj
 			    'save-profile',
+			    'save-list-profiles', // -> profileObj
 			    'save-day-datetime'))) {
 			// recreating environment as much as needed
 			// (mainly for redirectToLogEntry)
@@ -110,6 +111,9 @@ class livereporting_event extends moon_com
 				case 'save-misc':
 				case 'save-sbplayers':
 					$object = $this->instEventEvent();
+					break;
+				case 'save-list-profiles':
+					$object = $this->instEventProfile();
 					break;
 				default:
 					list (, $object) = explode('-', $event);
@@ -224,7 +228,6 @@ class livereporting_event extends moon_com
 			case 'tweet':
 			case 'chips':
 			case 'round':
-			case 'profile':
 			case 'photos': // single photo
 				$object = 'instEvent' . ucfirst($argv['uri']['argv'][1]);
 				$object = $this->$object();
@@ -248,19 +251,13 @@ class livereporting_event extends moon_com
 		// exceptions/etc.
 		switch ($argv['uri']['argv'][1]) {
 			case 'event':
-				switch ($argv['uri']['argv'][0]) {
-					case 'load':
-						$object = $this->instEventEvent();
-						$object->synthEvent('load-' . $argv['uri']['argv'][2], $argv);
-						exit;
-				}
-				break;
-
+			case 'profile':
 			case 'round':
 				switch ($argv['uri']['argv'][0]) {
 					case 'load':
-						$object = $this->instEventRound();
-						$object->synthEvent('load-rounds', $argv);
+						$object = 'instEvent' . ucfirst($argv['uri']['argv'][1]);
+						$object = $this->$object();
+						$object->synthEvent('load-' . $argv['uri']['argv'][2], $argv);
 						exit;
 				}
 				break;
@@ -592,6 +589,16 @@ class livereporting_event extends moon_com
 		);
 		foreach ($logEntries as $logEntry) {
 			switch ($logEntry['type']) {
+				case 'chips':
+					$object = 'instEvent' . ucfirst($logEntry['type']);
+					$mainArgv['list.entries'] .= $this->$object()->preRender($logEntry, array(
+						'variation'=> 'logEntry',
+					));
+					break;
+			}
+		}
+		foreach ($logEntries as $logEntry) {
+			switch ($logEntry['type']) {
 				case 'post':
 				case 'tweet':
 				case 'photos':
@@ -728,7 +735,7 @@ class livereporting_event extends moon_com
 			$mainArgv_['eventlist.paged'],
 			$mainArgv_['eventlist.singleevent']) = $this->partialRenderSidewidgetEventsList($argv, $page, $lrep, $tpl);
 		
-		$mainArgv_['widget.key_hands'] = $this->partialRenderTopwidgetKeyHands($argv, $lrep, $tpl);
+		$mainArgv_['widget.key_hands'] = $this->partialRenderTopwidgetKeyHands($argv, $page, $lrep, $tpl);
 
 		list (
 			$playersLeft,
@@ -775,7 +782,7 @@ class livereporting_event extends moon_com
 			$this->tabsSafeDisplay['chips'],
 			$mainArgv_['widget.top_chip_counts'],
 			$mainArgv_['chips.top_chip_counts']
-		) = $this->partialRenderSidewidgetChips($winner, $page, $lrep, $argv, $tpl);
+		) = $this->partialRenderSidewidgetChips($winner, $page, $lrep, $eventInfo, $argv, $tpl);
 		
 		list (
 			$this->tabsSafeDisplay['gallery'],
@@ -814,7 +821,7 @@ class livereporting_event extends moon_com
 		$mainArgv += $mainArgv_;
 	}
 	
-	private function partialRenderTopwidgetKeyHands(&$argv, &$lrep, &$tpl)
+	private function partialRenderTopwidgetKeyHands(&$argv, &$page, &$lrep, &$tpl)
 	{
 		return ;
 		$keyHands = $this->lrepEv()->getKeyHandEntries($argv['event_id']);
@@ -934,12 +941,7 @@ class livereporting_event extends moon_com
 						? img('player',  $winner['id'] . '-' . $winner['winner_img'])
 						: ''
 				);
-			} /* else {
-				$winner = $this->lrepEv()->getWinnerFallback($argv['event_id']);
-				if (NULL != $winner) {
-					$mainArgv['pw.winner'] = htmlspecialchars($winner['name']);
-				}
-			} */
+			}
 		}
 		
 		return @array(
@@ -1014,11 +1016,11 @@ class livereporting_event extends moon_com
 		);
 	}
 	
-	private function partialRenderSidewidgetChips($winner, $page, $lrep, $argv, $tpl)
+	private function partialRenderSidewidgetChips($winner, $page, $lrep, $eventInfo, $argv, $tpl)
 	{
 		$return = array();
+		$isAdm = $page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent');
 		if ($winner == NULL) {
-			$showLinks = $page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent');
 			$topChips = $this->lrepEv()->getLastTinyChips($argv['event_id'], $argv['day_id']);
 			if (!empty($topChips)) {
 				$return = array(
@@ -1026,7 +1028,7 @@ class livereporting_event extends moon_com
 					'widget.top_chip_counts' => true,
 					'list.top_chip_counts' => ''
 				);
-				if ($showLinks) {
+				if ($isAdm) {
 					 $playerUrl = $lrep->makeUri('event#view', array(
 							'event_id' => $argv['event_id'],
 							'type' => 'profile',
@@ -1041,7 +1043,7 @@ class livereporting_event extends moon_com
 						'place' => $k+1,
 						'is_busted' => intval($chip['chips']) == 0,
 						'player' => htmlspecialchars($chip['uname']),
-						'playerurl' => $showLinks
+						'playerurl' => $isAdm
 							? str_replace('{}', $chip['id'], $playerUrl)
 							: '',
 						'player_sponsorimg' => isset($chip['sponsor']['ico'])
@@ -1062,9 +1064,18 @@ class livereporting_event extends moon_com
 			}
 			$return['tab_safe_display'] = intval($hasChips) > 0;
 		}
+		if (empty($return['tab_safe_display']) && $isAdm) {
+			$days = $lrep->instEventModel('_src_event')->getDaysData($argv['event_id']);
+			if ($lrep->instTools()->isAllowed('viewSingleChipsControl', array(
+				'event_synced' => $eventInfo['synced'],
+				'day_state' => $days[$argv['day_id']]['state']
+			))) {
+				$return['tab_safe_display'] = true;
+			}
+		}
 
 		return @array(
-			$return['tab_safe_display'],
+			$return['tab_safe_display'], // @todo why is this here?
 			$return['widget.top_chip_counts'],
 			$return['list.top_chip_counts']
 		);
@@ -1121,13 +1132,22 @@ class livereporting_event extends moon_com
 		$mainArgv['controls'] = '';
 		if ($page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent')) {
 			$mainArgv['showControls'] = true;
-			$argv = array_merge($argv, $eventInfo);
-			
+			// $argv = array_merge($argv, $eventInfo);
+			// $argv['synced'] = 0; // event is synced != entry is synced
+			$argv = array_merge($argv, array(
+				'tzName' => $eventInfo['tzName'],
+				'tzOffset' => $eventInfo['tzOffset'],
+				'show_wsop_eod' => $eventInfo['show_wsop_eod'], // _chips
+			));
+
 			if (!isset($argv['hide_write_controls'])) {
-				$object = $this->instEventEvent();
-				$mainArgv['controls'] .= $object->render($argv, array(
-					'variation' => 'logControl'
-				));
+				foreach (array('event', 'profile') as $object) {
+					$object = 'instEvent' . ucfirst($object);
+					$object = $this->$object();
+					$mainArgv['controls'] .= $object->render($argv, array(
+						'variation' => 'logControl'
+					));
+				}
 			}
 			if (!isset($argv['hide_write_controls']) && intval($argv['day_id'])) {
 				foreach (array('post', 'tweet', 'round', 'chips', 'photos') as $object) {
@@ -1282,13 +1302,14 @@ class livereporting_event extends moon_com
 		if ($mainArgv['show_write_controls']) {
 			foreach(array(
 				// tpl uri name, master filter key
-				array('write-post',  'post'),
-				array('write-photos','xphotos'),
-				array('write-round', 'round'),
-				array('write-event', 'event'),
-				array('write-chips', 'chips'),
-				array('write-evmisc','misc'),
-				array('write-tweet', 'tweet'),
+				array('write-post',    'post'),
+				array('write-photos',  'xphotos'),
+				array('write-round',   'round'),
+				array('write-event',   'event'),
+				array('write-chips',   'chips'),
+				array('write-evmisc',  'misc'),
+				array('write-tweet',   'tweet'),
+				array('write-profiles','list-profiles'),
 			) as $swc) {
 				$mainArgv['url.' . $swc[0]] = $lrep->makeUri('event#view', array(
 						'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
@@ -1402,7 +1423,6 @@ class livereporting_event extends moon_com
 			$mainArgv += array(
 				'ce.url.sect-prizepool' => str_replace('vsub', 'prizepool', $cUrl),
 				'ce.url.sect-winners'   => str_replace('vsub', 'winners', $cUrl),
-				'ce.url.sect-list'      => str_replace('vsub', 'list', $cUrl)
 			);
 
 			$mainArgv['pl.pleft'] = intval($eventInfo['pleft']);

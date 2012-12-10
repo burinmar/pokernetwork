@@ -263,7 +263,8 @@ class livereporting_event_pylon extends livereporting_event
 			$createdOn = $locale->gmdatef($data['created_on'] + $data['tzOffset'], 'Reporting') . ' ' . $data['tzName'];
 		}
 		
-		$data['contents'] = unserialize($data['contents']);
+		if (is_string($data['contents']))
+			$data['contents'] = unserialize($data['contents']);
 		$rArgv = array(
 			'id' => $data['id'],
 			'title' => isset($data['contents']['title'])
@@ -487,7 +488,8 @@ class livereporting_event_pylon extends livereporting_event
 			'is_hidden' => NULL,
 		);
 		foreach ($additionalTextFields as $field) {
-			$entry[$field] = NULL;
+			$field = explode(' ', $field); // expr AS handle
+			$entry[array_pop($field)] = NULL;
 		}
 		if ($rowId != '') {
 			$entry = $this->db->single_query_assoc('

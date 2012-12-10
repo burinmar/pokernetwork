@@ -29,6 +29,11 @@ class livereporting_tools extends livereporting_model_pylon
 			case 'writeContent': // do not depend on [A], or check ipn reswitch
 				return $iAdminRepo;
 
+			case 'viewSingleChipsControl':
+				if (!$iAdminRepo)
+					return false;
+				return !$data['event_synced'] && $data['day_state'] == 1;
+
 			default:
 				return FALSE;
 		}
@@ -403,5 +408,43 @@ class livereporting_tools extends livereporting_model_pylon
 			: $skins['color'][$tournament['skin']];
 
 		return $ls;
+	}
+
+	function helperNormalizeName($string)
+	{
+		$string = str_replace(array(
+			chr(194).chr(160), // no-break space ftw
+			"\t",
+			"\r",
+			"\n",
+			"\0",
+			"\x0B"
+		), ' ', $string);
+		$string = trim($string);
+		// $string = rtrim($row[$i + 1], chr(160)); // xls leftover?
+		$string = preg_replace('~[ ]{2,}~', ' ', $string);
+		if ('' === $string)
+			return null;
+		return $string;
+	}
+
+	function helperNormalizeChips($string)
+	{
+		$string = str_replace(array(
+			chr(194).chr(160), // no-break space ftw
+			"\t",
+			"\r",
+			"\n",
+			"\0",
+			"\x0B",
+		), ' ', $string);
+		$string = trim($string);
+		// $string = rtrim($row[$i + 1], chr(160)); // xls leftover?
+		$string = str_replace(array(
+			',',
+			'.'
+		), '', $string);
+		$string = filter_var($string, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+		return $string;
 	}
 }

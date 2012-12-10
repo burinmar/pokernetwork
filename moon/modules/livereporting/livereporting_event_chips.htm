@@ -43,7 +43,7 @@
 		<%else {player_url} %>{player}<%end%>
 	</td>
 	<td class="sponsor">
-		<span><%if {player_sponsorimg} %><img src="{player_sponsorimg}" alt="" class="splogo" /><%end%> <%if {player_is_pnews} %><img src="/img/pn-player.png" alt="PN" class="splogo" /><%end%> {player_sponsor}</span>
+		<span><%if {player_sponsorimg} %><img src="{player_sponsorimg}" alt="" class="splogo" /><%end%> <%if {player_is_pnews} %><img src="/img/pn-player.png" alt="PN" class="splogo" /><%end%> <%if{player_sponsor}%>{player_sponsor}<%end%></span>
 	</td>
 	<td class="country">
 		<%if {country} %><img src="http://www.pokernews.com/i/flags/flag_{country_id}.png" alt="{country}" /> {country}<%end%>
@@ -157,12 +157,10 @@
 			</dd>
 			<dt></dt>
 			<dd>
-				<%if {cc.fullist_change_disabled} %>
-					<label><input type="checkbox" class="checkbox" <%if {cc.fulllist} %> checked="checked" <%end%> disabled="disabled" />
-					<%if {cc.fulllist} %><input type="hidden" name="is_full_listing" value="1" /><%end%>
-				<%else {cc.fullist_change_disabled} %>
-					<label><input type="checkbox" name="is_full_listing" class="checkbox" <%if {cc.fulllist} %> checked="checked" <%end%> value="1" />
-				<%end%> This is a full players listing</label>
+				<label>
+					<input type="checkbox" name="is_full_listing" class="checkbox" <%if {cc.fulllist} %> checked="checked" <%end%> value="1" />
+					This is a full players listing
+				</label>
 				<div class="explain">Autobust players not in the list, fill the winners list if prizepool is already known. <!-- <br />Advice: Review your list not to include busted players from the previous &quot;full&quot; import. This will eliminate possible problems with winner list order in case prizepool is already known. --></div>
 			</dd>
 		</dl>
@@ -257,7 +255,6 @@ document.domain = document.domain.match(/([a-z1-9]+.[a-z1-9]+)$/)[1];
 	<table class="list">
 		<thead>
 			<tr>
-				<th style="width:20px"><span>Id</span></th>
 				<th><span>Name</span></th>
 				<th style="width:100px"><span>Chips</span></th>
 				<th style="width:100px"><span>Chips&nbsp;change</span></th>
@@ -267,13 +264,11 @@ document.domain = document.domain.match(/([a-z1-9]+.[a-z1-9]+)$/)[1];
 			<%loop {cc.chips += controls:chips.save_preview.item} %>
 			<tr class="<%if {is_busted} %>red<%end%><%if {is_new_player} %>green<%end%>">
 				<%if {url} %>
-				<td><a href="{url}">{id}</a></td>
 				<td><a href="{url}">{name}</a></td>
 				<%else {url} %>
-				<td>{id}</td>
 				<td>{name}</td>
 				<%end%>
-				<td><%if {place} %>Takes place #{place}<%if {amount} %>, {amount}<%end%><%end%>{chips}</td>
+				<td>{chips}</td>
 				<td>{chips_change}</td>
 			</tr>
 			<%end%>

@@ -454,3 +454,9 @@ p.blocky {margin-top: 15px;}
 #rq-wr-rounds table.rounds tr {
 	height: 28px;
 }
+
+.newctchips, .newctplayer-chips {
+	width: 50px !important; 
+	height: 16px !important; 
+	line-height: 16px !important;
+}
