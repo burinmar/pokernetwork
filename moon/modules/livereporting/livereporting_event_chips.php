@@ -1455,15 +1455,13 @@ class livereporting_event_chips extends livereporting_event_pylon
 				}
 				$newRow[$cov] = $chip[$cok];
 			}
-			if (!empty($newRow[self::importChipsName])) { // name
-				$data['chips'][] = $newRow;
-			}
-		}
-		foreach ($data['chips'] as $k => $chip) {
-			if (isset($chip[self::importChipsName]))
-				$data['chips'][$k][self::importChipsName] = $tools->helperNormalizeName($chip[self::importChipsName]);
-			if (isset($chip[self::importChipsChip]))
-				$data['chips'][$k][self::importChipsChip] = $tools->helperNormalizeName($chip[self::importChipsChip]);
+			if (!isset($newRow[self::importChipsName]) || !isset($newRow[self::importChipsChip]))
+				continue;
+			$newRow[self::importChipsName] = $tools->helperNormalizeName($newRow[self::importChipsName]);
+			$newRow[self::importChipsChip] = $tools->helperNormalizeChips($newRow[self::importChipsChip]);
+			if (null === $newRow[self::importChipsName] || null === $newRow[self::importChipsChip])
+				continue;
+			$data['chips'][] = $newRow;
 		}
 		return $data['chips'];
 	}
