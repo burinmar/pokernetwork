@@ -1150,9 +1150,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 						$playerId, // null => 0
 						$chip,
 						$chipChange);
-					if (intval($chip) > 0 && count($topChips) <= 25)
+					if (null != $playerId && count($topChips) < 25)
 						$topChips[] = array(
-							'id' => intval($playerId), // null => 0
+							'id' => $playerId,
 							'chips'  => $chip,
 							'chipsc' => $chipChange,
 						);
