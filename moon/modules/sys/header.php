@@ -53,6 +53,16 @@ if ($this->wallpaper($res, array(
 	return $res;
 }
 
+//  $22,500 PokerStars Freeroll 
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/56.htm',
+'imgPath'=> '/img/wallpaper/ps_22k_wallpaper.jpg',
+'bgColor'=> '#000',
+'endDate'=> '2013-01-07 23:59:59',
+'showIn'=> '/pokerstars/'
+)
+)) return $res;
+
 // Bet365 Vaults
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/10-000-bet365-open-vaults-freerolls/',
