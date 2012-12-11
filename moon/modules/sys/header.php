@@ -53,19 +53,6 @@ if ($this->wallpaper($res, array(
 	return $res;
 }
 
-
-
-// PS PCA FlashBack
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/6-000-pokerstars-pca-flashback/',
-'imgPath'=> '/img/wallpaper/ps_flashback_wallpaper.jpg',
-'bgColor'=> '#000',
-'endDate'=> '2012-12-25 23:59:59',
-'showIn'=> 'home, /pokerstars/'
-
-)
-)) return $res;
-
 // Bet365 Vaults
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/10-000-bet365-open-vaults-freerolls/',
