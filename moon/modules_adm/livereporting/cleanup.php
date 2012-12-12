@@ -68,10 +68,7 @@ class cleanup extends moon_com
 			livereporting_adm_alt_log(0, 0, 0, 'delete', 'other', '0', count($files) . ' tmp:failed:lrep*', -1);
 		}
 
-		if ('com' == _SITE_ID_) {
-			echo "Old Chips:\n";
-			$this->oldChipsPurge();
-		}
+		// $this->oldChipsPurge();
 
 		echo "done";
 	}
@@ -79,87 +76,97 @@ class cleanup extends moon_com
 	// purge redundant (invisible for regular user) chip counts
 	function oldChipsPurge()
 	{
-		set_time_limit(0);
-		$days = $this->db->array_query_assoc('SELECT id FROM reporting_ng_days WHERE state=2 AND day_date>' . (time() - 3*24*3600));
-		foreach ($days as $k => $day) {
-			$days[$k] = $day['id'];
-		}
-		natsort($days);
-		if (0 == count($days)) {
-			return ;
-		}
+		try {
+			$this->db->exceptions(true);
+			$days = $this->db->array_query_assoc('SELECT id FROM reporting_ng_days WHERE state=2 AND day_date>' . (time() - 3*24*3600));
+			foreach ($days as $k => $day) {
+				$days[$k] = $day['id'];
+			}
+			natsort($days);
+			if (0 == count($days))
+				throw new Exception('No days');
 
-		$this->db->query('
-			CREATE TEMPORARY TABLE `_delchips_` (
-			  `id` int(10) unsigned NOT NULL,
-			  PRIMARY KEY (`id`)
-			)
-		');
+			$this->db->query('
+				CREATE TEMPORARY TABLE `_delchips_` (
+				  `id` int(10) unsigned NOT NULL,
+				  PRIMARY KEY (`id`)
+				)
+			');
+			$this->db->query('
+				INSERT INTO `_delchips_` (id)
+				SELECT id FROM reporting_ng_chips
+				WHERE day_id IN (' . implode(',', $days) . ')
+				  AND is_hidden=0
+			');
 
-		$this->db->query('
-			INSERT IGNORE INTO `_delchips_` (id)
-			SELECT id FROM reporting_ng_chips
-			WHERE day_id IN (' . implode(',', $days) . ')
-		');
+			$total = $this->db->single_query_assoc('SELECT COUNT(*)  cnt FROM `_delchips_`');
+			$total = $total['cnt'];
 
-		$total = $this->db->single_query_assoc('SELECT COUNT(*)  cnt FROM `_delchips_`');
-		$total = $total['cnt'];
-
-		// `ce` wrqapper is for execution order, should be mysql version dependent (remove eventually)
-		// selecting first player chip (implied per-event) and last player chips (per-day)
-		$rdel = $this->db->query('
-			SELECT id FROM (
-				SELECT ce.id FROM (
-					SELECT c.id, c.player_id, c.chips FROM (
+			// selecting first player chip (implied per-event) and last player chips (per-day)
+			$rdel = $this->db->array_query_assoc('
+				SELECT c.id FROM (
+					(
 						SELECT player_id, MAX(created_on) created_on
-						FROM reporting_ng_chips WHERE day_id IN (' . implode(',', $days) . ') AND is_hidden=0
+						FROM reporting_ng_chips
+						WHERE day_id IN (' . implode(',', $days) . ') 
+						  AND is_hidden=0
 						GROUP BY player_id, day_id
-							UNION
+					)
+						UNION
+					(
 						SELECT player_id, MIN(created_on) created_on
-						FROM reporting_ng_chips WHERE day_id IN (' . implode(',', $days) . ') AND is_hidden=0
+						FROM reporting_ng_chips
+						WHERE day_id IN (' . implode(',', $days) . ') 
+						  AND is_hidden=0
 						GROUP BY player_id
-					) `x`
-					INNER JOIN reporting_ng_chips c ON c.player_id=x.player_id AND c.created_on=x.created_on
-				) ce
-			) a
-		');
+					)
+				) `x`
+				INNER JOIN reporting_ng_chips c ON c.player_id=x.player_id AND c.created_on=x.created_on
+			', 'id');
+			$dids = array_keys($rdel);
+			if (0 == count($dids))
+				throw new Exception('Strange conditions, abort');
 
-		$dids = array();
-		while(($row = $this->db->fetch_row_assoc($rdel)) != false) {
-			$dids[] = $row['id'];
-		}
-		if (0 == count($dids)) {
-			return ;
-		}
+			// delete "meaningful" chips from temporary table
+			$delete = $this->db->query('
+				DELETE FROM _delchips_ WHERE id IN (' . implode(',', $dids) . ')
+			');
+			// stop on db error, otherwise all chips are deleted for selected days
+			if (!$delete) // [1]
+				throw new Exception('Scary');
 
-		// delete "meaningful" chips from temporary table
-		$delete = $this->db->query('
-			DELETE FROM _delchips_ WHERE id IN (' . implode(',', $dids) . ')
-		');
-		// stop on db error, otherwise all chips are deleted for selected days
-		if ($this->db->error() || !$delete) {
-			return ;
-		}
+			$extras = $this->db->single_query_assoc('SELECT COUNT(*) cnt FROM `_delchips_`');
+			$extras = $extras['cnt'];
+			echo 'Total: ' . $total . '; extras: ' . $extras . '; ';
 
-		$extras = $this->db->single_query_assoc('SELECT COUNT(*)  cnt FROM `_delchips_`');
-		$extras = $extras['cnt'];
-		echo 'Total: ' . $total . ', extras: ' . $extras . "\n";
+			if ($total == $extras)
+				throw new Exception('Sanity check failed'); // looks like the delete fail detection [1] slipped anyway
 
-		if ($total == $extras) {
-			return ; // looks like the delete fail detection (:120-124) slipped anyway
-		}
+			// // delete what's left, where import_id is null
+			$extras = $this->db->array_query_assoc('SELECT id FROM `_delchips_`', 'id');
+			$extras = array_keys($extras);
+			if (0 == count($extras))
+				throw new Exception('Nothing ot do');;
 
-		// delete what's left
-		$rextras = $this->db->query('SELECT id FROM `_delchips_`');
-		$extras = array();
-		while(($row = $this->db->fetch_row_assoc($rextras)) != false) {
-			$extras[] = $row['id'];
+			$dextras = $this->db->array_query_assoc('
+				SELECT id FROM `reporting_ng_chips`
+				WHERE id IN (' . implode(',', $extras) . ')
+				  AND import_id IS NULL
+			', 'id');
+			$dextras = array_keys($dextras);
+			if (0 == count($dextras))
+				throw new Exception('Nothing to do'); ;
+
+			echo 'deletable extras: ' . count($dextras) . ";\n";
+
+			// $this->db->query('DELETE FROM reporting_ng_chips WHERE id IN (' . implode(',', $dextras) . ')');
+			// $deleted = $this->db->affected_rows();
+			// livereporting_adm_alt_log(0, 0, 0, 'delete', 'other', '0', 'cnt:' . $deleted, -1);
+			// echo 'deleted: ' . $deleted . ";\n";
+		} catch (Exception $e) {
+			echo $e->getMessage() . ".\n";
 		}
-		if (0 == count($extras)) {
-			return ;
-		}
-		$this->db->query('DELETE FROM reporting_ng_chips WHERE id IN (' . implode(',', $extras) . ')');
-		livereporting_adm_alt_log(0, 0, 0, 'delete', 'other', '0', 'cnt:' . count($extras), -1);
+		$this->db->exceptions(false);
 	}
 
 	private function doUpdateBluffCountry($numDays)

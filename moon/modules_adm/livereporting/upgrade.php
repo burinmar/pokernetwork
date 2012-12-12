@@ -6,7 +6,7 @@ class upgrade extends moon_com
 	{
 		header('content-type: text/plain');
 		set_time_limit(600);
-		$this->upgradeChipsPlayers();
+		// $this->upgradeChipsPlayers();
 		moon_close();
 		exit;
 	}

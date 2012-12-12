@@ -353,7 +353,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 				: 'odd',
 			'is_busted' => intval($chip['chips']) == 0,
 			'chips' => number_format($chip['chips']),
-			'chips_change' => $chip['chipsc'] !== NULL
+			'chips_change' => $chip['chipsc'] != 0 // null or 0
 				? number_format($chip['chipsc'])
 				: '',
 			'chips_change_direction' => $chip['chipsc'] != 0

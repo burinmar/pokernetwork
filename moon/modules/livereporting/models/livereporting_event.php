@@ -1279,6 +1279,8 @@ class livereporting_model_event_src_mobileapp extends livereporting_model_event
 		{ return parent::getLogEntries($eventId, $dayId, $filter, 'LIMIT ' . intval($limit)); }
 	function getChips($eventId, $dayId)
 		{ return parent::getLastChips($eventId, $dayId); }
+	function getSponsorsById($ids)
+		{ return parent::getSponsorsById($ids); }
 
 	function getDayEvent($dayId)
 	{
