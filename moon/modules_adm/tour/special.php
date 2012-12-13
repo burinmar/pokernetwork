@@ -652,7 +652,7 @@ class special extends moon_com {
 	}
 
 	function syncUpdateItem($arrived, $existing) {
-		$fields = array('name', 'qualification_from', 'qualification_to', 'qualification_points', 'date', 'timezone', 'prizepool', 'room_id', 'hide', 'created', 'password', 'password_from');
+		$fields = array('name', 'qualification_from', 'qualification_to', 'qualification_points', 'date', 'timezone', 'prizepool', 'room_id', 'hide', 'created', 'password', 'password_from', 'skin');
 		$ins = array();
 		foreach ($fields as $v) {
 			$ins[$v] = $arrived[$v];
