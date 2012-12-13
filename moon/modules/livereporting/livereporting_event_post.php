@@ -55,19 +55,11 @@ class livereporting_event_post extends livereporting_event_pylon
 		$rArgv['body'] = str_replace('src="/i/cards_sign/', 'src="/img/cards/', $rArgv['body']);
 
 		if ($argv['variation'] == 'logEntry') {
-			if (mb_strlen(strip_tags($data['contents']['contents'])) > 10000) {
-				$body = $lrep->instTools()->helperHtmlExcerpt($rArgv['body'], 15000, 270, '...', false, true);
-				if (mb_strlen($rArgv['body']) != mb_strlen($body)) {
-					$rArgv['body'] = $body;
-					$rArgv += array(
-						'is_preview' => true
-					);
-				}
-			}
 			return $tpl->parse('logEntry:post', $rArgv);
 		} elseif ($argv['variation'] == 'individual') {
 			if ($rArgv['show_controls']) {
 				$entry = $this->getEditableData($data['id'], $data['event_id']);
+				if (!empty($entry))
 				$rArgv['control'] = $this->renderControl(array_merge($entry, array(
 					'keep_old_dt' => true,
 					'tzName' => $data['tzName'],
@@ -194,7 +186,7 @@ class livereporting_event_post extends livereporting_event_pylon
 			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_post')->getCurrentRound($location['event_id'], $location['day_id']);
 			$saveDataPost['round_id'] = @$saveDataLog['contents']['round']['id'];
 		}
-		$saveDataLog['contents'] = serialize($saveDataLog['contents']);
+		$this->helperSaveManagedSerializeContents($saveDataLog['contents']);
 
 		if ($entry['id'] != NULL) { // update
 			$this->db->update($saveDataPost, $this->table('tPosts'), array(

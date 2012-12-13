@@ -3287,7 +3287,7 @@ mysqli_close($this->dblink);
 }function connection($info = FALSE) {
 if ($info === FALSE) {
 $this->ready || $this->handshake();
-return $this->$this->dblink;
+return $this->dblink;
 }else {
 return (isset($this->connectInfo[$info]) ? $this->connectInfo[$info] : FALSE);
 }}function error() {

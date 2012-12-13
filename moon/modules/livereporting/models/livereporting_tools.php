@@ -164,6 +164,48 @@ class livereporting_tools extends livereporting_model_pylon
 		}
 		return $truncate;
 	}
+
+	function helperHtmlExcerptForStoring($text, $maxlen)
+	{
+		$doc = new DOMDocument('1.0', 'UTF-8');
+		$text = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $text . '</body></html>';
+		$doc->loadHTML($text);
+
+		$output = '';
+		$outputLen = 0;
+		if (null === ($body = $doc->getElementsByTagName('body')->item(0)))
+			return '';
+
+		foreach ($body->childNodes as $node) {
+			$append = $node->ownerDocument->saveXML($node);
+			$outputLenThis = mb_strlen($append, '8bit');
+			if ($outputLen + $outputLenThis > $maxlen) {
+				if ($node->nodeName == 'table') {
+					$xpath = new DOMXPath($doc);
+					$trs = $xpath->query('./tr', $node);
+					$trsl = $trs->length;
+					while ($trsl > 0 && $outputLen + $outputLenThis > $maxlen) {
+						$removeRawMin = $outputLen + $outputLenThis - $maxlen;
+						$removedChunkLimit = 20;
+						while ($trsl > 0 && $removedChunkLimit-- && $removeRawMin > 0) {
+							$tr = $trs->item($trsl-1);
+							$removeRawMin -= mb_strlen($tr->ownerDocument->saveXML($tr), '8bit');
+							$node->removeChild($tr);
+							$trsl--;
+						}
+						$append = $node->ownerDocument->saveXML($node);
+						$outputLenThis = mb_strlen($append, '8bit');
+					}
+					if ($outputLen + $outputLenThis <= $maxlen)
+						$output .= $append;
+				}
+				break;
+			}
+			$output .= $append;
+		}
+
+		return $output;
+	}
 	
 	/**
 	 * Reads data of the common reporting datepicker form

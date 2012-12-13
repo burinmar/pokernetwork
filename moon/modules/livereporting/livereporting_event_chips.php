@@ -1209,7 +1209,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$saveDataLog = array(
 			'type' => 'chips',
 			'is_hidden' => $data['published'] != '1',
-			'contents' => serialize(array(
+			'contents' => array(
 				'title' => $data['title'],
 				'contents' => $data['body_compiled'],
 				'is_full_import' => intval($data['is_full_listing']),
@@ -1225,8 +1225,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 					? $data['image']['title']
 					: NULL,
 				'tags' => $tags
-			))
+			)
 		);
+		$this->helperSaveManagedSerializeContents($saveDataLog['contents']);
 
 		$this->helperSaveAssignCommonLogAttrs($saveDataLog, $userId, $entry, $data, $location);
 

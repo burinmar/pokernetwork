@@ -564,6 +564,19 @@ class livereporting_event_pylon extends livereporting_event
 			);
 		}
 	}
+
+	protected function helperSaveManagedSerializeContents(&$saveDataLogContents)
+	{
+		$serialized = serialize($saveDataLogContents);
+		$over = mb_strlen($serialized, '8bit') - 65500;
+		if ($over > 0) {
+			$saveDataLogContents['contents'] = $this->lrep()->instTools()->helperHtmlExcerptForStoring(
+				$saveDataLogContents['contents'],
+				mb_strlen($saveDataLogContents['contents'], '8bit') - $over);
+			$serialized = serialize($saveDataLogContents);
+		}
+		$saveDataLogContents = $serialized;
+	}
 	
 	/**
 	 * Macro to save entry tags to db (per-entry tags only)

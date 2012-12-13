@@ -46,7 +46,7 @@ var livePokerAdm = function() {
 			}, // post
 			rqWpHide : stdHide,
 			rqWcShow : function (id) {
-				syncFields({ 
+				syncFields({
 					'#rq-wc-body': '#rq-wp-body',
 					'#rq-wc input[name=title]': '#rq-wp input[name=title]',
 					'#rq-wc input[name=tags]': '#rq-wp input[name=tags]'
@@ -520,7 +520,7 @@ var livePokerAdm = function() {
 		$('#rq-wp .js-tag-suggestable, #rq-wc .js-tag-suggestable').focus(function(){
 			var $scope = $(this).parents('#rq-wp, #rq-wc');
 			var request = [
-				$('input[name=title]', $scope).val(), 
+				$('input[name=title]', $scope).val(),
 				$('#rq-wp-body, #rq-wc-body', $scope).val()
 			].join(' ');
 			if ($(this).data('ajax-tag-suggestion-hash') == request.length)
@@ -542,7 +542,7 @@ var livePokerAdm = function() {
 						$('.js-tag-suggestions', $scope).fadeOut(300);
 					}
 				});
-			}})($scope, this)();
+			};})($scope, this)();
 		});
 		$('#rq-wp .js-tag-suggestions, #rq-wc .js-tag-suggestions').live('click', function(){
 			var $scope = $(this).parents('#rq-wp, #rq-wc');

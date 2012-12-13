@@ -82,7 +82,7 @@ class livereporting_event_round extends livereporting_event_pylon
 				$this->forget();
 				echo json_encode(array(
 					'status' => 0,
-					'data' => $this->subRenderRoundAndBreakList($argv['event_id'], $argv['uri']['argv'][2])
+					'data' => $this->subRenderRoundAndBreakList($argv['event_id'], $argv['uri']['argv'][3])
 				));
 				moon_close();
 				exit;
@@ -293,7 +293,7 @@ class livereporting_event_round extends livereporting_event_pylon
 					'event_id' => $argv['event_id'],
 					'path' => $this->getUriPath(0),
 					'type' => 'round',
-					'id' => $argv['day_id']
+					'id' => 'rounds.' . $argv['day_id']
 				), $this->getUriFilter(NULL, TRUE))),
 				'rounds' => !empty($argv['unhide'])
 					? $this->subRenderRoundAndBreakList($argv['event_id'], $argv['day_id'])
