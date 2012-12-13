@@ -158,3 +158,16 @@
 #landing.pokerace5k {background-image: url('/img/landing/pokerace5k/intro.jpg'); background-color: #b4b4b4; color: #000;}
 #landing.pokerace5k .download {background: #b70000}
 #landing.pokerace5k .download:after {background-image: url('/img/landing/pokerace5k/logo.png')}
+
+
+#landing.titan-winter {background-image: url('/img/landing/titan-winter/intro.jpg?1'); background-color: #010f24;}
+#landing.titan-winter .download {
+	background-image: -moz-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-image: -webkit-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-image: -o-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-image: -ms-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-color: #00d8ff;
+	color: #fff !important;}
+#landing.titan-winter .download:after {background-image: url('/img/landing/titan-winter/logo.png')}
+#landing.titan-winter a {color: #fff;}
+#landing.titan-winter a:hover {color: #ff0000;}

@@ -1,0 +1,76 @@
+#promo {background: #020e24 url('bg.jpg') no-repeat top left}
+#promo .head {
+	float: right;
+	margin-right: 40px;
+	width: 460px;
+	padding: 40px 0;
+	position: relative;
+	margin-bottom: 0;
+	min-height: 0;
+}
+#promo .head h1 {
+	font-size: 40px;
+	line-height: 44px;
+}
+#promo .head p {font-size: 20px; margin-bottom: 20px}
+#promo .menu {background: #002684 url('menu.png') repeat-x top right}
+#promo .menu a {background: url('menu-sep.png') no-repeat top right; color: #fff}
+#promo .menu a:hover {color:#fff}
+#promo .menu .active a {color: #fff}
+#promo .menu .active, #promo .menu .active:hover {background: url('menu.png') repeat-x 0px -43px}
+#promo .menu li:hover {background: url('menu.png') repeat-x bottom left}
+#promo .prize {
+	border-bottom: 0 none;
+	padding-bottom: 0;
+}
+#promo .prize a,
+#promo .content a {color: #00ccff}
+#promo .prize a:hover,
+#promo .content a:hover {color: #99ccff}
+#promo .content h2 {color: #fff}
+#promo table th {background: #04448b; color: #fff}
+#promo table td {
+	background: #182d4c;
+	border-bottom: 1px dotted rgba(0, 0, 0, .6);
+	color: #fff;
+}
+#promo table.results td {background: #1c3357}
+#promo table.results tr:nth-child(odd) td {background: #182d4c}
+
+#promo .download {
+	display: inline-block;
+	min-width: 150px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 10px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	background-image: -moz-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-image: -webkit-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-image: -o-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-image: -ms-linear-gradient(top, #00d8ff 0%, #0091ff 100%);
+	background-color: #00d8ff;
+} #promo .download:hover {background: #0091ff}
+	#promo .download:after {
+		position: absolute;
+		content: '';
+		top: 0;
+		right: -160px;
+		height: 40px;
+		width: 160px;
+		background: url('logo.png') no-repeat center right;
+	}
+
+#promo .usertable {margin-bottom: 20px}
+#promo .usertable td {padding: 10px}
+#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
+#promo .content .paging {background-color: #04448b}
+
+#promo .archive {border-top: 0 none}
+#promo .show-archive {border-bottom: 1px dashed #00ccff}
+#promo .show-archive:hover {border-color:#99ccff}
