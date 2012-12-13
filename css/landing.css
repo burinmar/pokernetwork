@@ -116,23 +116,6 @@
 
 
 /*SKINS*/
-#landing.pca2012 {background-image: url('/img/landing/pca2012/intro.jpg?1'); padding: 40px 35px 65px 65px;}
-#landing.pca2012 .head {color: #000}
-#landing.pca2012 .download {
-	background-image: -moz-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
-	background-image: -webkit-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
-	background-image: -o-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
-	background-image: -ms-linear-gradient(top, #00a3c7 0%, #006d9e 100%);
-	background-color: #00a3c7}
-#landing.pca2012 .download:after {background-image: url('/img/landing/pca2012/logo.png')}
-
-
-
-#landing.pokerstars-fr-300 {background-image: url('/img/landing/pokerstars-fr-300/intro.jpg')}
-#landing.pokerstars-fr-300 .download {background: #c20000}
-#landing.pokerstars-fr-300 .download:after {background-image: url('/img/landing/pokerstars-fr-300/logo.png')}
-
-
 
 #landing.vault365 {background-image: url('/img/landing/vault365/intro.jpg')}
 #landing.vault365 .download {
