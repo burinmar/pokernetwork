@@ -1,0 +1,125 @@
+#christmasPromo {
+	background: #003818 url('http://www.pokernews.com/i/promoallinone/bg.jpg') no-repeat top center;
+	max-height: 1449px;
+	overflow: hidden;
+	margin-top: 20px;
+	border-radius: 5px;
+	padding: 60px 35px;
+	text-align: center;
+	color: #fff;
+}
+	#christmasPromo h1 {
+		font-weight: bold;
+		font-size: 48px;
+		line-height: 50px;
+		text-shadow: 0 0 5px #000;
+		margin-bottom: 20px;
+	}
+	#christmasPromo h2 {
+		font-weight: bold;
+		font-size: 80px;
+		line-height: 80px;
+		text-shadow: 0 0 5px #000;
+		margin-bottom: 220px;
+	}
+	#christmasPromo ul {
+		list-style: none;
+		margin-left: 13px;
+	}
+	#christmasPromo ul li {
+		float: left;
+		width: 220px;
+		height: 345px;
+		position: relative;
+		background-color: #0c371e;
+		margin-bottom: 220px;
+		box-shadow: 0px 36px 20px -26px rgba(0, 0, 0, 0.6);
+		padding: 25px;
+	}
+		#christmasPromo ul li:before {
+			content: '';
+			position: absolute;
+			top: -170px;
+			left: -28px;
+			background: url('http://www.pokernews.com/i/promoallinone/box.png');
+			width: 292px;
+			height: 260px;
+		}
+			#christmasPromo .wh:before {background-position: 0 0;}
+			#christmasPromo .bet365:before {background-position: 0 -260px;}
+			#christmasPromo .ps:before {background-position: 0 -520px;}
+			#christmasPromo .titan:before {background-position: 0 -780px;}
+			#christmasPromo .pokerace:before {background-position: 0 -1040px;}
+
+		#christmasPromo .bet365 {margin: 0 37px;}
+		#christmasPromo .titan {margin: 0 37px 0 167px;}
+	#christmasPromo ul li p {
+		position: absolute;
+		top: 90px;
+		width: 220px;
+		font-size: 14px;
+	}
+		#christmasPromo ul li p b {
+			display: block;
+			font-size: 30px;
+			line-height: 40px;
+		}
+	#christmasPromo ul li span {
+		display: block;
+		font-size: 18px;
+		color: #ffff00;
+		margin-top: 15px;
+	}
+	#christmasPromo ul li a {
+		position: absolute;
+		bottom: 25px;
+		right: 25px;
+		width: 111px;
+		line-height: 40px;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		text-align: center;
+		background-color: #066f33;
+		color: #fff;
+		font-size: 16px;
+		background: -moz-linear-gradient(top,  #066f33 0%, #00471e 100%);
+		background: -webkit-linear-gradient(top,  #066f33 0%, #00471e 100%);
+		background: -o-linear-gradient(top,  #066f33 0%, #00471e 100%);
+		background: -ms-linear-gradient(top,  #066f33 0%, #00471e 100%);
+		box-shadow: 0 2px 3px -2px #000;
+	}
+		#christmasPromo ul li a.download {
+			left: 25px;
+			background-color: #cc0e13;
+			background: -moz-linear-gradient(top,  #cc0e13 0%, #9e0f13 100%);
+			background: -webkit-linear-gradient(top,  #cc0e13 0%, #9e0f13 100%);
+			background: -o-linear-gradient(top,  #cc0e13 0%, #9e0f13 100%);
+			background: -ms-linear-gradient(top,  #cc0e13 0%, #9e0f13 100%);
+		}
+		#christmasPromo ul li table {
+			position: absolute;
+			top: 240px;
+			width: auto;
+			left: 0;
+			width: 250px;
+		}
+		#christmasPromo ul .pokerace table {width: 100%;}
+		#christmasPromo ul .titan table {width: 100%;}
+		
+		#christmasPromo ul .ps table, #christmasPromo ul .bet365 table, #christmasPromo ul .wh table {width: 70%; left: 11%}
+	
+	#christmasPromo td {
+		background-repeat: no-repeat;
+		background-position: top center;
+		vertical-align: middle;
+		padding: 0 7px;
+		white-space: nowrap;
+	}
+	#christmasPromo .dollar {
+		background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACkAAAASCAYAAADG3feYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABDNJREFUeNrMVu1vU2UU/7W3b9vd2pV27crYxtZNuq1DmGBEHJNgDIkvCSFGjWBiNH4xxpioxO9+0fgP+MEEjTHERCMmRgjTRHmJc8DcoN37ii3d1rXldqW1b/e2nucpqwMyescH5TTNvfc55577e875nXMeDQCD6YODOaMgoFgqoVAsoqGmFlZTDf5rkbIZJDJ/Q6fVQtBokFMUZD85ZdSRThT1erzm7cNcIoGfAvMY3NqJXc2t9/WhnCzDqNPd17vDoQB+nPLhde92xAnw97MzbFlk3vQyRe+vZBIt9WbU0Ae6G53wOl2qnafzeXw19hvmoyFoNQplREBHYwuOPLwPosGg2k+CgJ2encT8SgKeTTaYKLspwqchnYPSHWHRFDQCDnt34IB7m2rnN3NZfPzrt6gzSGi26yvr4VgBqbwVxwYPo95oUr3Zn+emcHJinDJSQLpQYOl28rzYakU87+mDy2xGT6NrQ7v/7I8zsIkJ2C1lgNtduzG+OMIBxygiTP/ewHOqfLHvsgBtsVhxLRHHqWk/QrTOQZpppx2b7OumuFBUgBLFncK/VsJJCbHUAnpbdOi09+DoI2/BYrJCysTwzZ+fYwJj8IUWuF2z2Xrbu3lFhoaKQ68V7gLav3kLDPStc4Y5vlaV4cGEhC9Hh6kY9Ggizh7dsbuiOxecpE5QYLTGfvcziKYWsZgM4fy1IdQZzdyG6Zndi949/LlEHeT45WH4l5cgl4p4e88gOqy2e2LQVgP5BQHscbiwnL6JFPFvOra8huhp6G4Fwhe5BLe9G132Xnib+uGPjJajIJTtVmUmHsWVyAKS5MtZV4/jl36vSoOqIFlllViuq8hI8Cw+GnoXsfQSepw7ccj76j0LpHzNqeJqVZCvUHonohE00a5N1AG6bI0VXYNJhKyU71/a+SYG2p+GXJSRzCZQpB8Tpmd2q/KQ3YGBrW7iromDfWPX41VBVuVkO/Hl2L6nOJcMwu3mT7R6MBoaRzPdn576Do+17Ue9ycKjOjRzskyJjJ7brZUjtPGC0s/TdGfhrAuS9brp+DJVnIJttNM7W9B6jljF2us2U6sJ0tMifvB9jbn4JHxLl7k+tiKTvvWuyuY+BWFdKvijrACTnLdMmKWYf7Tt/fDKDepv16Glucn6lEEQVPGlr6kNZ2YCyOXSMNcKvMJXm/lK1op39j6rekyuNvMTYxcxFV1CnOa4fH72U85JNm1e9nSj3+Gg8TaCUQKrVtg0+fDJF2AVPbgaNMAfEviVPbN1tdOGyVWq+hPjF3GoswsHWtsog9p/081m96wkwU6nH5lSznbRsMFT0N7WXv5fe8AISPEN+WAFmqH3p6UbcFsaKtnk3tiR6JdgEAo11xJv0gH4qNn+H0c1Jmevh3AhHEa+qFTaIGN1+63rgyYSSwgDyUpZ5LPtwRM2c9P/CDAAFSOqtZ9wynQAAAAASUVORK5CYII=');
+		background-position: center 5px;
+		padding-top: 30px;
+	}
+	#christmasPromo .chip {background-image: url('data:image/png;base64,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'); padding-top: 30px;}
+	#christmasPromo .pointer {background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAAfCAYAAAAFkva3AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA0JJREFUeNqkVktrU0EUPreJeTRNmpAa48I0aaMlxEoDbYgUTB9SuuumghRMQdqdNgqKLvwFggruXPUXaLESKFboKroopVBRsmj6QIQa8qgxMY+m9/pNmJSYXpukHjjMnbkz353vnO/MXCIiFVxSq9Wv0CroP83EwEZHR5NarfY5ns2nBWqBn2EPmUzGlMvl7rvd7m4+fiqwsg0MDFAqlaKdnZ2PSqUyhCHlqcEUCgUZjUYKBAKK6enpK21tbU8wbG0W0MJiFgwGpYrNz89LbMxms11vhrLsxMnJSdre3ibQfQt/3yhlWTBQJLvdTshwK4DdBoPhLoYdcKFpmtW2sLBQpmw2m2/X02HdeAwPD9P6+jr19vY+RZI+nUS5Llh7ezv19fXR4OCgeXx83M4p9/yL8ok0qw07LFMG4D25HTaldKfTSSsrKzQyMvIYlMO1gE2BsSwPDQ0RSu5cf3//Jb1efwvD7mrKDdOsNuhQ4qfNs0p9N1x/c3Nz4urq6iE3sVQqSZ2dnUI2m71RKBR8mOKXBdvb26NIJEKgUqbGDAeABLAkgHI100V+bGllwUKhUGlmZkbJ9MVkwSydTitwEBgSicRNdAs1YD+JK1oHf+jz+Qg6oqmpKWlxcXEtFou92d3dvYgdapE9slqtTLgt4XDYBVpfsGYNHocnOVj+KAGzs7NlHaFsEui/g1/VaDRJv99/TGfwYCXostLY2Nggj8dDoHEH3QfwWD6fL+7v72dqF3m93m65Oj2iCc1ksfClKIof0P8GL7HYgN7h0tJSj8PhoK6uLnK5XCx+F/BxL96/5jv9q5xEKDqC1sW0yUWohdvgj9gCdnpUbGJiQsI59xvj+mogls0DuAcpZ/0f8Bz/WoEHNyuXccRTzRpcRL+qaYp8QYq3Jf6usn0W6JxKpXIgk61jY2Ok0+lYSQnRaPRaPB5nmYzU0pUzBb9XL5tMpigUf6ycQPcFv8jrFjrbNaMRxzWYhr4OaicIgqCplGUjvwMin2e0WCzFra0tJ7JLy8vLmY6Ojs+bm5sso1957BsyDc9sgMdG4vFl8jhfoSk0cSWy7J3li5k20/DvPONF9gGhibNR4ICtPEZFvrsjen8EGAB5JbipbVL8JgAAAABJRU5ErkJggg=='); padding-top: 30px;}
+	#christmasPromo .cards {background-image: url('data:image/png;base64,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'); padding-top: 30px;}
