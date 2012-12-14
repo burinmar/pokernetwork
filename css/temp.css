@@ -1,9 +1,9 @@
 #christmasPromo {
 	background: #003818 url('http://www.pokernews.com/i/promoallinone/bg.jpg') no-repeat top center;
+	background-size: cover;
 	max-height: 1449px;
 	overflow: hidden;
 	margin-top: 20px;
-	border-radius: 5px;
 	padding: 60px 35px;
 	text-align: center;
 	color: #fff;
@@ -58,6 +58,7 @@
 		top: 90px;
 		width: 220px;
 		font-size: 14px;
+		color: #fff;
 	}
 		#christmasPromo ul li p b {
 			display: block;
