@@ -1,7 +1,7 @@
 <?php
 class header extends moon_com 
 {
-	function main($argv) 
+	function main($argv)
 	{
 		$navi   = moon :: shared('sitemap');
 		$page   = moon::page();
@@ -14,7 +14,7 @@ class header extends moon_com
 
 		$bCrumb   = $navi->breadcrumb();
 		$activeMainMenu = isset ($bCrumb[0]['id'])
-			? $bCrumb[0]['id'] 
+			? $bCrumb[0]['id']
 			: 0;
 		$tplArgv['isHome'] = 'home' == $navi->on();
 
@@ -34,8 +34,20 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+//Titan
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/15k-titan-winter-freeroll-series/',
+'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
+'bgColor'=> '#01062C',
+'startDate'=> '2012-12-20 00:00:01',
+'endDate'=> '2012-12-21 23:59:59',
+'showIn'=> 'home'
+)
+)) return $res;
+
+
 // FullTilt TakeOver 2012
-$imgURL = '/img/wallpaper/ftops-xxi.jpg';
+/*$imgURL = '/img/wallpaper/ftops-xxi.jpg';
 $trID = 'EN';
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.fulltiltpoker.com/?key=MDAwMTkwN0QwMDAzQzM1MjAwMDAwMDAwMDAwMDAwMDA-',
@@ -51,7 +63,7 @@ if ($this->wallpaper($res, array(
 	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.fulltiltpoker.com/?key=MDAwMTkwN0QwMDAzQzM1MjAwMDAwMDAwMDAwMDAwMDA-" target="_blank"><img src="/img/wallpaper/en_pushdown_1000x150.gif" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
 	$res = $tb . $res;
 	return $res;
-}
+}*/
 
 //  $22,500 PokerStars Freeroll 
 if ($this->wallpaper($res, array(
