@@ -34,16 +34,57 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+//titanas ir Holiday season antra karta bus rodomi
+$first = moon::locale()->now() < 1356681601; //2012-12-28 00:00:01
+
 //Titan
 if ($this->wallpaper($res, array(
 'url'=> '/leagues/15k-titan-winter-freeroll-series/',
 'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
 'bgColor'=> '#01062C',
-'startDate'=> '2012-12-20 00:00:01',
-'endDate'=> '2012-12-21 23:59:59',
+'startDate'=> $first ? '2012-12-20 00:00:01' : '2013-01-01 00:00:01',
+'endDate'=> $first ? '2012-12-21 23:59:59' : '2013-01-06 23:59:59',
 'showIn'=> 'home'
 )
 )) return $res;
+
+
+// WH Double Up
+if ($this->wallpaper($res, array(
+'url'=> '/leagues/10-000-double-up-sit-and-go-madness/',
+'imgPath'=> '/img/wallpaper/williamhill_doubleup_wallpaper.jpg',
+'bgColor'=> '#000',
+'startDate'=> '2012-12-22 00:00:01',
+'endDate'=> '2012-12-23 23:59:59',
+'showIn'=> 'home, /william-hill/',
+)
+)) return $res;
+
+
+//  $22,500 PokerStars Freeroll
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/56.htm',
+'imgPath'=> '/img/wallpaper/ps_22k_wallpaper.jpg',
+'bgColor'=> '#000',
+'startDate'=> '2012-12-26 00:00:01',
+'endDate'=> '2012-12-27 23:59:59',
+'showIn'=> 'home, /pokerstars/'
+)
+)) return $res;
+
+
+//PokerAce freeroll
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/pokerace/freerolls/58.htm',
+'imgPath'=> '/img/wallpaper/pokerace_freeroll_wallpaper.jpg',
+'bgColor'=> '#838383',
+'startDate'=> '2012-12-28 00:00:01',
+'endDate'=> '2012-12-29 23:59:59',
+'showIn'=> 'home',
+)
+)) return $res;
+
+
 
 
 // FullTilt TakeOver 2012
@@ -65,18 +106,8 @@ if ($this->wallpaper($res, array(
 	return $res;
 }*/
 
-//  $22,500 PokerStars Freeroll 
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/56.htm',
-'imgPath'=> '/img/wallpaper/ps_22k_wallpaper.jpg',
-'bgColor'=> '#000',
-'endDate'=> '2013-01-07 23:59:59',
-'showIn'=> '/pokerstars/'
-)
-)) return $res;
-
 // Bet365 Vaults
-if ($this->wallpaper($res, array(
+/*if ($this->wallpaper($res, array(
 'url'=> '/leagues/10-000-bet365-open-vaults-freerolls/',
 'imgPath'=> '/img/wallpaper/bet365_openvaults_wallpaper.jpg',
 'bgColor'=> '#000',
@@ -93,6 +124,7 @@ if ($this->wallpaper($res, array(
 'showIn'=> '/poker-770/'
 )
 )) return $res;
+*/
 
 //  $67,500 PokerStars PokerNews Freeroll Series 
 //if ($this->wallpaper($res, array(
