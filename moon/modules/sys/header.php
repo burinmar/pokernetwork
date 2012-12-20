@@ -80,6 +80,7 @@ if ($this->wallpaper($res, array(
 'bgColor'=> '#838383',
 'startDate'=> '2012-12-28 00:00:01',
 'endDate'=> '2012-12-29 23:59:59',
+'geoTarget'=> '-au, nz',
 'showIn'=> 'home',
 )
 )) return $res;
