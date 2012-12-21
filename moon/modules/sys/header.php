@@ -60,6 +60,17 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
+//Holiday season PN-3368 Poker christmas infographics
+if ($this->wallpaper($res, array(
+'url'=> '/holiday-season.htm',
+'imgPath'=> '/img/wallpaper/christmas_wallpaper.jpg',
+'bgColor'=> '#005f2d',
+'startDate'=> $first ? '2012-12-24 00:00:01' : '2012-12-30 00:00:01',
+'endDate'=> $first ? '2012-12-25 23:59:59' : '2012-12-31 23:59:59',
+'showIn'=> 'home',
+)
+)) return $res;
+
 
 //  $22,500 PokerStars Freeroll
 if ($this->wallpaper($res, array(
