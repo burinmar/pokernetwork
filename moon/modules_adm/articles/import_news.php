@@ -245,15 +245,16 @@ function getLastImportedNewsTime()
 
 function getLeadingImage($fileName, $prefix = '')
 {
-	$url = !is_dev()
+	$url = 'http://pnimg.net/w/articles/0/' . substr_replace($fileName, '/', 3, 0);
+	/*$url = !is_dev()
 		? 'http://www.pokernews.com/w/articles/'
-		: 'http://www.pokernews.dev/w/articles/';
+		: 'http://www.pokernews.dev/w/articles/';*/
 	$path = _W_DIR_ . 'articles/img/';
 
 	$subdir_ = substr($fileName, 0, 4);
 	$fileName = $prefix . substr($fileName, 4);
 
-	$url .= $subdir_ . '/' . $fileName;
+	//$url .= $subdir_ . '/' . $fileName;
 	$imgFullPath = $path . $subdir_ . '/' . $fileName;
 
 	$ch = curl_init ($url);
