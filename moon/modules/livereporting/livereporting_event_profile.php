@@ -280,8 +280,6 @@ class livereporting_event_profile extends livereporting_event_pylon
 						'updated_on' => time(),
 						'is_hidden'  => 0
 					);
-					if (!$profile['has_chips'])
-						$saveData['day_enter_id'] = $location['day_id'];
 					if (isset($row[2]) && ($row[2] = strtolower($row[2])) && isset($sponsors[$row[2]]))
 						$saveData['sponsor_id'] = $sponsors[$row[2]];
 					$this->db->update(
@@ -297,7 +295,6 @@ class livereporting_event_profile extends livereporting_event_pylon
 						'name'          => $name,
 						'tournament_id' => $location['tournament_id'],
 						'event_id'      => $location['event_id'],
-						'day_enter_id'  => $location['day_id'],
 					);
 					if (isset($row[2]) && ($row[2] = strtolower($row[2])) && isset($sponsors[$row[2]]))
 						$saveData['sponsor_id'] = $sponsors[$row[2]];
@@ -339,6 +336,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 
 	private function getProfilesProfileForDeletionById($eventId, $id)
 	{
+		// @todo maybe do not filter by is_hidden
 		$profile = $this->db->single_query_assoc('
 			SELECT id, name
 			FROM ' . $this->table('Players') . ' 
@@ -354,13 +352,10 @@ class livereporting_event_profile extends livereporting_event_pylon
 	private function getProfilesProfileForSave($eventId, $name)
 	{
 		$profile = $this->db->single_query_assoc('
-			SELECT p.id, p.name, IFNULL(MAX(c.id),0) has_chips
-			FROM ' . $this->table('Players') . ' p
-			LEFT JOIN ' . $this->table('Chips') . ' c
-				ON c.player_id=p.id
-			WHERE p.event_id=' . intval($eventId) . '
-			  AND p.name="' . $this->db->escape($name) . '"
-			GROUP BY p.id
+			SELECT id, name
+			FROM ' . $this->table('Players') . '
+			WHERE event_id=' . intval($eventId) . '
+			  AND name="' . $this->db->escape($name) . '"
 		');
 		return isset($profile['id'])
 			? $profile
@@ -584,19 +579,13 @@ class livereporting_event_profile extends livereporting_event_pylon
 		return $this->saveProfiles($data);
 	}
 
-	/**
-	 * used from _event_chips.save_()
-	 * For player creation only, when chips component thinks there is no such player present
-	 * (which is assumed based on getPreviousChipsByPlayerName(), getPreviousChipsByDayDT() from models/lr_events)
-	 */
-	public function savePlayerSrcChips($location, $playerName)
+	private function savePlayer($location, $playerName)
 	{
 		$this->db->insert(array(
 			'tournament_id' => $location['tournament_id'],
 			'event_id' => $location['event_id'],
 			'name' => $playerName,
 			'created_on' => time(),
-			'day_enter_id' => $location['day_id']
 		), $this->table('Players'));
 		$playerId = $this->db->insert_id();
 		if (!$playerId) {
@@ -606,7 +595,27 @@ class livereporting_event_profile extends livereporting_event_pylon
 		return $playerId;
 	}
 
-	// saveProfiles, saveProfile, savePlayerSrcChips
+	/**
+	 * used from _event_chips.save_()
+	 * For player creation only, when chips component thinks there is no such player present
+	 * (which is assumed based on getPreviousChipsByPlayerName(), getPreviousChipsByDayDT() from models/lr_events)
+	 */
+	public function savePlayerSrcChips($location, $playerName)
+	{
+		return $this->savePlayer($location, $playerName);
+	}
+
+	/**
+	 * used from _event_event.savePlaces()
+	 * For player creation only, when event component thinks there is no such player present
+	 * (which is assumed based on getPlayersByPlayerName() from models/lr_events)
+	 */
+	public function savePlayerSrcEvent($location, $playerName)
+	{
+		return $this->savePlayer($location, $playerName);
+	}
+
+	// saveProfiles, saveProfile, savePlayer
 	private function updateProfilePPRels($id, $name)
 	{
 		$player = $this->db->single_query_assoc('

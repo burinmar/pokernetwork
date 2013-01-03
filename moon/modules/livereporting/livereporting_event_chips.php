@@ -800,7 +800,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		return $entry;
 	}
 
-	// Slmost plain redirect, with loopback to saveSingleChipSrcEvent.
+	// Almost plain redirect, with loopback to saveSingleChipSrcEvent.
 	// saveSingleChipSrcEvent could be called without loopback, but `Players info` control
 	// needs chips insertion anyway.
 	private function renderSaveNewPlayer($data)

@@ -186,7 +186,7 @@ class winner_list extends moon_com
 		
 		if (empty($entryData['winner']) || empty($entryData['runner_up'])) {
 			$suggestions = $this->db->array_query_assoc('
-				SELECT name, place FROM ' . $this->table('WinnersList') . '
+				SELECT name, place FROM ' . $this->table('Players') . '
 				WHERE event_id=' . $location['event_id'] . '
 				  AND place IN (1,2)
 			', 'place');

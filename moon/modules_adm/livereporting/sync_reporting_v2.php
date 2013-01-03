@@ -804,13 +804,6 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			}
 			$row['event_id'] = $this->lrEventsMap[$row['event_id']];
 		}
-		if (isset($row['day_enter_id'])) { // exists & != null
-			if (!isset($this->lrDaysMap[$row['day_enter_id']])) {
-				moon::error('repsync ' . $msgMethod . '() no day');
-				return;
-			}
-			$row['day_enter_id'] = $this->lrDaysMap[$row['day_enter_id']];
-		}
 		if (isset($row['player_id'])) { // exists & != null
 			if (!isset($this->lrPlayersMap[$row['player_id']])) {
 				moon::error('repsync ' . $msgMethod . '() no player');

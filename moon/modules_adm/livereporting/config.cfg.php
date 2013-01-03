@@ -22,7 +22,6 @@ $cfg['livereporting'] = array(
 	'tb.SyncLog'     => 'reporting_ng_sync',
 	'tb.Tours'       => 'reporting_ng_tours',
 	'tb.Winners'     => 'reporting_ng_winners',
-	'tb.WinnersList' => 'reporting_ng_winners_list',
 	'tb.Rooms'       => 'rw2_rooms',
 	'tb.Constants'   => 'page_constants',
 	'tb.Entries{slider}'   => 'reporting_supp_slider',

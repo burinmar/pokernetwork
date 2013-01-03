@@ -324,6 +324,8 @@ class ctags extends moon_com
 	private function getArticlesEntries($src, $ids)
 	{
 		$entries = array();
+		foreach ($ids as $key => $value)
+			$ids[$key] = intval($value);
 		$entriesR = $this->db->query('
 			SELECT id, title, published, uri, article_type, summary, img
 			FROM articles
@@ -419,7 +421,7 @@ class ctags extends moon_com
 	}
 }
 
-class ctags_updater extends moon_com
+abstract class ctags_updater extends moon_com
 {
 	protected $src;
 

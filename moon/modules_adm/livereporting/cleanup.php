@@ -26,14 +26,18 @@ class cleanup extends moon_com
 				moon::page()->set_local('cron', ob_get_contents());
 				return;
 			
-			case 'wsop-bluff-profile':
+			case 'winners-list-to-players-places':
+				$this->winnersListToPlayersPlaces();
+				return ;
+
+			/*case 'wsop-bluff-profile':
 				ob_start();
 				$days = isset($_GET['days'])
 					? max(1, intval($_GET['days']))
 					: 2;
 				$this->doUpdateBluffCountry($days);
 				moon::page()->set_local('cron', ob_get_contents());
-				return;
+				return;*/
 			
 			default:
 				break;
@@ -41,6 +45,16 @@ class cleanup extends moon_com
 	}
 
 	function doBatch1()
+	{
+		$this->clearTmpFiles();
+		$this->releaseCursedPlayers();
+
+		// $this->oldChipsPurge();
+
+		echo "done";
+	}
+
+	private function clearTmpFiles()
 	{
 		$fs = new FS_CMD;
 
@@ -67,14 +81,110 @@ class cleanup extends moon_com
 		if (count($files)) {
 			livereporting_adm_alt_log(0, 0, 0, 'delete', 'other', '0', count($files) . ' tmp:failed:lrep*', -1);
 		}
+	}
 
-		// $this->oldChipsPurge();
+	private function releaseCursedPlayers()
+	{
+		// delete players with no chips or winning place number
+		$playersIds = array_keys($this->db->array_query_assoc('
+			SELECT p.id, IFNULL(MAX(c.id),0) has_chips
+			FROM reporting_ng_players p
+			LEFT JOIN reporting_ng_chips c
+				ON c.player_id=p.id
+			WHERE p.place IS NULL
+			  AND GREATEST(p.created_on, IFNULL(p.updated_on, 0)) BETWEEN UNIX_TIMESTAMP()-30*24*3600 AND UNIX_TIMESTAMP()-3*24*3600
+			GROUP BY p.id
+			HAVING has_chips=0
+		', 'id'));
+		if (0 == count($playersIds))
+			return ;
+		$this->db->query('
+			DELETE FROM reporting_ng_players WHERE id IN (' . implode(',', $playersIds) . ')
+		');
+		echo 'Deleted ' . $this->db->affected_rows() . ' unused players. ';
+	}
 
-		echo "done";
+	private function winnersListToPlayersPlaces()
+	{
+		$events = $this->db->array_query_assoc('
+			SELECT id FROM reporting_ng_events
+			WHERE id NOT IN (
+				SELECT event_id FROM (
+					SELECT event_id, MAX(place) mpl FROM reporting_ng_players
+					GROUP BY event_id
+					HAVING mpl IS NOT NULL
+				) `unprocessed_events`
+			)
+			GROUP BY id
+		');
+		foreach ($events as $event) {
+			$eventId = $event['id'];
+			$winners = $this->db->array_query_assoc('
+				SELECT name, place, event_id, tournament_id FROM reporting_ng_winners_list
+				WHERE event_id=' . $eventId . '
+			');
+
+			$names = array();
+			foreach ($winners as $winner)
+				$names[] = '"' . $this->db->escape($winner['name']) . '"';
+			if (0 == count($names))
+				continue;
+			$eventPlayers = $this->db->array_query_assoc('
+				SELECT id, FIELD(name, ' . implode(',', $names) . ') nr 
+				FROM reporting_ng_players
+				WHERE event_id=' . intval($eventId) . ' 
+				  AND name IN(' . implode(',', $names) . ')
+			');
+			$result = array();
+			foreach ($names as $k => $name)
+				$result[$k] = null;
+			foreach ($eventPlayers as $player) {
+				$nr = intval($player['nr']) - 1;
+				if (!array_key_exists($nr, $result))
+					continue; // should not be possible at all, in theory
+				$result[$nr] = $player['id'];
+			}
+			$eventPlayers = $result;
+
+			$time = time();
+			foreach ($winners as $k => $player) {
+				$playerId = $eventPlayers[$k];
+
+				if (null === $playerId && null != $player['name'] && 'Error' != $player['name']) {
+					$playerId = $this->savePlayer($player['tournament_id'], $player['event_id'], $player['name']);
+					if (null == $playerId)
+						continue;
+				}
+				if (null === $playerId) 
+					continue;
+
+				$this->db->update(array(
+					'place' => $player['place'],
+					'updated_on' => $time + $player['event_id'],
+				), 'reporting_ng_players', array(
+					'id' => $playerId
+				));
+			}
+		}
+	}
+
+	private function savePlayer($tournamentId, $eventId, $playerName)
+	{
+		$this->db->insert(array(
+			'tournament_id' => $tournamentId,
+			'event_id' => $eventId,
+			'name' => $playerName,
+			'created_on' => time(),
+		), 'reporting_ng_players');
+		$playerId = $this->db->insert_id();
+		if (!$playerId) {
+			return ; // can't distinguish between dupe error (which is ok) and others (which are not)
+		}
+		return $playerId;
 	}
 
 	// purge redundant (invisible for regular user) chip counts
-	function oldChipsPurge()
+	private function oldChipsPurge()
 	{
 		try {
 			$this->db->exceptions(true);
@@ -169,7 +279,7 @@ class cleanup extends moon_com
 		$this->db->exceptions(false);
 	}
 
-	private function doUpdateBluffCountry($numDays)
+	/*private function doUpdateBluffCountry($numDays)
 	{
 		$this->db->query('
 			UPDATE reporting_ng_players p
@@ -183,7 +293,7 @@ class cleanup extends moon_com
 			SET p.country_id=pb.country
 		');
 		echo 'Updated: ' . $this->db->affected_rows();
-	}
+	}*/
 
 	/* if uncommenting apply alt_log()
 	function doCleanup()

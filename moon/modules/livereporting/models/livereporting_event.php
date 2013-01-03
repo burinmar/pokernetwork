@@ -691,7 +691,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $chips;
 	}
 
-	// retains players array keys
+	// "retains" players array keys
 	// redirects to getPreviousChipsByPlayerId with some processing
 	protected function getPreviousChipsByPlayerName($eventId, $playerKNames, $datetime)
 	{
@@ -705,7 +705,7 @@ class livereporting_model_event extends livereporting_model_pylon
 			SELECT id, FIELD(name, ' . implode(',', $names) . ') nr 
 			FROM ' . $this->table('Players') . '
 			WHERE event_id=' . intval($eventId) . ' 
-			AND NAME IN(' . implode(',', $names) . ')
+			  AND name IN(' . implode(',', $names) . ')
 		', 'id');
 
 		$previousChips = $this->getPreviousChipsByPlayerId($eventId, array_keys($players), $datetime);
@@ -863,7 +863,7 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 		
 		$place = $this->db->single_query_assoc('
-			SELECT MIN(place)-1 place FROM ' . $this->table('WinnersList') . '
+			SELECT MIN(place)-1 place FROM ' . $this->table('Players') . '
 			WHERE event_id=' . intval($eventId) . '
 		');
 		if (0 == count($place) || $place['place'] == 0) {
@@ -885,7 +885,36 @@ class livereporting_model_event extends livereporting_model_pylon
 		
 		return $return;
 	}
-	
+
+	// "retains" players array keys
+	public function getPlayersByPlayerName($eventId, $playerKNames)
+	{
+		if (0 == count($playerKNames))
+			return array();
+
+		$names = array();
+		foreach ($playerKNames as $name)
+			$names[] = '"' . $this->db->escape($name) . '"';
+		$players = $this->db->array_query_assoc('
+			SELECT id, FIELD(name, ' . implode(',', $names) . ') nr 
+			FROM ' . $this->table('Players') . '
+			WHERE event_id=' . intval($eventId) . ' 
+			  AND name IN(' . implode(',', $names) . ')
+		');
+
+		$result = array();
+		foreach ($playerKNames as $k => $name)
+			$result[$k] = null;
+		foreach ($players as $player) {
+			$nr = intval($player['nr']) - 1;
+			if (!array_key_exists($nr, $result))
+				continue; // should not be possible at all, in theory
+			$result[$nr] = $player['id'];
+		}
+
+		return $result;
+	}
+
 	protected function getTournamentSyncOrigin($eventId)
 	{
 		$syncData = $this->db->single_query_assoc('

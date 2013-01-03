@@ -401,19 +401,6 @@ class livereporting_event_event extends livereporting_event_pylon
 		return $this->getPayouts($eventId, FALSE);
 	}
 
-	private function getPlayerNames($eventId)
-	{
-		$names = array();
-		$players = $this->db->array_query_assoc('
-			SELECT id, name FROM ' . $this->table('Players') . '
-			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
-		');
-		foreach ($players as $player) {
-			$names[$player['id']] = $player['name'];
-		}
-		return $names;
-	}
-
 	private function saveBumpEvent($eventId)
 	{
 		$this->db->update(array(
@@ -468,46 +455,44 @@ class livereporting_event_event extends livereporting_event_pylon
 		list (
 			$location
 		) = $prereq;
+		$lrep = $this->lrep();
+		$tools = $lrep->instTools();
+		$evProfileObj = $this->instEventProfile();
+		$evModel = $lrep->instEventModel('_src_event');
 		
-		//$placesNoPlayer = array();
-		$placePlayer = array();
-		$placePayout = array();
-		$players = $this->getPlayerNames($data['event_id']);
+		$names = array();
+		foreach ($data['winner_list'] as $playerName) {
+			$names[] = $tools->helperNormalizeName($playerName);
+		}
 
-		foreach ($data['winner_list'] as $place => $name) {
-			$evPayout = NULL;
-			if ($name != NULL) {
-				$evPayout = array(
-					'name' => $name
-				);
+		$this->db->query('
+			UPDATE ' . $this->table('Players') . '
+			SET place=NULL, updated_on=' . time() . '
+			WHERE event_id=' . $location['event_id'] . ' AND place IS NOT NULL
+		');
+
+		$k = 0;
+		$players = $evModel->getPlayersByPlayerName($data['event_id'], $names);
+		foreach ($data['winner_list'] as $playerName) {
+			$playerId = $players[$k];
+			$k++;
+
+			if (null === $playerId && null != $playerName) {
+				$playerId = $evProfileObj->savePlayerSrcChips($location, $playerName);
+				if (null == $playerId)
+					continue;
 			}
-			if ($name == NULL || !in_array($name, $players)) {
-				//$placesNoPlayer[] = $place + 1;
-			} else {
-				$placePlayer[$place + 1] = array_search($name, $players);
-				$evPayout['id'] = $placePlayer[$place + 1];
-			}
-			if ($evPayout) {
-				$placePayout[$place + 1] = $evPayout;
-			}
-		}
-		
-		$this->db->query('DELETE FROM reporting_ng_winners_list WHERE event_id=' . $location['event_id']);
-		foreach ($placePayout as $place => $payout) {
-			$this->db->insert(array(
-				'tournament_id' => $location['tournament_id'],
-				'event_id' => $location['event_id'],
-				'place' => $place,
-				'name' => $payout['name'],
-				'player_id' => isset($payout['id'])
-					? $payout['id']
-					: NULL,
-				'created_on' => time(),
+			if (null === $playerId) 
+				continue;
+
+			$this->db->update(array(
+				'place' => $k,
 				'updated_on' => time(),
-			), 'reporting_ng_winners_list');
+			), $this->table('Players'), array(
+				'id' => $playerId
+			));
 		}
 		
-		// players left updated, winner list updated
 		$this->saveBumpEvent($data['event_id']);
 	}
 
