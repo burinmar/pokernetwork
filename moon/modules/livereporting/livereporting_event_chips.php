@@ -380,7 +380,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$eventInfo = $lrep->instEventModel('_src_event')->getEventData($this->requestArgv('event_id'));
 		$isAdm = $page->get_global('adminView') && $lrep->instTools()->isAllowed('writeContent');
 		$showSingleChipsControls = 
-			$isAdm 
+			$isAdm && 0 != $data['day_id']
 			&& ($days = $lrep->instEventModel('_src_event')->getDaysData($data['event_id']))
 			&& $lrep->instTools()->isAllowed('viewSingleChipsControl', array(
 			'event_synced' => $eventInfo['synced'],

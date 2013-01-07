@@ -32,7 +32,7 @@ class event_list extends moon_com
 					'from_date','from_time','to_date',
 					'to_time','buyin','fee','rebuy','addon','is_live','is_main','is_syncable','alias','prizepool','chipspool','players_total','players_left',
 					'stayhere', 'bluff_id', 'stars_id', 'wpt_id',
-					'dayid', 'dayname', 'dayfrom_date', 'dayfrom_time'
+					'dayid', 'dayname', 'daymergename', 'dayfrom_date', 'dayfrom_time'
 				);
 				$form->fill($_POST);
 				$data = $form->get_values();
@@ -347,7 +347,7 @@ class event_list extends moon_com
 			}
 
 			$days = $this->db->array_query_assoc('
-				SELECT id, day_date, name
+				SELECT id, day_date, name, merge_name
 				FROM ' . $this->table('Days') . '
 				WHERE is_live>=0 AND event_id =' . intval($argv['id']) . '
 				ORDER BY name DESC
@@ -358,6 +358,7 @@ class event_list extends moon_com
 					'nr' => $nr + 1,
 					'id' => $day['id'],
 					'value' => htmlspecialchars($day['name']),
+					'merge_name' => htmlspecialchars($day['merge_name']),
 					'from_date' => gmdate('Y-m-d', $day['day_date'] + $tzOffset),
 					'from_time' => gmdate('H:i',   $day['day_date'] + $tzOffset),
 				));
@@ -715,6 +716,7 @@ class event_list extends moon_com
 				'tournament_id' => $tourId,
 				'event_id' => $eventId,
 				'name' => $data['dayname'][$nr],
+				'merge_name' => $data['daymergename'][$nr],
 				'is_live' => 1,
 				'is_empty' => 1,
 				'state' => 0,
@@ -732,6 +734,7 @@ class event_list extends moon_com
 			$day_date -= $tzOffset;
 			$saveData = array(
 				'name' => $data['dayname'][$nr],
+				'merge_name' => $data['daymergename'][$nr],
 				'updated_on' => time(),
 				'day_date' => $day_date
 			);

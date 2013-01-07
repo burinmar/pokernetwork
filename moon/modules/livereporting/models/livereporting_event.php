@@ -282,7 +282,7 @@ class livereporting_model_event extends livereporting_model_pylon
 			return $daysData[$eventId];
 		}
 		$days = $this->db->array_query_assoc('
-			SELECT id, name, is_live, is_empty, state FROM ' . $this->table('Days') . '
+			SELECT id, name, is_live, is_empty, state, merge_name FROM ' . $this->table('Days') . '
 			WHERE event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
 			    AND is_live>=0
 			ORDER BY name 
@@ -445,112 +445,34 @@ class livereporting_model_event extends livereporting_model_pylon
 	/**
 	 * Returns previous days, including self, but excluding parallel and future days
 	 * Input days must be ordered
-	 * @todo check (1)
-	 * @todo check (2)
 	 */
 	private function dayUnroll($daysData, $dayId)
 	{
-		// (1) {{
-		// $bigDayCurrent = "number" of the milestone day (1a => 1, 2 => 2, null => 'all')
-		if (!empty($dayId)) {
-			preg_match('~^[0-9]+~i', $daysData[$dayId]['name'], $bigDayCurrent);
-			$bigDayCurrent = isset ($bigDayCurrent[0])
-				? $bigDayCurrent[0]
-				: '0';
-		} else {
-			$bigDayCurrent = 'all';
-		}
-		// }}
+		$nameHash = array();
+		foreach ($daysData as $day)
+			$nameHash[$day['name']] = $day['id'];
 
-		$days = array_keys($daysData);
-		$daysPrev = array();
-		foreach ($days as $day) {
-			// (2) {{
-			// "number" of the day
-			preg_match('~^[0-9]+~i', $daysData[$day]['name'], $bigDay);
-			$bigDay = isset ($bigDay[0])
-				? $bigDay[0]
-				: '0';
-			// if sibling day, then skip (milestone: 2a, then skip 2b, 2c, 2d)
-			if ($day != $dayId && $bigDay == $bigDayCurrent) {
+		$revHash = array();
+		foreach ($daysData as $day) {
+			if (!isset($nameHash[$day['merge_name']]))
 				continue;
-			}
-			// }}
-			$daysPrev[] = $day;
-			if ($day == $dayId) {
-				break;
-			}
+			$revHash[$nameHash[$day['merge_name']]][] = $day['id'];
 		}
 
-		$omitDays = $this->dayParallel($daysData, $dayId);
-		foreach ($omitDays as $day) {
-			if (FALSE !== ($k = array_search($day, $daysPrev))) {
-				unset($daysPrev[$k]);
+		$daysPrev = array();
+		$descendPool = array($dayId);
+		while (count($descendPool) > 0) {
+			$newDescendPool = array();
+			foreach ($descendPool as $id) {
+				$daysPrev[] = $id;
+				if (isset($revHash[$id]))
+					foreach ($revHash[$id] as $subId)
+						$newDescendPool[] = $subId;
 			}
+			$descendPool = $newDescendPool;
 		}
+
 		return $daysPrev;
-	}
-
-	/**
-	 * Returns ids of event days, which are conidered to be from "parallel reality"
-	 * E.g. 2b would return ids of 2a, 1a, 1c; 1a => 1b-d 
-	 */
-	private function dayParallel($daysData, $dayId)
-	{
-		if (0 == $dayId) {
-			return array();
-		}
-		preg_match('~^([0-9]+)([a-d]+)~i', $daysData[$dayId]['name'], $tmpDayName);
-		if (!isset($tmpDayName[1])) {
-			return array();
-		}
-
-		$omit = array();
-		if ($tmpDayName[1] == '1') {
-			$omitNames = array('1a' => 1, '1b' => 1, '1c' => 1, '1d' =>1);
-			unset($omitNames[$daysData[$dayId]['name']]);
-			$omitNames = array_keys($omitNames);
-			foreach ($daysData as $dayData) {
-				if (in_array($dayData['name'], $omitNames)) {
-					$omit[] = $dayData['id'];
-				}
-			}
-		} else if ($tmpDayName[1] == '2') {
-			$primaryDaysCnt = 0;
-			foreach ($daysData as $dayData) {
-				if (substr($dayData['name'], 0, 1) == '1') {
-					$primaryDaysCnt++;
-				}
-			}
-			if ($primaryDaysCnt == 4) { 
-				// only suitable for 4 days, else fucked up
-				if ($tmpDayName[0] == '2a') {
-					$omitNames = array('2b', '1b', '1d');
-				} elseif ($tmpDayName[0] == '2b') {
-					$omitNames = array('2a', '1a', '1c');
-				} else {
-					$omitNames = array();
-				}
-				foreach ($daysData as $dayData) {
-					if (in_array($dayData['name'], $omitNames)) {
-						$omit[] = $dayData['id'];
-					}
-				}
-			} elseif ($primaryDaysCnt == 3) {
-				// leave only days, that have same letters, e.g. 2b => 2b, 2ab => 1a, 1b
-				$leaveNames = array();
-				foreach (str_split($tmpDayName[2]) as $leaveDayLatter) {
-					$leaveNames[] = '1' . $leaveDayLatter;
-				}
-
-				foreach ($daysData as $dayData) {
-					if (substr($dayData['name'], 0, 1) == '1' && !in_array($dayData['name'], $leaveNames)) {
-						$omit[] = $dayData['id'];
-					}
-				}
-			}
-		}
-		return $omit;
 	}
 
 	protected function dayParallelIface($eventId, $dayId)

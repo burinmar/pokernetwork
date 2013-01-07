@@ -26,9 +26,13 @@ class cleanup extends moon_com
 				moon::page()->set_local('cron', ob_get_contents());
 				return;
 			
-			case 'winners-list-to-players-places':
+			/*case 'winners-list-to-players-places':
 				$this->winnersListToPlayersPlaces();
-				return ;
+				return ;*/
+
+			case 'days-format-upgrade':
+				$this->daysFormatUpgrade();
+				return;
 
 			/*case 'wsop-bluff-profile':
 				ob_start();
@@ -104,7 +108,7 @@ class cleanup extends moon_com
 		echo 'Deleted ' . $this->db->affected_rows() . ' unused players. ';
 	}
 
-	private function winnersListToPlayersPlaces()
+	/* private function winnersListToPlayersPlaces()
 	{
 		$events = $this->db->array_query_assoc('
 			SELECT id FROM reporting_ng_events
@@ -181,6 +185,196 @@ class cleanup extends moon_com
 			return ; // can't distinguish between dupe error (which is ok) and others (which are not)
 		}
 		return $playerId;
+	} */
+
+	private function daysFormatUpgrade()
+	{
+		header('content-type: text/plain');
+		$events = $this->db->array_query_assoc('
+			SELECT DISTINCT event_id FROM reporting_ng_days
+		');
+		$upd = 0;
+		foreach ($events as $event) {
+			$days = $this->db->array_query_assoc('
+				SELECT id, name FROM reporting_ng_days
+				WHERE event_id=' . $event['event_id'] . '
+				  AND is_live!=-1
+			');
+			usort($days, array($this, 'daysSortCmp'));
+
+			$mush = $this->preprocessDays($days);
+			$pdays = $this->assignMerges($mush);
+
+			if (count($days) != count($pdays)) {
+				print_R($days);
+				print_R($pdays);
+				echo '~';
+				echo "\n\n";
+			}
+
+			foreach ($pdays as $day) {
+				$this->db->update(array(
+					'merge_name' => $day['merge_name']
+				), 'reporting_ng_days', array(
+					'id' => $day['id']
+				));
+				$upd += $this->db->affected_rows();
+			}
+
+		}
+
+		echo $upd;
+
+		moon_close();exit;
+	}
+
+	private function daysSortCmp($a, $b)
+	{
+		return strnatcasecmp($a['name'], $b['name']);
+	}
+
+	// loads of assumptions within
+	private function preprocessDays($days)
+	{
+		$mush = array(
+			'linear' => array(),
+			'tree' => array(),
+			'lost' => array(),
+		);
+		$return = array();
+
+		foreach (array_reverse($days, true) as $k => $day) {
+			$pday = $this->helperDayParse($day['name']);
+			if (!isset($pday[2])) {
+				$mush['lost'][] = $day;
+				unset($days[$k]);
+				continue;
+			}
+			if ('' !== $pday[2])
+				break;
+			array_unshift($mush['linear'], $day);
+			unset($days[$k]);
+		}
+
+		foreach ($days as $day) {
+			$pday = $this->helperDayParse($day['name']);
+			$mush['tree'][$pday[1]][] = $day;
+		}
+
+		return $mush;
+	}
+
+	// // $bigDayCurrent = "number" of the milestone day (1a => 1, 2 => 2, null => 'all')
+	private function helperDayParse($name)
+	{
+		// $name = str_ireplace('Day ', '', $name);
+		preg_match('~^([0-9]+)([a-z]*)~i', $name, $bigDay);
+		return $bigDay;
+	}
+
+	private function assignMerges($mush)
+	{
+		$days = array();
+
+		// linear days: merge_name=next(day)
+		foreach ($mush['linear'] as $k => $day) {
+			$day['merge_name'] = isset($mush['linear'][$k+1])
+				? $mush['linear'][$k+1]['name']
+				: null;
+			$days[] = $day;
+		}
+
+		if (!count($mush['linear']) || !count($mush['tree']))
+			return $days;
+
+		// last tree level merges into first linear day
+		$lastTreeLevel = end($mush['tree']);
+		foreach ($lastTreeLevel as $day) {
+			$day['merge_name'] = $mush['linear'][0]['name'];
+			$days[] = $day;
+		}
+
+		// disregard single "0" day
+		if (isset($mush['tree']['0']) && count($mush['tree']['0'])) {
+			$mush['tree']['0'][0]['merge_name'] = null;
+			$days[] = $mush['tree']['0'][0];
+			unset($mush['tree']['0']);
+		}
+
+		// if was 1 tree level, already done
+		if (count($mush['tree']) == 1)
+			return $days;
+
+		// if not 2 tree levels ("1" and "2"), we don't know of that setup
+		if (count($mush['tree']) != 2 || !isset($mush['tree']['1']) || !isset($mush['tree']['2']))
+			return $days;
+
+		$lvl2Days = array();
+		foreach ($mush['tree']['2'] as $day)
+			$lvl2Days[strtolower($day['name'])] = $day['name'];
+		$lvl1Days = $mush['tree']['1'];
+		foreach ($lvl1Days as $day) {
+			switch (count($lvl1Days)) {
+			case 4:
+				switch (strtolower($day['name'])) {
+				case '1a':
+				case '1c':
+					if (isset($lvl2Days['2a']))
+						$day['merge_name'] = $lvl2Days['2a'];
+					break;
+				case '1b':
+				case '1d':
+					if (isset($lvl2Days['2b']))
+						$day['merge_name'] = $lvl2Days['2b'];
+					break;
+				}
+				break;
+			case 3:
+				switch (strtolower($day['name'])) {
+				case '1a':
+					if (isset($lvl2Days['2ab']))
+						$day['merge_name'] = $lvl2Days['2ab'];
+					if (isset($lvl2Days['2ac']))
+						$day['merge_name'] = $lvl2Days['2ac'];
+					if (isset($lvl2Days['2a']))
+						$day['merge_name'] = $lvl2Days['2a'];
+					break;
+				case '1b':
+					if (isset($lvl2Days['2ab']))
+						$day['merge_name'] = $lvl2Days['2ab'];
+					if (isset($lvl2Days['2bc']))
+						$day['merge_name'] = $lvl2Days['2bc'];
+					if (isset($lvl2Days['2b']))
+						$day['merge_name'] = $lvl2Days['2b'];
+					break;
+				case '1c':
+					if (isset($lvl2Days['2ac']))
+						$day['merge_name'] = $lvl2Days['2ac'];
+					if (isset($lvl2Days['2bc']))
+						$day['merge_name'] = $lvl2Days['2bc'];
+					if (isset($lvl2Days['2c']))
+						$day['merge_name'] = $lvl2Days['2c'];
+					break;
+				}
+				break;
+			case 2:
+				switch (strtolower($day['name'])) {
+				case '1a':
+					if (isset($lvl2Days['2a']))
+						$day['merge_name'] = $lvl2Days['2a'];
+					break;
+				case '1b':
+					if (isset($lvl2Days['2b']))
+						$day['merge_name'] = $lvl2Days['2b'];
+					break;
+				}
+				break;
+			}
+			if (isset($day['merge_name']))
+				$days[] = $day;
+		}
+
+		return $days;
 	}
 
 	// purge redundant (invisible for regular user) chip counts
