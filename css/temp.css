@@ -129,6 +129,7 @@
 	margin: 0 -10px -10px;
 	padding: 50px;
 	background: #000 url('http://www.pokernews.com/i/liveStream/ept-live-stream-bg.jpg') no-repeat top left;
+	background-size: contain;
 	color: #fff;
 }
 	#starsTV .head {
