@@ -127,21 +127,6 @@ function insertNews($newsData)
 		if ($fileName) {
 			// leading image
 			$this->getLeadingImage($fileName);
-			// thumbnail
-			$this->getLeadingImage($fileName, 'thumb_');
-			// original
-			$this->getLeadingImage($fileName, 'orig/');
-
-			$path = _W_DIR_ . 'articles/img/';
-			$subdir_ = substr($fileName, 0, 4);
-			$fileName = substr($fileName, 4);
-			$filePathOrig = $path . $subdir_ . '/orig/' . $fileName;
-
-			$f = new moon_file;
-			if ($f->is_file($filePathOrig)) {
-				$img = &moon::shared('img');
-				$img->resize_exact($f, $path . $subdir_ . '/mid_' . $fileName, 223,147);
-			}
 		}
 
 		// insert news attachments
@@ -243,7 +228,7 @@ function getLastImportedNewsTime()
 	return (isset($result['lastCreated']) AND $result['lastCreated'] > 0) ? $result['lastCreated'] : time() - 3600 * 24;
 }
 
-function getLeadingImage($fileName, $prefix = '')
+function getLeadingImage($fileName)
 {
 	$url = 'http://pnimg.net/w/articles/0/' . substr_replace($fileName, '/', 3, 0);
 	/*$url = !is_dev()
@@ -252,28 +237,19 @@ function getLeadingImage($fileName, $prefix = '')
 	$path = _W_DIR_ . 'articles/img/';
 
 	$subdir_ = substr($fileName, 0, 4);
-	$fileName = $prefix . substr($fileName, 4);
+	$fileName = substr($fileName, 4);
 
 	//$url .= $subdir_ . '/' . $fileName;
-	$imgFullPath = $path . $subdir_ . '/' . $fileName;
+	//$imgFullPath = $path . $subdir_ . '/' . $fileName;
+	$path0 = $path . $subdir_.'/orig/'.$fileName;
+	$path1 = $path . $subdir_.'/'.$fileName;
+	$path2 = $path . $subdir_.'/thumb_'.$fileName;
+	$path3 = $path . $subdir_.'/mid_'.$fileName;
 
-	$ch = curl_init ($url);
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	$rawdata = curl_exec($ch);
-	if (curl_errno($ch)) {
-		return FALSE;
+
+	if(file_exists($path0)){
+		unlink($path0);
 	}
-	curl_close($ch);
-
-	if(file_exists($imgFullPath)){
-		unlink($imgFullPath);
-	}
-
 	$oldumask = umask(0);
 	if (!file_exists($path . $subdir_)) {
 		mkdir($path . $subdir_, 0777);
@@ -283,9 +259,16 @@ function getLeadingImage($fileName, $prefix = '')
 	}
 	umask($oldumask);
 
-	$fp = fopen($imgFullPath, 'x');
-	fwrite($fp, $rawdata);
-	fclose($fp);
+
+	$img = moon::shared('img');
+	$f = moon::file();
+	if ($f->is_url_content($url, $path0, 5)) {
+		$img->resize_exact($f, $path1, 460, 305);
+		if ($f->is_file($path1)) {
+			$img->resize_exact($f, $path2, 120,80);
+			$img->resize_exact($f, $path3, 223,147);
+		}
+	}
 }
 
 function getAttachmentImage($fileName)
