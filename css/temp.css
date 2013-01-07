@@ -129,7 +129,7 @@
 	margin: 0 -10px -10px;
 	padding: 50px;
 	background: #000 url('http://www.pokernews.com/i/liveStream/ept-live-stream-bg.jpg') no-repeat top left;
-	background-size: contain;
+	background-size: cover;
 	color: #fff;
 }
 	#starsTV .head {
@@ -173,5 +173,4 @@
 				margin: 0 0 0 10px;
 			} #starsTV .social li:first-child {margin-left: 0;}
 			#starsTV .twitter-share-button {margin-top: 14px;}
-			#starsTV.wptStreamPage {background-image: url('http://www.pokernews.com/i/liveStream/wpt-bg.jpg'); padding-top: 170px;}
-			#starsTV.pcaStreamPage {background-image: url('http://www.pokernews.com/i/liveStream/pca-bg.jpg'); padding-top: 170px;}
+			#starsTV.pcaStreamPage {background-image: url('http://www.pokernews.com/i/liveStream/pca-bg.jpg'); background-size: contain; padding-top: 170px;}
