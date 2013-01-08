@@ -96,7 +96,7 @@ class cleanup extends moon_com
 			LEFT JOIN reporting_ng_chips c
 				ON c.player_id=p.id
 			WHERE p.place IS NULL
-			  AND GREATEST(p.created_on, IFNULL(p.updated_on, 0)) BETWEEN UNIX_TIMESTAMP()-30*24*3600 AND UNIX_TIMESTAMP()-3*24*3600
+			  AND GREATEST(p.created_on, IFNULL(p.updated_on, 0)) BETWEEN UNIX_TIMESTAMP()-7*24*3600 AND UNIX_TIMESTAMP()-3*24*3600
 			GROUP BY p.id
 			HAVING has_chips=0
 		', 'id'));
@@ -546,23 +546,25 @@ class cleanup extends moon_com
 		echo 'done';
 	}*/
 
+	private $playerPPRels;
 	private function updatePlayerPPRels($id, $name)
 	{
-		static $cachedId = array();
-		static $cachedStored = array();
-		if (!isset($cachedStored[$name])) {
-			$player = $this->db->single_query_assoc('
-				SELECT id FROM `players_poker`
-				WHERE title="' . $this->db->escape($name) . '"
-					OR find_in_set("' . $this->db->escape($name) . '", alternative_names)
-			');
-			$cachedId[$name] = !empty($player['id'])
-				? $player['id']
-				: NULL;
-			$cachedStored[$name] = true;
+		if (null == $this->playerPPRels) {
+			$this->playerPPRels == array();
+			foreach($this->db->array_query_assoc('
+				SELECT id, title, alternative_names FROM `players_poker`
+			') as $player) {
+				$this->playerPPRels[trim($player['title'])] = $player['id'];
+				if ('' != trim($player['alternative_names'])) {
+				foreach (explode(',', $player['alternative_names']) as $altName) {
+					$this->playerPPRels[trim($altName)] = $player['id'];
+				}}
+			}
 		}
 		$this->db->update(array(
-			'pp_id' => $cachedId[$name]
+			'pp_id' => isset($this->playerPPRels[$name])
+				? $this->playerPPRels[$name]
+				: null
 		), 'reporting_ng_players', array(
 			'id' => $id
 		));
@@ -578,6 +580,7 @@ class cleanup extends moon_com
 			SELECT id, name FROM `reporting_ng_players`
 			ORDER BY id DESC
 		');
+
 		while ($player = $this->db->fetch_row_assoc($players)) {
 			$res = $this->updatePlayerPPRels($player['id'], $player['name']);
 			if ($res) {

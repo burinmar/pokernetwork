@@ -33,6 +33,8 @@
 	}
 
 	$(function(){
+		if (!$('#eventDays').length)
+			return ;
 		// autofill day date from previous day
 		$('#eventDays .jsEventDayName').livequery('focus', function(){
 			var $context = $(this).closest('.jsEventDay');

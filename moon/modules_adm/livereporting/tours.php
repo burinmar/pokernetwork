@@ -119,16 +119,16 @@ function renderForm($vars)
 }
 function getItems()
 {
-		// functions.php
-		$tours = poker_tours();
-		$sql = 'SELECT id, is_hidden
-		FROM ' . $this->table('Tours');
-		$result = $this->db->array_query_assoc($sql);
-		foreach ($result as $r) {
-				$tours[$r['id']]['is_hidden'] = (isset($tours[$r['id']])) ? $r['is_hidden'] : 1;
-		}
-		uasort($tours, array($this, 'cmpItems'));
-		return $tours;
+	// functions.php
+	$tours = poker_tours();
+	$sql = 'SELECT id, is_hidden
+	FROM ' . $this->table('Tours');
+	$result = $this->db->array_query_assoc($sql);
+	foreach ($result as $r) {
+		$tours[$r['id']]['is_hidden'] = (isset($tours[$r['id']])) ? $r['is_hidden'] : 1;
+	}
+	uasort($tours, array($this, 'cmpItems'));
+	return $tours;
 }
 private function cmpItems($a, $b) {
 	return strcmp($a['title'], $b['title']);

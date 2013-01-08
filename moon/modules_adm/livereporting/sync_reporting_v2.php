@@ -1,7 +1,5 @@
 <?php
 
-include_class('moon_memcache');
-
 /** 
  * each data block should either send all items minimum data, 
  * or pass exception rules (like ng_events do)
@@ -314,7 +312,6 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->_sendEventMiscWinners($baseDir);
 		$this->_sendEventMiscPayouts($baseDir);
 		$this->_sendEventMiscPlayers($baseDir);
-		$this->_sendEventMiscWinnersList($baseDir);
 	}
 	
 	private function _sendEventMiscWinners($baseDir)
@@ -343,16 +340,6 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			$baseDir . '/players.txt', 
 			'lrPlayersMap', 
 			'reporting_ng_players', 
-			'1'
-		);
-	}
-	
-	private function _sendEventMiscWinnersList($baseDir)
-	{
-		$this->sendStd(
-			$baseDir . '/winners_list.txt', 
-			'lrWinnersListMap', 
-			'reporting_ng_winners_list', 
 			'1'
 		);
 	}
@@ -631,10 +618,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->_replicateEventMiscPayouts($responseDir);
 		$this->_replicateEventMiscPlayersDeleted($responseDir);
 		$this->_replicateEventMiscPlayers($responseDir);
-		$this->_replicateEventMiscWinnersListDeleted($responseDir);
-		$this->_replicateEventMiscWinnersList($responseDir);
 		$this->lrWinnersMap = null;
-		$this->lrWinnersListMap = null;
 		$this->lrPayoutsMap = null;
 	}
 	
@@ -701,27 +685,6 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		);
 	}
 	
-	private function _replicateEventMiscWinnersList($responseDir)
-	{
-		$this->replicateStd(
-			'reporting_ng_winners_list', 
-			$responseDir . '/winners_list.txt', 
-			'lrWinnersListMap', 
-			'winners_list', 
-			__METHOD__
-		);
-	}
-	
-	private function _replicateEventMiscWinnersListDeleted($responseDir)
-	{
-		$this->replicateStdDelete(
-			'reporting_ng_winners_list', 
-			$responseDir . '/winners_list_deleted.txt', 
-			'lrWinnersListMap', 
-			'winners_list_d'
-		);
-	}
-	
 	private function _replicateReporting($responseDir) {
 		$this->_replicateReportingLogDeleted($responseDir);
 		$this->_replicateReportingLog($responseDir);
@@ -763,7 +726,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 	}
 	
 	/**
-	 * Events, days, winners, winners_list, payouts, players
+	 * Events, days, winners, payouts, players
 	 */
 	private function replicateStd($baseTable, $responseFile, $lrMapName, $msgCntPrefix, $msgMethod, $hint = null)
 	{
@@ -1280,7 +1243,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 	}
 	
 	/**
-	 * Events, days, winners, winners_list, payouts, players
+	 * Events, days, winners, payouts, players
 	 */
 	private function replicateStdDelete($baseTable, $responseFile, $lrMapName, $msgCntPrefix)
 	{

@@ -1,7 +1,5 @@
 <?php
 
-include_class('moon_memcache');
-
 class tour_list extends moon_com
 {
 	function onload()
@@ -350,16 +348,8 @@ class tour_list extends moon_com
 			ORDER BY name
 		');
 		$rooms = array();
-		$split = ceil(count($rRooms) / 4);
-		foreach ($rRooms as $k => $room) {
-			$rooms[$k % $split][] = $room;
-		}
-		$rRooms = $rooms;
-		$rooms = array();
 		foreach ($rRooms as $rRoom) {
-			foreach ($rRoom as $room) {
-				$rooms[] = $room;
-			}
+			$rooms[$rRoom['id']] = $rRoom;
 		}
 
 		$eRooms = explode(',', $entryData['ad_rooms']);
@@ -556,10 +546,14 @@ class tour_list extends moon_com
 		if (NULL === $saveData['id']) {
 			$saveData['created_on'] = time();
 			$this->db->insert($saveData, $this->table('Tournaments'));
+			if ($this->db->error()) {
+				$page->alert($messages['e.save_error']);
+				return null;
+			}
 			$rId = $this->db->insert_id();
 			blame($this->my('fullname'), 'Created', $rId);
 			livereporting_adm_alt_log($rId, 0, 0, 'insert', 'tournaments', $rId);
-			moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.tourns_uris');
+			moon::cache('memcache')->delete('reporting.tourns_uris');
 			return $rId;
 		} else {
 			// update event, day times
@@ -599,9 +593,13 @@ class tour_list extends moon_com
 			$this->db->update($saveData, $this->table('Tournaments'), array(
 				'id' => $saveData['id']
 			));
+			if ($this->db->error()) {
+				$page->alert($messages['e.save_error']);
+				return null;
+			}
 			livereporting_adm_alt_log($saveData['id'], 0, 0, 'update', 'tournaments', $saveData['id']);
 			blame($this->my('fullname'), 'Updated', $saveData['id']);
-			moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.tourns_uris');
+			moon::cache('memcache')->delete('reporting.tourns_uris');
 			return $saveData['id'];
 		}
 	}
@@ -631,6 +629,6 @@ class tour_list extends moon_com
 			livereporting_adm_alt_log($did, 0, 0, 'delete', 'tournaments', $did, 'soft');
 		}
 		blame($this->my('fullname'), 'Deleted', $deleteIds);
-		moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.tourns_uris');
+		moon::cache('memcache')->delete('reporting.tourns_uris');
 	}
 }

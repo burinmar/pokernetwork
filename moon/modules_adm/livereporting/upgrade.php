@@ -19,6 +19,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$this->db->query('
@@ -28,6 +29,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$this->db->query('
@@ -38,6 +40,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$this->db->query('
@@ -47,6 +50,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$dupes = $this->db->array_query_assoc('
@@ -87,6 +91,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$dupes = $this->db->array_query_assoc('
@@ -117,6 +122,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$this->db->query('
@@ -127,6 +133,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$this->db->query('
@@ -135,6 +142,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 
 		$this->db->query('
@@ -143,6 +151,7 @@ class upgrade extends moon_com
 		echo $this->db->error()
 			? 'Error'
 			: 'Hokkay';
+		echo $this->db->affected_rows();
 		echo "\n";
 	}
 }

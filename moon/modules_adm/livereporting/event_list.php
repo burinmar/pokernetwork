@@ -1,7 +1,5 @@
 <?php
 
-include_class('moon_memcache');
-
 class event_list extends moon_com
 {
 	function onload()
@@ -605,23 +603,31 @@ class event_list extends moon_com
 		if (NULL === $saveData['id']) {
 			$saveData['created_on'] = time();
 			$this->db->insert($saveData, $this->table('Events'));
+			if ($this->db->error()) {
+				$page->alert($messages['e.save_error']);
+				return null;
+			}
 			$rId = $this->db->insert_id();
 			blame($this->my('fullname'), 'Created', $rId);
 			livereporting_adm_alt_log($saveData['tournament_id'], $rId, 0, 'insert', 'events', $rId);
 			$this->saveEntryDays_($saveData['tournament_id'], $rId, $tzOffset, $data);
 			$this->saveTournamentState($saveData['tournament_id']);
-			moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.events_uris');
+			moon::cache('memcache')->delete('reporting.events_uris');
 			return $rId;
 		} else {
 			$saveData['updated_on'] = time();
 			$this->db->update($saveData, $this->table('Events'), array(
 				'id' => $saveData['id']
 			));
+			if ($this->db->error()) {
+				$page->alert($messages['e.save_error']);
+				return null;
+			}
 			blame($this->my('fullname'), 'Updated', $saveData['id']);
 			livereporting_adm_alt_log($saveData['tournament_id'], $saveData['id'], 0, 'update', 'events', $saveData['id']);
 			$this->saveEntryDays_($saveData['tournament_id'], $saveData['id'], $tzOffset, $data);
 			$this->saveTournamentState($saveData['tournament_id']);
-			moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.events_uris');
+			moon::cache('memcache')->delete('reporting.events_uris');
 			return $saveData['id'];
 		}
 	}
@@ -841,7 +847,7 @@ class event_list extends moon_com
 			}
 		}
 
-		moon_memcache::getInstance()->delete(moon_memcache::getRecommendedPrefix() . 'reporting.events_uris');
+		moon::cache('memcache')->delete('reporting.events_uris');
 
 		// $this->object('calc')->recalc();
 	}

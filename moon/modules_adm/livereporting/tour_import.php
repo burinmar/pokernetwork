@@ -1,7 +1,5 @@
 <?php
 
-include_class('moon_memcache');
-
 class tour_import extends moon_com
 {
 	function properties()
@@ -94,11 +92,9 @@ class tour_import extends moon_com
 
 	private function getSrcData()
 	{
-		include_class('moon_memcache');
-		$mcd = moon_memcache::getInstance();
-		$mcdKey = $mcd->getRecommendedPrefix() . 'adm.reporting.tour_import.data';
+		$cache = moon::cache();
 
-		if (FALSE == ($data = $mcd->get($mcdKey))) {
+		if (FALSE == ($data = $cache->get('adm.reporting.tour_import.data'))) {
 			$url = is_dev()
 				? 'http://www.pokernews.dev/live-reporting/export.tournaments-homerun.xml'
 				: 'http://www.pokernews.com/live-reporting/export.tournaments-homerun.xml';
@@ -110,7 +106,7 @@ class tour_import extends moon_com
 			$data_ = @simplexml_load_string($data);
 			
 			if (isset($data_->tournament)) {
-				$mcd->set($mcdKey, $data, 0, 30);
+				$cache->save('adm.reporting.tour_import.data', $data, 30);
 			}
 		}
 		
@@ -153,7 +149,6 @@ class tour_import extends moon_com
 			'list.events' => ''
 		);
 		$locale = &moon::locale();
-
 
 		if (NULL === ($entryData = $this->getEntry($argv['id']))) {
 			$messages = $tpl->parse_array('messages');
