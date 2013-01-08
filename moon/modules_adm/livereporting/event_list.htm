@@ -132,14 +132,14 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		<dt><label>Start date</label></dt>
 		<dd>
 		<input type="text" name="from_date" id="from-date" value="{entry.from_date}" class="isDate required" size="12" maxlength="10" />
-		<input type="hidden" name="from_time" id="from-time" value="{entry.from_time}" class="isTime required" size="7" maxlength="5" />
+		<input type="hidden" name="from_time" value="{entry.from_time}" class="isTime required" size="7" maxlength="5" />
 		<!-- {tz} -->
 		</dd>
 
 		<dt><label>End date</label></dt>
 		<dd>
-		<input type="text" name="to_date" id="to-date" value="{entry.to_date}" class="isDate" size="12" maxlength="10" />
-		<input type="hidden" name="to_time" id="to-time" value="{entry.to_time}" class="isTime" size="7" maxlength="5" />
+		<input type="text" name="to_date" value="{entry.to_date}" class="isDate" size="12" maxlength="10" />
+		<input type="hidden" name="to_time" value="{entry.to_time}" class="isTime" size="7" maxlength="5" />
 		<!-- {tz} -->
 		</dd>
 
@@ -223,44 +223,42 @@ e.ncommdupe=There is already subforum assigned to display news comments
 				</tr><%end%>
 			</table>
 		</dd>
-		<% end %>
+		<%end%>
 
 		<dt><label>Event days</label></dt>
 		<dd>
-			<div id="day-preview-holder" style="float: right;"></div>
+			<div id="dayPreviewContainer" style="float: right;"></div>
 			<script type="text/javascript">
 			<!--
-			var emptyDayControl = {emptyDayControl};
-			<%if {entry.id} %>
-			var isNewEvt = false;
-			<%else {entry.id} %>
-			var isNewEvt = true;
-			<%end%>
+			lrEventDaysSetup({emptyDayControl});
 			//-->
 			</script>
-			<table id="event_days">
+			<table id="eventDays">
 			<tr>
-				<td>Title (day no.)</td>
+				<td>Title</td>
+				<td>Merge into</td>
 				<td>Date</td>
 			</tr>
 			{days}
 			</table>
 		</dd>
-
 	</dl>
-	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+	<div class="footer"><div class="formButton"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div></div>
 </form>
 
 
 <% entry:day.item %>
-<tr>
+<tr class="jsEventDay">
 	<td>
 		<input type="hidden" name="dayid[{nr}]" value="{id}" />
-		<input type="text" name="dayname[{nr}]" id="dayname{nr}" value="{value}" maxlength="6" size="10" class="evDName" />
+		<input type="text" name="dayname[{nr}]" value="{value}" maxlength="6" size="6" class="jsEventDayName" />
 	</td>
 	<td>
-		<input type="text" name="dayfrom_date[{nr}]" id="fromdate{nr}" value="{from_date}" class="isDate" size="12" maxlength="10" />
-		<input type="text" name="dayfrom_time[{nr}]" id="fromtime{nr}" value="{from_time}" class="isTime" size="7" maxlength="5" />
+		<input type="text" name="daymergename[{nr}]" value="{merge_name}" maxlength="6" size="6" class="jsEventDayMergeName" />
+	</td>
+	<td>
+		<input type="text" name="dayfrom_date[{nr}]" value="{from_date}" class="isDate jsEventDayDate" size="10" maxlength="10" />
+		<input type="text" name="dayfrom_time[{nr}]" value="{from_time}" class="isTime" size="5" maxlength="5" />
 	</td>
 </tr>
 
@@ -277,3 +275,4 @@ e.ncommdupe=There is already subforum assigned to display news comments
 
 <% restrictions.item %>
 <option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+

@@ -288,6 +288,5 @@ $.fn.pnReportingDayGraph = function(args) {
 		});
 		return this;
 	}
-
 };
 })(jQuery);

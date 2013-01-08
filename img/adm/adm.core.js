@@ -64,7 +64,7 @@ var alist = {
 		f.submit();
 	}
 
-}
+};
 
 
 
@@ -93,7 +93,7 @@ function makeUri(s)
 		"й": "j",    "ф": "f",    "я": "ja",
 		//SERBIAN
 		"ђ": "dj", "љ": "lj", "њ": "nj", "ћ":  "c", "џ": "dz"
-	}
+	};
 	if (typeof(lang)!="undefined" && lang=='de') {
 		doubles['ä'] = 'ae';
 		doubles['ü'] = 'ue';
@@ -129,10 +129,12 @@ jQuery(document).ready(function () {
 	}
 	jQuery("input.isDate").each(function () {
 		var id = jQuery(this).attr('id');
-		if (id) {
-			jQuery(this).click(function (){pickDate(this.id)});
-			jQuery(this).before('<a href="void(0);" onclick="pickDate(\'' + id + '\');return false" title=""  class="calendar"></a>&nbsp;');
+		if (!id) {
+			id = ['jsDateAutoId', Math.floor((Math.random()*10000)+1)].join('');
+			jQuery(this).attr('id', id);
 		}
+		jQuery(this).click(function(){pickDate(this.id);});
+		jQuery(this).before('<a href="void(0);" onclick="pickDate(\'' + id + '\');return false" title=""  class="calendar"></a>&nbsp;');
 	});
 
 	/* SORTING */
@@ -141,7 +143,7 @@ jQuery(document).ready(function () {
 			if (this.cells[0]) {
 				var s = '<td class="drag" >&nbsp;</td>';
 				if (this.cells[0].nodeName.toUpperCase() == 'TH') {
-					jQuery(this).addClass('nodrag nodrop')
+					jQuery(this).addClass('nodrag nodrop');
 					s = '<th style="width: 20px;" >&nbsp;</th>';
 				}
 				jQuery(this.cells[0]).before(s);
