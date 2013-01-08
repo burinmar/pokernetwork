@@ -1,16 +1,23 @@
 <% logEntry:tweet %>
-<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%> tweet" id="tweet-{id}">
-	<h3 class="articleTitle">PokerNews_Live Tweet</h3>
-	<p class="tweetAuthor">
-		<%if {author_name} %><a href="http://twitter.com/pokernews_live"><img height="48" width="48" alt="PokerNews_Live" src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" class="fl10 tweetAuthorPhoto"> @PokerNews_live</a><%end%>
-	</p>
-	<p class="tweetContent">{body}</p>
-	<p class="tweetDate">
-		{!posted} <span class="date">{created_on}</span> 
-		<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if{url.delete}%><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a><%end%></span><%end%>
-	</p>
-</div>
 
+<div class="article <%if{is_hidden}%>article-hidden<%end%><%if{is_temporally_hidden}%>article-temporally-hidden<%end%> tweet" id="tweet-{id}">
+	<%if {show_controls} %> <span class="postActionIcons"><a href="{url.edit}" class="editIco" title="Edit Post">edit</a><%if{url.delete}%><a href="{url.delete}" class="rq-confirm-delete deleteIco" title="Delete Post">delete</a><%end%></span><%end%>
+	<div class="twitter-quoteNew">
+		<div class="author">
+			<a href="http://twitter.com/pokernews_live"><img src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" /></a>
+			<p><a href="http://twitter.com/pokernews_live" onclick="window.open(this.href);return false;"><b>PokerNews Live</b></a><br />
+			<a href="http://twitter.com/pokernews_live" onclick="window.open(this.href);return false;">@PokerNews_live</a></p>
+		</div><span class="clr"></span>
+		<p class="tweetMessage">{body}</p>
+		<span class="date">{created_on}</span>
+		<div class="tweetActions">
+			<a href="https://twitter.com/intent/tweet?in_reply_to={twitter_id}" class="tweetReply">Reply</a>
+			<a href="https://twitter.com/intent/retweet?tweet_id={twitter_id}" class="tweetRetweet">Retweet</a>
+			<a href="https://twitter.com/intent/favorite?tweet_id={twitter_id}" class="tweetFavorite">Favorite</a>
+		</div>
+		<a href="https://twitter.com/intent/follow?screen_name=pokernews_live" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow</a>
+	</div>
+</div>
 
 <% entry:tweet %>
 <%if {control} %>
@@ -18,17 +25,21 @@
 	{control}
 </div>
 
-<div id="livePokerLiveReporting"><!--# id for css only #-->
-<div class="article tweet" id="tweet-{id}">
-	<h3 class="articleTitle">PokerNews_Live Tweet</h3>
-	<p class="tweetAuthor">
-		<%if {author_name} %><a href="http://twitter.com/pokernews_live"><img height="48" width="48" alt="PokerNews_Live" src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" class="fl10 tweetAuthorPhoto"> @PokerNews_live</a><%end%>
-	</p>
-	<p class="tweetContent">{body}</p>
-	<p class="tweetDate">
-		{!posted} <span class="date">{created_on}</span> 
-	</p>
-</div>
+<div id="livePokerLiveReporting" class="article"><!--# id for css only #-->
+	<div class="twitter-quoteNew">
+		<div class="author">
+			<a href="http://twitter.com/pokernews_live"><img src="http://a1.twimg.com/profile_images/1143727461/PN_normal.jpg" /></a>
+			<p><a href="http://twitter.com/pokernews_live" onclick="window.open(this.href);return false;"><b>PokerNews Live</b></a><br />
+			<a href="http://twitter.com/pokernews_live" onclick="window.open(this.href);return false;">@PokerNews_live</a></p>
+		</div><span class="clr"></span>
+		<p class="tweetMessage">{body}</p>
+		<span class="date">{created_on}</span>
+		<div class="tweetActions">
+			<a href="https://twitter.com/intent/tweet?in_reply_to={twitter_id}" class="tweetReply">Reply</a>
+			<a href="https://twitter.com/intent/retweet?tweet_id={twitter_id}" class="tweetRetweet">Retweet</a>
+			<a href="https://twitter.com/intent/favorite?tweet_id={twitter_id}" class="tweetFavorite">Favorite</a>
+		</div>
+		<a href="https://twitter.com/intent/follow?screen_name=pokernews_live" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow</a>	</div>
 </div>
 
 <span class="clr"> </span>
@@ -56,3 +67,4 @@
 	</div>
 </form>
 </div>
+

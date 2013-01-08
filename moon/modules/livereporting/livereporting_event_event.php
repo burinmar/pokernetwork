@@ -11,7 +11,7 @@ require_once 'livereporting_event_pylon.php';
 class livereporting_event_event extends livereporting_event_pylon
 {
 	/** 
-	 * @todo decouple 'save-event' in html and php !! terrible legacy mix 
+	 * @todo decouple 'save-event' in html and php !! terrible legacy mix (partially done)
 	 */
 	protected function synthEvent($event, $argv)
 	{
@@ -330,15 +330,15 @@ class livereporting_event_event extends livereporting_event_pylon
 			ORDER BY place
 		');
 		$winners = $this->db->array_query_assoc('
-			SELECT wl.player_id id, wl.place, wl.name' . 
+			SELECT p.id, p.place, p.name' . 
 				($extended ? ', p.sponsor_id, p.status, p.is_pnews, pp.uri uri' : '') . '
-			FROM reporting_ng_winners_list wl ' . ($extended ? '
-				LEFT JOIN ' . $this->table('Players') . ' p
-					ON p.id=wl.player_id
+			FROM ' . $this->table('Players') . ' p ' . ($extended ? '
 				LEFT JOIN ' . $this->table('PlayersPoker') . ' pp
-					ON pp.title=p.name AND pp.hidden=0
+					ON pp.id=p.pp_id AND pp.hidden=0
 				' : '') . '
-			WHERE wl.event_id=' . filter_var($eventId, FILTER_VALIDATE_INT) . '
+			WHERE p.event_id=' . intval($eventId) . '
+			  AND p.is_hidden=0
+			  AND p.place IS NOT NULL
 		', 'place');
 
 		$payouts = array();

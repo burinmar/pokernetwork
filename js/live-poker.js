@@ -59,9 +59,9 @@ var livePoker = function() {
 			$('.navi', this).removeClass('hide');
 			$('.imageLink', this).eq(0).show();
 			$('.imageInfo', this).eq(0).show();
-			$(this).pnSlideshow({marginStep:93, visibleTabs:6})
+			$(this).pnSlideshow({marginStep:93, visibleTabs:6});
 		});
-	};
+	}
 	
 	var miscAjaxInterval = 60000;
 	var miscAjaxMultiplier = 1.2;
@@ -72,11 +72,11 @@ var livePoker = function() {
 			return;
 		}
 		var sendData = {};
-		if (typeof launchShoutBox != 'undefined' && launchShoutBox != false) {
+		if (typeof launchShoutBox != 'undefined') {
 			sendData.shoutbox = 1;
 			sendData.shoutbox_event_id = launchShoutBox.evt;
 		}
-		if (typeof launchLiveCount != 'undefined' && launchLiveCount != false) {
+		if (typeof launchLiveCount != 'undefined') {
 			sendData.liveupdate = 1;
 			sendData.liveupdate_day = launchLiveCount.day;
 			sendData.liveupdate_evt = launchLiveCount.evt;
@@ -94,7 +94,7 @@ var livePoker = function() {
 					jQuery('#shoutbox-ajax-content').html(resp.shoutbox);
 				}
 				if (typeof resp.liveupd != 'undefined') {
-					if (resp.liveupd != 0) {
+					if (resp.liveupd) {
 						jQuery('#lrAjaxLiveUpdate').html(' ' + resp.liveupd).show();
 					} else {
 						jQuery('#lrAjaxLiveUpdate').hide();
@@ -126,11 +126,11 @@ var livePoker = function() {
 					}
 					jQuery('#counter').html( this.value.length + ' / ' + maxlimit);
 			}
-		});	
+		});
 		if (typeof miscAjaxTimer == 'undefined') {
 			miscAjaxTimer = setTimeout(reloadMiscAjax, miscAjaxInterval);
 		}
-	};
+	}
 	function setupLiveCount() {
 		if (typeof miscAjaxTimer == 'undefined') {
 			miscAjaxTimer = setTimeout(reloadMiscAjax, miscAjaxInterval);
@@ -139,7 +139,7 @@ var livePoker = function() {
 	return {
 			setupEventsList : function() {
 				setupEL();
-			}, 
+			},
 			setupGalleryBoxes : function() {
 				setupGalleryBoxes();
 			},

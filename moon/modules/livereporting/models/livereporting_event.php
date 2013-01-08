@@ -86,14 +86,15 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $data;
 	}
 	
-	/**
-	 * @todo supress arg errors
-	 */
 	protected function countUpdates($eventId, $dayId, $since)
 	{
-		$eventId = filter_var($eventId, FILTER_VALIDATE_INT);
-		$dayId   = filter_var($dayId, FILTER_VALIDATE_INT);
-		$since   = filter_var($since, FILTER_VALIDATE_INT);
+		if (false === ($eventId = filter_var($eventId, FILTER_VALIDATE_INT)))
+			return ;
+		if (false === ($since   = filter_var($since, FILTER_VALIDATE_INT)))
+			return ;
+		$since = max($since, time() - 24*3600);
+		$since = min($since, time());
+		$dayId = filter_var($dayId, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		$updates = $this->db->single_query_assoc('
 			SELECT COUNT(id) cnt FROM ' . $this->table('Log') . '
 			WHERE ' . ($dayId ? 'day_id=' . $dayId : 'event_id=' . $eventId)  . '
@@ -104,9 +105,6 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $updates['cnt'];
 	}
 
-	/**
-	 * @todo should check is_live in query (SELECT t.name tname ..), but since uri cache is invalidated quicky, skip that
-	 */
 	protected function getEventData($eventId)
 	{
 		static $eventsData = array();
@@ -183,7 +181,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$where = $this->getLogEntriesSqlWhere($eventId, $dayId, $filter);
 		$entries = $this->db->array_query_assoc('
-			SELECT id, event_id, type, is_hidden, created_on, author_id, contents, sync_id IS NOT NULL synced
+			SELECT id, event_id, type, is_hidden, created_on, author_id, contents, sync_id IS NOT NULL synced' . (_SITE_ID_ == 'com' ? ', comm_count' : '') . '
 			FROM ' . $this->table('Log') . ' l 
 			WHERE ' . implode(' AND ', $where) . '
 			ORDER BY created_on ' . (!empty($filter['rsort']) ? '' : 'DESC ') .
@@ -294,21 +292,10 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $daysData[$eventId];
 	}
 	
-	private function getLiveEventsSort($a, $b)
-	{
-		if ($a['from_date'] == $b['from_date']) {
-			return $a['id'] < $b['id'] ? 1 : -1;
-		}
-		return ($a['from_date'] < $b['from_date']) ? 1 : -1;
-	}
-
-	/**
-	 * @todo cache: if caching, drop from_date and sort within the sql query
-	 */
 	protected function getLiveEvents($tournamentId, $includeEmpty = FALSE)
 	{
 		$evs = $this->db->array_query_assoc('
-			SELECT e.id, e.name, e.from_date, MIN(d.is_empty) is_empty
+			SELECT e.id, e.name, MIN(d.is_empty) is_empty
 			FROM ' . $this->table('Events') . ' e
 			INNER JOIN  ' . $this->table('Days') . ' d
 				ON d.event_id=e.id
@@ -318,27 +305,23 @@ class livereporting_model_event extends livereporting_model_pylon
 			GROUP BY e.id ' . ($includeEmpty 
 			    ? ''
 			    : 'HAVING is_empty=0') . '
-			ORDER BY e.id DESC
+			ORDER BY e.from_date DESC, e.id DESC
 		');
-		usort($evs, array($this, 'getLiveEventsSort'));
 		foreach ($evs as $k => $v) {
 			unset($evs[$k]['from_date']);
 		}
-		
+
 		return $evs;
 	}
 	
-	/**
-	 * @todo cache, maybe
-	 */
 	protected function getLastRound($eventId, $dayId)
 	{
 		// $daysData = $this->getDaysData($eventId);
 		// $omitDays = $this->dayParallel($daysData, $dayId);
 		$roundId = $this->db->single_query_assoc('
 			SELECT r.id mid 
-			FROM reporting_ng_log l
-			INNER JOIN reporting_ng_sub_rounds r
+			FROM ' . $this->table('Log') . ' l
+			INNER JOIN ' . $this->table('tRounds') . ' r
 				ON r.id=l.id AND l.type="round"
 			WHERE l.event_id=' . intval($eventId) . '
 			  AND l.day_id=' . intval($dayId) . '
@@ -366,8 +349,8 @@ class livereporting_model_event extends livereporting_model_pylon
 		// $daysData = $this->getDaysData($eventId);
 		// $omitDays = $this->dayParallel($daysData, $dayId);
 		$id = $this->db->single_query_assoc('
-			SELECT l.id FROM reporting_ng_log l
-			INNER JOIN reporting_ng_sub_rounds r
+			SELECT l.id FROM ' . $this->table('Log') . ' l
+			INNER JOIN ' . $this->table('tRounds') . ' r
 				ON r.id=l.id AND l.type="round" 
 			WHERE l.event_id=' . intval($eventId) . '
 			  AND l.day_id=' . intval($dayId) . '
@@ -392,7 +375,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$round = $this->db->single_query_assoc('
 			SELECT id, round, duration, small_blind, big_blind, variety, ante
-			FROM reporting_ng_sub_rounds
+			FROM ' . $this->table('tRounds') . '
 			WHERE id=' . intval($id) . '
 		');
 
@@ -475,15 +458,6 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $daysPrev;
 	}
 
-	protected function dayParallelIface($eventId, $dayId)
-	{
-		$daysData = $this->getDaysData($eventId);
-		if (0 == count($daysData)) {
-			return array();
-		}
-		return $this->dayParallel($daysData, $dayId);
-	}
-
 	private function getFauxRoomSponsors()
 	{
 		return array(
@@ -535,7 +509,6 @@ class livereporting_model_event extends livereporting_model_pylon
 		return $return;
 	}
 	
-	// @todo name fields properly
 	const chipsTiny = 1;
 	protected function getLastChips($eventId, $dayId, $modifier = 0)
 	{
@@ -567,14 +540,14 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 
 		$sql = '
-		SELECT p.id, ce.chips, p.name uname, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.pp_id, p.status, p.is_pnews, p.country_id' : '') . ' 
+		SELECT p.id, ce.chips, p.name, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.pp_id, p.status, p.is_pnews, p.country_id' : '') . ' 
 		FROM (
 			SELECT c.chips, c.player_id' . (!$tiny ? ', c.created_on, c.day_id, c.chips_change' : '' ) . ' FROM (
-				SELECT player_id, MAX(created_on) created_on FROM reporting_ng_chips
+				SELECT player_id, MAX(created_on) created_on FROM ' . $this->table('Chips') . '
 				WHERE day_id IN (' . implode(',', $daysToQuery) . ') AND is_hidden=0
 				GROUP BY player_id ORDER BY NULL
 			) x
-			INNER JOIN reporting_ng_chips c
+			INNER JOIN ' . $this->table('Chips') . ' c
 				ON c.player_id=x.player_id AND c.created_on=x.created_on
 			WHERE ' . implode(' AND ', $innerWhere) . '
 		) ce
@@ -597,15 +570,15 @@ class livereporting_model_event extends livereporting_model_pylon
 		foreach ($chips as $k => $row) {
 			if (isset($sponsors[$row['sponsor_id']])) {
 				$chips[$k] += array(
-					'sponsorimg' => $sponsors[$row['sponsor_id']]['favicon'],
-					'sponsorurl' => $sponsors[$row['sponsor_id']]['alias'],
-					'sponsor'    => $sponsors[$row['sponsor_id']]['name'],
+					'sponsor.img'  => $sponsors[$row['sponsor_id']]['favicon'],
+					'sponsor.url'  => $sponsors[$row['sponsor_id']]['alias'],
+					'sponsor.name' => $sponsors[$row['sponsor_id']]['name'],
 				);
 			} else {
 				$chips[$k] += array(
-					'sponsorimg' => NULL,
-					'sponsorurl' => NULL,
-					'sponsor' => NULL,
+					'sponsor.img'  => NULL,
+					'sponsor.url'  => NULL,
+					'sponsor.name' => NULL,
 				);
 			}
 		}
@@ -1007,22 +980,34 @@ class livereporting_model_event_src_index extends livereporting_model_event
 }
 
 /**
- * livereporting_model_event methods, accessed from ../livereporting_event component
- * and some of it's subcomponents (chips, days, etc.)
+ * livereporting_model_event methods, accessed from ../livereporting_event multiple
+ * subcomponents (chips, days, etc.)
  * @package livereporting
  * @subpackage models
- * @todo maybe split access from livereporting_event_* to other classes
  */
 class livereporting_model_event_src_event extends livereporting_model_event
 {
-	function getDaysDefaultId($eventId)
-		{ return parent::getDaysDefaultId($eventId); }
-	function getDayData($eventId, $name)
-		{ return parent::getDayData($eventId, $name); }
 	function getEventData($eventId)
 		{ return parent::getEventData($eventId); }
-	function unsetDefaultDayCache($eventId)
-		{ return parent::unsetDefaultDayCache($eventId); }
+	function getDaysData($eventId)
+		{ return parent::getDaysData($eventId); }
+	function getSponsorsById($ids)
+		{ return parent::getSponsorsById($ids); }
+}
+
+/**
+ * livereporting_model_event methods, accessed from ../livereporting_event component
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_event_src_event_core extends livereporting_model_event
+{
+	function getDayData($eventId, $name)
+		{ return parent::getDayData($eventId, $name); }
+	function getDaysDefaultId($eventId)
+		{ return parent::getDaysDefaultId($eventId); }
+	function getEventData($eventId)
+		{ return parent::getEventData($eventId); }
 	function getLogEntries($eventId, $dayId, $filter = NULL, $limit = NULL)
 		{ return parent::getLogEntries($eventId, $dayId, $filter, $limit); }
 	function getLogEntriesCount($eventId, $dayId, $filter = NULL)
@@ -1041,8 +1026,6 @@ class livereporting_model_event_src_event extends livereporting_model_event
 		{ return parent::getLastPhotos($eventId); }
 	function getLastTinyChips($eventId, $dayId)
 		{ return parent::getLastChips($eventId, $dayId, self::chipsTiny); }
-	function getLastTodayChips($eventId, $dayId)
-		{ return parent::getLastChips($eventId, $dayId); }
 	function getPayoutBundle($eventId)
 		{ return parent::getPayoutBundle($eventId); }
 	function getTournamentSyncOrigin($eventId)
@@ -1051,22 +1034,25 @@ class livereporting_model_event_src_event extends livereporting_model_event
 		{ return parent::getLogEntryRedirectable($id, $type); }
 	function getSuccessivePostsCount($entry, $redirectToDayAll, $filterShow, $viewHidden)
 		{ return parent::getSuccessivePostsCount($entry, $redirectToDayAll, $filterShow, $viewHidden); }
-	function updateStatesOnLogEntryAdded($tournamentId, $eventId, $dayId)
-		{ return parent::updateStatesOnLogEntryAdded($tournamentId, $eventId, $dayId); }
-	function updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId)
-		{ return parent::updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId); }
-	function dayParallel($eventId, $dayId)
-		{ return parent::dayParallelIface($eventId, $dayId); }
-	function getSponsorsById($ids)
-		{ return parent::getSponsorsById($ids); }
-	function getSponsors()
-		{ return parent::getSponsors(); }
 	function getKeyHandEntries($eventId)
 		{ return parent::getKeyHandEntries($eventId); }
 }
 
 /**
- * livereporting_model_event methods, accessed from ../livereporting_event_post components
+ * livereporting_model_event methods, accessed from ../livereporting_event_pylon component
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_event_src_event_pylon extends livereporting_model_event
+{
+	function updateStatesOnLogEntryAdded($tournamentId, $eventId, $dayId)
+		{ return parent::updateStatesOnLogEntryAdded($tournamentId, $eventId, $dayId); }
+	function updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId)
+		{ return parent::updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId); }
+}
+
+/**
+ * livereporting_model_event methods, accessed from ../livereporting_event_post component
  * @package livereporting
  * @subpackage models
  */
@@ -1079,7 +1065,18 @@ class livereporting_model_event_src_event_post extends livereporting_model_event
 }
 
 /**
- * livereporting_model_event methods, accessed from ../livereporting_event_chips components
+ * livereporting_model_event methods, accessed from ../livereporting_event_day component
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_event_src_event_day extends livereporting_model_event
+{
+	function unsetDefaultDayCache($eventId)
+		{ return parent::unsetDefaultDayCache($eventId); }
+}
+
+/**
+ * livereporting_model_event methods, accessed from ../livereporting_event_chips component
  * @package livereporting
  * @subpackage models
  */
@@ -1093,10 +1090,10 @@ class livereporting_model_event_src_event_chips extends livereporting_model_even
 		{ return parent::getPreviousChipsByDayDT($eventId, $dayId, $datetime); }
 	function getDayChipsTimeCap($eventId, $dayId) 
 		{ return parent::getDayChipsTimeCap($eventId, $dayId); }
-	function getCurrentRound($eventId, $dayId)
-		{ return parent::getCurrentRound($eventId, $dayId); }
-	function getRound($eventId, $dayId, $timestamp)
-		{ return parent::getRound($eventId, $dayId, $timestamp); }
+	function getLastTinyChips($eventId, $dayId)
+		{ return parent::getLastChips($eventId, $dayId, self::chipsTiny); }
+	function getLastTodayChips($eventId, $dayId)
+		{ return parent::getLastChips($eventId, $dayId); }
 }
 
 /**
@@ -1158,8 +1155,8 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 		$entries = array();
 		$entriesR = $this->db->query('
 			SELECT l.id, l.type, l.created_on, l.event_id, l.tournament_id, l.contents
-			FROM reporting_ng_log l
-			INNER JOIN reporting_ng_days d
+			FROM ' . $this->table('Log') . ' l
+			INNER JOIN ' . $this->table('Days') . ' d
 				ON d.id=l.day_id
 			WHERE l.is_hidden=0 AND (' . implode(' OR ', $where) . ')
 			  AND d.is_live=1
@@ -1204,7 +1201,7 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 		if (!$map) {
 			$map = $this->db->array_query_assoc('
 				SELECT id, tour
-				FROM reporting_ng_tournaments
+				FROM ' . $this->table('Tournaments') . '
 			', 'id');
 
 		}

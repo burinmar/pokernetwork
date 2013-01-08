@@ -46,6 +46,9 @@ class livereporting_event_tweet extends livereporting_event_pylon
 		$tpl = $this->load_template();
 		
 		$rArgv = $this->helperRenderCommonArgv($data, $argv);
+		$rArgv['twitter_id'] = isset($data['contents']['twitter_id'])
+			? $data['contents']['twitter_id']
+			: 0;
 
 		if ($argv['variation'] == 'logEntry') {
 			if (_SITE_ID_ == 'com') {
@@ -90,7 +93,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 	{
 		// services API
 		$twitter = moon::shared('twitter')->getInstance('PokerNews_live');
-		
+
 		$page = &moon::page();
 		$homeURL = $page->home_url();
 		$homeURL = preg_replace('~/$~', '', $homeURL);
@@ -150,7 +153,7 @@ class livereporting_event_tweet extends livereporting_event_pylon
 			$location,
 			$entry
 		) = $prereq;
-		
+
 		$userId = intval(moon::user()->get_user_id());
 
 		$data['body'] = str_replace("\r", '', $data['body']);

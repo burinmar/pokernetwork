@@ -615,13 +615,13 @@ class livereporting_event_pylon extends livereporting_event
 	protected function helperSaveNotifyEvent($isHidden, $location)
 	{
 		if ($isHidden == false) {
-			$this->lrep()->instEventModel('_src_event')->updateStatesOnLogEntryAdded(
+			$this->lrep()->instEventModel('_src_event_pylon')->updateStatesOnLogEntryAdded(
 				$location['tournament_id'],
 				$location['event_id'],
 				$location['day_id']
 			);
 		} else {
-			$this->lrep()->instEventModel('_src_event')->updateStatesOnLogEntryRemoved(
+			$this->lrep()->instEventModel('_src_event_pylon')->updateStatesOnLogEntryRemoved(
 				$location['tournament_id'],
 				$location['event_id'],
 				$location['day_id']
@@ -699,7 +699,7 @@ class livereporting_event_pylon extends livereporting_event
 	 */
 	protected function helperDeleteNotifyEvent($location)
 	{
-		$this->lrep()->instEventModel('_src_event')->updateStatesOnLogEntryRemoved(
+		$this->lrep()->instEventModel('_src_event_pylon')->updateStatesOnLogEntryRemoved(
 			$location['tournament_id'],
 			$location['event_id'],
 			$location['day_id']

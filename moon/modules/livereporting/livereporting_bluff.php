@@ -18,7 +18,7 @@ class livereporting_bluff extends moon_com
 		} elseif (!isset($argv['src'])) {
 			$argv['src'] = 'std';
 		}
-		
+
 		if (!isset($_GET['nocache']) && !isset($argv['nocache'])) {
 			$cacheFn = 'tmp/cache/lrep.' . urlencode($argv['key']) . '.' . 
 				intval($argv['event_id']) . '.' . urlencode($argv['day_id']) . '.' . 
@@ -305,7 +305,7 @@ class livereporting_bluff extends moon_com
 					'created_on' => $chip['created_on'],
 					'id' => $chip['id'],
 					'user_id' => $chip['id'],
-					'user_name' => $chip['uname'],
+					'user_name' => $chip['name'],
 					'day_id' => $day,
 					'status'  => isset($chip['status'])  ? $chip['status'] : '',
 					'sponsor' => isset($chip['sponsor']) ? $chip['sponsor'] : ''
@@ -460,7 +460,7 @@ class livereporting_bluff extends moon_com
 			// if (0 == intval($chip['chips'])) {
 			// 	continue;
 			// }
-			$bluff = $this->getBluff($argv['event_id'], $chip['uname']);
+			$bluff = $this->getBluff($argv['event_id'], $chip['name']);
 			$chip['bluff_id'] = $bluff['id'];
 			$xml->start_node('chip_count', array('place' => $i++));
 			$xml->node('player', array(
@@ -468,7 +468,7 @@ class livereporting_bluff extends moon_com
 						? intval($chip['bluff_id'])
 						: -1 * intval($chip['id'])
 				),
-				$chip['uname']
+				$chip['name']
 			);
 			$chip['player_sponsor'] = $lrepTools->helperPlayerStatus(
 				isset($chip['status']) ? $chip['status'] : '', 
@@ -479,10 +479,10 @@ class livereporting_bluff extends moon_com
 			$xml->node('amount', '', $chip['chips']);
 			$xml->node('created_at', '', $this->fancyDate($chip['created_on'], $tzOffset));
 
-			if (isset($bluffPlayers[$chip['uname']])) {
-				$xml->node('city', '', $bluffPlayers[$chip['uname']]['city']);
-				$xml->node('state', '', $bluffPlayers[$chip['uname']]['state']);
-				$xml->node('country', '', $bluffPlayers[$chip['uname']]['country']);
+			if (isset($bluffPlayers[$chip['name']])) {
+				$xml->node('city', '', $bluffPlayers[$chip['name']]['city']);
+				$xml->node('state', '', $bluffPlayers[$chip['name']]['state']);
+				$xml->node('country', '', $bluffPlayers[$chip['name']]['country']);
 			} else {
 				$xml->node('city', '', '');
 				$xml->node('state', '', '');
@@ -1111,13 +1111,13 @@ class livereporting_bluff extends moon_com
 					foreach ($players as $player) {
 						$chips[intval($player['id'])] += array(
 							'id'      => $player['id'],
-							'uname'   => $player['name'],
+							'name'   => $player['name'],
 						);
 					}
 					$post['contents'] .= '<table class="chips">';
 					$kChip = 1;
 					foreach ($chips as $chip) {
-						$post['contents'] .= '<tr class="' . ($kChip % 2 ? 'PNhirow' : 'PNlorow') . '"><td class="name">' . (isset($chip['uname']) ? htmlspecialchars($chip['uname']) : '-') . '</td>';
+						$post['contents'] .= '<tr class="' . ($kChip % 2 ? 'PNhirow' : 'PNlorow') . '"><td class="name">' . (isset($chip['name']) ? htmlspecialchars($chip['name']) : '-') . '</td>';
 						$post['contents'] .= '<td class="c">' . htmlspecialchars($chip['chips']) . '</td>';
 						$post['contents'] .= '<td class="cc">' . ($chip['chipsc'] !== NULL
 						    ? htmlspecialchars($chip['chipsc']) . ' <img src="http://www.pokernews.com/img/live_poker/delta_' . ($chip['chipsc'] > 0 ? 'pos' : 'neg') .'.png" width="7" height="8" />'
@@ -1489,7 +1489,7 @@ class livereporting_bluff extends moon_com
 		// $tz = ($tzz<0 ? '-':'+') . (abs($tzz)<10 ? '0':'') . abs($tzz).'00';
 		return moon::locale()->gmdatef($time + $tzOffset, 'Reporting') . ' PST';
 	}
-	
+
 
 	/**
 	 * Get bluff_id by event_id and vice versa

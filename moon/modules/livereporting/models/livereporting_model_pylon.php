@@ -6,7 +6,7 @@
  * Base class for all livereporting data models
  *
  * Not a descendant of moon_com class, but has access to all it's common attributes,
- * as well as public attributes of ../livereporting component (including $this->db and $this->mcd)
+ * as well as public attributes of ../livereporting component (including $this->db)
  * @package livereporting
  * @subpackage models
  */

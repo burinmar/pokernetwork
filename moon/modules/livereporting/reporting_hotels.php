@@ -176,7 +176,6 @@ class reporting_hotels extends moon_com
 			return '';
 		}
 
-		$tours = poker_tours();
 		foreach ($activeTournaments as $row) {
 			$tplArgv['list.tournaments'] .= $tpl->parse('list:form.tournaments.item', array(
 				'id' => $row['id'],
@@ -215,11 +214,10 @@ class reporting_hotels extends moon_com
 		$cacheId[] = moon::user()->id();
 		$cacheId = md5(serialize($cacheId));		
 		
-		$memcObj = moon_memcache::getInstance();
-		$memcObjPrefix = moon_memcache::getRecommendedPrefix();
+		$cache = moon::cache();
 		if (
 			//1 ||
-			FALSE == ($cachedResult = $memcObj->get($memcObjPrefix . 'hotel.result' . $cacheId)) ||
+			FALSE == ($cachedResult = $cache->get('hotel.result' . $cacheId)) ||
 			!is_array($cachedResult)
 		) { 
 			// fetch remote data
@@ -231,7 +229,7 @@ class reporting_hotels extends moon_com
 			}
 			// cache if got hotel info, AND either not requested rooms availability or got it
 			if (self::remoteHotelInfo == $resultCode && (!isset($data->_roomAvailability) || FALSE !== $data->_roomAvailability)) {
-				$memcObj->set($memcObjPrefix . 'hotel.result' . $cacheId, array($resultCode, $data), MEMCACHE_COMPRESSED, 60);
+				$cache->save('hotel.result' . $cacheId, array($resultCode, $data), 60);
 			}
 		} else {
 			// cache
@@ -546,11 +544,10 @@ class reporting_hotels extends moon_com
 		$cacheId[] = moon::user()->id();
 		$cacheId = md5(serialize($cacheId));
 
-		$memcObj = moon_memcache::getInstance();
-		$memcObjPrefix = moon_memcache::getRecommendedPrefix();
+		$cache = moon::cache();
 		if (
 			//1 ||
-			FALSE == ($cachedResult = $memcObj->get($memcObjPrefix . 'hotels.results' . $cacheId)) ||
+			FALSE == ($cachedResult = $cache->get('hotels.results' . $cacheId)) ||
 			!is_array($cachedResult)
 		) { 
 			// fetch remote data
@@ -561,7 +558,7 @@ class reporting_hotels extends moon_com
 				list ($resultCode, $data) = $this->getHotelsRemote($requestArgv);
 			}
 			if (self::remoteHotelList == $resultCode) {
-				$memcObj->set($memcObjPrefix . 'hotels.results' . $cacheId, array($resultCode, $data), MEMCACHE_COMPRESSED, 60);
+				$cache->save('hotels.results' . $cacheId, array($resultCode, $data), 60);
 			}
 		} else {
 			// cache
@@ -1187,11 +1184,10 @@ class reporting_hotels extends moon_com
 	{
 		if ($this->activeMasterTournaments !== false)
 			return $this->activeMasterTournaments;
-		$memcObj = moon_memcache::getInstance();
-		$memcObjPrefix = moon_memcache::getRecommendedPrefix();
+		$cache = moon::cache();
 		if (
 			// 1 || 
-			FALSE == ($cachedResult = $memcObj->get($memcObjPrefix . 'active-tournaments-remote')) ||
+			FALSE == ($cachedResult = $cache->get('active-tournaments-remote')) ||
 			!is_array($cachedResult) ||
 			($cachedResult[1] === null && time() - $cachedResult[0] > 30)
 		) { 
@@ -1201,7 +1197,7 @@ class reporting_hotels extends moon_com
 				$remoteData = null;
 			}
 
-			$memcObj->set($memcObjPrefix . 'active-tournaments-remote', array(time(), $remoteData), MEMCACHE_COMPRESSED, 300);
+			$cache->save('active-tournaments-remote', array(time(), $remoteData), 300);
 		} else {
 			// cache
 			list (, $remoteData) = $cachedResult;

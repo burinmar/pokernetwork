@@ -167,7 +167,6 @@ var rq_we_pl_newplace={rq_we_pl_newplace};
 
 
 
-
 <% logTab:main %>
 <%if {entries} %>
 <table class="payouts tal" summary="Payout statistics">
@@ -175,6 +174,14 @@ var rq_we_pl_newplace={rq_we_pl_newplace};
 	<col class="player" />
 	<col class="sponsor" />
 	<col class="prize" />
+	<thead>
+		<tr>
+			<th class="position">{!place}</th>
+			<th>{!winner}</th>
+			<th>{!sponsor}</th>
+			<th class="numeric">{!prize} ({currency})</th>
+		</tr>
+	</thead>
 	<tbody>
 	{entries}
 	</tbody>
@@ -195,7 +202,7 @@ var rq_we_pl_newplace={rq_we_pl_newplace};
 		<%if {sponsorurl} %>
 		<a href="{sponsorurl}"><img src="{sponsorimg}" alt="" /> {sponsor}</a>
 		<% else {sponsorurl} %>
-		<img src="{sponsorimg}" alt="" /> {sponsor}
+		<%if {sponsorimg} %><img src="{sponsorimg}" alt="" /><%end%> {sponsor}
 		<%end%>
 		<%end%>
 	</td>

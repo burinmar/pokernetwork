@@ -29,7 +29,7 @@ class livereporting_event extends moon_com
 				$this->eSuggestTags();
 				break;
 			default:
-			$this->eSaves($event, $argv);
+				$this->eSaves($event, $argv);
 			}
 			moon::page()->page404();
 		} // end limited
@@ -81,7 +81,6 @@ class livereporting_event extends moon_com
 	
 	/**
 	 * Event delegate: redirect standard save request
-	 * @todo synthEvent : $event => 'save' (?)
 	 */
 	private function eSaves($event, $argv)
 	{
@@ -127,7 +126,7 @@ class livereporting_event extends moon_com
 			moon_close(); exit;
 		}
 	}
-	
+
 	private function eSuggestTags()
 	{
 		if (!$this->lrep()->instTools()->isAllowed('writeContent')) {
@@ -237,7 +236,7 @@ class livereporting_event extends moon_com
 		
 		if ($argv['uri']['argv'][0] == 'save') { // std supplimentary saves (using _GET to attach to endpoint, but may have _POST too)
 		switch ($argv['uri']['argv'][1]) {
-			case 'chips':   //`chips tab` save single chip; @todo attach directrly, using `event`
+			case 'chips':   //`chips tab` save single chip
 			case 'profile': // delete single chip
 			case 'day':     // day state
 			case 'event':   // event state
@@ -275,9 +274,6 @@ class livereporting_event extends moon_com
 					$this->set_var('render', 'bluff-xml');
 					$this->set_var('dist', $argv['uri']['type']);
 					$this->set_var('key', $argv['uri']['argv'][1]);
-					$this->set_var('bluff_id', isset($_GET['key'])
-						? intval($_GET['key'])
-						: NULL);
 				/*} else {
 					moon::error('Bandymas pavogti reportingo duomenis', 'N');
 				}*/
@@ -376,14 +372,11 @@ class livereporting_event extends moon_com
 		return $lrepObj;
 	}
 	
-	/**
-	 * @todo rename to lrepEvMdl everywhere
-	 */
 	private function lrepEv()
 	{
 		static $lrepEvObj = null;
 		if (!$lrepEvObj) {
-			$lrepEvObj = $this->lrep()->instEventModel('_src_event');
+			$lrepEvObj = $this->lrep()->instEventModel('_src_event_core');
 		}
 		return $lrepEvObj;
 	}
@@ -718,8 +711,9 @@ class livereporting_event extends moon_com
 		$cacheable = !$page->get_global('adminView') || !$lrep->instTools()->isAllowed('writeContent');
 		
 		if ($cacheable) {
-			$ckey = $lrep->mcdKey . 'reporting.sidebar-argv-' . $argv['event_id'] . '-' . $argv['day_id'];
-			if (($stored = $lrep->mcd->get($ckey)) !== FALSE) {
+			$cache = moon::cache();
+			$ckey = 'reporting.sidebar-argv-' . $argv['event_id'] . '-' . $argv['day_id'];
+			if (($stored = $cache->get($ckey)) !== FALSE) {
 				list ($mainArgv_,
 					$this->tabsSafeDisplay['chips'],
 					$this->tabsSafeDisplay['gallery'],
@@ -781,7 +775,7 @@ class livereporting_event extends moon_com
 		list (
 			$this->tabsSafeDisplay['chips'],
 			$mainArgv_['widget.top_chip_counts'],
-			$mainArgv_['chips.top_chip_counts']
+			$mainArgv_['chips.top_chip_counts'],
 		) = $this->partialRenderSidewidgetChips($winner, $page, $lrep, $eventInfo, $argv, $tpl);
 		
 		list (
@@ -807,12 +801,12 @@ class livereporting_event extends moon_com
 		$mainArgv_['nl_social'] = _SITE_ID_ == 'nl';
 		
 		if ($cacheable) {
-			$lrep->mcd->set($ckey, array(
+			$cache->save($ckey, array(
 					$mainArgv_,
 					$this->tabsSafeDisplay['chips'],
 					$this->tabsSafeDisplay['gallery'],
 					$this->tabsSafeDisplay['payouts'],
-				), 0, $eventInfo['tstate'] == 2 || $winner != NULL
+				), $eventInfo['tstate'] == 2 || $winner != NULL
 				? 60  // is finished
 				: 10  // is live or not started
 			);
@@ -1042,25 +1036,26 @@ class livereporting_event extends moon_com
 							: 'odd',
 						'place' => $k+1,
 						'is_busted' => intval($chip['chips']) == 0,
-						'player' => htmlspecialchars($chip['uname']),
+						'player' => htmlspecialchars($chip['name']),
 						'playerurl' => $isAdm
 							? str_replace('{}', $chip['id'], $playerUrl)
 							: '',
-						'player_sponsorimg' => isset($chip['sponsor']['ico'])
+						'player_sponsorimg' => !empty($chip['sponsor.img'])
 							? ($chip['sponsor_id'] > 0
-								? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
-								: $chip['sponsorimg'])
+								? img('rw', $chip['sponsor_id'], $chip['sponsor.img'])
+								: $chip['sponsor.img'])
 							: NULL,
 						'chips' => number_format($chip['chips']),
 					));
 				}
 			}
 		} else {
-			$ckey = $lrep->mcdKey . 'reporting.finished-ev-chips-' . $argv['event_id'] . '-' . $argv['day_id'];
-			if (($hasChips = $lrep->mcd->get($ckey)) === FALSE) {
+			$cache = moon::cache();
+			$ckey = 'reporting.finished-ev-chips-' . $argv['event_id'] . '-' . $argv['day_id'];
+			if (($hasChips = $cache->get($ckey)) === FALSE) {
 				$topChips = $this->lrepEv()->getLastTinyChips($argv['event_id'], $argv['day_id']);
 				$hasChips = count($topChips);
-				$lrep->mcd->set($ckey, $hasChips, 0, 3600);
+				$cache->save($ckey, $hasChips, 3600);
 			}
 			$return['tab_safe_display'] = intval($hasChips) > 0;
 		}
@@ -1139,7 +1134,7 @@ class livereporting_event extends moon_com
 				'tzOffset' => $eventInfo['tzOffset'],
 				'show_wsop_eod' => $eventInfo['show_wsop_eod'], // _chips
 			));
-
+			
 			if (!isset($argv['hide_write_controls'])) {
 				foreach (array('event', 'profile') as $object) {
 					$object = 'instEvent' . ucfirst($object);
@@ -1576,11 +1571,7 @@ class livereporting_event extends moon_com
 			$e = true;
 			return;
 		}
-		if ($argv['dist'] == 'xml') {
-			Header('Content-Type: application/xml; charset=utf-8');
-		} elseif ($argv['dist'] == 'json') {
-			//Header('Content-Type: application/json; charset=utf-8');
-		}
+		Header('Content-Type: application/xml; charset=utf-8');
 		echo $output;
 		moon_close();
 		exit;

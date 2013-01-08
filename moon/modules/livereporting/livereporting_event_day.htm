@@ -42,14 +42,12 @@
 <form method="post" class="control" action="{!action}">
 	<input type="hidden" name="event"   value="{cd.save_event}" />
 	<input type="hidden" name="id" value="{cd.id}" />
-	<fieldset>
-		<legend>Day</legend>
-		<p><label>Date:</label>
-			{cd.custom_datetime} {cd.custom_tz}
-		</p>
-		<p><label>&nbsp;</label>
-			<input type="submit" value="Save" name="update_day_data" style="width:100px;"/>
-		</p>
-	</fieldset>
+	<div class="aform clrfix">
+		<dl>
+			<dt>Date:</dt>
+			<dd class="dateSelectionItems">{cd.custom_datetime} {cd.custom_tz}</dd>
+		</dl>
+		<div class="formButton clrfix"><input type="submit" name="update_day_data" value="Save"/></div>
+	</div>
 </form>
 </div>

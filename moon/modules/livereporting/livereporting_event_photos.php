@@ -66,9 +66,6 @@ class livereporting_event_photos extends livereporting_event_pylon
 		}
 	}
 
-	/**
-	 * @todo getEditableData : lighten
-	 */
 	protected function render($data, $argv)
 	{
 		if ($argv['variation'] == 'logControl') {
@@ -109,9 +106,6 @@ class livereporting_event_photos extends livereporting_event_pylon
 			);
 			if (NULL === ($entry = $this->getEditableData($data['id'], $data['event_id']))) {
 				$entry['xphotos'] = array();
-				if (time() - $data['created_on'] < 3600*24*30) { // whine 1 month
-					moon::error('Reporting photos: damaged entry: ' . $data['id']);
-				}
 				if ($rArgv['show_controls']) {
 					$rArgv['show_controls'] = false;
 					$rArgv['title'] = '(adm: damaged entry)';

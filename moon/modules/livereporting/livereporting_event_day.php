@@ -30,7 +30,7 @@ class livereporting_event_day extends livereporting_event_pylon
 					'day_id'   => $argv['uri']['argv'][3],
 					'state'    => $argv['uri']['argv'][2]
 				));
-				$this->lrep()->instEventModel('_src_event')
+				$this->lrep()->instEventModel('_src_event_day')
 					->unsetDefaultDayCache($argv['event_id']);
 				$this->redirect('event#view', array(
 					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),

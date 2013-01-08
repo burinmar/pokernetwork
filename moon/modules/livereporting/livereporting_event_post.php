@@ -58,17 +58,20 @@ class livereporting_event_post extends livereporting_event_pylon
 			return $tpl->parse('logEntry:post', $rArgv);
 		} elseif ($argv['variation'] == 'individual') {
 			if ($rArgv['show_controls']) {
-				$entry = $this->getEditableData($data['id'], $data['event_id']);
-				if (!empty($entry))
-				$rArgv['control'] = $this->renderControl(array_merge($entry, array(
-					'keep_old_dt' => true,
-					'tzName' => $data['tzName'],
-					'tzOffset' => $data['tzOffset'],
-					'tags' => implode(', ', $entry['tags']),
-					'published' => empty($entry['is_hidden']),
-					'unhide' => ($argv['action'] == 'edit'),
-					'bundled_control' => ($argv['action'] != 'edit'),
-				)));
+				if (NULL === ($entry = $this->getEditableData($data['id'], $data['event_id']))) {
+					$rArgv['show_controls'] = false;
+					$rArgv['title'] = '(adm: damaged entry)';
+				} else {
+					$rArgv['control'] = $this->renderControl(array_merge($entry, array(
+						'keep_old_dt' => true,
+						'tzName' => $data['tzName'],
+						'tzOffset' => $data['tzOffset'],
+						'tags' => implode(', ', $entry['tags']),
+						'published' => empty($entry['is_hidden']),
+						'unhide' => ($argv['action'] == 'edit'),
+						'bundled_control' => ($argv['action'] != 'edit'),
+					)));
+				}
 			}
 			$page->title($page->title() . ' | ' . $rArgv['title']);
 			$this->helperRenderOGMeta($rArgv);

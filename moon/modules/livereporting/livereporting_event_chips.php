@@ -103,8 +103,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 	{
 		$data['contents'] = unserialize($data['contents']);
 		foreach($data['contents']['chips'] as $chip) {
-			if (!isset($chip['uname'])) // if new format
-				$this->playerIdsOnPage[] = intval($chip['id']);
+			$this->playerIdsOnPage[] = intval($chip['id']);
 		}
 	}
 
@@ -214,7 +213,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 						$player['sponsor.name']),
 
 				));
-			} elseif (isset($chip['uname'])) {
+			} elseif (isset($chip['uname'])) { // old format, when no entry in _ng_players, but uname is still present
 				$chipsArgv = array_merge($chipsArgv, array(
 					'player' => htmlspecialchars($chip['uname']),
 					'player_url' => $playerUrl && $chip['id']
@@ -258,9 +257,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 		))) {
 			// sub_chips entry lost, editing chips not available
 			$entry['chips'] = array();
-			if (time() - $data['created_on'] < 3600*24*30) { // whine for 1 month
-				moon::error('Reporting chips: damaged entry: ' . $data['id']);
-			}
 			if ($rArgv['show_controls']) {
 				$rArgv['show_controls'] = false;
 				$rArgv['title'] = '(adm: damaged entry)';
@@ -270,10 +266,10 @@ class livereporting_event_chips extends livereporting_event_pylon
 		if ($rArgv['show_controls']) {
 			$chipsTxt = array();
 			foreach ($entry['chips'] as $nr => $chip) {
-				$chipsTxt[] = isset($chip['uname'])
-					? htmlspecialchars($chip['uname']) . "\t" . $chip['chips']
+				$chipsTxt[] = isset($chip['name'])
+					? htmlspecialchars($chip['name']) . "\t" . $chip['chips']
 					: '???(unknown ' . (-$nr + 1) . ')' . "\t" . $chip['chips'];
-			}			
+			}
 			$eventInfo = $lrep->instEventModel('_src_event')->getEventData($data['event_id']);
 			$rArgv['control'] = $this->renderControl(array(
 				'unhide' => ($argv['action'] == 'edit'),
@@ -314,21 +310,21 @@ class livereporting_event_chips extends livereporting_event_pylon
 		$rArgv['entries'] = '';
 		foreach ($entry['chips'] as $k => $chip) {
 			$chipsArgv = $this->helperRenderChipArgv($chip, $k, !empty($data['contents']['is_full_import']));
-			if (isset($chip['uname'])) {
+			if (isset($chip['name'])) {
 				$chipsArgv = array_merge($chipsArgv, array(
-					'player' => htmlspecialchars($chip['uname']),
+					'player' => htmlspecialchars($chip['name']),
 					'player_url' => $playerUrl
 						? str_replace('{}', $chip['id'], $playerUrl)
 						: '',
-					'player_sponsor' => $chip['sponsor'],
-					'player_sponsorimg' => !empty($chip['sponsorimg'])
+					'player_sponsor' => $chip['sponsor.name'],
+					'player_sponsorimg' => !empty($chip['sponsor.img'])
 						? ($chip['sponsor_id'] > 0
-							? img('rw', @$chip['sponsor_id'], $chip['sponsorimg'])
-							: $chip['sponsorimg'])
+							? img('rw', @$chip['sponsor_id'], $chip['sponsor.img'])
+							: $chip['sponsor.img'])
 						: NULL,
-					'player_sponsorurl' =>  $chip['sponsorurl'],
-					'player_status'  =>  $lrep->instTools()->helperPlayerStatus($chip['status'], $chip['sponsor']),
-					'player_is_pnews' => !empty($chip['ispn']),
+					'player_sponsorurl' =>  $chip['sponsor.url'],
+					'player_status'  =>  $lrep->instTools()->helperPlayerStatus($chip['status'], $chip['sponsor.name']),
+					'player_is_pnews' => !empty($chip['is_pnews']),
 					'country' => !empty($chip['country_id'])
 						? htmlspecialchars($chip['country_id'])
 						: '',
@@ -387,7 +383,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			'day_state' => $days[$data['day_id']]['state']
 		));
 
-		$entry['chips'] = $lrep->instEventModel('_src_event')->getLastTodayChips($data['event_id'], $data['day_id']);
+		$entry['chips'] = $lrep->instEventModel('_src_event_chips')->getLastTodayChips($data['event_id'], $data['day_id']);
 		$rArgv = array();
 
 		if ($isAdm) {
@@ -465,7 +461,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 					: NULL,
 			);
 
-			if (isset($chip['uname'])) {
+			if (isset($chip['name'])) {
 				if ($isAdm && $showSingleChipsControls) {
 					$newCtrl = $tpl->parse('logTab:chips.chips.item.new_ctrl', array('playerid' => $chip['id']));
 					$delCtrl = $tpl->parse('logTab:chips.chips.item.del_ctrl', array('playerid' => $chip['id']));
@@ -500,7 +496,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 						: '';
 				}
 				$chipsArgv += array(
-					'player' => htmlspecialchars($chip['uname']),
+					'player' => htmlspecialchars($chip['name']),
 					'playerid' => $chip['id'],
 					'playerurl' => $playerUrl,
 					'sponsor' => '',
@@ -515,14 +511,14 @@ class livereporting_event_chips extends livereporting_event_pylon
 						: ''
 				);
 				$chipsArgv['sponsor'] = trim($tpl->parse('logTab:chips.chips.item.sponsor', array(
-					'sponsorimg' => !empty($chip['sponsorimg'])
+					'sponsorimg' => !empty($chip['sponsor.img'])
 						? ($chip['sponsor_id'] > 0 
-							? img('rw', $chip['sponsor_id'], $chip['sponsorimg'])
-							: $chip['sponsorimg'])
+							? img('rw', $chip['sponsor_id'], $chip['sponsor.img'])
+							: $chip['sponsor.img'])
 						: null,
-					'sponsorurl' =>  $chip['sponsorurl'],
-					'sponsor' => $chip['sponsor'],
-					'status'  => $lrep->instTools()->helperPlayerStatus($chip['status'], $chip['sponsor']),
+					'sponsorurl' =>  $chip['sponsor.url'],
+					'sponsor' => $chip['sponsor.name'],
+					'status'  => $lrep->instTools()->helperPlayerStatus($chip['status'], $chip['sponsor.name']),
 					'is_pnews' => $chip['is_pnews'],
 				)));
 			} else {
@@ -566,7 +562,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 
 	private function chipsNameCmp($a, $b)
 	{
-		$key = 'uname';
+		$key = 'name';
 		return strcasecmp($a[$key], $b[$key]);
 	}
 
@@ -710,7 +706,6 @@ class livereporting_event_chips extends livereporting_event_pylon
 	 * Chips data. 
 	 * Returns array with players ids as keys, or non-positive numbers for ones which were definitely deleted. 
 	 * Player data _may_ be missing either way.
-	 * @todo return more meaningful field names
 	 */
 	private function getEditableData($id, $eventId, $full)
 	{
@@ -765,20 +760,20 @@ class livereporting_event_chips extends livereporting_event_pylon
 			foreach ($players as $player) {
 				$add = array(
 					'id'      => $player['id'],
-					'uname'   => $player['name'],
-					'ispn'    => $player['is_pnews'],
+					'name'    => $player['name'],
+					'is_pnews'=> $player['is_pnews'],
 					'status'  => $player['status'],
 					'country_id' => $player['country_id'],
 					'sponsor_id' => $player['sponsor_id'],
-					'sponsor'    => null,
-					'sponsorimg' => null,
-					'sponsorurl' => null
+					'sponsor.name' => null,
+					'sponsor.img'  => null,
+					'sponsor.url'  => null
 				);
 				if (isset($sponsors[$player['sponsor_id']])) {
 					$sponsor = $sponsors[$player['sponsor_id']];
-					$add['sponsor'] = $sponsor['name'];
-					$add['sponsorimg'] = $sponsor['favicon'];
-					$add['sponsorurl'] = !$sponsor['is_hidden'] && !empty($sponsor['alias'])
+					$add['sponsor.name'] = $sponsor['name'];
+					$add['sponsor.img']  = $sponsor['favicon'];
+					$add['sponsor.url']  = !$sponsor['is_hidden'] && !empty($sponsor['alias'])
 						? '/' . $sponsor['alias'] . '/'
 						: null;
 				}
@@ -1129,14 +1124,14 @@ class livereporting_event_chips extends livereporting_event_pylon
 				}
 				if (null != $playerId) {
 					if (false !== $playerCountry)
-						$this->db->update(array( // move to _profile?
+						$this->db->update(array( // @todo move to _profile?
 							'country_id' => $playerCountry,
 							'updated_on' => time(),
 						), $this->table('Players'), array(
 							'id' => $playerId
 						));
 					if ($explicit && !$entryId)
-						$this->db->update(array( // move to _profile?
+						$this->db->update(array( // @todo move to _profile?
 							'is_hidden' => 0,
 							'updated_on' => time(),
 						), $this->table('Players'), array(
@@ -1260,7 +1255,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			}
 		}
 
-		if (empty($entry['synced'])) { // @todo do not recreate everything
+		if (empty($entry['synced'])) {
 			$this->db->query('
 				DELETE FROM ' . $this->table('Chips') . '
 				WHERE import_id=' . $entryId . '

@@ -21,22 +21,25 @@ class livereporting_model_hierarchy extends livereporting_model_pylon
 	function getTorunamentsUris()
 	{
 		static $data = NULL;
-		if ($data === NULL && ($data = $this->mcd->get($this->mcdKey . 'reporting.tourns_uris')) === FALSE) {
-			// live,id index
-			$data = array();
-			$rData = $this->db->query('
-				SELECT id, alias FROM ' . $this->table('Tournaments') . '
-				WHERE is_live=1
-			');
-			while ($row = $this->db->fetch_row_assoc($rData)) {
-				if (!empty($row['alias'])) {
-					$data[$row['id']] = $row['alias'];
+		if ($data === NULL) {
+			$cache = moon::cache('memcache');
+			if (($data = $cache->get('reporting.tourns_uris')) === FALSE) {
+				// live,id index
+				$data = array();
+				$rData = $this->db->query('
+					SELECT id, alias FROM ' . $this->table('Tournaments') . '
+					WHERE is_live=1
+				');
+				while ($row = $this->db->fetch_row_assoc($rData)) {
+					if (!empty($row['alias'])) {
+						$data[$row['id']] = $row['alias'];
+					}
+				}
+				krsort($data);
+				if (0 != count($data)) {
+					$cache->save('reporting.tourns_uris', $data, 60);
 				}
 			}
-			krsort($data);
-			if (0 != count($data)) {
-	 			$this->mcd->set($this->mcdKey . 'reporting.tourns_uris', $data, 0, 60);
-	 		}
 		}
 		return $data;
 	}
@@ -50,26 +53,29 @@ class livereporting_model_hierarchy extends livereporting_model_pylon
 	function getEventsUris()
 	{
 		static $data = NULL;
-		if ($data === NULL && ($data = $this->mcd->get($this->mcdKey . 'reporting.events_uris')) === FALSE) {
-			// live,id index
-			$rData = $this->db->query('
-				SELECT id, tournament_id, alias FROM ' . $this->table('Events') . '
-				WHERE is_live=1 
-			');
-			$data = array();
-			while ($row = $this->db->fetch_row_assoc($rData)) {
-				if (NULL == $row['alias'] || '' == $row['alias']) {
-					continue;
+		if ($data === NULL) {
+			$cache = moon::cache('memcache');
+			if (($data = $cache->get('reporting.events_uris')) === FALSE) {
+				// live,id index
+				$rData = $this->db->query('
+					SELECT id, tournament_id, alias FROM ' . $this->table('Events') . '
+					WHERE is_live=1 
+				');
+				$data = array();
+				while ($row = $this->db->fetch_row_assoc($rData)) {
+					if (NULL == $row['alias'] || '' == $row['alias']) {
+						continue;
+					}
+					$data[$row['id']] = array(
+						$row['tournament_id'],
+						$row['alias']
+					);
 				}
-				$data[$row['id']] = array(
-					$row['tournament_id'],
-					$row['alias']
-				);
+				krsort($data);
+				if (0 != count($data)) {
+					$cache->save('reporting.events_uris', $data, 60);
+				}
 			}
-			krsort($data);
-			if (0 != count($data)) {
-	 			$this->mcd->set($this->mcdKey . 'reporting.events_uris', $data, 0, 60);
-	 		}
 		}
 
 		return $data;

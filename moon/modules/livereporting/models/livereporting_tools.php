@@ -168,7 +168,10 @@ class livereporting_tools extends livereporting_model_pylon
 	function helperHtmlExcerptForStoring($text, $maxlen)
 	{
 		$doc = new DOMDocument('1.0', 'UTF-8');
-		$text = '<html><head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $text . '</body></html>';
+		// doctype affects how is saved using saveXML (loads differently?)
+		$text = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+				<html xmlns="http://www.w3.org/1999/xhtml">
+				<head><meta http-equiv="content-type" content="text/html; charset=utf-8"></head><body>' . $text . '</body></html>';
 		$doc->loadHTML($text);
 
 		$output = '';
@@ -178,6 +181,7 @@ class livereporting_tools extends livereporting_model_pylon
 
 		foreach ($body->childNodes as $node) {
 			$append = $node->ownerDocument->saveXML($node);
+			// $append = $doc->saveHTML($node);
 			$outputLenThis = mb_strlen($append, '8bit');
 			if ($outputLen + $outputLenThis > $maxlen) {
 				if ($node->nodeName == 'table') {
@@ -190,17 +194,22 @@ class livereporting_tools extends livereporting_model_pylon
 						while ($trsl > 0 && $removedChunkLimit-- && $removeRawMin > 0) {
 							$tr = $trs->item($trsl-1);
 							$removeRawMin -= mb_strlen($tr->ownerDocument->saveXML($tr), '8bit');
+							// $removeRawMin -= mb_strlen($doc->saveHTML($tr), '8bit');
 							$node->removeChild($tr);
 							$trsl--;
 						}
 						$append = $node->ownerDocument->saveXML($node);
+						// $append = $doc->saveHTML($node);
 						$outputLenThis = mb_strlen($append, '8bit');
 					}
-					if ($outputLen + $outputLenThis <= $maxlen)
+					if ($outputLen + $outputLenThis <= $maxlen) {
 						$output .= $append;
+						// $outputLen += $outputLenThis;
+					}
 				}
 				break;
 			}
+			$outputLen += $outputLenThis;
 			$output .= $append;
 		}
 
@@ -489,4 +498,102 @@ class livereporting_tools extends livereporting_model_pylon
 		$string = filter_var($string, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		return $string;
 	}
+
+	function imageFrom2Vectors($data)
+	{
+		try {
+			return ReportingChipsImage::getImage($data);
+		} catch (Exception $e) {}
+	}
 }
+
+class ReportingChipsImage
+{
+	const rowNamePaddingX = 10;
+	const rowNameOffsetY = 20;
+	const rowHeight = 30;
+	const colSkip = 30;
+	const dataOffsetX = 5;
+	const dataOffsetY = 5;
+	static function getImage($data)
+	{
+		$fontPath = is_dev()
+			 ? '../com/i/livereporting.ttf'
+			 : 'i/livereporting.ttf';
+
+		$image = new Imagick();
+		$image->setResolution(72, 72);
+		$draw = new ImagickDraw();
+		// $draw->setResolution(72, 72);
+		$draw->setFont(realpath($fontPath));
+		$draw->setFontSize(12);
+
+		$widths = array(
+			self::dataOffsetX,
+			self::rowNamePaddingX,
+			'names' => 0,
+			self::colSkip,
+			'chips' => 0,
+			self::rowNamePaddingX,
+			self::dataOffsetX
+		);
+		$heights = array(
+			self::dataOffsetY,
+			self::rowHeight * count($data),
+			self::dataOffsetY,
+		);
+
+		foreach ($data as $row) {
+			list($name, $chip) = $row;
+			$dim = $image->queryFontMetrics($draw, $name);
+			$widths['names'] = max($widths['names'], $dim['textWidth']);
+			$dim = $image->queryFontMetrics($draw, $chip);
+			$widths['chips'] = max($widths['chips'], $dim['textWidth']);
+		}
+
+		$imageWidth = 0;
+		foreach ($widths as $w) {
+			$imageWidth += $w;
+		}
+		$imageHeight = 0;
+		foreach ($heights as $h) {
+			$imageHeight += $h;
+		}
+
+		$image->newImage($imageWidth, $imageHeight, '#f2f2f2');
+		$draw->setFillColor('white');
+		$draw->rectangle(1, 1, $imageWidth - 2, $imageHeight - 2);
+		$draw->setFillColor('#f2f2f2');
+		$y = self::dataOffsetY;
+		$n = 1;
+		foreach ($data as $row) {
+			if ($n % 2)
+				$draw->rectangle(self::dataOffsetY, $y, $imageWidth - self::dataOffsetY, $y + self::rowHeight);
+			$y += self::rowHeight;
+			$n++;
+		}
+		$image->drawImage($draw);
+
+		$y = self::rowNameOffsetY + self::dataOffsetY;
+		$x1 = self::rowNamePaddingX + self::dataOffsetX;
+		$x2 = $x1 + $widths['names'] + self::colSkip + $widths['chips'];
+		$draw->setFillColor('black');
+		foreach ($data as $row) {
+			list($name, $chip) = $row;
+			$draw->setTextAlignment(1);
+			$image->annotateImage($draw, $x1, $y, 0, $name);
+			$draw->setTextAlignment(3);
+			$image->annotateImage($draw, $x2, $y, 0, $chip);
+			$y += self::rowHeight;
+		}
+		
+		$image->setImageFormat('png');
+		ob_start();
+		echo $image;
+		$image = ob_get_contents();
+		ob_end_clean();
+
+		return $image;
+	}
+}
+

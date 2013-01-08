@@ -216,8 +216,8 @@ class livereporting_index extends moon_com
 		$result = array();
 
 		if (!empty($argv['liveupdate'])) {
-			$result['liveupd'] = $this->object('livereporting')->instEventModel('_src_index')
-				->countUpdates($argv['liveupdate_evt'], $argv['liveupdate_day'], $argv['liveupdate_since']);
+			$result['liveupd'] = intval($this->object('livereporting')->instEventModel('_src_index')
+				->countUpdates($argv['liveupdate_evt'], $argv['liveupdate_day'], $argv['liveupdate_since']));
 		}
 
 		if (!empty($argv['shoutbox'])) {
@@ -576,7 +576,6 @@ class livereporting_index extends moon_com
 			$running[$k]['events'] = array();
 		}
 
-		$tours = poker_tours();
 		$result = '';
 
 		$nr = 0;
@@ -947,7 +946,6 @@ class livereporting_index extends moon_com
 		$page->set_global($this->my('module') . '.livereporting_event_ipnSid', $sid);
 
 		if (!empty($sid[$key]) && !$error) {
-			moon::error('redirectIPNNews: no $sid');
 			// @no way to check if logged in -- reswitch [A] instead
 			$page->redirect($this->get_var('ipnWriteBase') . $this->get_var('ipnBrowseNewsUrl') . '?sid=' . $sid[$key][0] . '&key=');
 		} else {

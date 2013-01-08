@@ -98,7 +98,7 @@
 			<dd>
 				<label><input type="checkbox" name="published" value="1" class="checkbox"<%if {cp.published} %> checked="checked"<%end%> /> Published</label><br />
 				<label><input type="checkbox" name="is_keyhand" value="1" class="checkbox"<%if {cp.is_keyhand} %> checked="checked"<%end%> /> Is Key Hand</label><br />
-				<label><input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cp.is_exportable} %> checked="checked"<%end%> /> Exportable <small class="grayText">(WSOP xml)</small></label>
+				<label><input type="checkbox" name="is_exportable" value="1" class="checkbox"<%if {cp.is_exportable} %> checked="checked"<%end%> /> Exportable</label>
 				<%if {cp.forum_topic.createble} %>
 				<div class="create-topic-context">
 					<label><input type="checkbox" name="create_topic" value="1" class="checkbox create-topic-toggle"<%if {cp.forum_topic.created} %> checked="checked" disabled="disabled"<%end%> /> Forum topic</label>

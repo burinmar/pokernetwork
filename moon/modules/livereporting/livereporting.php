@@ -2,7 +2,6 @@
 /**
  * @package livereporting
  */
-include_class('moon_memcache');
 
 /**
  * Livereporting class provides url read/write mechanism, access to various reporting models.
@@ -15,20 +14,8 @@ include_class('moon_memcache');
  */
 class livereporting extends moon_com
 {
-	/**
-	 * Memcache object
-	 * @var moon_memcache
-	 */
-	public $mcd = NULL;
-	/**
-	 * Memcache recommended prefix
-	 * @var string
-	 */
-	public $mcdKey = NULL;
 	function onload()
 	{
-		$this->mcd = moon_memcache::getInstance();
-		$this->mcdKey = moon_memcache::getRecommendedPrefix();
 		// global $_profiler;
 		// $this->profiler = &$_profiler;
 	}
@@ -515,7 +502,7 @@ class livereporting extends moon_com
 			? $currentUserId
 			: intval($userId); // null => 0
 		$this->db->query('
-			INSERT INTO reporting_ng_alt_log
+			INSERT INTO ' . $this->table('AltLog') . '
 			(trn_id, ev_id, day_id, type, performed_by, object_table, object_id, comment)
 			VALUES(
 				"' . $this->db->escape($trnId) . '",

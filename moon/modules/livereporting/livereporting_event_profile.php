@@ -153,7 +153,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 			'id' => '-id-'
 		), $this->getUriFilter(NULL, TRUE));
 		$controlsArgv['cl.sponsors'] = json_encode(
-			$this->lrep()->instEventModel('_src_event')->getSponsors()
+			$this->lrep()->instEventModel('_src_event_profile')->getSponsors()
 		);
 
 		return $tpl->parse('control:list-profiles', $controlsArgv);
@@ -248,7 +248,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 		}
 
 		$sponsors = array();
-		$rSponsors = $this->lrep()->instEventModel('_src_event')->getSponsors();
+		$rSponsors = $this->lrep()->instEventModel('_src_event_profile')->getSponsors();
 		foreach ($rSponsors as $rSponsor) {
 			$sponsors[strtolower($rSponsor['name'])] = $rSponsor['id'];
 		}
@@ -387,12 +387,12 @@ class livereporting_event_profile extends livereporting_event_pylon
 			'cu.card' => htmlspecialchars($profile['card']),
 			'cu.is_pnews' => htmlspecialchars($profile['is_pnews']),
 			'cu.is_hidden' => htmlspecialchars($profile['is_hidden']),
-			'cu.sponsor' => $profile['sponsor'],
+			'cu.sponsor' => $profile['sponsor.name'],
 			'cu.sponsorimg' => $profile['sponsor_id'] > 0
-				? img('rw', $profile['sponsor_id'], $profile['sponsorimg'])
-				: $profile['sponsorimg'],
-			'cu.sponsorurl' => $profile['sponsorurl'],
-			'cu.status'  => $lrep->instTools()->helperPlayerStatus($profile['status'], $profile['sponsor']),
+				? img('rw', $profile['sponsor_id'], $profile['sponsor.img'])
+				: $profile['sponsor.img'],
+			'cu.sponsorurl' => $profile['sponsor.url'],
+			'cu.status'  => $lrep->instTools()->helperPlayerStatus($profile['status'], $profile['sponsor.name']),
 			'cu.chips_list' => ''
 		);
 
@@ -468,17 +468,17 @@ class livereporting_event_profile extends livereporting_event_pylon
 		if (isset($sponsors[$profile['sponsor_id']])) {
 			$sponsor = $sponsors[$profile['sponsor_id']];
 			$profile += array(
-				'sponsor'    => $sponsor['name'],
-				'sponsorimg' => $sponsor['favicon'],
-				'sponsorurl' => !$sponsor['is_hidden'] && !empty($sponsor['alias'])
+				'sponsor.name' => $sponsor['name'],
+				'sponsor.img'  => $sponsor['favicon'],
+				'sponsor.url'  => !$sponsor['is_hidden'] && !empty($sponsor['alias'])
 					? '/' . $sponsor['alias'] . '/'
 					: null
 			);
 		} else {
 			$profile += array(
-				'sponsor'    => null,
-				'sponsorimg' => null,
-				'sponsorurl' => null
+				'sponsor.name' => null,
+				'sponsor.img'  => null,
+				'sponsor.url'  => null
 			);
 		}
 
@@ -591,6 +591,7 @@ class livereporting_event_profile extends livereporting_event_pylon
 		if (!$playerId) {
 			return ; // can't distinguish between dupe error (which is ok) and others (which are not)
 		}
+		// @todo probably should delay this query, since it results in batch table scans during live reporting
 		$this->updateProfilePPRels($playerId, $playerName);
 		return $playerId;
 	}
@@ -630,5 +631,49 @@ class livereporting_event_profile extends livereporting_event_pylon
 		), $this->table('Players'), array(
 			'id' => $id
 		));
+	}
+
+	/**
+	 * Refresh players_poker <-> reporting_players references (pp player created, updated, deleted).
+	 * 1. Collect all existing rp profiles, referencing this player by id, where names still match.
+	 * 2. For each alt. name, update all rp profiles with matching names with pp id; collect rp id.
+	 * 3. Delete references from profiles, which did not qualify in steps 1 and 2.
+	 * Called from broadcast
+	 */
+	public function notifyPokerPlayerAltered($ppId, $name, $altNames)
+	{
+		$allNames = explode(',', $altNames);
+		array_unshift($allNames, $name);
+
+		foreach ($allNames as $k => $name) {
+			$name = trim($name);
+			if ($name == '') {
+				unset($allNames[$k]);
+				continue;
+			}
+			$allNames[$k] = $name;
+		}
+
+		$relevantRPIds = array();
+		// scary scanning query
+		foreach ($this->db->array_query_assoc('
+			SELECT id, pp_id
+			FROM ' . $this->table('Players') . '
+			WHERE FIND_IN_SET(name, "' . $this->db->escape(implode(',', $allNames)) . '")
+		') as $rp) {
+			$relevantRPIds[] = $rp['id'];
+			$this->db->query('
+				UPDATE ' . $this->table('Players') . '
+				SET pp_id=' . intval($ppId) . ', updated_on=' . time() . '
+				WHERE id=' . $rp['id'] . '
+				  AND (pp_id!=' . intval($ppId) . ' OR pp_id IS NULL)
+			');
+		}
+		$relevantRPIds[] = 0;
+		$this->db->query('
+			UPDATE ' . $this->table('Players') . '
+			SET pp_id=NULL, updated_on=' . time() . '
+			WHERE pp_id=' . intval($ppId) . ' AND id NOT IN(' . implode(',', $relevantRPIds) . ')
+		');
 	}
 }

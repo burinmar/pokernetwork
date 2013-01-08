@@ -220,10 +220,10 @@ class livereporting_tour extends moon_com
 		$return = true;
 		foreach ($data as $row) {
 			$this->db->replace($row, 'reporting_ng_tours_base');
-			// if ($this->db->error()) {
-			// 	$return = false;
-			// 	break;
-			// }
+			if ($this->db->error()) {
+				$return = false;
+				break;
+			}
 		}
 
 		$cache = moon::cache('memcache');
