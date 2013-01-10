@@ -42,8 +42,8 @@ if ($this->wallpaper($res, array(
 'url'=> '/leagues/15k-titan-winter-freeroll-series/',
 'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
 'bgColor'=> '#01062C',
-'startDate'=> $first ? '2012-12-20 00:00:01' : '2013-01-01 00:00:01',
-'endDate'=> $first ? '2012-12-21 23:59:59' : '2013-01-06 23:59:59',
+//'startDate'=> $first ? '2012-12-20 00:00:01' : '2013-01-01 00:00:01',
+'endDate'=> '2013-01-14 23:59:59',
 'showIn'=> 'home'
 )
 )) return $res;
