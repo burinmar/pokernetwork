@@ -5,6 +5,13 @@
 
 //default settings
 $cfg = array(
+	// supported attachments: file, image, image+, video, html
+	'attachments' => '',
+	//table for storing attachments example articles, or articles|attachments
+	'attachmentsTable' => '',
+	//writable directory name, where to put files on disk (storage directory : shared_storage)
+	'attachmentsDir' => '',
+
 	//table for storing attachments
 	'tableObjects' => '',
 	//table for storing original source
