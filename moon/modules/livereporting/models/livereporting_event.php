@@ -1213,6 +1213,23 @@ class livereporting_model_event_src_tags extends livereporting_model_event
 }
 
 /**
+ * livereporting_model_event methods, accessed from mobile version
+ * @package livereporting
+ * @subpackage models
+ */
+class livereporting_model_event_src_mobile extends livereporting_model_event
+{
+	function getDayData($eventId, $name)
+		{ return parent::getDayData($eventId, $name); }
+	function getDaysDefaultId($eventId)
+		{ return parent::getDaysDefaultId($eventId); }
+	function getChips($eventId, $dayId)
+		{ return parent::getLastChips($eventId, $dayId); }
+	function getSponsorsById($ids)
+		{ return parent::getSponsorsById($ids); }
+}
+
+/**
  * livereporting_model_event methods, accessed from other.mobileapp
  * @package livereporting
  * @subpackage models

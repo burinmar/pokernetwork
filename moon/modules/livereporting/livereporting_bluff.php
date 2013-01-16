@@ -1061,7 +1061,7 @@ class livereporting_bluff extends moon_com
 	{
 		if (in_array($post['type'], array('chips', 'post'))) {
 			$rtf = $this->object('rtf');
-			$rtf->setInstance($this->get_var('rtf') . '-bluff');
+			$rtf->setInstance($this->get_var('rtf') . '-post~bluff');
 			list(, $post['contents']) = $rtf->parseText($post['id'], $post['contents']);
 			preg_match_all('/\[((10|[2-9AKQJtx]{1})(s|c|h|d|x)([,|\s]*))+\]/i', $post['contents'], $m);
 			foreach($m[0] as $v) {

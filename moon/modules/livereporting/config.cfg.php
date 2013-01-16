@@ -33,7 +33,7 @@ $cfg['livereporting'] = array(
 	'tb.hLs' => 'hands_list',
 	'tb.Constants'   => 'page_constants',
 
-	'comp.rtf' => 'MoonShared.rtf',
+	'comp.rtf' => 'MoonShared.rtf2',
 	'var.rtf' => 'live-reporting',
 
 	'var.root' => moon::shared('sitemap')->getLink('reporting'),
@@ -52,6 +52,7 @@ $cfg['livereporting'] = array(
 	'vocabulary{reporting_news}'              => '{dir.multilang}{module}/livereporting_index.txt',
 	'vocabulary{reporting_hotels}'            => '{dir.multilang}/hotels.txt',
 	'vocabulary{rtf}'                    => '{dir.multilang}/shared.txt',
+	'vocabulary{reporting_h}'                 => '{dir.multilang}/shared.txt',
 
 	'dir.web:LogosBigBg' => '/w/lrep/lbbg/',
 	'dir.web:LogosSmall' => '/w/lrep/ls/',

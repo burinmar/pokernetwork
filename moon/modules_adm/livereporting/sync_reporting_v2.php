@@ -901,10 +901,8 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		// some definitions
 		// "dirty" (semi)
 		$perPostTags = false;
-		$attachments = false;
 		switch ($logRow['type']) {
 			case 'post':
-				$attachments = true;
 			case 'chips':
 				$perPostTags = true;
 				$tagsType = $logRow['type'];
@@ -997,44 +995,8 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				), 'reporting_ng_tags');
 			}
 		}
-
-		if ($attachments) {
-			$this->replicateLogRowFixAttachments($logRow, $subRow, $row);
-		}
-	}
-
-	private function replicateLogRowFixAttachments(&$logRow, &$subRow, &$row)
-	{
-		if (empty($row['attachments'])) {
-			return;
 		}
 
-		preg_match_all('~{id:([0-9]+)}~', $subRow['contents'], $attIds);
-		if (0 != count($attIds[1])) {
-			$attIds[1] = array_unique($attIds[1]);
-			$this->db->query('
-				DELETE FROM reporting_ng_attachments
-				WHERE parent_id=' . $logRow['id'] . '
-			');
-			foreach ($attIds[1] as $v) {
-				if (isset($row['attachments'][$v])) {
-					$row['attachments'][$v]['parent_id'] = $logRow['id'];
-					unset($row['attachments'][$v]['id']);
-					$newId = $this->db->insert($row['attachments'][$v], 'reporting_ng_attachments', 'id');
-					if ($newId) {
-						$subRow['contents'] = str_replace('{id:' . $v . '}', '{id___:' . $newId . '}', $subRow['contents']);
-					}
-				}
-			}
-			$subRow['contents'] = str_replace('{id___:', '{id:', $subRow['contents']);
-			$this->db->update(array(
-				'contents' => $subRow['contents']
-			), 'reporting_ng_sub_posts', array(
-				'id' => $logRow['id']
-			));
-		}
-	}
-	
 	private function replicateLogRowRetranslatePost(&$logRow, &$subRow, &$row)
 	{
 		if (empty($subRow['round_id'])) {

@@ -13,6 +13,10 @@ class sync_reporting extends moon_com
 				$this->doImgsrvImport();
 				$page = & moon :: page();
 				$page->set_local('cron', ob_get_contents());
+				if (isset($_GET['debug'])) {
+					moon_close();
+					exit;
+				}
 				return;
 
 			case 'sync_v2';
@@ -76,6 +80,7 @@ class sync_reporting extends moon_com
 		$oldData = $gotData;
 		$gotData = @unserialize($gotData);
 		if (!isset ($gotData['images'])) {
+			moon::error('livereporting.sync_reporting#imgsrv-import');
 			echo 'No data';
 			return ;
 		}
