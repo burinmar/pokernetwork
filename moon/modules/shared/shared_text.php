@@ -215,7 +215,7 @@ function short_words($txt,$size=30,$url=false)
 	$m=array_unique($d[0]);
 	arsort($m,SORT_STRING);
 	foreach ($m as $k=>$v) {
-		if (!$url && preg_match("/([\w]+:\/\/[\w-?&;%:#~=\.\/\@]+[\w\/])/i",$v,$d)) continue;
+		if (!$url && preg_match("~(http|https)://[\w\-\?&;%:#\~=\./\@]+[\w/]~iu",$v)) continue;
 		$to='';
 		while (strlen($v)) {
 			if (($pos = strpos($v, '}{')) || ($pos = strpos($v, '|'))) {
@@ -264,7 +264,7 @@ function cards($s)
 		if (!isset($altn[$rusis])) continue;
 		if (strtoupper($m[1][$k])=='T' || $m[1][$k]=='0') $m[1][$k]='10';
 		$alt= '{'.$m[1][$k].'-'.$altn[$rusis].'}' ;
-		$s=str_replace($v,'<img src="/img/cards/'.strtolower($m[1][$k].$rusis).'.gif" border="0" alt="'.htmlspecialchars($alt).'" style="margin-bottom:-3px;" />',$s);
+		$s=str_replace($v,'<img src="/img/cards/'.strtolower($m[1][$k].$rusis).'.gif" border="0" alt="'.htmlspecialchars($alt).'" style="margin-bottom:-3px;" width="25" height="15" />',$s);
 	}
 	return str_replace('/img/cards/ad.gif','/img/cards/da.gif',$s);
 }
@@ -359,8 +359,12 @@ function objects($path,$objArray='')
 	$f=&moon::file();
 	$this->objArray=array();
 	if (is_array($objArray))
-		foreach ($objArray as $v) {
-			switch ($v['obj_type']) {
+		foreach ($objArray as $id=>$v) {
+			if (!empty($v['id'])) {
+				//seniem
+				$id = $v['id'];
+			}
+			switch ($v['content_type']) {
 			case 3:
             case 'file':
 				$tipas='file';
@@ -401,19 +405,50 @@ function objects($path,$objArray='')
             case 0:
 			case 'img':
 				$tipas='img';
-				$s=$this->construct_img($v['file'],$v['thumbnail'],$v['comment'],$v['options']);
-				$this->objArray['{img:url-'.$v['id'].'}'] = $this->construct_img($v['file'],$v['thumbnail'],$v['comment'],$v['options'], TRUE);
+				if (isset($v['wh'])) {
+					//nauji
+					$comment = isset($v['comment']) ? $v['comment'] : '';
+					$align = isset($v['options']) ? $v['options'] : '';
+					$s=$this->construct_img($v['file'],$v['wh'],$comment, $align);
+					$this->objArray['{img:url-'.$id.'}'] = $this->construct_img($v['file'],$v['wh'],$comment, $align, TRUE);
+				}
+				else {
+					$s=$this->construct_img_old($v['file'],$v['thumbnail'],$v['comment'],$v['options']);
+					$this->objArray['{img:url-'.$id.'}'] = $this->construct_img_old($v['file'],$v['thumbnail'],$v['comment'],$v['options'], TRUE);
+				}
+
 				break;
 			#case 'img' : $tipas='html'; $s=$v['comment'];break;
 			default: continue 2;
 			}
-            $obj_code = '{'.$tipas.':'.$v['id'].'}';
-        	$this->objArray[$obj_code]=$this->objArray['{id:'.$v['id'].'}']=$s;
-            $this->objIds[$obj_code] = $v['id'];
+            $obj_code = '{'.$tipas.':'.$id.'}';
+        	$this->objArray[$obj_code]=$this->objArray['{id:'.$id.'}']=$s;
+            $this->objIds[$obj_code] = $id;
 		}
 }
 
-function construct_img($file,$thumb,$comment,$options,$forURL = FALSE)
+function construct_img($file,$size,$comment,$options,$forURL = FALSE)
+{
+	switch ($options) {
+	case 'center': $divClass='img-center';break;
+	case 'left': $divClass='img-left';break;
+	case 'right': $divClass='img-right';break;
+	default: $divClass='img';
+	}
+	list($x,$y)=explode('x',$size);
+	$storage = moon::shared('storage')->location($this->dirObj);
+	$src =  $storage->url($file,'1');
+    $s='<img src="' . $src . '"  alt="'.htmlspecialchars($comment).'" class="content-img" />';
+	if ($forURL) {
+		$s='<a href="{url.img.object}" onclick="window.open(this.href);return false;" class="ignore">'.$s.'</a>';
+	}
+	else {
+		$s='<a href="'.$storage->url($file).'" onclick="window.open(this.href);return false;" class="ignore">'.$s.'</a>';
+	}
+    $width= $comment==='' ? '' : ' style="width: '.max($x,100).'px"';
+	return '</p><div class="' . $divClass . '">'.$s.'<div'.$width.'>'.htmlspecialchars($comment).'</div></div><p>';
+}
+function construct_img_old($file,$thumb,$comment,$options,$forURL = FALSE)
 {
 	switch ($options) {
 	case 'center': $divClass='img-center';break;
@@ -560,13 +595,17 @@ function _tag($tag,$param,$txt){
 		$tpls['video_myhands'] = '<object width="620" height="450"><param name="movie" value="http://www.myhands.com/handplayer/v3/preloader.swf?random=' . $rand . '" /><param name="menu" value="false" /><param name="scale" value="noscale" /><param name="quality" value="high" /><param name="wmode" value="transparent" /><param name="allowFullScreen" value="true" /><param name="flashvars" value="handId=\1&amp;listId=undefined&amp;searchId=undefined&amp;embedMode=0&amp;devMode=0"><embed swLiveConnect="true" type="application/x-shockwave-flash" width="620" height="450" src="http://www.myhands.com/handplayer/v3/preloader.swf?random=' . $rand . '" menu="false" scale="noscale" quality="high" wmode="transparent" allowFullScreen="true" flashvars="handId=\1&amp;listId=undefined&amp;searchId=undefined&amp;embedMode=0&amp;devMode=0" /></object><br /><small>This Hand History Player is supported by <em><a href="http://www.myhands.com" target="_blank">www.myhands.com</a></em></small>';
 		$tpls['video_handreplays'] = '<object width="600" height="400"><param name="movie" value="http://www.pokerhandreplays.com/flash/replayer.swf?pokerhandid=\1" /><param name="wmode" value="transparent" /><embed type="application/x-shockwave-flash" width="600" height="400" src="http://www.pokerhandreplays.com/flash/replayer.swf?pokerhandid=\1" wmode="transparent" /></object>';
 		$tpls['video_pokerreplay'] = '<object data="http://www.pokerreplay.com/assets/swf/PokerReplayVideoPlayer_External.swf?code=\1&amp;type=external&amp;l=en" type="application/x-shockwave-flash" width="480" height="385"><param name="allowFullScreen" value="true" /><param name="wmode" value="transparent" /><param name="movie" value="http://www.pokerreplay.com/assets/swf/PokerReplayVideoPlayer_External.swf?code=\1&amp;type=external&amp;l=en" /><embed type="application/x-shockwave-flash" src="http://www.pokerreplay.com/assets/swf/PokerReplayVideoPlayer_External.swf?code=\1&amp;type=external&amp;l=en" width="480" height="385" wmode="transparent" allowfullscreen="true"></embed></object>';
-		
+		$tpls['video_soundcloud'] = '<iframe width="100%" height="166" scrolling="no" frameborder="no" src="http://w.soundcloud.com/player/?url=http%3A%2F%2Fapi.soundcloud.com%2Ftracks%2F\1&show_artwork=true"></iframe>';
+
 		if (isset($this->features['mobile'])) {
 			$tpls['video_youtube'] = str_replace(array('{url}', '{txt}'), 'http://www.youtube.com/watch?v=\1', $tags['url_newwin']);
 			$tpls['video_vimeo'] = str_replace(array('{url}', '{txt}'), 'http://vimeo.com/\1', $tags['url_newwin']);
 		}
 		
 		$patterns[] = "#.*?youtube\.com.*?watch\?v=([^&\[]+).*#is"; // link
+		$replacements[] = $tpls['video_youtube'];
+
+		$patterns[] = "#.*?youtu\.be/([^&\[]+).*#is"; // link
 		$replacements[] = $tpls['video_youtube'];
 
 		$patterns[] = "#.*?youtube\.com/(?:embed|v)/([^&\[\"]+).*#is"; // embed
@@ -615,7 +654,7 @@ function _tag($tag,$param,$txt){
 			$txt = str_replace('{txt}',$txt, $tags['quote_named']);
 			$txt = str_replace('{src}', htmlspecialchars($match[1]), $txt);
 		} else {
-			$txt=str_replace('{txt}',$txt, $tags['quote']);			
+			$txt=str_replace('{txt}',$txt, $tags['quote']);
 		}
 		break;
 	case 'timer':
@@ -732,8 +771,12 @@ function _tag($tag,$param,$txt){
 			}
 			else {
 				switch ($v) {
-					case 'left': $align = ' fl'; break;
+					case 'left': $align .= ' fl'; break;
 					case 'center': $tbcenter = true; break;
+					default:
+						if (substr($v,0,6) ==='class:') {
+							$align .= ' ' . substr($v, 6);
+						}
 				}
 			}
 		}
@@ -917,7 +960,7 @@ function used_objects($txt) {
 }
 
 // URI suformavimas
-function make_uri($s) {
+function make_uri($s, $maxLength = 60) {
 	if ($k = strpos($s, '(')) {
 		$s = substr($s, 0, $k);
 	}
@@ -953,7 +996,7 @@ function make_uri($s) {
 	//$s=str_replace(array(" the "," or "," a "," of "),' ',$s);
 	$s = preg_replace("/[^a-z0-9-]/", '-', strtolower($s));
 	$s = preg_replace('/-{2,}/', '-', $s);
-	$s = preg_replace('/^-*(.*?)-*$/', '\\1', substr($s, 0, 60));
+	$s = preg_replace('/^-*(.*?)-*$/', '\\1', substr($s, 0, $maxLength));
 	return $s;
 }
 
@@ -963,8 +1006,18 @@ function js_html($str) {
     return $res;
 }
 
-function countries() {
-	return $this->tpl->parse_array("countries");
+function countries($us = FALSE) {
+	if ('us' === $us) {
+		//valstijos
+		return $this->tpl->parse_array("states");
+	}
+	else {
+		return $this->tpl->parse_array("countries");
+	}
+}
+
+function languages() {
+	return $this->tpl->parse_array("languages");
 }
 
 function error($alert=TRUE) {
