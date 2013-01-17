@@ -245,7 +245,7 @@ class livereporting extends moon_com
 				}
 			}
 
-			// * rtf-preview, rtf, ...
+			// * ajax, rtf, ...
 			return array('livereporting_index#read_uri', array(
 				'uri' => $uri
 			));
@@ -348,8 +348,6 @@ class livereporting extends moon_com
 				return '/' . $this->lrRoot . '/archive' . (isset($argv['params']['page'])
 					? '.' . $argv['params']['page']
 					: '') . '.htm';
-			case 'rtf#preview':
-				return '/' . rawurlencode($this->lrRoot) . '/rtf-preview.htm?id=' . intval($argv['params']);
 		}
 
 		if (!is_array($argv['params'])) {

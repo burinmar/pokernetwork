@@ -83,19 +83,24 @@ switch ($instance) {
 		$cfg['parserFeatures'] = array('replace' => array('h' => 'h2'));
 		$cfg['features'] = '-sub,-sup,-underline,-strike,-quote,-code,-timer,-cards,-video,-smiles,-spoiler,-game,-twitter';
 		break;
-
-	case 'live-reporting-post':
+	case 'live-reporting-more':
 		$cfg['parserFeatures'] = array(
 			'tags' => 'h|b|i|u|quote|list|url|video|img|spoiler|table|hand|twitter',
 			'smiles' => FALSE,
 			'cards' => TRUE,
 			'html' => TRUE);
-		$cfg['attachmentsTable'] = 'reporting_ng_sub_posts|attachments';
 		$cfg['attachmentsDir'] = 'lr-attachments';
 		$cfg['attachments'] = 'image, video, html';
 		$cfg['imgWH'] = '640x1000';
-		$cfg['features'] = '-sub,-sup,-strike,-quote,list,-olist,-code,-smiles,-heading,table,-timer,-spoiler,-game,poll';
-		if ($par == 'bluff') {
+		$cfg['features'] = '-sub,-sup,-strike,-quote,list,-olist,-code,-smiles,-heading,table,-timer,-spoiler,-game';
+
+		$par = explode('&', $par);
+		if (in_array('post', $par)) {
+			$cfg['attachmentsTable'] = 'reporting_ng_sub_posts|attachments';
+		} else if (in_array('chips', $par)) {
+			$cfg['attachmentsTable'] = 'reporting_ng_sub_chips|attachments';
+		}
+		if (in_array('bluff', $par)) {
 			$cfg['parserFeatures']['cards'] = false;
 		}
 		break;

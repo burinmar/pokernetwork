@@ -173,7 +173,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 		$lrep = $this->lrep();
 		$ipnReadBase = $this->get_var('ipnReadBase');
 		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . ':2');
+		$rtf->setInstance($this->get_var('rtf'));
 		$controlsArgv = array(
 			'cx.save_event' => $this->parent->my('fullname') . '#save-photos',
 			'cx.unhide'     => !empty($argv['unhide']),
@@ -381,7 +381,7 @@ class livereporting_event_photos extends livereporting_event_pylon
 		$xTopPhotos = array_slice($xPhotos, 0, 24); 
 
 		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . ':2');
+		$rtf->setInstance($this->get_var('rtf'));
 		list(,$data['body_compiled']) = $rtf->parseText($entry['id'], $data['body']);
 
 		$saveDataPhotos = array(

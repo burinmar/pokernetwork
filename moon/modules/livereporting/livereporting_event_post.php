@@ -86,7 +86,7 @@ class livereporting_event_post extends livereporting_event_pylon
 		}
 		$lrep = $this->lrep();
 		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . '-post:0');
+		$rtf->setInstance($this->get_var('rtf') . '-more~post');
 
 		if (!empty($argv['synced']))
 			$argv['contents'] = preg_replace('~{poll:([0-9]+)}~', '' /*'<!-- {poll:com:\1} -->'*/, $argv['contents']);
@@ -150,7 +150,7 @@ class livereporting_event_post extends livereporting_event_pylon
 		$tags = $this->helperSaveGetTags($data['tags']);
 		
 		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . '-post:0');
+		$rtf->setInstance($this->get_var('rtf') . '-more~post');
 		list(,$data['body_compiled']) = $rtf->parseText($entry['id'], $data['body']);
 		
 		$saveDataPost = array(

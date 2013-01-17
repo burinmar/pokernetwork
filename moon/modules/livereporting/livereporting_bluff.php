@@ -804,7 +804,7 @@ class livereporting_bluff extends moon_com
 			? 25
 			: 5;
 		$posts = $this->db->array_query_assoc('
-			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc
+			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc, p.attachments
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('Days') . ' d
 				ON l.day_id=d.id
@@ -825,7 +825,7 @@ class livereporting_bluff extends moon_com
 			$cPosts = array(); // do not show in pnapp
 		} else {
 			$cPosts = $this->db->array_query_assoc('
-				SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc, p.chips
+				SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc, p.chips, p.attachments
 				FROM ' . $this->table('Log') . ' l
 				INNER JOIN ' . $this->table('Days') . ' d
 					ON l.day_id=d.id
@@ -916,7 +916,7 @@ class livereporting_bluff extends moon_com
 		));
 
 		$posts = $this->db->array_query_assoc('
-			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc
+			SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc, p.attachments
 			FROM ' . $this->table('Log') . ' l
 			INNER JOIN ' . $this->table('tPosts') . ' p
 				ON l.id=p.id
@@ -936,7 +936,7 @@ class livereporting_bluff extends moon_com
 			$cPosts = array(); // do not show in pnapp
 		} else {
 			$cPosts = $this->db->array_query_assoc('
-				SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc, p.chips
+				SELECT l.type, l.created_on, l.updated_on, l.day_id, p.id, p.title, p.contents, p.image_src, p.image_alt, p.image_misc, p.chips, p.attachments
 				FROM ' . $this->table('Log') . ' l
 				INNER JOIN ' . $this->table('Days') . ' d
 					ON l.day_id=d.id
@@ -1061,8 +1061,8 @@ class livereporting_bluff extends moon_com
 	{
 		if (in_array($post['type'], array('chips', 'post'))) {
 			$rtf = $this->object('rtf');
-			$rtf->setInstance($this->get_var('rtf') . '-post~bluff');
-			list(, $post['contents']) = $rtf->parseText($post['id'], $post['contents']);
+			$rtf->setInstance($this->get_var('rtf') . '-more~bluff&' . $post['type']);
+			list(, $post['contents']) = $rtf->parseText(false, array($post['contents'], $post['attachments']));
 			preg_match_all('/\[((10|[2-9AKQJtx]{1})(s|c|h|d|x)([,|\s]*))+\]/i', $post['contents'], $m);
 			foreach($m[0] as $v) {
 				$t = preg_replace('/(10|[2-9AKQJtx]{1})(s|c|h|d|x)/i', '{$1$2}', $v);

@@ -449,7 +449,7 @@ class livereporting_event_round extends livereporting_event_pylon
 		$userId = intval(moon::user()->get_user_id());
 
 		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . ':4');
+		$rtf->setInstance($this->get_var('rtf'));
 		list(, $description_compiled) = $rtf->parseText($entry['id'], $data['description']);
 
 		$saveDataRound = $serData = array(

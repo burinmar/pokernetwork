@@ -45,11 +45,6 @@ class livereporting_index extends moon_com
 					$obj = $this->object('rtf');
 					$obj->events($event_, $argv['uri']['argv']);
 					return ;
-				case 'rtf-preview':
-					$this->forget();
-					echo $this->previewText(isset($_GET['id']) ? $_GET['id'] : NULL, $_POST['body']);
-					moon_close();
-					exit;
 				default:
 					moon::page()->page404();
 			}
@@ -955,12 +950,4 @@ class livereporting_index extends moon_com
 		moon_close();
 		exit;
 	}
-
-	private function previewText($id, $text)
-	{
-		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . '-post:0');
-		list(,$data['body_compiled']) = $rtf->parseText($id, $text);
-		return $data['body_compiled'] . ' ';
 	}
-}

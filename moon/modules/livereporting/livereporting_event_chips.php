@@ -651,7 +651,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 		
 		if (is_object( $rtf = $this->object('rtf') )) {
-			$rtf->setInstance($this->get_var('rtf') . ':1');
+			$rtf->setInstance($this->get_var('rtf') . '-more~chips');
 			$controlsArgv['cc.toolbar'] = $rtf->toolbar('rq-wc-body', isset($argv['import_id']) ? intval($argv['import_id']) : '', array('noarticle'=>true));
 		}
 
@@ -1173,7 +1173,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 		}
 
 		$rtf = $this->object('rtf');
-		$rtf->setInstance($this->get_var('rtf') . ':1');
+		$rtf->setInstance($this->get_var('rtf') . '-more~chips');
 		list(, $data['body_compiled']) = $rtf->parseText($entryId, $data['intro']);
 
 		$tags = $this->helperSaveGetTags($data['tags']);
@@ -1279,6 +1279,10 @@ class livereporting_event_chips extends livereporting_event_pylon
 			//if (!empty($data['is_full_listing'])) {
 			//    could assign places and positions
 			// could assign players_left
+		}
+		
+		if ($entry['id']) {
+			$rtf->assignObjects($entry['id']);
 		}
 		
 		$this->helperSaveDbUpdateTags($tags, $entryId, 'chips', $saveDataLog['is_hidden'], $location);
