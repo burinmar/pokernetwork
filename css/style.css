@@ -1624,16 +1624,12 @@ iframe.modalWindow {
 		height: 0;
 		outline: 0;
 		overflow: hidden;
-		padding-top: 21px;
 		position: absolute;
 		right: 10px;
 		top: 10px;
 		width: 21px;
-		} html[dir="rtl"] .modalWindowClose {
-		left: 15px;
-		right: auto;
 		} .modalWindowClose:hover {
-		background-position: left -30px;
+		background-position: left bottom;
 	}
 	.modalWindow .article {
 		border-top: 0;
