@@ -60,7 +60,7 @@ function setInstance($instance)
 	$this->attachments=$cfg['attachments'];
 	$this->parserFeatures=$cfg['parserFeatures'];
 	$this->canEdit=$cfg['canEdit'];
-	
+
 	return $this;
 }
 
@@ -237,7 +237,9 @@ function main($vars=array())
 					$p->js('/js/swfupload/swfupload.queue.js');
 					$p->js('/js/swfupload/swfupload.handlers.js');
 					$p->js('/js/swfupload/swfupload.fileprogress.js');
-					$p->js('/js/swfupload/swfupload.cookies.js');
+					$user = moon::user();
+					$swfKey = $user->id() ? $this->object('sys.login_object')->autologin_code($user->id(), $user->get('email')) : '';
+					$a['swfkey'] = $t->ready_js($swfKey);
 				}
 				//pick from gallery
 				$a['galleryScript'] = ($gCat = $this->get_var('rtfAddGallery')) && is_numeric($gCat) ? '<script type="text/javascript">initMultiUpload(\'img\','.$gCat.');</script>' : '';
@@ -503,6 +505,7 @@ function admSaveItem(&$err) //updatina irasa
 		$this->set_var('insertedID',$id);
 	}
 	if ($stop) {
+		echo 'swfupload:ok';
 		moon_close();
 		exit;
 	}
@@ -564,7 +567,7 @@ function admSaveFile($id,$fileObj,&$err, $fNameOrig='') //insertina irasa
 function admImgShowPreview($fname) {
 	$fname = $this->fileDir . $fname;
 	$f = & moon :: file();
-	if ($f->is_file($fname) && $f->has_extension('jpg,png,gif')) {
+	if ($f->is_file($fname) && $f->has_extension('jpg,jpeg,png,gif')) {
     	$fsource = $f->file_path();
 		list($w,$h)=explode('x',$f->file_wh());
 		if ($h && $w) {
@@ -588,6 +591,7 @@ function admImgShowPreview($fname) {
 		else {
 	        $ext = $f->file_ext();
 			switch ($ext) {
+			case 'jpeg':
 		    case 'jpg': $img=imagecreatefromjpeg($fsource); break;
 			case 'png': $img=imagecreatefrompng($fsource); break;
 			case 'gif': $img=imagecreatefromgif($fsource); break;
@@ -595,6 +599,7 @@ function admImgShowPreview($fname) {
 			$mini = imagecreatetruecolor($nw,$nh);
 			imagecopyresampled($mini,$img,0,0,0,0,$nw,$nh,$w,$h);
 		    switch ($ext) {
+		    case 'jpeg':
 		    case 'jpg': imagejpeg($mini,NULL,90); break;
 			case 'png': imagepng($mini); break;
 			case 'gif': imagegif($mini); break;
@@ -670,6 +675,12 @@ function toolbar($textAreaName,$parentID)
 	$a['instance'] = $this->instance;
 	$a['fld'] = $textAreaName;
 	$a['go_preview'] = $this->url('#preview', $parentID);
+	if (is_object($this->object('hands'))) {
+		$a['urlHands'] = $this->link('hands#');
+	}
+	if (is_object($this->object('poll.poll_for_rtf'))) {
+		$a['urlPoll'] = $this->link('poll.poll_for_rtf#');
+	}
 	$a['goObjList'] = $this->attachments ? $this->url('#', $parentID) : '';
 	$t=&$this->load_template();
 	return $t->parse('toolbar', $a);
@@ -785,11 +796,11 @@ function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE, $attachJs = t
 		//$objects = array_reverse($objects);
 		$objectsImg = array();
 		$objectsOther = array();
-		
+
 		$images = array();
 		$startPos = null;
 		$startIdx = null;
-		
+
 		$tpl = $this->load_template();
 		$m = array(
 			'items:images' => '',
@@ -818,7 +829,7 @@ function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE, $attachJs = t
 						//$m['items:images'] .= $tpl->parse('items:images', $vars);
 						//$m['items:tabs'] .= $tpl->parse('items:tabs', $vars);
 					}
-					
+
 					if ($startPos == null || $pos < $startPos) {
 						$startPos = $pos;
 						$startIdx = $k;
@@ -828,13 +839,13 @@ function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE, $attachJs = t
 				$objectsOther[] = $o;
 			}
 		}
-		
+
 		ksort($images);
 		foreach($images as $img) {
 			$m['items:images'] .= $tpl->parse('items:images', $img);
 			$m['items:tabs'] .= $tpl->parse('items:tabs', $img);
 		}
-		
+
 		if (isset($objectsImg[$startIdx])) {
 			$htmlCode = $tpl->parse('article_img_slideshow', $m);
 			// assign code as html attachment to first image id
@@ -850,7 +861,7 @@ function parseTextTypeImg($parent_id, $source, $alertErrors=FALSE, $attachJs = t
 			);
 			unset($objectsImg[$startIdx]);
 			$objectsOther[] = $attImg;
-			
+
 			// assign other objects
 			$txt->objects(array($this->fileDir, $this->fileSrc), $objectsOther);
 			// remove left image ids from source

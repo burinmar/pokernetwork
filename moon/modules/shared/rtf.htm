@@ -31,6 +31,8 @@ fico_show=txt, doc|docx, pdf, htm|html, ppt, gif, png, jpg, rar, zip, odt, mp3
 	        textarea: '{fld}',
 			instance: '{instance}',
 	        uriPreview: '{go_preview}',
+			<% if {urlHands} %>urlHands: '{urlHands}',<% end %>
+			<% if {urlPoll} %>urlPoll: '{urlPoll}',<% end %>
 	        <% if {buttons} %>buttons: '{buttons}',<% end %>
 			<% if {attachments} %>attachments: '{attachments}',<% end %>
 	        uriObjects: '{goObjList}'
@@ -127,7 +129,10 @@ fico_show=txt, doc|docx, pdf, htm|html, ppt, gif, png, jpg, rar, zip, odt, mp3
 
 <% preview %>
    <h1>Preview</h1>
-   <div style="clear:both">{text}</div>
+   <div style="clear:both">
+   <%if{error}%><div style="padding:10px;border: 1px solid red;color: red;">{error}</div><%end%>
+   {text}
+   </div>
 
 
 
@@ -158,7 +163,7 @@ fico_show=txt, doc|docx, pdf, htm|html, ppt, gif, png, jpg, rar, zip, odt, mp3
 			<dd><input class="inputtext" type="file" name="file" size="35" id="i-file" /></div></dd>
 		<%else{img_src}%>
 			<dt><label for="i-file">Image File</label></dt>
-			<dd><input class="inputtext" type="file" name="file" size="35" id="i-file" /></dd>
+			<dd><input class="inputtext" type="file" name="file" size="35" id="i-file" />{galleryScript}</dd>
 			<dt><label for="i-url">or Image URL</label></dt>
 			<dd class="w100"><input class="inputtext" name="url" value="{url}" size="35" id="i-url" /></dd>
 		<%end%>
@@ -181,10 +186,10 @@ fico_show=txt, doc|docx, pdf, htm|html, ppt, gif, png, jpg, rar, zip, odt, mp3
 /*<![CDATA[*/
 $(document).ready(function () {
 	var settings_object = {
-		upload_url : '{!action}', // flash session cookie fix
+		upload_url : '{!action}',
 		flash_url : '/js/swfupload/swfupload.swf',
 		file_post_name: 'file',
-		post_params: {'swfupload':1, 'event': '{event}', 'wid':'{instanceID}', 'parent_id':'{parent_id}','content_type':'{content_type}'/*,'SI':phpSessionId*/},
+		post_params: {'swfupload':1, 'event': '{event}', 'wid':'{instanceID}', 'parent_id':'{parent_id}','content_type':'{content_type}','swfkey': '{swfkey}'},
 
 		// File Upload Settings
 		file_size_limit : '10 MB',
@@ -205,19 +210,10 @@ $(document).ready(function () {
 
 
 		// Button Settings
-		//button_image_url : "http://adm.pokernews.dev/i/adm/button_browse.png",
+		button_image_url : "/img/adm/button_browse.png",
 		button_placeholder_id : "spanButtonPlaceholder1",
-		button_text: '<span class="theFont">Select...</span>',
-		button_text_style: ".theFont {font-size: 16}",
-		//button_text_left_padding: 12,
-		//button_text_top_padding: 3,
-
-		button_width: 70,
+		button_width: 61,
 		button_height: 22,
-		button_action : SWFUpload.BUTTON_ACTION.SELECT_FILES,
-
-		swfupload_element_id : "flashUI2",	// Setting from graceful degradation plugin
-		degraded_element_id : "degradedUI2",	// Setting from graceful degradation plugin
 
 		custom_settings : {
 			progressTarget : "fsUploadProgress1",
@@ -234,11 +230,13 @@ var swfu;
 var uploadCompleteHandler = function () {
 	var filesLeft = swfu.getStats().files_queued;
 	if (!filesLeft) {
-		var obj{i};
-		if (obj{i}=findRTF('{instanceID}')) {
-            obj{i}.reload();
-			obj{i}.modal.close();
-		}
+		setTimeout(function(){
+			var obj{i};
+			if (obj{i}=findRTF('{instanceID}')) {
+	            obj{i}.reload();
+				obj{i}.modal.close();
+			}
+		}, 1000);
 		//document.location.href = document.location.href;
 	}
 };
@@ -247,10 +245,10 @@ var uploadCompleteHandler = function () {
 
 <div class="upload" id="multiImg" style="display: none">
 	<p>Upload multiple images:</p>
-	<div class="swfButton"><span id="spanButtonPlaceholder1">Select</span></div>
+	<div><span id="spanButtonPlaceholder1">Select</span></div>
 	<dl>
 		<dd style="">
-			<div class="fieldset flash" id="fsUploadProgress1" style="max-height:230px; overflow:auto;"></div>
+			<div class="fieldset flash" id="fsUploadProgress1"></div>
 			<div id="divStatus"></div>
 		</dd>
 	</dl>
@@ -300,7 +298,7 @@ var uploadCompleteHandler = function () {
 		</dd>
 	</dl>
 	<div class="formButton"><input type="submit" value="Save"/></div>
-	
+
 <% article_img_slideshow %>
 <% if {items:images} %>
 <div class="pnGallery">

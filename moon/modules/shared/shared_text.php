@@ -443,7 +443,12 @@ function construct_img($file,$size,$comment,$options,$forURL = FALSE)
 		$s='<a href="{url.img.object}" onclick="window.open(this.href);return false;" class="ignore">'.$s.'</a>';
 	}
 	else {
-		$s='<a href="'.$storage->url($file).'" onclick="window.open(this.href);return false;" class="ignore">'.$s.'</a>';
+		//gal orig didesnis yra
+		$whT = $this->srcDirObj;
+		if (!empty($whT) && count($wh = explode('x', $whT))==2 && ($wh[0]<$x || $wh[1]<$y)) {
+			//echo $whT, ' ', $forURL, '<br/>';
+			$s='<a href="'.$storage->url($file).'" onclick="window.open(this.href);return false;" class="ignore">'.$s.'</a>';
+		}
 	}
     $width= $comment==='' ? '' : ' style="width: '.max($x,100).'px"';
 	return '</p><div class="' . $divClass . '">'.$s.'<div'.$width.'>'.htmlspecialchars($comment).'</div></div><p>';

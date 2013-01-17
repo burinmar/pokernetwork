@@ -55,10 +55,11 @@ class rtf2 extends moon_com {
 		if ($this->maxFileSize < 1024 || $this->maxFileSize > 10 * $MB) {
 			$this->maxFileSize = 10 * $MB;
 		}
-		$wh = explode('x', $cfg['imgOrigWH']);
-		$this->whO = count($wh) < 2 || $wh[0] < 200 || $wh[1] < 200 ? array(200, 200):array((int) $wh[0], (int) $wh[1]);
-		$wh = explode('x', $cfg['imgWH']);
-		$this->whT = count($wh) < 2 || $wh[0] < 50 || $wh[1] < 50 ? array(50, 50):array((int) $wh[0], (int) $wh[1]);
+		//$wh = explode('x', $cfg['imgOrigWH']);
+		//$this->whO = count($wh) < 2 || $wh[0] < 200 || $wh[1] < 200 ? array(200, 200):array((int) $wh[0], (int) $wh[1]);
+		//$wh = explode('x', $cfg['imgWH']);
+		//$this->whT = count($wh) < 2 || $wh[0] < 50 || $wh[1] < 50 ? array(50, 50):array((int) $wh[0], (int) $wh[1]);
+		$this->whT = $cfg['imgWH'];
 		$this->fileExt = $cfg['fileExt'];
 		$this->fileDir = $cfg['attachmentsDir'];
 		$this->fileSrc = '';
@@ -630,7 +631,12 @@ class rtf2 extends moon_com {
 	//objektui priskirtu failu sarasiukas
 	function getObjects($parentID, $showNew = false) {
 		//if (!count($ids) || !$this->myTable) return array();
-		$r = $this->db->single_query('SELECT ' . $this->myTableColumn . ' FROM ' . $this->myTable . ' WHERE id=' . (int)$parentID);
+		if (empty($parentID) || empty($this->myTable)) {
+			$r = FALSE;
+		}
+		else {
+			$r = $this->db->single_query('SELECT ' . $this->myTableColumn . ' FROM ' . $this->myTable . ' WHERE id=' . (int)$parentID);
+		}
 		$a = empty ($r) ? array():$this->extract($r[0]);
 		if ($showNew) {
 			$u = moon :: user();
@@ -719,7 +725,7 @@ class rtf2 extends moon_com {
 			$objects = FALSE;
 		}
 		if (!empty($objects) && is_array($objects)) {
-			$txt->objects(array($this->fileDir, $this->fileSrc), $objects);
+			$txt->objects(array($this->fileDir, $this->whT), $objects);
 		}
 		$res = $txt->article($source);
 		if ($alertErrors) {
