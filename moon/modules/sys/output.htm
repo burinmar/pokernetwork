@@ -54,6 +54,33 @@ jQuery(document).ready(function () {
 </body>
 </html>
 
+<% modal %>
+{common_header}
+<body class="modal">
+<div class="modalWindowContent">
+<script type="text/javascript">
+	/*<![CDATA[*/
+	function selfclose() {
+		try {
+			if (top.modalActive)
+				top.modalActive.close();
+			else
+				throw "Try with domain";
+		} catch (e) {
+			document.domain = document.domain.match(/([a-z1-9]+.[a-z1-9]+)$/)[1];
+			if (top.modalActive) top.modalActive.close();
+		}
+	}
+	document.write('<a href="./" onclick="selfclose();return false;" class="modalWindowClose">Close</a>');
+	document.close();
+/*]]>*/
+</script>
+
+	{content}
+</div>
+</body>
+</html>
+
 
 <% print %>
 <div class="print article">
