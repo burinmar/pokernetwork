@@ -45,6 +45,7 @@ class patch extends moon_com {
 
 
 	function attachments() {
+		return;
         $sqlArr = array();
 
 		/*$m = $this->db->single_query("show tables like 'sys_attachments'");
@@ -216,5 +217,5 @@ class patch extends moon_com {
 		die("\n");
 	}
 
-   
+
 }
