@@ -1,0 +1,77 @@
+#promo {background: #300905 url('bg.jpg') no-repeat top left}
+#promo .head {
+	float: right;
+	margin-right: 40px;
+	width: 450px;
+	padding-top: 50px;
+	position: relative;
+	margin-bottom: 0;
+	min-height: 220px;
+	padding-left: 0;
+}
+#promo .head h1 {
+	line-height: 44px;
+	margin-bottom: 5px;
+}
+#promo .head p {font-size: 20px; color: #fff; margin-bottom: 20px}
+#promo .menu {background: #164f16 url('menu.png') repeat-x top right}
+#promo .menu a {background: url('menu-sep.png') no-repeat top right; color: #383838}
+#promo .menu a:hover {color:#383838}
+#promo .menu .active a {color: #383838}
+#promo .menu .active, #promo .menu .active:hover {background: url('menu.png') repeat-x 0px -43px}
+#promo .menu li:hover {background: url('menu.png') repeat-x bottom left}
+#promo .prize {
+	border-bottom: 0 none;
+	padding-bottom: 0;
+}
+#promo .prize a,
+#promo .content a {color: #fca104}
+#promo .prize a:hover,
+#promo .content a:hover {color: #facf05}
+#promo .content h2 {color: #fff}
+#promo table th {background: #e18e02; color: #391900}
+#promo table td {
+	background: #d7d7d7;
+	border-bottom: 1px dotted #001416;
+	color: #000;
+}
+#promo table.results td {background: #e4e4e4; border-bottom: 1px dotted #001416}
+#promo table.results tr:nth-child(odd) td {background: #d7d7d7}
+
+#promo .download {
+	display: inline-block;
+	min-width: 150px;
+	color: #fff;
+	font-size: 14px;
+	font-weight: bold;
+	height: 40px;
+	line-height: 40px;
+	padding: 0 10px;
+	position: relative;
+	text-align: center;
+	text-decoration: none;
+	text-transform: uppercase;
+	background-color: #da7301;
+	background-image: -moz-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	background-image: -webkit-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	background-image: -o-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#e9aa03', endColorstr='#da7301');
+}
+	#promo .download:after {
+		content: '';
+		position: absolute;
+		top: 5px;
+		right: -140px;
+		background: url('logo.png') no-repeat top right;
+		height: 30px;
+		width: 116px;
+	}
+
+#promo .usertable {margin-bottom: 20px}
+#promo .usertable td {padding: 10px}
+#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
+#promo .content .paging {background-color: #e18e02}
+
+#promo .archive {border-top: 0 none}
+#promo .show-archive {border-bottom: 1px dashed #fca104}
+#promo .show-archive:hover {border-color:#facf05}
