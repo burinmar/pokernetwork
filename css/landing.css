@@ -171,3 +171,13 @@
 #landing.titan-winter .download:after {background-image: url('/img/landing/titan-winter/logo.png')}
 #landing.titan-winter a {color: #fff;}
 #landing.titan-winter a:hover {color: #ff0000;}
+
+#landing.pkr3ways {background-image: url('/img/landing/pkr3ways/intro.jpg'); background-color: #300905}
+#landing.pkr3ways .download {
+	background-image: -moz-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	background-image: -webkit-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	background-image: -o-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	background-image: -ms-linear-gradient(top, #e9aa03 0%, #da7301 100%);
+	background-color: #e9aa03;
+	color: #fff !important;}
+#landing.pkr3ways .download:after {background-image: url('/img/landing/pkr3ways/logo.png')}
