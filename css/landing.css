@@ -117,32 +117,6 @@
 
 /*SKINS*/
 
-#landing.vault365 {background-image: url('/img/landing/vault365/intro.jpg')}
-#landing.vault365 .download {
-	background-image: -moz-linear-gradient(top, #fffcbc 0%, #efe722 100%);
-	background-image: -webkit-linear-gradient(top, #fffcbc 0%, #efe722 100%);
-	background-image: -o-linear-gradient(top, #fffcbc 0%, #efe722 100%);
-	background-image: -ms-linear-gradient(top, #fffcbc 0%, #efe722 100%);
-	background-color: #efe722;
-	color: #323232 !important}
-#landing.vault365 .download:after {background-image: url('/img/landing/vault365/logo.png')}
-#landing.vault365 a {color: #00c482;}
-#landing.vault365 a:hover {color: #ffff0c;}
-
-
-
-
-#landing.ps-sm {background-image: url('/img/landing/ps-sm/intro.jpg')}
-#landing.ps-sm .download {
-	background-image: -moz-linear-gradient(top, #ff0000 0%, #810000 100%);
-	background-image: -webkit-linear-gradient(top, #ff0000 0%, #810000 100%);
-	background-image: -o-linear-gradient(top, #ff0000 0%, #810000 100%);
-	background-image: -ms-linear-gradient(top, #ff0000 0%, #810000 100%);
-	background-color: #ff0000;}
-#landing.ps-sm .download:after {background-image: url('/img/landing/ps-sm/logo.png')}
-
-
-
 #landing.ps-10k {background-image: url('/img/landing/ps-10k/intro.jpg?1')}
 #landing.ps-10k .download {
 	background-image: -moz-linear-gradient(top, #ffe3a7 0%, #b38700 100%);
@@ -154,11 +128,6 @@
 #landing.ps-10k .download:after {background-image: url('/img/landing/ps-10k/logo.png')}
 #landing.ps-10k a {color: #fff;}
 #landing.ps-10k a:hover {color: #ff0000;}
-
-#landing.pokerace5k {background-image: url('/img/landing/pokerace5k/intro.jpg'); background-color: #b4b4b4; color: #000;}
-#landing.pokerace5k .download {background: #b70000}
-#landing.pokerace5k .download:after {background-image: url('/img/landing/pokerace5k/logo.png')}
-
 
 #landing.titan-winter {background-image: url('/img/landing/titan-winter/intro.jpg?1'); background-color: #010f24;}
 #landing.titan-winter .download {

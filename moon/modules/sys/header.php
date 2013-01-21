@@ -34,97 +34,23 @@ class header extends moon_com
 		//	return $res;
 		//}
 
-//titanas ir Holiday season antra karta bus rodomi
-$first = moon::locale()->now() < 1356681601; //2012-12-28 00:00:01
-
-//Titan
+// $5K PKR PokerNews - 3 Ways to Victory [END: 2013-03-09]
 if ($this->wallpaper($res, array(
-'url'=> '/leagues/15k-titan-winter-freeroll-series/',
-'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
-'bgColor'=> '#01062C',
-//'startDate'=> $first ? '2012-12-20 00:00:01' : '2013-01-01 00:00:01',
-'endDate'=> '2013-01-14 23:59:59',
-'showIn'=> 'home'
-)
-)) return $res;
-
-
-// WH Double Up
-if ($this->wallpaper($res, array(
-'url'=> '/leagues/10-000-double-up-sit-and-go-madness/',
-'imgPath'=> '/img/wallpaper/williamhill_doubleup_wallpaper.jpg',
-'bgColor'=> '#000',
-'startDate'=> '2012-12-22 00:00:01',
-'endDate'=> '2012-12-23 23:59:59',
-'showIn'=> 'home, /william-hill/',
-)
-)) return $res;
-
-//Holiday season PN-3368 Poker christmas infographics
-if ($this->wallpaper($res, array(
-'url'=> '/holiday-season.htm',
-'imgPath'=> '/img/wallpaper/christmas_wallpaper.jpg',
-'bgColor'=> '#005f2d',
-'startDate'=> $first ? '2012-12-24 00:00:01' : '2012-12-30 00:00:01',
-'endDate'=> $first ? '2012-12-25 23:59:59' : '2012-12-31 23:59:59',
+'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
+'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
+'bgColor'=> '#400c0d',
+'endDate'=> '2013-01-25 23:59:59',
 'showIn'=> 'home',
 )
 )) return $res;
 
-
-//  $22,500 PokerStars Freeroll
+// $5K PKR PokerNews - 3 Ways to Victory [END: 2013-03-09]
 if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/pokerstars/freerolls/56.htm',
-'imgPath'=> '/img/wallpaper/ps_22k_wallpaper.jpg',
-'bgColor'=> '#000',
-'startDate'=> '2012-12-26 00:00:01',
-'endDate'=> '2012-12-27 23:59:59',
-'showIn'=> 'home, /pokerstars/'
-)
-)) return $res;
-
-
-//PokerAce freeroll
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/pokerace/freerolls/58.htm',
-'imgPath'=> '/img/wallpaper/pokerace_freeroll_wallpaper.jpg',
-'bgColor'=> '#838383',
-'startDate'=> '2012-12-28 00:00:01',
-'endDate'=> '2012-12-29 23:59:59',
-'geoTarget'=> '-au, nz',
-'showIn'=> 'home',
-)
-)) return $res;
-
-
-
-
-// FullTilt TakeOver 2012
-/*$imgURL = '/img/wallpaper/ftops-xxi.jpg';
-$trID = 'EN';
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.fulltiltpoker.com/?key=MDAwMTkwN0QwMDAzQzM1MjAwMDAwMDAwMDAwMDAwMDA-',
-'imgPath'=> $imgURL,
-'bgColor'=> '#000',
-'geoTarget'=> '-us, es, fr, it',
-'startDate'=> '2012-12-09 00:00:01',
-'endDate'=> '2012-12-16 23:59:59',
-'showIn'=> 'home',
-)
-)) {
-	$psb =$tpl->parse('fulltilt', array('siteID'=>$trID));
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.fulltiltpoker.com/?key=MDAwMTkwN0QwMDAzQzM1MjAwMDAwMDAwMDAwMDAwMDA-" target="_blank"><img src="/img/wallpaper/en_pushdown_1000x150.gif" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
-	$res = $tb . $res;
-	return $res;
-}*/
-
-// Bet365 Vaults
-/*if ($this->wallpaper($res, array(
-'url'=> '/leagues/10-000-bet365-open-vaults-freerolls/',
-'imgPath'=> '/img/wallpaper/bet365_openvaults_wallpaper.jpg',
-'bgColor'=> '#000',
-'endDate'=> '2013-01-06 23:59:59',
-'showIn'=> '/bet365-poker/'
+'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
+'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
+'bgColor'=> '#400c0d',
+'endDate'=> '2013-03-09 23:59:59',
+'showIn'=> '/pkr/',
 )
 )) return $res;
 
@@ -133,19 +59,10 @@ if ($this->wallpaper($res, array(
 'url'=> 'http://poker770.pokernews.com/',
 'imgPath'=> '/img/wallpaper/poker70_free50_wallpaper.jpg',
 'bgColor'=> '#000',
-'showIn'=> '/poker-770/'
+'showIn'=> '/poker-770/',
 )
 )) return $res;
-*/
 
-//  $67,500 PokerStars PokerNews Freeroll Series 
-//if ($this->wallpaper($res, array(
-//'url'=> '/pokerstars/freerolls/?upcoming',
-//'imgPath'=> '/img/wallpaper/ps_frseries_wallpaper.jpg',
-//'bgColor'=> '#000',
-//'endDate'=> '2012-12-06 23:59:59',
-//)
-//)) return $res;
 
 		/************* SLAMSTAS *************/
 		/*
