@@ -38,7 +38,7 @@ class header extends moon_com
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
 'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
-'bgColor'=> '#400c0d',
+'bgColor'=> '#3f0504',
 'endDate'=> '2013-01-25 23:59:59',
 'showIn'=> 'home',
 )
@@ -48,7 +48,7 @@ if ($this->wallpaper($res, array(
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
 'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
-'bgColor'=> '#400c0d',
+'bgColor'=> '#3f0504',
 'endDate'=> '2013-03-09 23:59:59',
 'showIn'=> '/pkr/',
 )
