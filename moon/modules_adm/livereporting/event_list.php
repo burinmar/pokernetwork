@@ -777,6 +777,7 @@ class event_list extends moon_com
 	{
 		$deleteEIds = array();
 		$deleteDIds = array();
+		$affectedTournaments = array();
 		if (!is_array($ids)) {
 			$ids = array($ids);
 		}
@@ -793,13 +794,23 @@ class event_list extends moon_com
 
 		if (!empty($deleteEIds)) {
 			$addDIds = $this->db->array_query_assoc('
-				SELECT id FROM ' . $this->table('Days') . '
+				SELECT id,tournament_id FROM ' . $this->table('Days') . '
 				WHERE event_id IN (' . implode(',', $deleteEIds) . ') AND is_live!=-1
 			');
 			foreach ($addDIds as $day) {
 				$deleteDIds[] = $day['id'];
+				$affectedTournaments[] = $day['tournament_id'];
 			}
 			$deleteDIds = array_unique($deleteDIds);
+
+			$chkEIds  = $this->db->array_query_assoc('
+				SELECT id,tournament_id FROM ' . $this->table('Events') . '
+				WHERE id IN (' . implode(',', $deleteEIds) . ')
+			');
+			foreach ($chkEIds as $event) {
+				$affectedTournaments[] = $event['tournament_id'];
+		}
+			$affectedTournaments = array_unique($affectedTournaments);
 		}
 
 		if (!empty($deleteDIds)) {
@@ -808,17 +819,6 @@ class event_list extends moon_com
 				SET is_live=-1, updated_on=' . time() . '
 				WHERE id IN (' . implode(',', $deleteDIds) . ')
 			');
-			/*
-			$this->db->query('
-				UPDATE ' . $this->table('Days') . '
-				SET is_live=-1
-				WHERE is_empty=0 AND id IN (' . implode(',', $deleteDIds) . ')
-			');
-			$this->db->query('
-				DELETE FROM ' . $this->table('Days') . '
-				WHERE is_empty=1 AND id IN (' . implode(',', $deleteDIds) . ')
-			');
-			 */
 			blame($this->my('fullname'), 'Deleted days', $deleteDIds);
 			foreach ($deleteDIds as $id) {
 				// since delete is soft, the row is still there
@@ -845,6 +845,10 @@ class event_list extends moon_com
 				');
 				livereporting_adm_alt_log($delData['tournament_id'], $id, 0, 'update', 'events', $id, 'softdel');
 			}
+		}
+
+		foreach ($affectedTournaments as $tournamentId) {
+			$this->saveTournamentState($tournamentId);
 		}
 
 		moon::cache('memcache')->delete('reporting.events_uris');

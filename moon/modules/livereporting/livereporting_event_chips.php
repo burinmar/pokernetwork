@@ -45,7 +45,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			
 			case 'save-chips': // chips post
 				$data = $this->helperEventGetData(array(
-					'day_id', 'import_id', 'column_order', 'is_full_listing', 'published', 'import_textarea', 'title', 'intro', 'tags', 'is_exportable', 'is_keyhand', 'datetime_options'
+					'day_id', 'import_id', 'column_order', 'is_full_listing', 'published', 'import_textarea', 'title', 'intro', 'tags', 'is_exportable', 'is_keyhand', 'round_id', 'datetime_options'
 				));
 				
 				// import wsop feed chips (does not need all $data)
@@ -639,6 +639,9 @@ class livereporting_event_chips extends livereporting_event_pylon
 				: '',
 			'cc.fulllist'  => !empty($argv['fulllist']),
 			'cc.published' => !empty($argv['published']),
+			'cc.round_id' => empty($argv['round_id']) 
+				? '' 
+				: $argv['round_id'],
 			'cc.is_exportable' => !empty($argv['is_exportable']),
 			'cc.is_keyhand' => $argv['is_keyhand'],
 			'cc.datetime_options' => '',
@@ -1222,9 +1225,10 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'tags' => $tags
 			)
 		);
-		$this->helperSaveManagedSerializeContents($saveDataLog['contents']);
 
 		$this->helperSaveAssignCommonLogAttrs($saveDataLog, $userId, $entry, $data, $location);
+		$this->helperSaveAssignRound($entry, $location, $saveDataLog, $saveDataChips);
+		$this->helperSaveManagedSerializeContents($saveDataLog['contents']);
 
 		if ($entryId != NULL) {
 			$this->db->update($saveDataChips, $this->table('tChips'), array(

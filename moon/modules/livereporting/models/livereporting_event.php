@@ -1049,15 +1049,6 @@ class livereporting_model_event_src_event_pylon extends livereporting_model_even
 		{ return parent::updateStatesOnLogEntryAdded($tournamentId, $eventId, $dayId); }
 	function updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId)
 		{ return parent::updateStatesOnLogEntryRemoved($tournamentId, $eventId, $dayId); }
-}
-
-/**
- * livereporting_model_event methods, accessed from ../livereporting_event_post component
- * @package livereporting
- * @subpackage models
- */
-class livereporting_model_event_src_event_post extends livereporting_model_event
-{
 	function getCurrentRound($eventId, $dayId)
 		{ return parent::getCurrentRound($eventId, $dayId); }
 	function getRound($eventId, $dayId, $timestamp)

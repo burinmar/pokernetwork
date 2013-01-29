@@ -180,15 +180,7 @@ class livereporting_event_post extends livereporting_event_pylon
 		);
 		
 		$this->helperSaveAssignCommonLogAttrs($saveDataLog, $userId, $entry, $data, $location);
-
-		if ($entry['id'] != NULL) { // update
-			$createdOn = array_intersect_key(array_merge($entry, $saveDataLog), array('created_on' => '')); // was [+ saving]
-			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_post')->getRound($location['event_id'], $location['day_id'], $createdOn['created_on']);
-			$saveDataPost['round_id'] = @$saveDataLog['contents']['round']['id'];
-		} else { // create
-			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_post')->getCurrentRound($location['event_id'], $location['day_id']);
-			$saveDataPost['round_id'] = @$saveDataLog['contents']['round']['id'];
-		}
+		$this->helperSaveAssignRound($entry, $location, $saveDataLog, $saveDataPost);
 		$this->helperSaveManagedSerializeContents($saveDataLog['contents']);
 
 		if ($entry['id'] != NULL) { // update

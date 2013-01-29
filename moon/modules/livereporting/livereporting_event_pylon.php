@@ -565,6 +565,22 @@ class livereporting_event_pylon extends livereporting_event
 		}
 	}
 
+	protected function helperSaveAssignRound($entry, $location, &$saveDataLog, &$saveDataSub)
+	{
+		if ($entry['id'] != NULL) { // update
+			$createdOn = array_intersect_key(array_merge($entry, $saveDataLog), array('created_on' => '')); // was [+ saving]
+			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_pylon')->getRound($location['event_id'], $location['day_id'], $createdOn['created_on']);
+			$saveDataSub['round_id'] = isset($saveDataLog['contents']['round']['id'])
+				? $saveDataLog['contents']['round']['id']
+				: null;
+		} else { // create
+			$saveDataLog['contents']['round'] = $this->lrep()->instEventModel('_src_event_pylon')->getCurrentRound($location['event_id'], $location['day_id']);
+			$saveDataSub['round_id'] = isset($saveDataLog['contents']['round']['id'])
+				? $saveDataLog['contents']['round']['id']
+				: null;
+		}
+	}
+
 	protected function helperSaveManagedSerializeContents(&$saveDataLogContents)
 	{
 		$serialized = serialize($saveDataLogContents);
