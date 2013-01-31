@@ -34,13 +34,14 @@ class header extends moon_com
 		//	return $res;
 		//}
 
-// $5K PKR PokerNews - 3 Ways to Victory [END: 2013-03-09]
+// $67,500 PokerStars PokerNews Freeroll Series [END: 2013-05-09]
 if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
-'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
-'bgColor'=> '#3f0504',
-'endDate'=> '2013-01-25 23:59:59',
-'showIn'=> 'home',
+'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
+'imgPath'=> '/img/wallpaper/ps_frseries_v3_wallpaper.jpg',
+'bgColor'=> '#000',
+'startDate'=> '2013-02-01 00:00:01',
+'endDate'=> '2013-02-08 23:59:59',
+'showIn'=> '/pokerstars/, home',
 )
 )) return $res;
 
