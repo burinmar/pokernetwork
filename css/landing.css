@@ -150,3 +150,12 @@
 	background-color: #e9aa03;
 	color: #fff !important;}
 #landing.pkr3ways .download:after {background-image: url('/img/landing/pkr3ways/logo.png')}
+
+#landing.pokerstars5k_2 {background-image: url('/img/landing/pokerstars5k_2/intro.jpg')}
+#landing.pokerstars5k_2 .download {
+	background-color: #fd9595;
+	background-image: -moz-linear-gradient(top, #fd9595 0%, #cc0000 100%);
+	background-image: -webkit-linear-gradient(top, #fd9595 0%, #cc0000 100%);
+	background-image: -o-linear-gradient(top, #fd9595 0%, #cc0000 100%);
+	}
+#landing.pokerstars5k_2 .download:after {background-image: url('/img/landing/pokerstars5k_2/logo.png')}
