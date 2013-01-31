@@ -10,7 +10,7 @@ class media extends moon_com
         
 	function events($event, $par)
 	{
-		if (isset($_POST['swfupload'])) {
+		if (isset($_POST['files-upload'])) {
 			$this->uploadFile();exit;
 		}
 		
@@ -138,6 +138,9 @@ class media extends moon_com
 			
 			'sessionId' => session_id()
 		) + $form->html_values();
+		$user = moon::user();
+		$swfKey = $user->id() ? $this->object('sys.login_object')->autologin_code($user->id(), $user->get('email')) : '';
+		$main['swfkey'] = $tpl->ready_js($swfKey);
 		
 		$listSites = '';
 		$listUndefined = '';
@@ -149,7 +152,6 @@ class media extends moon_com
 				$page->js('/js/swfupload/swfupload.queue.js');
 				$page->js('/js/swfupload/swfupload.handlers.js');
 				$page->js('/js/swfupload/swfupload.fileprogress.js');
-				$page->js('/js/swfupload/swfupload.cookies.js');
 				$page->js('/js/modules_adm/banners.swfupload.js');
 				$page->js('/js/modules_adm/banners.media.js');
 				
@@ -983,6 +985,9 @@ class media extends moon_com
 				}
 			}
 			if ($fileError) $page->page404();
+			if ($msg == '') {
+				$msg = 'swfupload:ok';
+			}
 			print $msg;
 		}
 	}

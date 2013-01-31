@@ -34,10 +34,11 @@ error_csv_2=Csv upload error: Incorrect data! Correct row example: fr;20;50$ fre
 <div class="upload">
 	<form id="form-upload" action="{!action}" method="post" enctype="multipart/form-data">
 		<input id="bannerId" type="hidden" name="banner_id" value="{id}" />
-		<input id="sessionId" type="hidden" value="{sessionId}" />
+		<input id="swfkey" type="hidden" value="{swfkey}" />
 		<div>
 			<div class="fieldset flash" id="fsUploadProgress1">
 				<span class="legend">Multiple files upload</span>
+				<div id="divStatus"></div>
 			</div>
 			<div style="padding-left:5px;">
 				<span id="spanButtonPlaceholder1"></span>
