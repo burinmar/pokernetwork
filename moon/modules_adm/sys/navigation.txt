@@ -1,7 +1,7 @@
 
 News {ico=news, admin=content}
 	articles.news = News
-	articles.turbo = Turbo
+#	articles.turbo = Turbo
 	articles.categories_news = News categories
 	articles.authors = Authors
 	articles.tags = Tags

@@ -13,6 +13,9 @@ $(document).ready(function () {
 			}
 		});
 	});
+
+});
+$(window).load(function () {
 	if (typeof(articleId) != 'undefined' && articleId) {
 		$.ajax({
 			type: 'POST',

@@ -303,6 +303,12 @@ errorImport3=No such article or article already imported
 	<input type="hidden" name="event" value="{event}" />{refresh}
 	<h2 class="formTitle">{formTitle}</h2><span class="clr"></span>
 	<%if{error}%><div class="alerts alert-f">{error}</div><%end%>
+	<%if{isImported}%><div class="alerts alert-f">This article was already imported. You can reimport this article but any updates made in your previously imported article will be lost!<br /><br />
+		<div>
+		<div class="formButton"><input type="submit" name="reimport" value="Reimport" /><input type="button" value="Cancel" onclick="window.location.href='{goBack}'" /></div>
+	</div>
+
+</div><%end%>
 
 	<dl>
 		<dt><label for="i_url">URL</label></dt>
@@ -322,7 +328,7 @@ var refreshUrl = '{selfUrl}';
 var form = $('#frmImport');
 form.bind('submit', function(e){
 	if(form.find('#i_url').val()!= '') {
-		form.find("input[type='submit']").attr('disabled', 'TRUE').css('width', '250px').val('Importing. Please wait...').next().remove();
+		form.find(".footer input[type='submit']").attr('disabled', 'TRUE').css('width', '250px').val('Importing. Please wait...').next().remove();
 	}
 });
 /*]]>*/

@@ -90,6 +90,7 @@ function insertNews($newsData)
 	}
 
 	$msg .= 'Importing news...<br />';
+	$reimport = !empty($_POST['reimport']) ? true : false;
 	foreach ($newsItems as $news) {
 		if (empty($news['fields'])) continue;
 
@@ -100,8 +101,12 @@ function insertNews($newsData)
 		$masterId = $fields['id'];
 
 		# check if article is imported
-		$is = $this->db->single_query('SELECT 1 FROM ' . $this->table('Articles') . ' WHERE master_id = ' . intval($masterId));
-		if (!empty($is)) continue;
+		$is = $this->db->single_query('SELECT id FROM ' . $this->table('Articles') . ' WHERE master_id = ' . intval($masterId));
+		if (!empty($is) && !$reimport) {
+			moon::page()->set_local('isImported',1);
+			continue;
+		}
+		$newsId  = empty($is[0]) ? 0 : $is[0];
 
 		if (isset($fields['id'])) unset($fields['id']);
 		if (isset($fields['category_id'])) unset($fields['category_id']);
@@ -118,7 +123,19 @@ function insertNews($newsData)
 		$ins['is_imported'] = 1;
 
 		$newsContent = $fields['content'];
-		$newsId = $this->db->insert($ins, $this->table('Articles'), 'id');
+		if ($reimport && $newsId) {
+			$ins2 = array();
+			$ins2['content'] = $ins['content'];
+			//$ins2['attachments'] = $ins['attachments'];
+			$ins2['article_type'] = $ins['article_type'];
+			//$ins2['img'] = $ins['img'];
+			//$ins2['img_alt'] = $ins['img_alt'];
+			$this->db->update($ins2, $this->table('Articles'), $newsId);
+			blame($this->my('fullname'), 'Reimport', $newsId);
+		}
+		else {
+			$newsId = $this->db->insert($ins, $this->table('Articles'), 'id');
+		}
 		moon::page()->set_local('lastImportedNewsId', $newsId);
 
 		// download and save images
@@ -130,42 +147,34 @@ function insertNews($newsData)
 		}
 
 		// insert news attachments
-		if (!empty($news['attachments'])) {
+		if (!empty($news['attachments']) && $newsId) {
 
 			$newsAtt = $news['attachments'];
-
+			if ($reimport) {
+				$this->db->query('DELETE FROM ' . $this->table('ArticlesAttachments') . ' WHERE parent_id=' . $newsId);
+			}
 			foreach ($newsAtt as $att) {
 				// insert attachment
 				$ins = $att;
 				$ins['parent_id'] = $newsId;
 				$prevId = $ins['id'];
 				if (isset($ins['id'])) unset($ins['id']);
+				if ($att['content_type'] == 0) {
+					$ins['file'] = $this->getAttachmentImage($att['file'], FALSE);
+					$ins['thumbnail'] = $this->getAttachmentImage($att['thumbnail'], TRUE);
+				}
 				$attId = $this->db->insert($ins, $this->table('ArticlesAttachments'), 'id');
-
 				// fix attachment ids
 				// replace {id:xxx} in news contents
 				$newsContent = str_ireplace('{id:' . $prevId . '}', '{id:' . $attId . '}', $newsContent);
-				$upd = array();
-				$upd['content'] = $newsContent;
-				$this->db->update($upd, $this->table('Articles'), array('id' => $newsId));
-
-				if ($att['content_type'] == 0) {
-					$chunks = explode('|', $att['file']);
-					if (!empty($chunks[3])) {
-						$fileName = $chunks[3];
-						$this->getAttachmentImage($fileName);
-					}
-					$chunks = explode('|', $att['thumbnail']);
-					if (!empty($chunks[3])) {
-						$fileName = $chunks[3];
-						$this->getAttachmentImage($fileName);
-					}
-				}
 			}
+			$upd = array();
+			$upd['content'] = $newsContent;
+			$this->db->update($upd, $this->table('Articles'), array('id' => $newsId));
 		}
 
 		// insert turbos
-		if (!empty($news['turbo'])) {
+		if (!empty($news['turbo'])  && !$reimport) {
 			$turbos = $news['turbo'];
 			foreach ($turbos as $turbo) {
 				if (empty($turbo['fields'])) continue;
@@ -179,7 +188,7 @@ function insertNews($newsData)
 				$turboContent = $ins['content'];
 				$turboId = $this->db->insert($ins, $this->table('Turbo'), 'id');
 
-				if (!empty($turbo['attachments'])) {
+				/*if (!empty($turbo['attachments'])) {
 
 					$turboAtt = $turbo['attachments'];
 					foreach ($turboAtt as $att) {
@@ -210,7 +219,7 @@ function insertNews($newsData)
 							}
 						}
 					}
-				}
+				}*/
 			}
 		}
 	}
@@ -271,36 +280,15 @@ function getLeadingImage($fileName)
 	}
 }
 
-function getAttachmentImage($fileName)
+function getAttachmentImage($url)
 {
-	$url = !is_dev()
-		? 'http://www.pokernews.com/files/cnt/'
-		: 'http://www.pokernews.dev/files/cnt/';
-	$path = _W_DIR_ . 'articles/att/';
+	$path = _W_DIR_ . 'articles/att/' . basename($url);
 
-	$url .= $fileName;
-	$imgFullPath = $path . $fileName;
-
-	$ch = curl_init ($url);
-	curl_setopt($ch, CURLOPT_HEADER, 0);
-	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	curl_setopt($ch, CURLOPT_BINARYTRANSFER, 1);
-	curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 5);
-	curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	$rawdata = curl_exec($ch);
-	if (curl_errno($ch)) {
-		return FALSE;
+	$f = moon::file();
+	if ($f->is_url_content($url, $path, 5)) {
+		return $f->file_info();
 	}
-	curl_close($ch);
-
-	if(file_exists($imgFullPath)){
-		unlink($imgFullPath);
-	}
-
-	$fp = fopen($imgFullPath, 'x');
-	fwrite($fp, $rawdata);
-	fclose($fp);
+	return '';
 }
 
 }

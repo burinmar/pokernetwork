@@ -737,9 +737,17 @@ class rtf2 extends moon_com {
 	function parseTextTypeImg($parent_id, $source, $alertErrors = FALSE, $attachJs = true) {
 		$txt = moon :: shared('text');
 		$txt->features = array_merge($txt->features, $this->parserFeatures);
-		if ($parent_id !== FALSE) {
+		if (is_array($source)) {
+			list($source,$objects) = $source;
+			$objects = $this->extract($objects);
+		}
+		elseif ($parent_id !== FALSE) {
 			$objects = $this->getObjects($parent_id, true);
-			//$objects = array_reverse($objects);
+		}
+		else {
+			$objects = FALSE;
+		}
+		if (!empty($objects)) {
 			$objectsImg = array();
 			$objectsOther = array();
 			$images = array();
@@ -749,27 +757,26 @@ class rtf2 extends moon_com {
 			$m = array('items:images' => '', 'items:tabs' => '', 'attachJs' => $attachJs);
 			$images = array();
 			// split images and other objects
-			foreach ($objects as $k => $o) {
+			$storage = moon::shared('storage')->location($this->fileDir);
+			//print_r($objects);
+			foreach ($objects as $id => $o) {
 				if ($o['content_type'] == 'img') {
 					// image
-					$pos = strpos($source, '{id:' . $o['id'] . '}');
+					$pos = strpos($source, '{id:' . $id . '}');
 					if ($pos !== FALSE) {
-						$objectsImg[$k] = $o;
-						$a = explode('|', $o['file']);
-						if (!empty ($a[3])) {
-							$vars = array('imgSrc' => str_replace('adm/', '', $this->linkas('articles.img#' . $a[3], '550.400')), 'thumbSrc' => str_replace('adm/', '', $this->linkas('articles.img#' . $a[3], '120.90')), 'url.img' => '/files/cnt/' . $a[3], 'description' => $o['comment']);
-							$images[$pos] = $vars;
-							//$m['items:images'] .= $tpl->parse('items:images', $vars);
-							//$m['items:tabs'] .= $tpl->parse('items:tabs', $vars);
+						$objectsImg[$id] = $o;
+						if (!empty ($o['file'])) {
+							$img = $o['file'];
+ 							$images[$pos] = array('imgSrc' => $storage->url($img, 2), 'thumbSrc' => $storage->url($img, 3), 'url.img' => $storage->url($img, 1), 'description' => isset($o['comment']) ? $o['comment'] : '');
 						}
 						if ($startPos == null || $pos < $startPos) {
 							$startPos = $pos;
-							$startIdx = $k;
+							$startIdx = $id;
 						}
 					}
 				}
 				else {
-					$objectsOther[] = $o;
+					$objectsOther[$id] = $o;
 				}
 			}
 			ksort($images);
@@ -782,18 +789,17 @@ class rtf2 extends moon_com {
 			if (isset ($objectsImg[$startIdx])) {
 				$htmlCode = $tpl->parse('article_img_slideshow', $m);
 				// assign code as html attachment to first image id
-				$attImg = array('id' => $objectsImg[$startIdx]['id'], 'file' => null, 'thumbnail' => null, 'parent_id' => $objectsImg[$startIdx]['parent_id'], 'comment' => $htmlCode, 'content_type' => 'html', 'options' => null, 'obj_type' => 'html');
+				$objectsOther[$startIdx] = array('comment' => $htmlCode, 'content_type' => 'html');
 				unset ($objectsImg[$startIdx]);
-				$objectsOther[] = $attImg;
-				// assign other objects
-				$txt->objects(array($this->fileDir, $this->fileSrc), $objectsOther);
 				// remove left image ids from source
-				foreach ($objectsImg as $v) {
-					$source = str_replace('{id:' . $v['id'] . '}', '', $source);
+				foreach ($objectsImg as $id=>$v) {
+					$source = str_replace('{id:' . $id . '}', '', $source);
 				}
+				// assign other objects
+				$objects = $objectsOther;
 			}
-			else {
-				$txt->objects(array($this->fileDir, $this->fileSrc), $objects);
+			if (!empty($objects) && is_array($objects)) {
+				$txt->objects(array($this->fileDir, $this->whT), $objects);
 			}
 		}
 		$res = $txt->article($source);

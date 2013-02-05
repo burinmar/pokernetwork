@@ -418,6 +418,11 @@ function renderFormImport($vars)
 		'refresh' => $page->refresh_field()
 	) + $form->html_values();
 
+	if ($page->get_local('isImported')) {
+		$m['isImported'] = 1;
+		$m['error'] = 0;
+	}
+
 	return $tpl->parse('viewFormImport', $m);
 }
 function saveItem()
@@ -712,7 +717,7 @@ function importItem()
 	$errorMsg = 0;
 	if ($values['url'] == '') {
 		$errorMsg = 1;
-	} elseif (strpos($values['url'], 'http://www.pokernews.com/') !== 0) {
+	} elseif (strpos($values['url'], 'http://www.pokernews.') !== 0) {
 		$errorMsg = 2;
 	}
 
