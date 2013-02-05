@@ -34,6 +34,16 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// $15k Titan Winter Freeroll Series 
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
+'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
+'bgColor'=> '#01062C',
+'endDate'=> '2013-03-13 23:59:59',
+'showIn'=> '/titan-poker/',
+)
+)) return $res;
+
 // $67,500 PokerStars PokerNews Freeroll Series [END: 2013-05-09]
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
