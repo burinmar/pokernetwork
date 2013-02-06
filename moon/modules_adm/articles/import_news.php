@@ -112,6 +112,7 @@ function insertNews($newsData)
 		if (isset($fields['category_id'])) unset($fields['category_id']);
 		if (isset($fields['authors'])) unset($fields['authors']);
 		if (isset($fields['turbo'])) unset($fields['turbo']);
+		$fields['attachments'] = TRUE;
 		if (isset($fields['attachments'])) unset($fields['attachments']);
 		if (isset($fields['pn_promo'])) unset($fields['pn_promo']);
 		if (isset($fields['ad_room_id'])) unset($fields['ad_room_id']);
