@@ -40,7 +40,7 @@ if ($this->wallpaper($res, array(
 'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
 'bgColor'=> '#01062C',
 'showIn'=> '/titan-poker/',
-'endDate'=> '2013-03-1 00:00:01',
+'endDate'=> '2013-03-13 00:00:01',
 )
 )) return $res;
 	if ($this->wallpaper($res, array(
