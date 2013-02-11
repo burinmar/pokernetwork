@@ -39,30 +39,20 @@ if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
 'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
 'bgColor'=> '#01062C',
-'startDate'=> '2013-02-11 00:00:01',
-'endDate'=> '2013-02-13 23:59:59',
-'showIn'=> '/titan-poker/, home',
-)
-)) return $res;
-// $15k Titan Winter Freeroll Series 
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
-'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
-'bgColor'=> '#01062C',
 'showIn'=> '/titan-poker/',
 )
 )) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
+	'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
+	'bgColor'=> '#01062C',
+	'startDate'=> '2013-02-11 00:00:01',
+	'endDate'=> '2013-02-13 23:59:59',
+	'showIn'=> '/titan-poker/, home',
+	)
+	)) return $res;
 
-// $5K PKR PokerNews - 3 Ways to Victory [END: 2013-03-09]
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
-'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
-'bgColor'=> '#3f0504',
-'startDate'=> '2013-02-14 00:00:01',
-'endDate'=> '2013-02-16 23:59:59',
-'showIn'=> '/pkr/, home',
-)
-)) return $res;
+
 // $5K PKR PokerNews - 3 Ways to Victory [END: 2013-03-09]
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
@@ -71,17 +61,17 @@ if ($this->wallpaper($res, array(
 'showIn'=> '/pkr/',
 )
 )) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
+	'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
+	'bgColor'=> '#3f0504',
+	'startDate'=> '2013-02-14 00:00:01',
+	'endDate'=> '2013-02-16 23:59:59',
+	'showIn'=> '/pkr/, home',
+	)
+	)) return $res;
 
-// $67,500 PokerStars PokerNews Freeroll Series [END: 2013-05-09]
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
-'imgPath'=> '/img/wallpaper/ps_frseries_v3_wallpaper.jpg',
-'bgColor'=> '#000',
-'startDate'=> '2013-02-17 00:00:01',
-'endDate'=> '2013-02-19 23:59:59',
-'showIn'=> '/pokerstars/, home',
-)
-)) return $res;
+
 // $67,500 PokerStars PokerNews Freeroll Series [END: 2013-05-09]
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
@@ -90,6 +80,16 @@ if ($this->wallpaper($res, array(
 'showIn'=> '/pokerstars/',
 )
 )) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
+	'imgPath'=> '/img/wallpaper/ps_frseries_v3_wallpaper.jpg',
+	'bgColor'=> '#000',
+	'startDate'=> '2013-02-17 00:00:01',
+	'endDate'=> '2013-02-19 23:59:59',
+	'showIn'=> '/pokerstars/, home',
+	)
+	)) return $res;
+
 
 //poker770
 if ($this->wallpaper($res, array(
