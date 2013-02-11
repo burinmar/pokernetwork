@@ -40,6 +40,7 @@ if ($this->wallpaper($res, array(
 'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
 'bgColor'=> '#01062C',
 'showIn'=> '/titan-poker/',
+'endDate'=> '2013-03-1 00:00:01',
 )
 )) return $res;
 	if ($this->wallpaper($res, array(
@@ -59,6 +60,7 @@ if ($this->wallpaper($res, array(
 'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
 'bgColor'=> '#3f0504',
 'showIn'=> '/pkr/',
+'endDate'=> '2013-03-09 00:00:01',
 )
 )) return $res;
 	if ($this->wallpaper($res, array(
@@ -78,6 +80,7 @@ if ($this->wallpaper($res, array(
 'imgPath'=> '/img/wallpaper/ps_frseries_v3_wallpaper.jpg',
 'bgColor'=> '#000',
 'showIn'=> '/pokerstars/',
+'endDate'=> '2013-05-09 00:00:01',
 )
 )) return $res;
 	if ($this->wallpaper($res, array(
