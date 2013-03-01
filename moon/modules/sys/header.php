@@ -34,6 +34,25 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+//  PartyPoker $9K Spring Rush 
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/partypoker-9k-spring-rush/',
+'imgPath'=> '/img/wallpaper/party_springrush_wallpaper.jpg',
+'bgColor'=> '#011345',
+'showIn'=> '/party-poker/',
+'endDate'=> '2013-03-31 00:00:01',
+)
+)) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/partypoker-9k-spring-rush/',
+	'imgPath'=> '/img/wallpaper/party_springrush_wallpaper.jpg',
+	'bgColor'=> '#011345',
+	'endDate'=> '2013-03-03 23:59:59',
+	'showIn'=> '/party-poker/, home',
+	)
+	)) return $res;
+
+
 // $15k Titan Winter Freeroll Series 
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
