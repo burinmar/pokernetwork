@@ -38,7 +38,7 @@ class header extends moon_com
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
 'imgPath'=> '/img/wallpaper/unibet_troia_wallpaper.jpg',
-'bgColor'=> '#000',
+'bgColor'=> '#000f0f',
 'showIn'=> '/unibet-poker/',
 'endDate'=> '2013-03-31 00:00:01',
 )
@@ -46,7 +46,7 @@ if ($this->wallpaper($res, array(
 	if ($this->wallpaper($res, array(
 	'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
 	'imgPath'=> '/img/wallpaper/unibet_troia_wallpaper.jpg',
-	'bgColor'=> '#000',
+	'bgColor'=> '#000f0f',
 	'endDate'=> '2013-03-06 23:59:59',
 	'showIn'=> 'home',
 	)
