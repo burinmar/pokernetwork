@@ -34,6 +34,24 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+//   Exclusive UnibetOpen Tickets
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
+'imgPath'=> '/img/wallpaper/unibet_troia_wallpaper.jpg',
+'bgColor'=> '#000',
+'showIn'=> '/unibet-poker/',
+'endDate'=> '2013-03-31 00:00:01',
+)
+)) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
+	'imgPath'=> '/img/wallpaper/unibet_troia_wallpaper.jpg',
+	'bgColor'=> '#000',
+	'endDate'=> '2013-03-06 23:59:59',
+	'showIn'=> 'home',
+	)
+	)) return $res;
+
 //  PartyPoker $9K Spring Rush 
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/partypoker-9k-spring-rush/',
@@ -48,7 +66,7 @@ if ($this->wallpaper($res, array(
 	'imgPath'=> '/img/wallpaper/party_springrush_wallpaper.jpg',
 	'bgColor'=> '#011345',
 	'endDate'=> '2013-03-03 23:59:59',
-	'showIn'=> '/party-poker/, home',
+	'showIn'=> 'home',
 	)
 	)) return $res;
 
@@ -68,7 +86,7 @@ if ($this->wallpaper($res, array(
 	'bgColor'=> '#01062C',
 	'startDate'=> '2013-02-11 00:00:01',
 	'endDate'=> '2013-02-13 23:59:59',
-	'showIn'=> '/titan-poker/, home',
+	'showIn'=> 'home',
 	)
 	)) return $res;
 
@@ -88,7 +106,7 @@ if ($this->wallpaper($res, array(
 	'bgColor'=> '#3f0504',
 	'startDate'=> '2013-02-14 00:00:01',
 	'endDate'=> '2013-02-16 23:59:59',
-	'showIn'=> '/pkr/, home',
+	'showIn'=> 'home',
 	)
 	)) return $res;
 
@@ -108,7 +126,7 @@ if ($this->wallpaper($res, array(
 	'bgColor'=> '#000',
 	'startDate'=> '2013-02-17 00:00:01',
 	'endDate'=> '2013-02-19 23:59:59',
-	'showIn'=> '/pokerstars/, home',
+	'showIn'=> 'home',
 	)
 	)) return $res;
 
