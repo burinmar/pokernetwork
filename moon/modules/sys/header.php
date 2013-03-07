@@ -84,8 +84,7 @@ if ($this->wallpaper($res, array(
 	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
 	'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
 	'bgColor'=> '#01062C',
-	'startDate'=> '2013-02-11 00:00:01',
-	'endDate'=> '2013-02-13 23:59:59',
+	'endDate'=> '2013-03-09 23:59:59',
 	'showIn'=> 'home',
 	)
 	)) return $res;
