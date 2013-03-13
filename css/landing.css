@@ -170,3 +170,13 @@
 	color: #f7de00;
 	}
 #landing.partypoker-spring .download:after {background-image: url('/img/landing/partypoker-spring/logo.png')}
+
+#landing.titan-spring {background-image: url('/img/landing/titan-spring/intro.jpg'); background-color: #023014;}
+#landing.titan-spring .download {
+	background-color: #f2a200;
+	background-image: -moz-linear-gradient(top, #f2a200 0%, #fafa74 100%);
+	background-image: -webkit-linear-gradient(top, #f2a200 0%, #fafa74 100%);
+	background-image: -o-linear-gradient(top, #f2a200 0%, #fafa74 100%);
+	color: #594007;
+	}
+#landing.titan-spring .download:after {background-image: url('/img/landing/titan-spring/logo.png')}
