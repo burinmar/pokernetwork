@@ -34,6 +34,17 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+
+//    Full Tilt Poker Free $10 
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/full-tilt-poker-free-10/',
+'imgPath'=> '/img/wallpaper/ftp_free10_wallpaper.jpg',
+'bgColor'=> '#000',
+'showIn'=> '/full-tilt-poker/',
+'endDate'=> '2013-05-30 00:00:01',
+)
+)) return $res;
+
 //   Exclusive UnibetOpen Tickets
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
