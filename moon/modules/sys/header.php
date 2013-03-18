@@ -34,6 +34,15 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// PokerNews PKR MEGADEAL
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/pkr-poker-megadeal/',
+'imgPath'=> '/img/wallpaper/pkr_megadeal_wallpaper.jpg',
+'bgColor'=> '#01001d',
+'showIn'=> '/pkr/',
+'endDate'=> '2013-04-21 23:59:59',
+)
+)) return $res;
 
 // $15k Titan Spring Freeroll Series
 if ($this->wallpaper($res, array(
