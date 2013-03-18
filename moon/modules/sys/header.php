@@ -41,7 +41,7 @@ if ($this->wallpaper($res, array(
 'imgPath'=> '/img/wallpaper/titan_spring_wallpaper.jpg',
 'bgColor'=> '#003113',
 'showIn'=> '/titan-poker/',
-'endDate'=> '2013-06-09 00:00:01',
+'endDate'=> '2013-06-09 23:59:59',
 )
 )) return $res;
 	if ($this->wallpaper($res, array(
