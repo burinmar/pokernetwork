@@ -35,6 +35,25 @@ class header extends moon_com
 		//}
 
 
+// $15k Titan Spring Freeroll Series
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
+'imgPath'=> '/img/wallpaper/titan_spring_wallpaper.jpg',
+'bgColor'=> '#003113',
+'showIn'=> '/titan-poker/',
+'endDate'=> '2013-06-09 00:00:01',
+)
+)) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
+	'imgPath'=> '/img/wallpaper/titan_spring_wallpaper.jpg',
+	'bgColor'=> '#003113',
+	'endDate'=> '2013-03-18 23:59:59',
+	'showIn'=> 'home',
+	)
+	)) return $res;
+
+
 //    Full Tilt Poker Free $10 
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/full-tilt-poker-free-10/',
@@ -77,45 +96,6 @@ if ($this->wallpaper($res, array(
 	'imgPath'=> '/img/wallpaper/party_springrush_wallpaper.jpg',
 	'bgColor'=> '#011345',
 	'endDate'=> '2013-03-03 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
-
-// $15k Titan Winter Freeroll Series 
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
-'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
-'bgColor'=> '#01062C',
-'showIn'=> '/titan-poker/',
-'endDate'=> '2013-03-13 00:00:01',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-winter-freeroll-series/',
-	'imgPath'=> '/img/wallpaper/titan_winter_wallpaper.jpg',
-	'bgColor'=> '#01062C',
-	'endDate'=> '2013-03-09 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
-
-// $5K PKR PokerNews - 3 Ways to Victory [END: 2013-03-09]
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
-'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
-'bgColor'=> '#3f0504',
-'showIn'=> '/pkr/',
-'endDate'=> '2013-03-09 00:00:01',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/5k-pkr-pokernews-3-ways-to-victory/',
-	'imgPath'=> '/img/wallpaper/pkr_3ways_wallpaper.jpg',
-	'bgColor'=> '#3f0504',
-	'startDate'=> '2013-02-14 00:00:01',
-	'endDate'=> '2013-02-16 23:59:59',
 	'showIn'=> 'home',
 	)
 	)) return $res;
