@@ -485,8 +485,8 @@ function diff($old, $new){
 }
 
 function htmlDiff($old, $new){
-	$old = str_replace("\n", " \n ", $old);
-	$new = str_replace("\n", " \n ", $new);
+	//$old = str_replace("\n", " \n ", $old);
+	//$new = str_replace("\n", " \n ", $new);
 	$diff = diff(explode(' ', $old), explode(' ', $new));
 	$ret = '';
 	foreach($diff as $k){

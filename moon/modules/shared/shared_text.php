@@ -1059,8 +1059,8 @@ function _diff($old, $new){
 }
 
 function htmlDiff($old, $new){
-	$old = str_replace(array("\r\n", "\n"), " \n ", htmlspecialchars($old));
-	$new = str_replace(array("\r\n", "\n"), " \n ", htmlspecialchars($new));
+	//$old = str_replace(array("\r\n", "\n"), " \n ", htmlspecialchars($old));
+	//$new = str_replace(array("\r\n", "\n"), " \n ", htmlspecialchars($new));
 	$diff = $this->_diff(explode(' ', $old), explode(' ', $new));
 	$ret = '';
 	foreach($diff as $k){
