@@ -34,6 +34,29 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+
+
+// [4] $15k Titan Spring Freeroll Series
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
+'imgPath'=> '/img/wallpaper/titan_spring+5kchase_wallpaper.jpg',
+'bgColor'=> '#002807',
+'showIn'=> '/titan-poker/',
+'endDate'=> '2013-06-09 23:59:59',
+)
+)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
+	
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
+	'imgPath'=> '/img/wallpaper/titan_spring+5kchase_wallpaper.jpg',
+	'bgColor'=> '#002807',
+	'startDate'=> '2013-03-31 00:00:01',
+	'endDate'=> '2013-04-03 23:59:59',
+	'showIn'=> 'home',
+	)
+	)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
+
+
 // [1] PokerNews PKR MEGADEAL
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/pkr-poker-megadeal/',
@@ -86,25 +109,6 @@ if ($this->wallpaper($res, array(
 	'bgColor'=> '#000f0f',
 	'startDate'=> '2013-03-27 00:00:01',
 	'endDate'=> '2013-03-30 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
-// [4] $15k Titan Spring Freeroll Series
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
-'imgPath'=> '/img/wallpaper/titan_spring_wallpaper.jpg',
-'bgColor'=> '#003113',
-'showIn'=> '/titan-poker/',
-'endDate'=> '2013-06-09 23:59:59',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
-	'imgPath'=> '/img/wallpaper/titan_spring_wallpaper.jpg',
-	'bgColor'=> '#003113',
-	'startDate'=> '2013-03-31 00:00:01',
-	'endDate'=> '2013-04-03 23:59:59',
 	'showIn'=> 'home',
 	)
 	)) return $res;
