@@ -39,7 +39,7 @@ class header extends moon_com
 // [4] $15k Titan Spring Freeroll Series
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
-'imgPath'=> '/img/wallpaper/titan_spring+5kchase_wallpaper.jpg',
+'imgPath'=> '/img/wallpaper/titan_spring5kchase_wallpaper.jpg',
 'bgColor'=> '#002807',
 'showIn'=> '/titan-poker/',
 'endDate'=> '2013-06-09 23:59:59',
@@ -48,7 +48,7 @@ if ($this->wallpaper($res, array(
 	
 	if ($this->wallpaper($res, array(
 	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
-	'imgPath'=> '/img/wallpaper/titan_spring+5kchase_wallpaper.jpg',
+	'imgPath'=> '/img/wallpaper/titan_spring5kchase_wallpaper.jpg',
 	'bgColor'=> '#002807',
 	'startDate'=> '2013-03-31 00:00:01',
 	'endDate'=> '2013-04-03 23:59:59',
