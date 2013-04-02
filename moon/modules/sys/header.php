@@ -143,15 +143,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-//poker770
-if ($this->wallpaper($res, array(
-'url'=> 'http://poker770.pokernews.com/network50/',
-'imgPath'=> '/img/wallpaper/poker70_free50_wallpaper.jpg',
-'bgColor'=> '#000',
-'showIn'=> '/poker-770/',
-)
-)) return $res;
-
 
 		/************* SLAMSTAS *************/
 		/*
