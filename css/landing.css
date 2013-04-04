@@ -180,3 +180,14 @@
 	color: #594007;
 	}
 #landing.titan-spring .download:after {background-image: url('/img/landing/titan-spring/logo.png')}
+
+#landing.bah-bountybrawl {background-image: url('/img/landing/bah-bountybrawl/intro.jpg'); background-color: #510001;}
+#landing.bah-bountybrawl .download {
+	background-image: -moz-linear-gradient(top, #ff1f1f 0%, #e00000 100%);
+	background-image: -webkit-linear-gradient(top, #ff1f1f 0%, #e00000 100%);
+	background-image: -o-linear-gradient(top, #ff1f1f 0%, #e00000 100%);
+	background-image: -ms-linear-gradient(top, #ff1f1f 0%, #e00000 100%);
+	background-color: #ff1f1f;
+	color: #fff;
+	}
+#landing.bah-bountybrawl .download:after {background-image: url('/img/landing/bah-bountybrawl/logo.png')}
