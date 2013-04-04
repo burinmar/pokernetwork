@@ -35,6 +35,16 @@ class header extends moon_com
 		//}
 
 
+// BetAtHome BountyBrawl
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/5-000-bet-at-home-bounty-brawl/',
+'imgPath'=> '/img/wallpaper/betathome_bountybrawl_wallpaper.jpg',
+'bgColor'=> '#110000',
+'showIn'=> '/bet-at-home/',
+'endDate'=> '2013-06-29 23:59:59',
+)
+)) return $res;
+
 
 // [4] $15k Titan Spring Freeroll Series
 if ($this->wallpaper($res, array(
