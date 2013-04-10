@@ -8,6 +8,7 @@ class event_list extends moon_com
 		$this->bluffable = in_array(_SITE_ID_, array('com', 'fr'));
 		$this->starsable = in_array(_SITE_ID_, array('com'));
 		$this->wptable   = in_array(_SITE_ID_, array('com'));
+		$this->mystackable = in_array(_SITE_ID_, array('com'));
 	}
 
 	function properties()
@@ -23,13 +24,13 @@ class event_list extends moon_com
 		switch ($event) {
 			case 'save':
 				$this->forget();
-				$page = &moon::page();
+				$page = moon::page();
 				$form = &$this->form();
 
 				$form->names('id','tournament_id','name',
 					'from_date','from_time','to_date',
 					'to_time','buyin','fee','rebuy','addon','is_live','is_main','is_syncable','alias','prizepool','chipspool','players_total','players_left',
-					'stayhere', 'bluff_id', 'stars_id', 'wpt_id',
+					'stayhere', 'bluff_id', 'stars_id', 'wpt_id', 'app_accept',
 					'dayid', 'dayname', 'daymergename', 'dayfrom_date', 'dayfrom_time'
 				);
 				$form->fill($_POST);
@@ -171,7 +172,7 @@ class event_list extends moon_com
 
 		$statuses = array('<span class="scheduledIco" title="Scheduled"></span>', '<span class="liveIco" title="Started"></span>', '<span class="explain">Concluded</span>');
 		$events = $this->getEvents($tournament['id']);
-		$locale = &moon::locale();
+		$locale = moon::locale();
 		list($tzOffset) = $locale->timezone($tournament['timezone']);
 		foreach ($events as $event) {
 			$mainArgv['list.entries'] .= $tpl->parse('list:entries.item', array(
@@ -189,13 +190,13 @@ class event_list extends moon_com
 					? $this->linkas('winner_list#', $event['winner_id'])
 					: $this->linkas('winner_list#new', 'by-event.' . $event['id']),
 				'winner' => htmlspecialchars($event['winner']),
-				'add_winner' => empty($event['winner']) && (!empty($event['days_closed']) || $event['state'] == '2')
+				'add_winner' => empty($event['winner']) && ($event['state'] == '2' || $event['state'] == '1')
 			));
 			foreach ($event['days'] as $day) {
 				$mainArgv['list.entries'] .= $tpl->parse('list:entries.subitem', array(
 					'id' => $event['id'] . '.' . $day['id'],
 					'start_date' => strftime('%Y-%m-%d', $day['day_date'] + $tzOffset),
-					'status' => $day['is_live']
+					'status' => $day['is_live'] && $event['is_live']
 						? $statuses[$day['state']]
 						: '',
 					'name' => htmlspecialchars($day['name'])
@@ -233,7 +234,7 @@ class event_list extends moon_com
 		$events = array();
 
 		$rEvents = $this->db->array_query_assoc('
-			SELECT e.id, e.from_date, e.to_date, e.name, e.state, e.is_live, e.is_main, COUNT(d.id) dayscnt, w.id winner_id, w.winner, MIN(d.state)=2 days_closed
+			SELECT e.id, e.from_date, e.to_date, e.name, e.state, e.is_live, e.is_main, COUNT(d.id) dayscnt, w.id winner_id, w.winner
 			FROM ' . $this->table('Events') . ' e
 			LEFT JOIN ' . $this->table('Days') . ' d
 				ON e.id=d.event_id
@@ -303,12 +304,13 @@ class event_list extends moon_com
 				'players_left' => '',
 				'prizepool' => '',
 				'chipspool' => '',
+				'app_accept' => '2',
 				'bluff_id' => '',
 				'stars_id' => '',
 				'wpt_id' => '',
 				'is_live' => '1',
 				'is_main' => '',
-				'is_syncable' => '1'
+				'is_syncable' => '1',
 			);
 			$mainArgv['title'] = 'New event';
 			$mainArgv['tz'] = $tzName;
@@ -366,6 +368,8 @@ class event_list extends moon_com
 		if ($tournament['is_syncable']) {
 			$mainArgv['is_tsyncable'] = true;
 		}
+		$mainArgv['is_synced'] = !empty($entryData['sync_id']) && !empty($entryData['is_syncable']);
+		$mainArgv['is_not_synced'] = !$mainArgv['is_synced'];
 
 		if ($this->bluffable) {
 			$mainArgv['is_bluffable'] = true;
@@ -382,6 +386,11 @@ class event_list extends moon_com
 			$entryData = array_intersect_key(
 				array_merge($entryData, $argv['failed-form-data']),
 				$entryData);
+		}
+
+		if ($this->mystackable) {
+			$mainArgv['is_mystackable'] = true;
+			$mainArgv['app_accept' . $entryData['app_accept']] = true;
 		}
 
 		if (isset($argv['failed-form-data'])) {
@@ -435,15 +444,15 @@ class event_list extends moon_com
 	/* data *must* be an array of strings */
 	function saveEntry($data)
 	{
-		$page     = &moon::page();
+		$page     = moon::page();
 		$tpl      = &$this->load_template();
 		$messages = $tpl->parse_array('messages');
 
 		$saveData = array();
 		$saveDataKeys = array(
-				'id','tournament_id','name',
-				'buyin','fee','rebuy','addon','is_live','is_main','is_syncable','alias','prizepool','chipspool','players_total','players_left'
-			);
+			'id','tournament_id','name',
+			'buyin','fee','rebuy','addon','is_live','is_main','is_syncable','alias','prizepool','chipspool','players_total','players_left'
+		);
 		if ($this->bluffable) {
 			$saveDataKeys[] = 'bluff_id';
 		}
@@ -453,22 +462,39 @@ class event_list extends moon_com
 		if ($this->wptable) {
 			$saveDataKeys[] = 'wpt_id';
 		}
+		if ($this->mystackable) {
+			$saveDataKeys[] = 'app_accept';
+		}
 		foreach ($saveDataKeys as $key) {
 			if (isset($data[$key])) {
 				$saveData[$key] = $data[$key];
 			}
 		}
 
+		$isSynced = false;
 		if (false !== filter_var($saveData['id'], FILTER_VALIDATE_INT)) {
 			$check = $this->db->single_query_assoc('
-				SELECT id FROM ' . $this->table('Events') . '
+				SELECT id, sync_id, is_syncable FROM ' . $this->table('Events') . '
 				WHERE tournament_id="' .$this->db->escape($data['tournament_id']). '"
 					AND id="' . $this->db->escape($data['id']) . '"
 			');
-			if (empty($check)) {
+			if (empty($check))
 				return ;
-			}
+			if (!empty($check['sync_id']) && !empty($check['is_syncable']))
+				$isSynced = true;
 		}
+
+		if ($isSynced) {
+			$this->db->update(array(
+				'is_syncable' => $saveData['is_syncable'],
+			), $this->table('Events'), array(
+				'id' => $saveData['id']
+			));
+			blame($this->my('fullname'), 'Updated', $saveData['id']);
+			livereporting_adm_alt_log($saveData['tournament_id'], $saveData['id'], 0, 'update', 'events', $saveData['id'], 'is_live');
+			return $saveData['id'];
+		}
+
 
 		$saveData['from_date'] = strtotime($data['from_date'] . ' ' . $data['from_time'] . ':00 +0000');
 		$saveData['to_date'] = $data['to_date'] == ''
@@ -587,7 +613,7 @@ class event_list extends moon_com
 		}
 
 		$tour = $this->getTour($saveData['tournament_id']);
-		$locale = &moon::locale();
+		$locale = moon::locale();
 		list($tzOffset) = $locale->timezone($tour['timezone']);
 		foreach (array('to_date','from_date') as $key) {
 			if ($saveData[$key] != NULL) {
@@ -809,7 +835,7 @@ class event_list extends moon_com
 			');
 			foreach ($chkEIds as $event) {
 				$affectedTournaments[] = $event['tournament_id'];
-		}
+			}
 			$affectedTournaments = array_unique($affectedTournaments);
 		}
 

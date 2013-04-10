@@ -152,6 +152,9 @@ e.ncommdupe=There is already subforum assigned to display news comments
 			</select>
 		</dd>
 
+		<dt><label>In-tour short title</label></dt>
+		<dd><input type="text" maxlength="255" size="70" class="width60" name="name_short" value="{entry.name_short}" /></dd>
+
 		<dt></dt>
 		<dd>
 			<label><input type="checkbox" name="priority" value="1" <%if {entry.priority} %>checked="checked"<%end%> /> High priority (sorting)</label>
@@ -182,6 +185,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 			</select>
 		</dd>
 	</dl>
+
 	<div class="is_live_dep tabzoneHeader clrfix" style="margin-top: 40px">
 		<h1>Tournament Skin Settings</h1>
 	</div>
@@ -194,7 +198,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 
 		<dt class="is_live_dep"><label>Live background image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_big_bg" />
+		<dd class="is_live_dep"><input type="file" name="logo_big_bg" accept="image/*" />
 			<%if {entry.logo_big_bg} %><br /><label><input type="checkbox" name="delete_logo_big_bg" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_big_bg}" alt="" /><%end%>
@@ -202,7 +206,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 
 		<dt class="is_live_dep"><label>Tournament image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_mid" />
+		<dd class="is_live_dep"><input type="file" name="logo_mid" accept="image/*" />
 			<%if {entry.logo_mid} %><br /><label><input type="checkbox" name="delete_logo_mid" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_mid}" alt="" /><%end%>
@@ -210,7 +214,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 
 		<dt class="is_live_dep"><label>Index page image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_idx" />
+		<dd class="is_live_dep"><input type="file" name="logo_idx" accept="image/*" />
 			<%if {entry.logo_idx} %><br /><label><input type="checkbox" name="delete_logo_idx" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_idx}" alt="" /><%end%>
@@ -218,7 +222,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 
 		<dt class="is_live_dep"><label>Archive list image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_small" />
+		<dd class="is_live_dep"><input type="file" name="logo_small" accept="image/*" />
 			<%if {entry.logo_small} %><br /><label><input type="checkbox" name="delete_logo_small" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_small}" alt="" /><%end%>
@@ -227,7 +231,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 
 		<%if {mobile_provider} %>
 		<dt class="is_live_dep"><label>Mobile app image 1:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_mobile_1" />
+		<dd class="is_live_dep"><input type="file" name="logo_mobile_1" accept="image/*" />
 			<%if {entry.logo_mobile_1} %><br /><label><input type="checkbox" name="delete_logo_mobile_1" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_mobile_1}" alt="" /><%end%>
@@ -235,14 +239,14 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 
 		<dt class="is_live_dep"><label>Mobile app image 2:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_mobile_2" />
+		<dd class="is_live_dep"><input type="file" name="logo_mobile_2" accept="image/*" />
 			<%if {entry.logo_mobile_2} %><br /><label><input type="checkbox" name="delete_logo_mobile_2" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_mobile_2}" alt="" /><%end%>
 			<div class="explain">w: 480px<br />h: 210px</div>
 		</dd>
 		<%end%>
-		
+
 		<dt class="is_live_dep"><label>Default skin</label></dt>
 		<dd class="is_live_dep">
 			<select name="skin" id="entry-skin">
@@ -250,8 +254,30 @@ e.ncommdupe=There is already subforum assigned to display news comments
 			</select>
 			<div id="entry-skin-preview" style="width:100px; height:50px; display:none; margin-top: 10px"></div>
 		</dd>
-		
 	</dl>
+
+	<%if{beta_provider}%>
+	<div class="is_live_dep tabzoneHeader clrfix" style="margin-top: 40px;">
+		<h1>Tournament New Skin Settings</h1>
+	</div>
+	<dl>
+		<dt class="is_live_dep"><label>Tournament image:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_main" accept="image/*" />
+			<%if {entry.logo_main} %><br /><label><input type="checkbox" name="delete_logo_main" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_main}" alt="" /><%end%>
+			<div class="explain">w: 1400px<br />h: 120px</div>
+		</dd>
+
+		<dt class="is_live_dep"><label>Index widget background:</label></dt>
+		<dd class="is_live_dep"><input type="file" name="logo_wgbg" accept="image/*" />
+			<%if {entry.logo_wgbg} %><br /><label><input type="checkbox" name="delete_logo_wgbg" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{entry.logo_wgbg}" alt="" /><%end%>
+			<div class="explain">w: 1400px<br />h: 120px</div>
+		</dd>
+	</dl>
+	<%end%>
 
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
 
@@ -299,6 +325,7 @@ AUD=AUD
 BRL=BRL
 CAD=CAD
 CHF=CHF
+CZK=CZK
 DKK=DKK
 EEK=EEK
 EUR=EUR
@@ -331,14 +358,12 @@ USD=USD
 <% states.item %>
 <option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
 
-
 <% skins.data %>
 1=Sky Blue
 2=Green
 3=Marine Blue
 4=Intense blue
 5=Tour logo (archive)
-
 
 <% skins.item %>
 <option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>

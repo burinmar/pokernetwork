@@ -454,6 +454,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 				'chips_change' => $chip['chipsc'] !== NULL
 					? number_format($chip['chipsc'])
 					: '',
+				'is_app' => $chip['is_app'],
 				'chips_change_direction' => $chip['chipsc'] != 0
 					?(intval($chip['chipsc']) > 0
 						? 'pos'
@@ -1284,7 +1285,7 @@ class livereporting_event_chips extends livereporting_event_pylon
 			//    could assign places and positions
 			// could assign players_left
 		}
-		
+
 		if ($entry['id']) {
 			$rtf->assignObjects($entry['id']);
 		}

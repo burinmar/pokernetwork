@@ -9,6 +9,7 @@ class tour_list extends moon_com
 	{
 		return array(
 			'render' => NULL,
+			'page' => 1,
 			'id' => NULL
 		);
 	}
@@ -18,18 +19,21 @@ class tour_list extends moon_com
 		switch ($event) {
 			case 'save':
 				$this->forget();
-				$page = &moon::page();
+				$page = moon::page();
 				$form = &$this->form();
-				$form->names('id', 'name', 'from_date', 'duration',
-				    'currency', 'intro', 'tour', 'is_live', 'alias', 'logo_bgcolor', 'logo_is_dark',
-				    'delete_logo_big_bg', 'delete_logo_small', 'timezone', 'place', 'address', 'geolocation',
-				    'sync_id','is_syncable','autopublish','show_wsop_eod',
-				    'delete_logo_mid', 'delete_logo_idx', 'delete_logo_mobile_1', 'delete_logo_mobile_2',
-				    'skin', 'ad_rooms', 'priority', 'stayhere');
+				$form->names('id', 'name', 'name_short', 'from_date', 'duration',
+					'currency', 'intro', 'tour', 'is_live', 'alias', 
+					'delete_logo_main', 'delete_logo_wgbg', 'delete_logo_mobile_1', 'delete_logo_mobile_2',
+					'delete_logo_big_bg', 'delete_logo_small', 'delete_logo_mid', 'delete_logo_idx', 'logo_bgcolor', 'logo_is_dark', 'skin', 
+					'timezone', 'place', 'address', 'geolocation',
+					'sync_id','is_syncable','autopublish','show_wsop_eod',
+					'ad_rooms', 'priority', 'stayhere');
 				$form->fill($_POST);
 				$data = $form->get_values();
 
 				foreach (array(
+					'logo_main',
+					'logo_wgbg',
 					'logo_mid',
 					'logo_big_bg',
 					'logo_small',
@@ -56,6 +60,8 @@ class tour_list extends moon_com
 				$saved = $this->saveEntry($data);
 				if (NULL === $saved) {
 					foreach (array(
+						'logo_main',
+						'logo_wgbg',
 						'logo_mid',
 						'logo_big_bg',
 						'logo_small',
@@ -104,6 +110,8 @@ class tour_list extends moon_com
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
+				if (isset($_GET['page'])) 
+					$this->set_var('page', intval($_GET['page']));
 				break;
 		}
 		$this->use_page('Common');
@@ -111,8 +119,8 @@ class tour_list extends moon_com
 
 	function main($argv)
 	{
-		$window = &moon::shared('admin');
-		$page   = &moon::page();
+		$window = moon::shared('admin');
+		$page   = moon::page();
 		$window->active($this->my('module').'.tour_list');
 		$page->title(
 			$window->current_info('title')
@@ -168,9 +176,15 @@ class tour_list extends moon_com
 			'url.tours' => $this->linkas('tours#')
 		);
 
+		$pn = moon::shared('paginate');
+		$pn->set_curent_all_limit($argv['page'], $this->getToursCount(), 30);
+		$pn->set_url( $this->linkas('#','',array('page'=>'{pg}')) );
+		$pnInfo=$pn->get_info();
+		$mainArgv['pages'] = $pn->show_nav();
+
 		$statuses = array('<span class="scheduledIco" title="Scheduled"></span>', '<span class="liveIco" title="Started"></span>', '<span class="explain">Concluded</span>');
-		$tours = $this->getTours();
-		$locale = &moon::locale();
+		$tours = $this->getTours($pnInfo['sqllimit']);
+		$locale = moon::locale();
 		foreach ($tours as $tour) {
 			list($tzOffset) = $locale->timezone($tour['timezone']);
 			$tour['from_date'] += $tzOffset;
@@ -191,7 +205,16 @@ class tour_list extends moon_com
 		return $tpl->parse('list:main', $mainArgv);
 	}
 
-	private function getTours()
+	private function getToursCount()
+	{
+		$tours = $this->db->single_query_assoc('
+			SELECT COUNT(*) cnt FROM ' . $this->table('Tournaments') . '
+			WHERE is_live>=0
+		');
+		return $tours['cnt'];
+	}
+
+	private function getTours($limit)
 	{
 		$tours = $this->db->array_query_assoc('
 			SELECT t.id, t.from_date, t.timezone, t.duration, t.name, t.state, t.is_live, COUNT(e.id) events, COUNT(e.id) - COUNT(w.id) misswinners
@@ -202,8 +225,9 @@ class tour_list extends moon_com
 				ON w.event_id=e.id AND w.winner!=""
 			WHERE t.is_live>=0
 			GROUP BY t.id
-			ORDER BY t.from_date DESC, id DESC
-		');
+			ORDER BY t.from_date DESC, id DESC ' .
+			$limit
+		);
 		return $tours;
 	}
 
@@ -227,6 +251,9 @@ class tour_list extends moon_com
 			$entryData = array(
 				'id' => '',
 				'name' => '',
+				'name_short' => '',
+				'logo_main' => '',
+				'logo_wgbg' => '',
 				'logo_mid' => '',
 				'logo_bgcolor' => '#000000',
 				'logo_big_bg' => '',
@@ -261,13 +288,19 @@ class tour_list extends moon_com
 				$e  = $messages['e.entry_not_found'];
 				return ;
 			}
-			$locale = &moon::locale();
+			$locale = moon::locale();
 			list($tzOffset) = $locale->timezone($entryData['timezone']);
 			foreach (array('from_date') as $key) {
 				$entryData[$key] += $tzOffset;
 			}
 			$entryData = array_merge($entryData, array(
 				'from_date' => gmdate('Y-m-d', $entryData['from_date']),
+				'logo_main' => !empty($entryData['logo_main'])
+					? $this->get_dir('web:LogosMain') . $entryData['logo_main']
+					: '',
+				'logo_wgbg' => !empty($entryData['logo_wgbg'])
+					? $this->get_dir('web:LogosWgBg') . $entryData['logo_wgbg']
+					: '',
 				'logo_big_bg' => !empty($entryData['logo_big_bg'])
 					? $this->get_dir('web:LogosBigBg') . $entryData['logo_big_bg']
 					: '',
@@ -305,6 +338,9 @@ class tour_list extends moon_com
 		$timezones = $locale->select_timezones();
 
 		$mainArgv['mobile_provider'] = _SITE_ID_ == 'com';
+		// tmp {
+		$mainArgv['beta_provider'] = _SITE_ID_ == 'com';
+		// }
 
 		$mainArgv['list.timezones'] = '';
 		foreach ($timezones as $timezoneId => $timezoneName) {
@@ -403,17 +439,18 @@ class tour_list extends moon_com
 	/* data *must* be an array of strings */
 	private function saveEntry($data)
 	{
-		$page     = &moon::page();
+		$page     = moon::page();
 		$tpl      = &$this->load_template();
 		$messages = $tpl->parse_array('messages');
 
 		$saveData = array();
 		foreach (array(
-				'id', 'alias', 'name', 'place', 'address', 'geolocation',
-				'ad_rooms', 'skin', 'is_live', 'currency', 'intro', 'tour',
-				'timezone', 'from_date', 'duration', 'logo_bgcolor', 'logo_is_dark',
-				'sync_id', 'is_syncable', 'autopublish', 'priority', 'show_wsop_eod'
-			) as $key) {
+			'id', 'alias', 'name', 'name_short', 'place', 'address', 'geolocation',
+			'ad_rooms', 'is_live', 'currency', 'intro', 'tour',
+			'timezone', 'from_date', 'duration',
+			'sync_id', 'is_syncable', 'autopublish', 'priority', 'show_wsop_eod',
+			'logo_bgcolor', 'logo_is_dark', 'skin',
+		) as $key) {
 			if (isset($data[$key])) {
 				$saveData[$key] = $data[$key];
 			}
@@ -476,21 +513,25 @@ class tour_list extends moon_com
 			$isInvalid = TRUE;
 		}
 
+		// tmp {
 		if (preg_match('~^[0-9a-f]{3,6}$~i', $saveData['logo_bgcolor'])) {
 			$saveData['logo_bgcolor'] = '#' . $saveData['logo_bgcolor'];
 		}
+		// }
 
 		if (TRUE === $isInvalid) {
 			return NULL;
 		}
 
-		$locale = &moon::locale();
+		$locale = moon::locale();
 		list($tzOffset) = $locale->timezone($saveData['timezone']);
 		foreach (array('from_date') as $key) {
 			$saveData[$key] -= $tzOffset;
 		}
 
 		foreach (array(
+			array('logo_main',     'fs:LogosMain'),
+			array('logo_wgbg',     'fs:LogosWgBg'),
 			array('logo_mid',      'fs:LogosMid'),
 			array('logo_big_bg',   'fs:LogosBigBg'),
 			array('logo_small',    'fs:LogosSmall'),

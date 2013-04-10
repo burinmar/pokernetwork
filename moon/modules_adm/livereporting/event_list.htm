@@ -115,6 +115,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
 	<span class="clr"></span>
 	<dl>
+		<% if{is_not_synced} %>
 		<dt></dt>
 		<dd>
 			<label><input type="checkbox" name="is_live" id="isLiveTournament" value="1" <%if {entry.is_live} %>checked="checked"<%end%> /> Is visible</label><br />
@@ -142,7 +143,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		<input type="hidden" name="to_time" value="{entry.to_time}" class="isTime" size="7" maxlength="5" />
 		<!-- {tz} -->
 		</dd>
-
+		<% end %>
 
 		<%if {is_tsyncable} %>
 		<dt><label>Sync</label></dd>
@@ -153,6 +154,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		<dd style="display:none"><input type="hidden" name="is_syncable" value="{entry.is_syncable}" /></dd>
 		<%end%>
 
+		<% if{is_not_synced} %>
 		<dt class="is_live_dep"></dt>
 		<dd class="is_live_dep">
 			<table>
@@ -176,6 +178,27 @@ e.ncommdupe=There is already subforum assigned to display news comments
 				</tr>
 			</table>
 		</dd>
+
+		<% if {is_mystackable} %>
+		<dt class="is_live_dep"></dt>
+		<dd class="is_live_dep">
+			<table>
+				<colgroup>
+					<col style="width: 80px" />
+					<col style="width: 120px" />
+				</colgroup>
+				<tr>
+					<td><label>App Updates</label></td>
+					<td><select name="app_accept">
+							<option value="0" <%if {app_accept0}%>selected="selected"<%end%>>Disabled</option>
+							<option value="1" <%if {app_accept1}%>selected="selected"<%end%>>Verified players only</option>
+							<option value="2" <%if {app_accept2}%>selected="selected"<%end%>>Everybody</option>
+						</select>
+					</td>
+				</tr>
+			</table>
+		</dd>
+		<% end %>
 
 		<dt></dt>
 		<dd>
@@ -242,6 +265,7 @@ e.ncommdupe=There is already subforum assigned to display news comments
 			{days}
 			</table>
 		</dd>
+		<% end %>
 	</dl>
 	<div class="footer"><div class="formButton"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div></div>
 </form>
@@ -261,18 +285,3 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		<input type="text" name="dayfrom_time[{nr}]" value="{from_time}" class="isTime" size="5" maxlength="5" />
 	</td>
 </tr>
-
-
-<% states.data %>
-0=Scheduled
-1=Started
-2=Concluded
-
-<% restrictions.data %>
-0=Default
-1=Only admins create topics
-8=Topics created from news
-
-<% restrictions.item %>
-<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
-

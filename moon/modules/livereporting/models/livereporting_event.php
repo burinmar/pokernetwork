@@ -181,7 +181,7 @@ class livereporting_model_event extends livereporting_model_pylon
 	{
 		$where = $this->getLogEntriesSqlWhere($eventId, $dayId, $filter);
 		$entries = $this->db->array_query_assoc('
-			SELECT id, event_id, type, is_hidden, created_on, author_id, contents, sync_id IS NOT NULL synced' . (_SITE_ID_ == 'com' ? ', comm_count' : '') . '
+			SELECT id, event_id, type, is_hidden, created_on, author_id, contents, sync_id IS NOT NULL synced' . ($this->get_var('commentsEnabled') ? ', comm_count' : '') . '
 			FROM ' . $this->table('Log') . ' l 
 			WHERE ' . implode(' AND ', $where) . '
 			ORDER BY created_on ' . (!empty($filter['rsort']) ? '' : 'DESC ') .
@@ -540,9 +540,9 @@ class livereporting_model_event extends livereporting_model_pylon
 		}
 
 		$sql = '
-		SELECT p.id, ce.chips, p.name, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.chips_change chipsc, p.pp_id, p.status, p.is_pnews, p.country_id' : '') . ' 
+		SELECT p.id, ce.chips, p.name, p.sponsor_id' . (!$tiny ? ', ce.created_on, ce.day_id, ce.is_app, ce.chips_change chipsc, p.pp_id, p.status, p.is_pnews, p.country_id' : '') . ' 
 		FROM (
-			SELECT c.chips, c.player_id' . (!$tiny ? ', c.created_on, c.day_id, c.chips_change' : '' ) . ' FROM (
+			SELECT c.chips, c.player_id' . (!$tiny ? ', c.created_on, c.day_id, c.is_app, c.chips_change' : '' ) . ' FROM (
 				SELECT player_id, MAX(created_on) created_on FROM ' . $this->table('Chips') . '
 				WHERE day_id IN (' . implode(',', $daysToQuery) . ') AND is_hidden=0
 				GROUP BY player_id ORDER BY NULL

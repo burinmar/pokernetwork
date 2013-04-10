@@ -51,7 +51,7 @@ $cfg['livereporting'] = array(
 	'vocabulary{livereporting_tour}'          => '{dir.multilang}{module}/livereporting_category.txt',
 	'vocabulary{reporting_news}'              => '{dir.multilang}{module}/livereporting_index.txt',
 	'vocabulary{reporting_hotels}'            => '{dir.multilang}/hotels.txt',
-	'vocabulary{rtf}'                    => '{dir.multilang}/shared.txt',
+	'vocabulary{rtf}'                         => '{dir.multilang}/shared.txt',
 	'vocabulary{reporting_h}'                 => '{dir.multilang}/shared.txt',
 
 	'dir.web:LogosBigBg' => '/w/lrep/lbbg/',

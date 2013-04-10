@@ -4,6 +4,7 @@
 	<col class="player" />
 	<col class="sponsor" />
 	<col class="country" />
+	<col class="appUpdate">
 	<%if {adm} %><col class="chipsTotal" /><%end%>
 	<col class="chipsTotal" />
 	<%if {adm} %><col class="chipsTime" /><%end%>
@@ -12,7 +13,7 @@
 	<tbody>
 		<tr class="sortRow">
 			<td colspan="3" style="padding-left:27px;"><a href="{cts_name_url}" class="{cts_name_class}">Sort</a></td>
-			<td class="numeric" colspan="2"><a href="{cts_chip_url}" class="{cts_chip_class}">Sort</a></td>
+			<td class="numeric" colspan="3"><a href="{cts_chip_url}" class="{cts_chip_class}">Sort</a></td>
 			<td><input type="hidden" id="cts_sort" value="{cts_sort}" /></td>
 		</tr>
 	</tbody>
@@ -58,6 +59,7 @@
 	</td>
 	<td class="sponsor">{sponsor}</td>
 	<td class="country"><%if {country} %><img src="http://www.pokernews.com/i/flags/flag_{country_id}.png" alt="{country}" /> {country}<%end%></td>
+	<td class="appUpdate"><%if {is_app} %><span>Updated<br>via app</span><%end%></td>
 	{adm_newctrl}
 	<td class="numeric">
 	<%if {is_busted} %>{!busted}<%else {is_busted} %>
