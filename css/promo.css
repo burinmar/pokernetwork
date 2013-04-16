@@ -202,8 +202,8 @@ article table, article ul, article ol {margin-bottom: 20px;}
 	line-height: 55px;
 
 }
-.overPromo {}
 .overPromo li {margin-bottom: 10px;}
+.liveSearch {margin-bottom: 20px;}
 .liveSearch button {margin-left: 10px; position: relative; top: 2px}
 .liveSearch .suggestion-list {
 		list-style: none !important;
