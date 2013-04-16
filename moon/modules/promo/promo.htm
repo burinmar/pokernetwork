@@ -6,27 +6,28 @@ terms-and-conditions={!terms}
 
 
 <% all:main %>
-<section id="promo" class="noBorder">
-	<header>
-		<%if{room.download}%><a href="{room.download}" class="logo"><img src="{room.logo}" alt="{room.name}"></a><%end%>
-		<h1>{title}</h1>
-		<div class="subheadline hMobile">{intro}</div>
-		<%if{room.download}%><div class="playCode">
-			<p>
-				<%if{room.bonus_code}%><span>Bonus Code:</span> <b>{room.bonus_code}</b><%end%>
-				<%if{room.marketing_code}%><span>Marketing Code:</span> <b>{room.marketing_code}</b><%end%>
-			</p>
-			<a href="{room.download}">Play</a>
-		</div><%end%>
-	</header>
-	<nav class="clrfix">
-		<%loop {menu += all:menu.item} %>
-			<a href="{url}" <%if{active}%> class="on"<%end%>>{title}</a>
-		<%end%>
-	</nav>
-	<article class="clrfix">{content}</article>
-</section>
-
+<div id="body">
+	<section id="promo" class="noBorder">
+		<header>
+			<%if{room.download}%><a href="{room.download}" class="logo"><img src="{room.logo}" alt="{room.name}"></a><%end%>
+			<h1>{title}</h1>
+			<div class="subheadline hMobile">{intro}</div>
+			<%if{room.download}%><div class="playCode">
+				<p>
+					<%if{room.bonus_code}%><span>Bonus Code:</span> <b>{room.bonus_code}</b><%end%>
+					<%if{room.marketing_code}%><br /><span>Marketing Code:</span> <b>{room.marketing_code}</b><%end%>
+				</p>
+				<a href="{room.download}">Play</a>
+			</div><%end%>
+		</header>
+		<nav class="clrfix">
+			<%loop {menu += all:menu.item} %>
+				<a href="{url}" <%if{active}%> class="on"<%end%>>{title}</a>
+			<%end%>
+		</nav>
+		<article class="clrfix">{content}</article>
+	</section>
+</div>
 
 
 
@@ -46,7 +47,7 @@ terms-and-conditions={!terms}
 		<%if{prize}%>
 		<div>
 			<h3>What’s In it for me?</h3>
-			<strong>{prize}</strong>
+			<strong class="<%if{prize_small}%>small<%else{prize_small}%>large<%end%>">{prize}</strong>
 		</div>
 		<%end%>
 		<%if{qualification}%>
@@ -127,8 +128,8 @@ terms-and-conditions={!terms}
 
 <% results:content %>
 <div class="sectionIntro">{description}</div>
-<form class="liveSearch tac">
-	<input type="text" name="filter" placeholder="{!3}" value="" class="ajax-suggestion url-{ajaxuri}" onfocus="$('.liveSearch button').addClass('on')" onblur="$('.liveSearch button').removeClass('on')" autocomplete="off" /><button type="reset" title="{!clear}" onclick="$(this).prev().val('').trigger('focus');return false;"></button>
+<form class="liveSearch">
+	<input type="text" name="filter" placeholder="{!3}" value="" class="ajax-suggestion url-{ajaxuri}" onfocus="$('.liveSearch button').addClass('on')" onblur="$('.liveSearch button').removeClass('on')" style="width: 300px" autocomplete="off" /><button type="reset" onclick="$(this).prev().val('').trigger('focus');return false;" class="button">Clear</button>
 	<div id="search-result-suggestions">
 		<div id="search-results"></div>
 	</div>

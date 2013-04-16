@@ -1,0 +1,6 @@
+#promo header {
+	background-color: #196100;
+	background-image: url('bg.jpg');
+}
+#promo .playCode p {background-color: #6ec813; color: #000;}
+#promo .playCode a {background-color: #ffa800; color: #2f1f00;}

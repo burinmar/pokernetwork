@@ -1,25 +1,28 @@
 <% index:main %>
-<section class="noBorder">
-	<h1 class="tac">{title}</h1>
-	<div class="sectionIntro">{description}</div>
+<div id="body" class="wColFull">
+	<div class="widget">
+		<h1 class="pageTitle">{title}</h1>
+		
+		<div class="article freerollsIntro">{description}</div>
 
-	<%if {list.active} %>
-	<ul class="activePromo">
-		<%loop {list.active += index:active.item} %>
-		<li>
-			<a href="{url}" style="background-image: url('{logo}')">{title}</a>
-		</li>
+		<%if {list.active} %>
+		<ul class="activePromo">
+			<%loop {list.active += index:active.item} %>
+			<li>
+				<a href="{url}" style="background-image: url('{logo}')">{title}</a>
+			</li>
+			<%end%>
+		</ul>
 		<%end%>
-	</ul>
-	<%end%>
 
 
-	<%if {list.inactive} %>
-	<h2 class="widgetTitle">{!archive}</h2>
-	<ul class="overPromo col2">
-		<%loop{list.inactive += index:inactive.item}%>
-		<li><a href="{url}">{title}</a></li>
+		<%if {list.inactive} %>
+		<h2 class="widgetTitle">{!archive}</h2>
+		<ul class="overPromo">
+			<%loop{list.inactive += index:inactive.item}%>
+			<li><a href="{url}">{title}</a></li>
+			<%end%>
+		</ul>
 		<%end%>
-	</ul>
-	<%end%>
-</section>
+	</div>
+</div>

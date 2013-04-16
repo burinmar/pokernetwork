@@ -98,6 +98,7 @@ class promo extends moon_com
 			'schedule' => $this->partialRenderIndexEvents($entry),
 			'list.steps' => $this->partialRenderSteps($entry),
 			'prize' => htmlspecialchars($entry['prize']),
+			'prize_small' => strlen($entry['prize']) > 7,
 			'qualification' => $entry['descr_qualify'],
 			'when' => $text->dateRange(
 				strtotime($entry['date_start']) + $tzShift,

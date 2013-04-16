@@ -1,6 +1,5 @@
 /*PROMO HEADER*/
 #promo section {border-bottom: 0; padding: 0;}
-#promo article {margin: 0; position: relative;}
 #promo header {
 	background-color: #000;
 	background-repeat: no-repeat;
@@ -11,13 +10,17 @@
 	text-align: center;
 	padding: 0 60px;
 	z-index: 2;
+}	#promo header.noDownload {
+	padding-top: 150px;
+	padding-bottom: 150px;
 }
 	#promo header .download {display: none;}
+	#promo header p {color: #fff;}
 	#promo .logo {
 		display: inline-block;
 		margin-left: auto;
 		margin-right: auto;
-		margin-bottom: 100px;
+		margin-bottom: 290px;
 		padding: 15px 20px;
 		background-color: #d6d6d6;
 		background-image: -moz-linear-gradient(top, #d6d6d6, #ffffff);
@@ -57,7 +60,7 @@
 		}
 	#promo nav {
 		background-color: #7f7f7f;
-		margin-bottom: 30px;
+		margin-bottom: 10px;
 	}
 		#promo nav a {
 			color: #fff;
@@ -68,17 +71,37 @@
 			line-height: 40px;
 			border-right: 1px solid rgba(0, 0, 0, .3);
 			box-shadow: 1px 0 0 rgba(255, 255, 255, .4);
+			white-space: nowrap;
+			text-overflow: ellipsis;
 		}
 		#promo nav a.on, #promo nav a:hover {
 			background-color: rgba(0, 0, 0, .4);
 		}
 
-#promo .content {margin-right: 340px; min-height: 735px;}
+#promo .content {margin-right: 340px; min-height: 735px}
+#promo article {margin: 0; position: relative; padding: 20px;}
+article h2 {
+	font-size: 18px;
+	margin: 30px 0 10px;
+}
+article table, article ul, article ol {margin-bottom: 20px;}
+	article table th, article table td {padding: 10px 20px;}
+	article table th {color: #808389;}
+	article table td {
+		background-color: rgba(0, 0, 0, .1);
+		vertical-align: top;
+	}
+	article table tr:nth-child(odd) td {background-color: rgba(0, 0, 0, .2);}
+	
+	article ul, article ol {
+		padding-left: 40px;
+		overflow: hidden;
+	}
+		article ul {list-style-type: square;}
+		article li {padding: 3px 0;}
 	#promo aside {
 		width: 320px;
-		position: absolute;
-		top: 0;
-		right: 0;
+		float: right;
 	}
 	#promo aside .summary {
 		background-color: #7f7f7f;
@@ -93,7 +116,14 @@
 			line-height: 30px;
 			text-transform: uppercase;
 		}
-		#promo aside .summary strong {font-size: 60px;}
+		#promo aside .summary strong {font-size: 60px; line-height: 1em;}
+		#promo aside .summary strong.small {
+			display: block;
+			font-size: 40px;
+			line-height: 38px;
+			margin-top: 10px;
+		}
+		
 		#promo aside .summary .howToQualify h3 {margin-bottom: 10px;}
 		#promo aside .summary .howToQualify {font-size: 18px}
 		#promo aside .summary p, #promo aside .summary ul, #promo aside .summary ol {margin-bottom: 0; text-align: left;}
@@ -103,7 +133,7 @@
 		#promo aside .summary time {
 			display: inline-block;
 			line-height: 30x;
-			opacity: 1;
+			line-height: 1em;
 			background-color: rgba(0, 0, 0, 1);
 			color: #fff;
 			font-size: 30px;
@@ -148,7 +178,6 @@
 		margin-top: 30px;
 		top: 5px;
 	}
-	#promo .loadMore, #promo .paging {margin: 40px -20px -20px; padding: 20px; border-top: 1px solid #ccc;}
 	#promo .promoThumbs {
 		padding-left: 0;
 		list-style: none;
@@ -156,66 +185,6 @@
 		margin-right: 340px;
 		vertical-align: top;
 	}
-
-@media screen and (max-width: 1100px) and (min-width: 962px), (max-width: 800px) and (min-width: 501px) {
-	#promo .content {min-height: 0;}
-	#promo .content, #promo .promoThumbs {margin-right: 0;}
-	#promo aside {position: static; width: auto;}
-	#promo aside .summary div {display: table-cell; width: 33%; vertical-align: top;}
-	#promo aside .summary div time {font-size: 24px;}
-	
-}
-@media screen and (max-width: 602px) {
-	#promo header {margin: -20px -20px 0}
-	#promo aside .summary, #promo nav {margin-left: -20px; margin-right: -20px;}
-}
-@media screen and (max-width: 500px) {
-	#promo header {padding: 0 20px;}
-	#promo header h1 {font-size: 36px; line-height: 33px;}
-	#promo .playCode p {
-			line-height: 36px;
-			padding: 0 10px;
-			font-size: 18px;
-		}
-		#promo .playCode a {
-			font-size: 30px;
-			line-height: 60px;
-			min-width: 180px;
-		}
-	#promo .logo {margin-bottom: 20px;}
-	#promo nav a {
-		width: 50%;
-		padding: 0 10px;
-		border-bottom: 1px solid rgba(0, 0, 0, .3);
-		box-shadow: 1px 0 0 rgba(255, 255, 255, .4), 0 1px 0 rgba(255, 255, 255, .4);
-		text-align: center;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-	#promo .content {min-height: 0;}
-	#promo .content, #promo .promoThumbs {margin-right: 0;}
-	#promo aside {position: static; width: auto;}
-	#promo .hMobile {display: none;}
-	#promo .promoThumbs li {
-		display: block;
-		float: none;
-		width: 100%;
-		text-align: left;
-		height: 150px;
-		padding: 0;
-		font-size: 24px;
-	}
-	#promo .promoThumbs li img {
-		display: inline-block;
-		float: left;
-		margin-right: 20px;
-	}
-	#promo .promoThumbs li b {
-		position: relative;
-		top: 30px
-	}
-	
-}
 
 .activePromo {margin-bottom: 60px;}
 .activePromo li {display: table; width: 100%; margin-bottom: 1px;}
@@ -225,13 +194,25 @@
 	background-color: #000;
 	background-repeat: no-repeat;
 	background-position: top left;
+	background-size: cover;
 	color: #fff;
 	height: 270px;
-	font-size: 56px;
-	line-height: 60px;
-	padding-left: 50%;
-	padding-right: 40px;
+	padding: 20px 40px 20px 50%;
+	font-size: 44px;
+	line-height: 55px;
 
 }
-.overPromo {font-size: 18px;}
+.overPromo {}
 .overPromo li {margin-bottom: 10px;}
+.liveSearch button {margin-left: 10px; position: relative; top: 2px}
+.liveSearch .suggestion-list {
+		list-style: none !important;
+		text-align: left;
+		padding: 0;
+		margin-bottom: 0;
+	}
+		.liveSearch .suggestion-list li a {
+			display: block;
+			padding: 5px 10px;
+		}
+			.liveSearch .suggestion-list li a:hover, .liveSearch .suggestion-list li a:focus {background-color: rgba(0, 0, 0, .07);}

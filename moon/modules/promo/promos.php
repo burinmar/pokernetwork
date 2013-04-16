@@ -67,12 +67,12 @@ class promos extends moon_com
 			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) 
 			ORDER BY date_start DESC
 		') as $row) {
-			$logoFn = rawurlencode($row['skin_dir']) . '/logo-list.png';
+			$logoFn = rawurlencode($row['skin_dir']) . '/bg-list.jpg';
 			$mainArgv['list.active'] .= $tpl->parse('index:active.item', array(
 				'url' => $this->linkas('#' . $row['alias']),
 				'logo' => '' != $row['skin_dir'] && file_exists($this->get_dir('fs:Css') . $logoFn)
 					? $this->get_dir('web:Css') . $logoFn
-					: $this->get_dir('web:Css') . 'default/bg-list.gif',
+					: $this->get_dir('web:Css') . 'default/bg-list.jpg',
 				'title' => htmlspecialchars($row['title']),
 			));
 		}
