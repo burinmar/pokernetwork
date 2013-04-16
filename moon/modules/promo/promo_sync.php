@@ -41,6 +41,7 @@ class promo_sync extends moon_com
 		}
 		$this->importAbstract($data, 'Promos', 'PromosMaster', array(
 			'title',
+			'prize',
 			'descr_intro',
 			'descr_meta',
 			'descr_qualify',

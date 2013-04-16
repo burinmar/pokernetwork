@@ -250,6 +250,12 @@ $(document).ready(function(){
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item </label></dd>
 
+		<dt><label>Prize</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_prize}</div>
+			<input type="text" maxlength="255" size="50" class="width60 required" name="prize" value="{entry.prize}" />
+		</dd>
+
 		<dt><label>Intro text</label></dt>
 		<dd class="w100">
 			<div class="forSlaveOriginalText">{form.origin_descr_intro}</div>
