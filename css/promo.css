@@ -216,3 +216,4 @@ article table, article ul, article ol {margin-bottom: 20px;}
 			padding: 5px 10px;
 		}
 			.liveSearch .suggestion-list li a:hover, .liveSearch .suggestion-list li a:focus {background-color: rgba(0, 0, 0, .07);}
+.noWrap {white-space: nowrap;}
