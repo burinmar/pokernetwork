@@ -1,34 +1,25 @@
 <% index:main %>
-<div id="body" class="clrfix wColNarrow">
-	<div class="left fl">
-		<div class="widget promoList">
-			<h1 class="pageTitle">{title}</h1>
-			<div class="pageIntro">{description}</div>
-			<%if {list.active} %>
-			<ul class="activePromo">
-				<%loop{list.active += index:active.item}%>
-				<li>
-					<%if{logo}%><a href="{url}"><img src="{logo}" width="110" height="110" alt="Promo logo" class="fl" /></a><%end%>
-					<a href="{url}" class="promoTitle">{title}</a>
-					<%if{prize}%><em>{!value} <span>{prize}</span></em><%end%>
-					<%if{description}%><p>{description}</p><%end%>
-					<span class="clr"></span>
-				</li>
-				<%end%>
-			</ul>
-			<%end%>
-		</div>
-	</div>
-	<div class="right fr">
-		<div class="widget overBreadcrumb myAlerts">
-			<h2 class="widgetTitle">{!archive}</h2>
-			<%if {list.inactive} %>
-			<ul class="categories">
-				<%loop{list.inactive += index:inactive.item}%>
-				<li><a href="{url}">{title}</a></li>
-				<%end%>
-			</ul>
-			<%end%>
-		</div>
-	</div>
-</div>
+<section class="noBorder">
+	<h1 class="tac">{title}</h1>
+	<div class="sectionIntro">{description}</div>
+
+	<%if {list.active} %>
+	<ul class="activePromo">
+		<%loop {list.active += index:active.item} %>
+		<li>
+			<a href="{url}" style="background-image: url('{logo}')">{title}</a>
+		</li>
+		<%end%>
+	</ul>
+	<%end%>
+
+
+	<%if {list.inactive} %>
+	<h2 class="widgetTitle">{!archive}</h2>
+	<ul class="overPromo col2">
+		<%loop{list.inactive += index:inactive.item}%>
+		<li><a href="{url}">{title}</a></li>
+		<%end%>
+	</ul>
+	<%end%>
+</section>

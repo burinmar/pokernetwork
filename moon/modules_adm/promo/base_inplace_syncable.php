@@ -369,7 +369,7 @@ class base_inplace_syncable extends moon_com
 		return $tpl->parse('list:filter', $filter);
 	}
 
-	protected function partialRenderFilterElement() 
+	protected function partialRenderFilterElement($filterName, $filterValue, $tpl) 
 	{}
 /*	protected function partialRenderFilterElement($filterName, $filterValue, $tpl)
 	{
@@ -394,6 +394,7 @@ class base_inplace_syncable extends moon_com
 		$page   = moon::page();
 		$tpl    = $this->load_template();
 		$locale = moon::locale();
+		$text = moon::shared('text');
 		$mainArgv  = array(
 			'url.back' => call_user_func_array(array($this, 'linkas'), $this->getUrlList()),
 			'event.save' => $this->my('fullname') . '#save'
@@ -737,6 +738,7 @@ class base_inplace_syncable extends moon_com
 			if (NULL === $saveData['id']) {
 				moon::page()->page404();
 			}
+			$this->eventSaveSerializeSlave($saveData);
 			$retainFields = array('id', 'is_hidden', 'updated_on');
 			foreach ($this->getEntryTranslatables() as $fld) {
 				$retainFields[] = $fld;
@@ -808,6 +810,9 @@ class base_inplace_syncable extends moon_com
 	{}
 	//$saveData['date'] = strtotime($data['date_date'] . ' ' . $data['date_time']);
 	//$saveData['date'] = array('FROM_UNIXTIME', $saveData['date']);
+
+	protected function eventSaveSerializeSlave(&$saveData)
+	{}
 
 	protected function eventSavePreSaveOrigin(&$saveData)
 	{}
@@ -886,7 +891,7 @@ class base_inplace_syncable extends moon_com
 			));
 		}
 		$sql = "UPDATE `" . $table . "` SET " . implode(',', $set) . $where;
-		$r = &$this->db->query($sql);
+		$r = $this->db->query($sql);
 		return $r
 			? $this->db->insert_id()
 			: FALSE;

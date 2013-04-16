@@ -13,9 +13,11 @@ class promos extends base_inplace_syncable
 
 	function events($event, $argv)
 	{
-		if (isset($_GET['import'])) {
-			$this->importData();
+		if ($event == 'prepared-promos') { // accessed from js
+			echo $this->renderPreparedPromos();
+			exit;
 		}
+
 		parent::events($event, $argv);
 		moon::page()->js('/js/modules_adm/promo.js');
 		if (isset($_GET['sync']) || isset($_POST['sync'])) {
@@ -101,7 +103,7 @@ class promos extends base_inplace_syncable
 			}
 			foreach ($sites as $site) {
 				switch ($site) {
-				case 'pnw:com': // _SITE_ID_
+				case 'pnw:com':
 					$domain = 'www.pokernetwork';
 					break;
 				default:
@@ -122,16 +124,22 @@ class promos extends base_inplace_syncable
 				}
 				$argv['page_previews'] .= $tpl->parse('list:entries.page_previews.item', array(
 					'url' => 'http://' . $domain . '/promo-promos/' . $redirect,
-					'title' => $site
+					'title' => $site,
+					'siteid'=> $site
 				)) . ' ';
 			}
 		// }
 	}
 
-	protected function partialRenderEntry($argv, &$mainArgv, $entryData)
+	protected function partialRenderEntry($argv, &$mainArgv, $entryData, $tpl)
 	{
 		if (NULL !== $argv['id']) {
 			$mainArgv['submenu'] = $this->getPreferredSubmenu($argv['id'], $entryData, $this->my('fullname'));
+		}
+
+		if (isset($entryData['is_live_league'])) {
+			$mainArgv['form.is_live_league.show'] = true;
+			$mainArgv['form.is_live_league'] = empty($entryData['is_live_league']) ? '1' : '1" checked="checked';
 		}
 	}
 
@@ -217,6 +225,11 @@ class promos extends base_inplace_syncable
 			$mainArgv['languages' . $k] = $siteChunkResult;
 		}
 
+		$stepsDescr = explode("\n", $entryData['descr_steps'] . "\n\n");
+		for ($i = 0; $i < 3; $i++) {
+			$mainArgv['descr_steps_' . $i] = htmlspecialchars($stepsDescr[$i]);
+		}
+
 		foreach (array('date_start', 'date_end') as $key) {
 			$mainArgv['form.' . $key] = $entryData[$key] == '0000-00-00'
 				? ''
@@ -242,6 +255,11 @@ class promos extends base_inplace_syncable
 		if (!empty($entryData['id'])) {
 			$mainArgv['url.preview'] = '/promo-promos/?promo_id_redirect=' . $entryData['id'];
 		}
+
+		$promoDescr = explode("\n", $entryData['descr_steps'] . "\n\n");
+		for ($i = 0; $i < 3; $i++) {
+			$mainArgv['descr_steps_' . $i] = htmlspecialchars($promoDescr[$i]);
+		}
 	}
 
 	private function getRoomsList()
@@ -260,6 +278,13 @@ class promos extends base_inplace_syncable
 		if (isset($saveData['sites']) && is_array($saveData['sites'])) {
 			$saveData['sites'] = implode(',', $saveData['sites']);
 		}
+
+		$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
+	}
+
+	protected function eventSaveSerializeSlave(&$saveData)
+	{
+		$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
 	}
 
 	protected function getSaveRequiredNoEmptyFields()
@@ -275,6 +300,16 @@ class promos extends base_inplace_syncable
 	protected function getSaveCustomValidationErrors($data)
 	{
 		$errors = array();
+
+		if (!empty($data['lb_auto'])) {
+			$columnsCount = count(explode(';', $data['lb_columns']));
+			if ($columnsCount != 2) {
+				$errors[] = 'e.bad_lb_auto_columns';
+			}
+		}
+		if (NULL == ($resultChunks = $this->parseResults('', $data['lb_columns']))) {
+			$errors[] = 'e.bad_lb_columns';
+		}
 		foreach (array('date_start', 'date_end') as $date) {
 			if (empty($data[$date]) || !strtotime($data[$date])) {
 				$errors[] = 'e.bad_' . $date;
@@ -322,8 +357,15 @@ class promos extends base_inplace_syncable
 				continue;
 			}
 			foreach($resultChunks['data'] as $row) {
-				$playerName = $row[$resultChunks['idx.player']];
-				$playerPts  = $row[$resultChunks['idx.points']];
+				$playerName = isset($row[$resultChunks['idx.player']])
+					? $row[$resultChunks['idx.player']]
+					: '';
+				$playerPts  = isset($row[$resultChunks['idx.points']])
+					? $row[$resultChunks['idx.points']]
+					: '';
+				if ('' === $playerName || '' === $playerPts) {
+					continue;
+				}
 				if (!isset($results[$playerName])) {
 					$results[$playerName] = 0;
 				}
@@ -487,5 +529,28 @@ class promos extends base_inplace_syncable
 			  AND pe.is_hidden<2 AND p.is_hidden<2
 		');
 		return $updatesBatch;
+	}
+
+	private function renderPreparedPromos()
+	{
+		$preparedPromos = array();
+		$sites = getSitesList();
+		$sites['pnw:com'] = null;
+		foreach ($sites as $siteId => $null) {
+			callPnEvent($siteId, 'promo.promos#get-active-promos', null, $answer);
+			if (!is_array($answer))
+				continue;
+			foreach ($answer as $id) {
+				if (!isset($preparedPromos[$id]))
+					$preparedPromos[$id] = array();
+				$preparedPromos[$id][] = $siteId;
+			}
+		}
+
+		echo json_encode($preparedPromos);
+		ob_start();
+		moon_close();
+		ob_end_clean();
+		exit;
 	}
 }

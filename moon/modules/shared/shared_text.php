@@ -1,4 +1,6 @@
 <?php
+//if(_SITE_ID_ == 'kr') ini_set('memory_limit','256M');
+
 class shared_text{
 var $tpl;//sablonu klase
 var $smiles,$tag2htm;
@@ -157,6 +159,57 @@ function ago($s, $short = false, $show_ago = true, $show_hours = true)
 		}
 	}
 	return $res;
+}
+
+const dateRangeStd = 'std';
+const dataRangeShorter = 'short';
+function dateRange($from, $to, $variant = self::dateRangeStd)
+{
+	list($locale, $fmtMonthDay, $fmtYearDate) = $this->dateRangeEnv($variant);
+	$fromDate = $locale->gmdatef($from, $fmtMonthDay);
+	$fromYear = $locale->gmdatef($from, $fmtYearDate);
+	$toDate   = $locale->gmdatef($to, $fmtMonthDay);
+	$toYear   = $locale->gmdatef($to, $fmtYearDate);
+
+	if ($fromYear != $toYear)
+		return sprintf('%s - %s',
+			str_replace('{date}', $fromDate, $fromYear),
+			str_replace('{date}', $toDate,   $toYear)
+		);
+	if (gmdate('m', $from) != gmdate('m', $to))
+		return str_replace('{date}',
+			sprintf('%s - %s', $fromDate, $toDate),
+			$fromYear);
+	if ($fromDate != $toDate && $toDate = $locale->gmdatef($to, '%D'))
+		return str_replace('{date}',
+			sprintf('%s - %s', $fromDate, $toDate),
+			$fromYear);
+	return str_replace('{date}', $fromDate, $fromYear);
+}
+private $dateRangeEnvs = array();
+private function dateRangeEnv($variant) {
+	if (!isset($this->dateRangeEnvs[$variant])) {
+		$zone = 'west'; // could depend on _SITE_ID_ or locale.lang()
+		$conf = $this->tpl->parse_array('dateRange');
+		$return = array(
+			'locale' => moon::locale()
+		);
+		foreach (array('fmtMonthDay', 'fmtYearDate') as $var) {
+			$return[$var] = '';
+			foreach (array(
+				sprintf('%s.%s.%s', $var, $zone, $variant),
+				sprintf('%s.%s.%s', $var, $zone, self::dateRangeStd),
+				// sprintf('%s.%s.%s', $var, 'west', $variant), // while one zone
+				// sprintf('%s.%s.%s', $var, 'west', self::dateRangeStd), // while one zone
+			) as $candidate)
+				if (isset($conf[$candidate])) {
+					$return[$var] = $conf[$candidate];
+					break;
+				}
+		}
+		$this->dateRangeEnvs[$variant] = array_values($return);
+	}
+	return $this->dateRangeEnvs[$variant];
 }
 
 //Tekste aptinka linkus ir juos padaro "gyvus"

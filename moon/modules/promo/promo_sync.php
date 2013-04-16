@@ -43,8 +43,9 @@ class promo_sync extends moon_com
 			'title',
 			'descr_intro',
 			'descr_meta',
-			'descr_list',
+			'descr_qualify',
 			'descr_prize',
+			'descr_steps',
 			'terms_conditions',
 			'lb_columns',
 			'lb_descr',
@@ -242,7 +243,7 @@ class promo_sync extends moon_com
 			);
 		}
 		$sql = "INSERT INTO `". $table . "` (`" . implode("`, `", array_keys($row)) . "`) VALUES (" . implode(',', array_values($row)) . ')';
-		$r = &$this->db->query($sql);
+		$r = $this->db->query($sql);
 		return $r
 			? $this->db->insert_id()
 			: FALSE;
@@ -266,7 +267,7 @@ class promo_sync extends moon_com
 			));
 		}
 		$sql = "UPDATE `" . $table . "` SET " . implode(',', $set) . $where;
-		$r = &$this->db->query($sql);
+		$r = $this->db->query($sql);
 		return $r
 			? $this->db->insert_id()
 			: FALSE;

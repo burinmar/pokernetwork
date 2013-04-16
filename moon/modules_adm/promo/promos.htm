@@ -9,6 +9,8 @@ e.empty_alias=Uri is empty
 e.alias_duplicate=Duplicate uri
 e.bad_date_start=Bad start date
 e.bad_date_end=Bad end date
+e.bad_lb_auto_columns=Automatic leaderboard must have exactly 2 columns
+e.bad_lb_columns=Leaderboard columns must include player name and player points
 
 
 <% list:main %>
@@ -18,7 +20,10 @@ e.bad_date_end=Bad end date
 	<div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add item</a></div>
 </div>
 
-<%if {show_sync} %><div class="n sync"><a href="javascript:;" id="sync_promos">Synchronize promotions</a></div><%end%>
+<%if {show_sync} %>
+	<div class="n sync"><a href="javascript:;" id="sync_promos">Synchronize promotions</a></div>
+	<div class="n sync" style="margin-left: 40px"><a href="javascript:;" id="check_translations">Check translations</a></div>
+<%end%>
 
 <%if {filter} %>{filter}<% end %>
 
@@ -157,13 +162,20 @@ e.bad_date_end=Bad end date
 			</fieldset>
 		</dd><%end%>
 
-		<dt><label>List description</label></dt>
-		<dd class="w100"><textarea name="descr_list" cols="105" rows="2" id="descr_list">{entry.descr_list}</textarea></dd>
-
 		<dt><label>Intro text</label></dt>
 		<dd class="w100"><textarea name="descr_intro" cols="105" rows="2" id="descr_intro">{entry.descr_intro}</textarea></dd>
 
-		<dt><label>Prize description</label></dt>
+		<dt><label>Steps</label></dt>
+		<dd>
+			<input type="text" size="50" name="descr_steps[0]" value="{descr_steps_0}" /><br />
+			<input type="text" size="50" name="descr_steps[1]" value="{descr_steps_1}" /><br />
+			<input type="text" size="50" name="descr_steps[2]" value="{descr_steps_2}" />
+		</dd>
+
+		<dt><label>Qualification description</label></dt>
+		<dd class="w100"><textarea name="descr_qualify" cols="105" rows="4" id="descr_qualify">{entry.descr_qualify}</textarea></dd>
+
+		<dt><label>Prize/home description</label></dt>
 		<dd class="w100"><textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea></dd>
 
 		<dt><label>Terms and conditions</label></dt>
@@ -238,19 +250,27 @@ $(document).ready(function(){
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item </label></dd>
 
-		<dt><label>List description</label></dt>
-		<dd class="w100">
-			<div class="forSlaveOriginalText">{form.origin_descr_list}</div>
-			<textarea name="descr_list" cols="105" rows="2" id="descr_list">{entry.descr_list}</textarea>
-		</dd>
-
 		<dt><label>Intro text</label></dt>
 		<dd class="w100">
 			<div class="forSlaveOriginalText">{form.origin_descr_intro}</div>
 			<textarea name="descr_intro" cols="105" rows="2" id="descr_intro">{entry.descr_intro}</textarea>
 		</dd>
 
-		<dt><label>Prize description</label></dt>
+		<dt><label>Promo steps</label></dt>
+		<dd>
+			<div class="forSlaveOriginalText">{form.origin_descr_steps}</div>
+			<input type="text" size="50" name="descr_steps[0]" value="{descr_steps_0}" /><br />
+			<input type="text" size="50" name="descr_steps[1]" value="{descr_steps_1}" /><br />
+			<input type="text" size="50" name="descr_steps[2]" value="{descr_steps_2}" />
+		</dd>		
+
+		<dt><label>Qualification description</label></dt>
+		<dd class="w100">
+			<div class="forSlaveOriginalText">{form.origin_descr_qualify}</div>
+			<textarea name="descr_qualify" cols="105" rows="4" id="descr_qualify">{entry.descr_qualify}</textarea>
+		</dd>
+
+		<dt><label>Prize/home description</label></dt>
 		<dd class="w100">
 			<div class="forSlaveOriginalText">{form.origin_descr_prize}</div>
 			<textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea>

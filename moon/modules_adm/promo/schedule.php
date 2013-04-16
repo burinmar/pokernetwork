@@ -157,6 +157,7 @@ class schedule extends base_inplace_syncable
 
 		if (NULL != ($resultChunks = $this->object('promos')->parseResults($entryData['results'], $entryData['results_columns']))) {
 			if (count($resultChunks['data']) > 0) {
+				$dataError = false;
 				$mainArgv += array(
 					'results.show' => true,
 					'result.data.rows' => '',
@@ -174,9 +175,15 @@ class schedule extends base_inplace_syncable
 							'value' => htmlspecialchars($v)
 						));
 					}
+					if (!isset($row[$resultChunks['idx.points']]) || !isset($row[$resultChunks['idx.player']]))
+						$dataError = true;
 					$mainArgv['result.data.rows'] .= $tpl->parse('entry:result.data.row', array(
 						'result.data' => $rowData
 					));
+				}
+				if ($dataError) {
+					$errorMessages = $tpl->parse_array('messages');
+					moon::page()->alert($errorMessages['e.results_broken']);
 				}
 			}
 		}
@@ -217,6 +224,17 @@ class schedule extends base_inplace_syncable
 	protected function getSaveRequiredNoEmptyFields()
 	{
 		return array('title', 'start_date');
+	}
+
+	protected function getSaveCustomValidationErrors($data)
+	{
+		$errors = array();
+
+		if (NULL == ($resultChunks = $this->object('promos')->parseResults('', $data['results_columns']))) {
+			$errors[] = 'e.bad_results_columns';
+		}
+
+		return $errors;
 	}
 
 	protected function eventSavePreSaveOrigin(&$saveData)

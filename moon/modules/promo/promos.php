@@ -35,7 +35,7 @@ class promos extends moon_com
 
 	function main($argv)
 	{
-		switch (array_get_del($argv, 'render')) {
+		switch ($argv['render']) {
 		case 'index':
 			return $this->renderIndex();
 		default:
@@ -59,10 +59,8 @@ class promos extends moon_com
 
 		$time = time();
 		// active
-		// date_start<"' . gmdate('Y-m-d', $time + 604800) . '" AND 
 		foreach ($this->db->array_query_assoc('
-			SELECT title, alias, prize, skin_dir,
-			       descr_list, date_start, date_end, timezone
+			SELECT title, alias, skin_dir
 			FROM promos
 			WHERE is_hidden = 0 
 			  AND date_end>"' . gmdate('Y-m-d', $time/* - 86400*/) . '"
@@ -74,10 +72,8 @@ class promos extends moon_com
 				'url' => $this->linkas('#' . $row['alias']),
 				'logo' => '' != $row['skin_dir'] && file_exists($this->get_dir('fs:Css') . $logoFn)
 					? $this->get_dir('web:Css') . $logoFn
-					: '/img/promo/logo.png',
+					: $this->get_dir('web:Css') . 'default/bg-list.gif',
 				'title' => htmlspecialchars($row['title']),
-				'prize' => htmlspecialchars($row['prize']),
-				'description' => $row['descr_list']
 			));
 		}
 		// inactive

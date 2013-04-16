@@ -1,221 +1,237 @@
-#promo {
-	background: #000;
-	color: #fff;
-	padding-bottom: 40px;
+/*PROMO HEADER*/
+#promo section {border-bottom: 0; padding: 0;}
+#promo article {margin: 0; position: relative;}
+#promo header {
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-position: top center;
 	position: relative;
-	margin-bottom: 20px;
-}
-#promo h1, #promo h2, #promo h3 {font-weight: normal}
-#promo a {text-decoration: underline}
-#promo p {color: #fff}
-#promo table {
-	border-collapse: collapse;
-	width: 100%;
-}
-#promo .head {
-	margin-bottom: 40px;
-	min-height: 240px;
-	padding-left: 40px;
-	width: 540px;
-	padding-top: 60px;
-}
-#promo .head h1 {
-	font-size: 42px;
-	line-height: 48px;
-	margin-bottom: 12px;
-}
-#promo .head p {
-	font-size: 24px;
-	line-height: 24px;
-}
-#promo .menu {
-	list-style: none;
-	background: #fff;
-	margin-bottom: 40px;
-	display: block;
-	clear: both;
-	height: 43px;
-}
-#promo .menu li {
-	display: block;
-	float: left;
-	height: 43px;
-}
-#promo .menu a {
-	display: block;
-	font-size: 18px;
-	color: #000;
-	line-height: 43px;
-	text-decoration: none;
-	display: inline-block;
-	padding: 0 20px;
-}
-#promo .prize {
-	padding: 0 40px 40px;
-	border-bottom: 1px dotted #fff;
-	margin:0 -40px 40px;
-}
-#promo .prize img {margin: 0 25px 10px 0}
-#promo .prize p,
-#promo .content p {margin-bottom: 10px}
-#promo .content {padding: 0 40px;}
-#promo .content h2 {
-	font-size: 24px;
-	margin-bottom: 20px;
-	line-height: 26px;
-}
-#promo .content .prize h2 {margin-top: 30px}
-#promo .content ul,
-#promo .content ol {
-	margin-bottom: 20px;
-	margin-left: 40px;
-}
-#promo .nowrap {white-space: nowrap}
-#promo .timezone {
-	font-size: 10px;
-	opacity: 0.5;
-}
-/*Tournament Column*/
-#promo th.tar {text-align: right !important}
-#promo table th {
-	padding: 0px 15px;
-	line-height: 40px;
-	font-weight: normal;
-	text-align: left;
-	font-size: 14px
-	white-space: nowrap
-}
-#promo table td {
-	padding: 10px 15px;
-	vertical-align: top;
-}
-
-#promo table tr:last-child td {border: 0px none;}
-#promo table .password {
-	background: #fff9c4;
-	padding: 1px 5px;
-	color: #000;
-}
-#promo .content .paging {margin-bottom: 40px}
-#promo .content .paging a {color: #000; text-decoration: none !important}
-#promo .content .paging a:hover {color: #fff}
-#promo .paging .page, #promo .paging .prev, #promo .paging .next {background-image: url('/img/promo/paging.png') !important}
-#promo input[type="submit"] {
-	background: #fff;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	border: 0px none;
-	padding: 3px 10px;
-	margin-left: 15px;
-}
-#promo input[type="text"] {
-	background: #fff;
-	-webkit-border-radius: 5px;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	border: 0px none;
-	border-top: 1px solid #3a3a3a;
-	border-left: 1px solid #828282;
-	padding: 3px 10px;
-}
-#promo .search-form {width: 440px}
-#promo form {background: url('/img/promo/form-sep.png') no-repeat center right; width: 440px}
-#rr-hidden {color: #fff; font-size: 10px; background-color: #F62A33; padding: 2px 5px; position: relative; top: 38px; display: inline; z-index:2; left: 10px}
-#promo .usertable {margin-bottom: 20px}
-#promo .usertable td {padding: 10px}
-#promo .archive {
-	border-top: 1px dotted;
-	margin: 10px -40px 0;
-	padding: 30px 40px 0;
-}
-#promo .noborder {
-	border-top: 0px !important;
-	margin: 0 !important;
-	padding: 0 !important;
-}
-#promo #show-archive {
-	text-decoration: none;
-	border-bottom: 1px dashed;
-}
-#promo .month {
-	font-size: 23px;
-	line-height: 24px;
-	margin-bottom: 10px;
-}
-
-#promo .justArchive .month {font-size: 16px}
-#promo .schedule, #promo .tournaments {margin-bottom: 30px;}
-
-
-#promo .leaders-column {width: 300px;}
-#promo .updated {
-	font-size: 11px;
-	color: #ccc;
-	line-height: 11px;
-}
-#promo .switcher {
 	margin-bottom: 1px;
+	color: #fff;
+	text-align: center;
+	padding: 0 60px;
+	z-index: 2;
 }
-#promo .switcher em {
-	padding: 0 10px;
-	color: #93a19b;
-}
-#promo .switcher a {
-	display: inline-block;
-	background: #fff;
-	padding: 6px 11px;
-	margin-right: 1px;
-	text-decoration: none;
-	color: #000 !important;
-}
-#promo .leaders {margin-bottom: 5px;}
-#promo .leaders td {
-	padding: 5px 15px 5px 0;
-	vertical-align: top;
-}
-#promo .leaders .nr {
-	padding-left: 15px;
-	width: 10px;
-}
-#promo .more {padding-left: 15px;}
+	#promo header .download {display: none;}
+	#promo .logo {
+		display: inline-block;
+		margin-left: auto;
+		margin-right: auto;
+		margin-bottom: 100px;
+		padding: 15px 20px;
+		background-color: #d6d6d6;
+		background-image: -moz-linear-gradient(top, #d6d6d6, #ffffff);
+		background-image: -ms-linear-gradient(top, #d6d6d6, #ffffff);
+		background-image: -o-linear-gradient(top, #d6d6d6, #ffffff);
+		background-image: -webkit-linear-gradient(top, #d6d6d6, #ffffff);
+	} #promo .logo img {display: block;}
+	#promo h1 {
+		font-size: 56px;
+		line-height: 53px;
+	}
+	#promo .subheadline {
+		font-size: 26px;
+		line-height: 30px;
+	}
+	#promo .playCode {display: inline-block;}
+		#promo .playCode p {
+			line-height: 50px;
+			background-color: #b3b3b3;
+			display: block;
+			margin: 40px 10px 0;
+			padding: 0 20px;
+			font-size: 24px;
+			text-transform: uppercase;
+			color: #000;
+		}
+			#promo .playCode p span {font-weight: 300; color: #000;}
+		#promo .playCode a {
+			font-size: 44px;
+			line-height: 80px;
+			min-width: 200px;
+			padding: 0 40px;
+			background-color: #333;
+			display: inline-block;
+			text-transform: uppercase;
+			color: #fff;
+		}
+	#promo nav {
+		background-color: #7f7f7f;
+		margin-bottom: 30px;
+	}
+		#promo nav a {
+			color: #fff;
+			float: left;
+			font-size: 16px;
+			padding: 0 20px;
+			text-transform: uppercase;
+			line-height: 40px;
+			border-right: 1px solid rgba(0, 0, 0, .3);
+			box-shadow: 1px 0 0 rgba(255, 255, 255, .4);
+		}
+		#promo nav a.on, #promo nav a:hover {
+			background-color: rgba(0, 0, 0, .4);
+		}
 
-#promo .tournaments-column {width: 540px;}
-.event-room {display: none}
-#promo .prize h3 {margin-bottom: 15px; font-size: 18px; line-height: 22px}
-#promo .terms ul {list-style-type: square;}
+#promo .content {margin-right: 340px; min-height: 735px;}
+	#promo aside {
+		width: 320px;
+		position: absolute;
+		top: 0;
+		right: 0;
+	}
+	#promo aside .summary {
+		background-color: #7f7f7f;
+		color: #fff;
+		text-align: center;
+	}
+		#promo aside .summary div {padding: 20px;}
+		#promo aside .summary div:nth-child(2) {background-color: rgba(0, 0, 0, .4);}
+		#promo aside .summary h3 {
+			margin: 0;
+			font-size: 30px;
+			line-height: 30px;
+			text-transform: uppercase;
+		}
+		#promo aside .summary strong {font-size: 60px;}
+		#promo aside .summary .howToQualify h3 {margin-bottom: 10px;}
+		#promo aside .summary .howToQualify {font-size: 18px}
+		#promo aside .summary p, #promo aside .summary ul, #promo aside .summary ol {margin-bottom: 0; text-align: left;}
+		#promo aside .summary ul, #promo aside .summary ol {padding-left: 25px;}
 
-.promoList ul {
-	list-style: none;
-	margin: 0 -10px;
+		#promo aside .summary ul {}
+		#promo aside .summary time {
+			display: inline-block;
+			line-height: 30x;
+			opacity: 1;
+			background-color: rgba(0, 0, 0, 1);
+			color: #fff;
+			font-size: 30px;
+			padding: 8px 25px;
+			margin-top: 10px;
+		}
+
+#promo table {width: 100%;}
+#promo .usertable {width: auto;}
+	#promo table td, #promo table th {
+		padding-right: 20px;
+		padding-left: 0;
+	}
+	#promo table td:first-child, #promo table th:first-child {padding-left: 20px;}
+	#promo .left-events {
+		background-color: #e81c2d;
+		font-size: 9px;
+		color: #fff;
+		border-radius: 8px;
+		width: 16px;
+		height: 16px;
+		line-height: 16px;
+		text-align: center;
+		display: inline-block;
+		position: relative;
+		margin-left: 10px;
+		top: -2px;
+	}
+	#promo table .password {
+		display: inline-block;
+		background-color: rgba(0, 0, 0, 1);
+		color: #fff;
+		padding: 0 10px;
+	}
+	#promo table td img {
+		vertical-align: middle;
+		margin-left: 5px;
+		display: none;
+	}
+	#promo table th em {font-size: 11px;}
+	#promo h3.widgetTitle {
+		margin-top: 30px;
+		top: 5px;
+	}
+	#promo .loadMore, #promo .paging {margin: 40px -20px -20px; padding: 20px; border-top: 1px solid #ccc;}
+	#promo .promoThumbs {
+		padding-left: 0;
+		list-style: none;
+		margin-bottom: 40px;
+		margin-right: 340px;
+		vertical-align: top;
+	}
+
+@media screen and (max-width: 1100px) and (min-width: 962px), (max-width: 800px) and (min-width: 501px) {
+	#promo .content {min-height: 0;}
+	#promo .content, #promo .promoThumbs {margin-right: 0;}
+	#promo aside {position: static; width: auto;}
+	#promo aside .summary div {display: table-cell; width: 33%; vertical-align: top;}
+	#promo aside .summary div time {font-size: 24px;}
+	
+}
+@media screen and (max-width: 602px) {
+	#promo header {margin: -20px -20px 0}
+	#promo aside .summary, #promo nav {margin-left: -20px; margin-right: -20px;}
+}
+@media screen and (max-width: 500px) {
+	#promo header {padding: 0 20px;}
+	#promo header h1 {font-size: 36px; line-height: 33px;}
+	#promo .playCode p {
+			line-height: 36px;
+			padding: 0 10px;
+			font-size: 18px;
+		}
+		#promo .playCode a {
+			font-size: 30px;
+			line-height: 60px;
+			min-width: 180px;
+		}
+	#promo .logo {margin-bottom: 20px;}
+	#promo nav a {
+		width: 50%;
+		padding: 0 10px;
+		border-bottom: 1px solid rgba(0, 0, 0, .3);
+		box-shadow: 1px 0 0 rgba(255, 255, 255, .4), 0 1px 0 rgba(255, 255, 255, .4);
+		text-align: center;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	#promo .content {min-height: 0;}
+	#promo .content, #promo .promoThumbs {margin-right: 0;}
+	#promo aside {position: static; width: auto;}
+	#promo .hMobile {display: none;}
+	#promo .promoThumbs li {
+		display: block;
+		float: none;
+		width: 100%;
+		text-align: left;
+		height: 150px;
+		padding: 0;
+		font-size: 24px;
+	}
+	#promo .promoThumbs li img {
+		display: inline-block;
+		float: left;
+		margin-right: 20px;
+	}
+	#promo .promoThumbs li b {
+		position: relative;
+		top: 30px
+	}
+	
 }
 
-.promoList .activePromo li {
-	border-top: 1px dotted #BEC5C9;
-	margin-top: 20px;
-	padding: 20px;
-}
-.promoList .activePromo li:first-child {
-	border-top: 0 none;
-	margin-top: 0;
-	padding: 0 20px 0;
-}
+.activePromo {margin-bottom: 60px;}
+.activePromo li {display: table; width: 100%; margin-bottom: 1px;}
+.activePromo a {
+	display: table-cell;
+	vertical-align: middle;
+	background-color: #000;
+	background-repeat: no-repeat;
+	background-position: top left;
+	color: #fff;
+	height: 270px;
+	font-size: 56px;
+	line-height: 60px;
+	padding-left: 50%;
+	padding-right: 40px;
 
-.promoList .activePromo li .promoTitle,
-.promoList .activePromo li em,
-.promoList .activePromo li p {padding-left: 135px;}
-
-.promoList .activePromo li .promoTitle {
-	font-size: 18px;
-	display: block;
-	margin-bottom: 10px
 }
-
-.promoList .activePromo em {
-	display: block;
-	font-size: 14px;
-	color: #5d5d5d;
-	margin-bottom: 20px;
-}
-
-.promoList .activePromo em span {color: #0098d9}
+.overPromo {font-size: 18px;}
+.overPromo li {margin-bottom: 10px;}

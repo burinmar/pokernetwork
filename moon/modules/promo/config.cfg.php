@@ -1,5 +1,4 @@
 <?php
-
 $cfg = array();
 $cfg['promo'] = array(
 	'tb.Promos' => 'promos',
@@ -12,7 +11,7 @@ $cfg['promo'] = array(
 	'tb.Trackers' => 'rw2_trackers',
 	'tb.CustomRooms'=>'promos_rooms',
 
-	'dir.fs:Css' => (is_dev() ? getenv("CMS_PATH") . 'img/' : 'img/') . 'promo/',
+	'dir.fs:Css'  =>  'img/promo/',
 	'dir.web:Css' => '/img/promo/',
 	'dir.CustomRooms'=>'/w/lrooms/',
 
@@ -22,4 +21,3 @@ $cfg['promo'] = array(
 	'comp.rtf'=>'MoonShared.rtf',
 	'var.rtf' => 'promos',
 );
-

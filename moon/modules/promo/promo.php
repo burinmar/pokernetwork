@@ -8,11 +8,11 @@ class promo extends moon_com
 			$this->redirect('promos#' . $argv[0]);
 		}
 
-		$promoAlias = array_get_del($argv, 0);
+		$promoAlias = $argv[0];
 		$this->set_var('promo-alias', $promoAlias);
 
 		$sub = isset($argv[1])
-			? array_get_del($argv, 1)
+			? $argv[1]
 			: NULL;
 		switch ($sub) {
 		case '':
@@ -25,10 +25,13 @@ class promo extends moon_com
 			}
 			// no break
 		case 'results':
-			if (isset($_GET['searchName']) && 'results' == $sub) {
+			if (isset($_GET['s']) && 'results' == $sub) {
 				$this->set_var('render', $sub . '-search');
-				$this->set_var('search', $_GET['searchName']);
+				$this->set_var('search', $_GET['s']);
 				break;
+			}
+			if (isset($_GET['filter']) && 'results' == $sub) {
+				$this->set_var('filter', $_GET['filter']);
 			}
 			if ($argv[2] == 'events' && 'results' == $sub) {
 				$this->set_var('render', $sub . '-event');
@@ -56,7 +59,7 @@ class promo extends moon_com
 			moon::page()->page404();
 		}
 		moon::page()->set_local('nobanners', 1);
-		switch (array_get_del($argv, 'render')) {
+		switch ($argv['render']) {
 		case 'index':
 			return $this->renderIndex($argv);
 		case 'schedule':
@@ -81,13 +84,26 @@ class promo extends moon_com
 	private function renderIndex($argv)
 	{
 		$tpl = $this->load_template();
+		$text = moon::shared('text');
 
 		$entry = $this->getPromo($argv['promo-alias']);
 		$this->partialRenderCommon($mainArgv, $entry, 'index');
+
+		$promoTz = moon::locale()->timezone($entry['timezone']);
+		list(, $tzShift) = $this->userTzData($promoTz[0]);
+
 		$contentArgv = array(
-			'description' => $this->parseRoomTemplate($entry['descr_prize'], $entry['room_id']),
-			'schedule' => '',
-			'leaderboard' => ''
+			'description' => $this->parseRoomVars($entry['descr_prize'], $entry['room']),
+			'leaderboard' => '',
+			'schedule' => $this->partialRenderIndexEvents($entry),
+			'list.steps' => $this->partialRenderSteps($entry),
+			'prize' => htmlspecialchars($entry['prize']),
+			'qualification' => $entry['descr_qualify'],
+			'when' => $text->dateRange(
+				strtotime($entry['date_start']) + $tzShift,
+				strtotime($entry['date_end']) + $tzShift,
+				shared_text::dataRangeShorter
+			),
 		);
 
 		if (NULL != ($lbChunks = $this->parseResults($entry['lb_data'], $entry['lb_columns']))) {
@@ -108,24 +124,24 @@ class promo extends moon_com
 			}
 		}
 
-		$promoTz = moon::locale()->timezone($entry['timezone']);
-		list($tzName, $tzShift) = $this->userTzData($promoTz[0]);
-		list($events, $evtRemain, $pwdCol, $roomsInfo) = $this->getEventsIndex($entry['id'], $tzShift);
-		$contentArgv['schedule'] =$this->partialRenderIndexEvents($entry, $events, $evtRemain, $pwdCol, $roomsInfo, $tzName, $tzShift);
-
 		$mainArgv = array_merge($mainArgv, array(
-			'content' => $tpl->parse('content:index', $contentArgv)
+			'content' => $tpl->parse('index:content', $contentArgv)
 		));
 		return $tpl->parse('all:main', $mainArgv);
 	}
 
-	private function partialRenderIndexEvents($entry, $events, $evtRemain, $pwdCol, $roomsInfo, $tzName, $tzShift)
+	private function partialRenderIndexEvents($entry)
 	{
+		list($events, $evtRemain, $pwdCol) = $this->getEventsIndex($entry['id']);
 		if (0 == count($events))
 			return ;
+
 		$locale = moon::locale();
 		$tpl = $this->load_template();
 		$currencies = array('USD' => '$', 'EUR' => '€');
+
+		$promoTz = $locale->timezone($entry['timezone']);
+		list($tzName, $tzShift) = $this->userTzData($promoTz[0]);
 		
 		$result = '';
 		$groupArgv = array(
@@ -153,22 +169,41 @@ class promo extends moon_com
 			if ($event['pwd_date'] == 0 || $event['pwd_date'] < time()) {
 				$eventArgv['pwd'] = htmlspecialchars($event['pwd']);
 			} elseif (!empty($event['pwd'])) {
-				$eventArgv['pwd'] = $tpl->parse('schedule:pwd_pending', array(
+				$eventArgv['pwd'] = $tpl->parse('index:schedule.pwd_pending', array(
 					'date' => $locale->gmdatef($event['pwd_date'], 'freerollTime', $tzShift)
 				));
 			}
-			if (!empty($event['room_id']) && isset($roomsInfo[$event['room_id']])) {
-			$eventArgv += array(
-				'room.ico' => $roomsInfo[$event['room_id']][1],
-				'room.title' => htmlspecialchars($roomsInfo[$event['room_id']][0])
-			);}
+
 			$groupArgv['events'] .= $tpl->parse('index:month.event', $eventArgv);
 		}
 		$result .= $tpl->parse('index:schedule', $groupArgv);
 		return $result;
 	}
 
-	private function getEventsIndex($promoId, $tzShift)
+	private function partialRenderSteps($entry)
+	{
+		$skinDir = $this->get_dir('fs:Css') . rawurlencode($entry['skin_dir']);
+		if (!is_dir($skinDir))
+			return ;
+		$webDir = $this->get_dir('web:Css') . rawurlencode($entry['skin_dir']);
+
+		$tpl = $this->load_template();
+		$stepsDescr = explode("\n", $entry['descr_steps'] . "\n\n");
+		$return = '';
+
+		for ($i = 0; $i < 3; $i++) {
+			if (is_file($skinDir . '/step' . ($i + 1) . '.jpg')) {
+				$return .= $tpl->parse('index:steps.item', array(
+					'img' => $webDir . '/step' . ($i + 1) . '.jpg',
+					'title' => htmlspecialchars($stepsDescr[$i]),
+				));
+			}
+		}
+
+		return $return;
+	}
+
+	private function getEventsIndex($promoId)
 	{
 		$events = array();
 		$pwdCol = false;
@@ -198,12 +233,11 @@ class promo extends moon_com
 			$evtRemain = $evtRemain[0];
 		}
 
-		$roomsInfo = $this->roomsInfo($events_);
 		foreach ($events_ as $event) {
 			$pwdCol |= !empty($event['pwd']);
 		}
 
-		return array($events_, $evtRemain, $pwdCol, $roomsInfo);
+		return array($events_, $evtRemain, $pwdCol);
 	}
 
 	private function renderSchedule($argv)
@@ -215,7 +249,7 @@ class promo extends moon_com
 
 		$contentArgv = array(
 			'list' => '',
-			'archive' => $this->eventsArchiveExist($entry['id']),
+			'has_archive' => $this->eventsArchiveExist($entry['id']),
 			'url.archive' => $this->linkas('promos#' . $entry['alias'] . '/schedule', '', array(
 				'archive' => 1
 			))
@@ -227,15 +261,15 @@ class promo extends moon_com
 		list($events, $pwdCol, $roomsInfo) = $this->getEventsGrouped($entry['id'], $tzShift, TRUE);
 		$contentArgv['list'] = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $roomsInfo, $tzName, $tzShift);
 
-		if ($contentArgv['list'] == '' && $contentArgv['archive']) {
-			$contentArgv['archive'] = false;
+		if ($contentArgv['list'] == '' && $contentArgv['has_archive']) {
+			$contentArgv['has_archive'] = false;
 			list($events, $pwdCol, $roomsInfo) = $this->getEventsGrouped($entry['id'], $tzShift, FALSE);
 			$contentArgv['list'] = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $roomsInfo, $tzName, $tzShift);
 			$contentArgv['instant_archive'] = 1;
 		}
 
 		$mainArgv = array_merge($mainArgv, array(
-			'content' => $tpl->parse('content:schedule', $contentArgv)
+			'content' => $tpl->parse('schedule:content', $contentArgv)
 		));
 
 		return $tpl->parse('all:main', $mainArgv);
@@ -295,11 +329,6 @@ class promo extends moon_com
 						'date' => $locale->gmdatef($event['pwd_date'], 'freerollTime', $tzShift)
 					));
 				}
-				if (!empty($event['room_id']) && isset($roomsInfo[$event['room_id']])) {
-				$eventArgv += array(
-					'room.ico' => $roomsInfo[$event['room_id']][1],
-					'room.title' => htmlspecialchars($roomsInfo[$event['room_id']][0])
-				);}
 				$groupArgv['events'] .= $tpl->parse('schedule:month.event', $eventArgv);
 			}
 			$result .= $tpl->parse('schedule.month', $groupArgv);
@@ -382,7 +411,7 @@ class promo extends moon_com
 				$v['room_id'] = -$v['room_id'];
 			}
 			if(!in_array($v['room_id'], $ids[$t])) {
-				$ids[$t][] = $v['room_id'];
+				$ids[$t][] = intval($v['room_id']);
 			}
 		}
 		$i = array();
@@ -401,15 +430,26 @@ class promo extends moon_com
 	private function renderResults($argv)
 	{
 		$tpl = $this->load_template();
-		moon::page()->js('/js/modules/promo.js');
+		$sitemap = moon::shared('sitemap');
+		moon::page()->js('/js/ajaxSuggestions.js');
 
 		$entry = $this->getPromo($argv['promo-alias']);
 		$this->partialRenderCommon($mainArgv, $entry, 'results');
 
+		$pageInfo = $sitemap->getPage();
+		$ajaxUri = array_merge(explode('/', rtrim($pageInfo['uri'], '/')), array(
+			$entry['alias'], 'results'
+		));
+		foreach ($ajaxUri as $k=>$v) {
+			$ajaxUri[$k] = urlencode($v);
+		}
+
 		$contentArgv = array(
 			'description' => $entry['lb_descr'],
 			'result.headers' => '',
-			'result.data.rows' => ''
+			'result.data.rows' => '',
+			'ajaxuri' => implode('/', $ajaxUri),
+			'paging' => '',
 		);
 		if (NULL == ($resultChunks = $this->parseResults($entry['lb_data'], $entry['lb_columns']))) {
 			moon::page()->page404();
@@ -418,16 +458,29 @@ class promo extends moon_com
 			moon::page()->page404();
 		}
 
-		$paging = moon::shared('paginate');
-		$paging->set_curent_all_limit($argv['page'], count($resultChunks['data']), 25);
-		$pgInfo = $paging->get_info();
-		$paging->set_url($this->linkas('promos#' . $entry['alias'] . '/results', '', array('page' => '{pg}')));
-		$contentArgv['paging'] = $paging->show_nav();
-		$pagedData = array();
-		for ($i = $pgInfo['from'] - 1; $i < $pgInfo['to']; $i++) {
-			$pagedData[] = $resultChunks['data'][$i];
+
+		if (!empty($argv['filter']) && strlen($argv['filter']) > 2) {
+			$searchName = strtolower(trim($argv['filter']));
+			$found = array();
+			$playerCol = $resultChunks['idx.player'];
+			foreach ($resultChunks['data'] as $row) {
+				if (strpos(strtolower($row[$playerCol]), $searchName) !== false) {
+					$found[] = $row;
+				}
+			}
+			$resultChunks['data'] = $found;
+		} else {
+			$paging = moon::shared('paginate');
+			$paging->set_curent_all_limit($argv['page'], count($resultChunks['data']), 25);
+			$pgInfo = $paging->get_info();
+			$paging->set_url($this->linkas('promos#' . $entry['alias'] . '/results', '', array('page' => '{pg}')));
+			$contentArgv['paging'] = $paging->show_nav();
+			$pagedData = array();
+			for ($i = $pgInfo['from'] - 1; $i < $pgInfo['to']; $i++) {
+				$pagedData[] = $resultChunks['data'][$i];
+			}
+			$resultChunks['data'] = $pagedData;
 		}
-		$resultChunks['data'] = $pagedData;
 
 		$defaultClass = 'before-player';
 		foreach ($resultChunks['columns'] as $k => $row) {
@@ -464,7 +517,7 @@ class promo extends moon_com
 			));
 		}
 		$mainArgv = array_merge($mainArgv, array(
-			'content' => $tpl->parse('content:results', $contentArgv)
+			'content' => $tpl->parse('results:content', $contentArgv)
 		));
 
 		return $tpl->parse('all:main', $mainArgv);
@@ -473,7 +526,6 @@ class promo extends moon_com
 	private function renderResultsEvent($argv)
 	{
 		$tpl = $this->load_template();
-		moon::page()->js('/js/modules/promo.js');
 
 		$entry = $this->getPromo($argv['promo-alias']);
 		if (NULL == ($event = $this->getEvent($argv['event-id']))) {
@@ -528,7 +580,7 @@ class promo extends moon_com
 			));
 		}
 		$mainArgv = array_merge($mainArgv, array(
-			'content' => $tpl->parse('content:schedule.results', $contentArgv)
+			'content' => $tpl->parse('schedule:content.results', $contentArgv)
 		));
 
 		return $tpl->parse('all:main', $mainArgv);
@@ -546,13 +598,23 @@ class promo extends moon_com
 
 		$searchName = strtolower(trim($argv['search']));
 		$playerCol = $resultChunks['idx.player'];
+		$foundLink = $this->linkas('promos#' . $entry['alias'] . '/results?filter=');
+		$found = array();
 		foreach ($resultChunks['data'] as $row) {
-			if (strtolower($row[$playerCol]) == $searchName) {
-				$this->helperResondAjax(implode('|', array_slice($row, 0, 3)));
+			if (strpos(strtolower($row[$playerCol]), $searchName) !== false) {
+				$found[] = $tpl->parse('results:players.item', array(
+					'name' => htmlspecialchars($row[$playerCol]),
+					'uri' => $foundLink . htmlspecialchars($row[$playerCol])
+				));
 			}
 		}
 
-		$this->helperResondAjax($notFoundStr);
+		if (0 != count($found))
+			$this->helperResondAjax($tpl->parse('results:players', array(
+				'items' => implode('', $found)
+			)));
+		else
+			$this->helperResondAjax($notFoundStr);
 	}
 
 	private function helperResondAjax($str)
@@ -574,8 +636,7 @@ class promo extends moon_com
 
 		$this->partialRenderCommon($mainArgv, $entry, 'terms-and-conditions');
 		$mainArgv = array_merge($mainArgv, array(
-			'class' => ' terms',
-			'content' => $this->parseRoomTemplate($entry['terms_conditions'], $entry['room_id'])
+			'content' => $this->parseRoomVars($entry['terms_conditions'], $entry['room'])
 		));
 
 		return $tpl->parse('all:main', $mainArgv);
@@ -598,7 +659,6 @@ class promo extends moon_com
 
 		$this->partialRenderCommon($mainArgv, $entry, $cp['alias']);
 		$mainArgv = array_merge($mainArgv, array(
-			'class' => ' custom',
 			'content' => $cp['description']
 		));
 
@@ -611,13 +671,21 @@ class promo extends moon_com
 	private function partialRenderCommon(&$mainArgv, $entry, $src)
 	{
 		$tpl = $this->load_template();
+		$page = moon::page();
 		// misc
 		$mainArgv = array(
 			'title' => htmlspecialchars($entry['title']),
 			'menu' => '',
-			'class' => '',
-			'intro' => $this->parseRoomTemplate($entry['descr_intro'], $entry['room_id']),
+			'intro' => $this->parseRoomVars($entry['descr_intro'], $entry['room']),
 		);
+		if ($entry['room'])
+		$mainArgv = array_merge($mainArgv, array(
+			'room.name'           => htmlspecialchars($entry['room']['name']),
+			'room.bonus_code'     => htmlspecialchars($entry['room']['bonus_code']),
+			'room.marketing_code' => htmlspecialchars($entry['room']['marketing_code']),
+			'room.download'       => htmlspecialchars('/' . $entry['room']['alias'] . '/download/?EL=League'),
+			'room.logo' => img('rw', $entry['room_id'], $entry['room']['logo'])
+		));
 
 		// tab menu
 		$menu = $tpl->parse_array('all:menuTitles');
@@ -628,50 +696,40 @@ class promo extends moon_com
 			'terms-and-conditions'
 			           => array('terms-and-conditions/', $menu['terms-and-conditions'])
 		);
-		if ('' == $entry['lb_data']) {
+		if ('' == $entry['lb_data'])
 			unset($menu['results']);
-		}
-		if ('' == $entry['terms_conditions']) {
+		if ('' == $entry['terms_conditions'])
 			unset($menu['terms-and-conditions']);
-		}
-		if (!$this->eventsExist($entry['id'])) {
+		if (!$this->eventsExist($entry['id']))
 			unset($menu['schedule']);
-		}
-		foreach ($this->getCustomPages($entry['id']) as $row) {
+		foreach ($this->getCustomPages($entry['id']) as $row)
 			$menu[$row['alias']] = array($row['alias'] . '/', $row['title']);
-		}
-		foreach ($menu as $id => $item) {
+		foreach ($menu as $id => $item)
 			$mainArgv['menu'] .= $tpl->parse('all:menu.item', array(
 				'title' => htmlspecialchars($item[1]),
 				'url' => $this->linkas('promos#' . $entry['alias']) . $item[0],
 				'active' => $src == trim($id, '#')
 			));
-		}
 
+		// css, title
 		if ($entry['skin_dir'] != '') {
-			moon::page()->css('/img/promo/' . rawurlencode($entry['skin_dir']) . '/style.css');
+			$page->css('/img/promo/' . rawurlencode($entry['skin_dir']) . '/style.css');
 		}
-		moon::page()->title($entry['title']);
+		$page->css('/css/article.css');
+		$page->title($entry['title']);
 	}
 
-	private $parseRoomTemplateArgs = array();
-	private function parseRoomTemplate($text, $roomId)
+	private function parseRoomVars($text, $room)
 	{
-		if (!isset($this->parseRoomTemplateArgs[$roomId])) {
-			$room = $this->db->single_query_assoc('
-				SELECT r.alias, t.bonus_code FROM ' . $this->table('Rooms') . ' r
-				INNER JOIN ' . $this->table('Trackers') . ' t
-					ON t.parent_id=r.id AND t.alias=""
-				WHERE id=' . intval($roomId) . '
-			');
-			if (!isset($room['alias'])) 
-				return $text;
-			list($tplArgs['bonus_code'], $tplArgs['marketing_code']) = explode('|', $room['bonus_code'] . '|');
-			$tplArgs['visit']    = '/' . $room['alias'] . '/ext/'/*.$trackerURI*/.'?BN=Review';
-			$tplArgs['download'] = '/' . $room['alias'] . '/download/'/*.$trackerURI*/.'?BN=Review';
-			$this->parseRoomTemplateArgs[$roomId] = $tplArgs;
-		}
-		foreach ($this->parseRoomTemplateArgs[$roomId] as $key => $value) {
+		if (!$room)
+			return $text;
+		$tplArgs = array(
+			'bonus_code'     => $room['bonus_code'],
+			'marketing_code' => $room['marketing_code'],
+			'visit'    => '/' . $room['alias'] . '/ext/?EL=League',
+			'download' => '/' . $room['alias'] . '/download/?EL=League',
+		);
+		foreach ($tplArgs as $key => $value) {
 			$text = str_replace('{' . $key . '}', htmlspecialchars($value), $text);
 		}
 		return $text;
@@ -718,19 +776,31 @@ class promo extends moon_com
 	private $promo;
 	private function getPromo($alias)
 	{
-
 		if (!$this->promo) {
 			$iAdmin = moon::user()->i_admin('content') && moon::page()->get_global('adminView');;
-			$this->promo = $this->db->single_query_assoc('
+			$promo = $this->db->single_query_assoc('
 				SELECT * FROM promos
 				WHERE alias="' . $this->db->escape($alias) . '"
 					AND ' . ($iAdmin
 						? 'is_hidden!=2'
 						: 'is_hidden=0')
 			);
-			$this->promo = 0 != count($this->promo)
-				? $this->promo
-				: null;
+			if (0 == count($promo)) {
+				$promo = null;
+			} else {
+				$promo['room'] = $this->db->single_query_assoc('
+					SELECT r.alias, r.name, r.logo, t.bonus_code FROM ' . $this->table('Rooms') . ' r
+					INNER JOIN ' . $this->table('Trackers') . ' t
+						ON t.parent_id=r.id AND t.alias=""
+					WHERE id=' . intval($promo['room_id']) . '
+				');
+				if (0 == count($promo['room'])) {
+					$promo['room'] = null;
+				} else {
+					list($promo['room']['bonus_code'], $promo['room']['marketing_code']) = explode('|', $promo['room']['bonus_code'] . '|');
+				}
+			}
+			$this->promo = $promo;
 		}
 		return $this->promo;
 	}
