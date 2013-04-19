@@ -191,3 +191,14 @@
 	color: #fff;
 	}
 #landing.bah-bountybrawl .download:after {background-image: url('/img/landing/bah-bountybrawl/logo.png')}
+
+
+
+#landing.pokerace {background-image: url('/img/landing/pokerace9k/intro.jpg'); background-color: #333333}
+#landing.pokerace .download {
+	background: #a7e318;
+	color: #000;
+	}
+#landing.pokerace .download:after {display: none;}
+#landing.pokerace a {color: #a7e318;}
+#landing.pokerace a:hover {color: #fff;}
