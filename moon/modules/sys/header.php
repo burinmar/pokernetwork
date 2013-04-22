@@ -35,6 +35,25 @@ class header extends moon_com
 		//}
 
 
+// PokerAce 9K
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
+'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
+'bgColor'=> '#333',
+'showIn'=> '/pokerace/',
+'endDate'=> '2013-06-02 23:59:59',
+)
+)) return $res;
+	if ($this->wallpaper($res, array(
+	'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
+	'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
+	'bgColor'=> '#333',
+	'endDate'=> '2013-04-29 23:59:59',
+	'showIn'=> 'home',
+	)
+	)) return $res;
+
+
 // BetAtHome BountyBrawl
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/5-000-bet-at-home-bounty-brawl/',
