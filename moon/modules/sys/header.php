@@ -41,7 +41,7 @@ if ($this->wallpaper($res, array(
 'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
 'bgColor'=> '#141414',
 'showIn'=> '/pokerace/',
-'endDate'=> '2013-06-02 23:59:59',
+'endDate'=> '2013-07-13 23:59:59',
 )
 )) return $res;
 	if ($this->wallpaper($res, array(
