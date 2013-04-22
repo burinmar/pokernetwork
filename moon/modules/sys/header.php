@@ -39,7 +39,7 @@ class header extends moon_com
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
 'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
-'bgColor'=> '#333',
+'bgColor'=> '#141414',
 'showIn'=> '/pokerace/',
 'endDate'=> '2013-06-02 23:59:59',
 )
@@ -47,7 +47,7 @@ if ($this->wallpaper($res, array(
 	if ($this->wallpaper($res, array(
 	'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
 	'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
-	'bgColor'=> '#333',
+	'bgColor'=> '#141414',
 	'endDate'=> '2013-04-29 23:59:59',
 	'showIn'=> 'home',
 	)
