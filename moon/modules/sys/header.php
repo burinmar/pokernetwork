@@ -35,6 +35,17 @@ class header extends moon_com
 		//}
 
 
+// SCOOP 2013
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/pokernews-scoop-freeroll-satellites/',
+'imgPath'=> '/img/wallpaper/ps_scoop2013_wallpaper.jpg',
+'bgColor'=> '#000',
+'showIn'=> '/pokerstars/',
+'startDate'=> '2013-05-01 00:00:01',
+'endDate'=> '2013-05-21 23:59:59',
+)
+)) return $res;
+
 // PokerAce 9K
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
