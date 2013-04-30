@@ -183,22 +183,20 @@ class promo extends moon_com
 
 	private function partialRenderSteps($entry)
 	{
-		$skinDir = $this->get_dir('fs:Css') . rawurlencode($entry['skin_dir']);
-		if (!is_dir($skinDir))
-			return ;
-		$webDir = $this->get_dir('web:Css') . rawurlencode($entry['skin_dir']);
+		$webDir = $this->get_dir('web:Css') . 'default/';
 
 		$tpl = $this->load_template();
 		$stepsDescr = explode("\n", $entry['descr_steps'] . "\n\n");
+		$stepsImages = explode("\n", $entry['descr_steps_images'] . "\n\n");
 		$return = '';
 
 		for ($i = 0; $i < 3; $i++) {
-			if (is_file($skinDir . '/step' . ($i + 1) . '.jpg')) {
-				$return .= $tpl->parse('index:steps.item', array(
-					'img' => $webDir . '/step' . ($i + 1) . '.jpg',
-					'title' => htmlspecialchars($stepsDescr[$i]),
-				));
-			}
+			if (!$stepsImages[$i])
+				continue;
+			$return .= $tpl->parse('index:steps.item', array(
+				'img' => $webDir . rawurlencode($stepsImages[$i]),
+				'title' => htmlspecialchars($stepsDescr[$i]),
+			));
 		}
 
 		return $return;

@@ -125,7 +125,7 @@ class base_inplace_syncable extends moon_com
 
 	protected function getUrlNew() 
 	{
-		return array('#new');
+		return array('#new', '');
 	}
 
 	protected function getUrlEdit($id)
@@ -135,7 +135,7 @@ class base_inplace_syncable extends moon_com
 
 	protected function getUrlList()
 	{
-		return array('#');
+		return array('#', '');
 	}
 
 	function main($argv)
@@ -216,7 +216,7 @@ class base_inplace_syncable extends moon_com
 		$pn = moon::shared('paginate');
 		$pn->set_curent_all_limit($argv['page'], $this->getEntriesCount(), $this->get_var('entriesPerPage'));
 		$pn->set_url(call_user_func_array(array($this, 'linkas'), 
-			$this->getUrlList() + array(3 => array('page' => '{pg}'))
+			$this->getUrlList() + array(2 => array('page' => '{pg}'))
 		));
 		$pnInfo = $pn->get_info();
 		$mainArgv['paging'] = $pn->show_nav();

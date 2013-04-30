@@ -167,9 +167,10 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 
 		<dt><label>Steps</label></dt>
 		<dd>
-			<input type="text" size="50" name="descr_steps[0]" value="{descr_steps_0}" /><br />
-			<input type="text" size="50" name="descr_steps[1]" value="{descr_steps_1}" /><br />
-			<input type="text" size="50" name="descr_steps[2]" value="{descr_steps_2}" />
+			<input type="text" size="50" name="descr_steps[0]" value="{form.descr_steps_0}" /><select name="descr_steps_images[0]">
+				<% loop {form.descr_steps_images_0 += entry:descr_steps_images.item} %><option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option> <% end %></select><br />
+			<input type="text" size="50" name="descr_steps[1]" value="{form.descr_steps_1}" /><select name="descr_steps_images[1]">{form.descr_steps_images_1}</select><br />
+			<input type="text" size="50" name="descr_steps[2]" value="{form.descr_steps_2}" /><select name="descr_steps_images[2]">{form.descr_steps_images_2}</select>
 		</dd>
 
 		<dt><label>Qualification description</label></dt>
@@ -221,6 +222,14 @@ $(document).ready(function(){
 </script>
 
 
+<% entry:descr_steps_images.list %>
+step1.png=Deposit
+step2.png=Enter Bonus Code
+step3.png=Sign Up
+step4.png=Generate Rake
+step5.png=First Deposit
+
+
 <% entry:slaveMain %>
 <div class="tabzoneHeader clrfix">
 	<h1>{title}</h1>
@@ -265,10 +274,10 @@ $(document).ready(function(){
 		<dt><label>Promo steps</label></dt>
 		<dd>
 			<div class="forSlaveOriginalText">{form.origin_descr_steps}</div>
-			<input type="text" size="50" name="descr_steps[0]" value="{descr_steps_0}" /><br />
-			<input type="text" size="50" name="descr_steps[1]" value="{descr_steps_1}" /><br />
-			<input type="text" size="50" name="descr_steps[2]" value="{descr_steps_2}" />
-		</dd>		
+			<input type="text" size="50" name="descr_steps[0]" value="{form.descr_steps_0}" /><br />
+			<input type="text" size="50" name="descr_steps[1]" value="{form.descr_steps_1}" /><br />
+			<input type="text" size="50" name="descr_steps[2]" value="{form.descr_steps_2}" />
+		</dd>
 
 		<dt><label>Qualification description</label></dt>
 		<dd class="w100">

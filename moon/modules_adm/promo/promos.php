@@ -226,8 +226,17 @@ class promos extends base_inplace_syncable
 		}
 
 		$stepsDescr = explode("\n", $entryData['descr_steps'] . "\n\n");
+		$stepsDescrImages = explode("\n", $entryData['descr_steps_images'] . "\n\n");
+		$stepsImages = $tpl->parse_array('entry:descr_steps_images.list');
 		for ($i = 0; $i < 3; $i++) {
-			$mainArgv['descr_steps_' . $i] = htmlspecialchars($stepsDescr[$i]);
+			$mainArgv['form.descr_steps_' . $i] = htmlspecialchars($stepsDescr[$i]);
+			$mainArgv['form.descr_steps_images_' . $i] = '';
+			foreach ($stepsImages as $stepsImageId => $stepsImageName)
+				$mainArgv['form.descr_steps_images_' . $i] .= $tpl->parse('entry:descr_steps_images.item', array(
+					'value' => $stepsImageId,
+					'name' => $stepsImageName,
+					'selected' => $stepsDescrImages[$i] == $stepsImageId
+				));
 		}
 
 		foreach (array('date_start', 'date_end') as $key) {
@@ -256,9 +265,9 @@ class promos extends base_inplace_syncable
 			$mainArgv['url.preview'] = '/promo-promos/?promo_id_redirect=' . $entryData['id'];
 		}
 
-		$promoDescr = explode("\n", $entryData['descr_steps'] . "\n\n");
+		$stepsDescr = explode("\n", $entryData['descr_steps'] . "\n\n");
 		for ($i = 0; $i < 3; $i++) {
-			$mainArgv['descr_steps_' . $i] = htmlspecialchars($promoDescr[$i]);
+			$mainArgv['form.descr_steps_' . $i] = htmlspecialchars($stepsDescr[$i]);
 		}
 	}
 
@@ -280,6 +289,7 @@ class promos extends base_inplace_syncable
 		}
 
 		$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
+		$saveData['descr_steps_images'] = implode("\n", $saveData['descr_steps_images']);
 	}
 
 	protected function eventSaveSerializeSlave(&$saveData)
