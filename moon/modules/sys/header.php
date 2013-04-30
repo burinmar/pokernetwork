@@ -86,62 +86,6 @@ if ($this->wallpaper($res, array(
 	)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
 
 
-// [1] PokerNews PKR MEGADEAL
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/pkr-poker-megadeal/',
-'imgPath'=> '/img/wallpaper/pkr_megadeal_wallpaper.jpg',
-'bgColor'=> '#01001d',
-'showIn'=> '/pkr/',
-'endDate'=> '2013-04-21 23:59:59',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/pkr-poker-megadeal/',
-	'imgPath'=> '/img/wallpaper/pkr_megadeal_wallpaper.jpg',
-	'bgColor'=> '#01001d',
-	'endDate'=> '2013-03-22 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
-// [2] PartyPoker $9K Spring Rush
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/partypoker-9k-spring-rush/',
-'imgPath'=> '/img/wallpaper/party_springrush_wallpaper.jpg',
-'bgColor'=> '#011345',
-'showIn'=> '/party-poker/',
-'endDate'=> '2013-03-31 00:00:01',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/partypoker-9k-spring-rush/',
-	'imgPath'=> '/img/wallpaper/party_springrush_wallpaper.jpg',
-	'bgColor'=> '#011345',
-	'startDate'=> '2013-03-23 00:00:01',
-	'endDate'=> '2013-03-26 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
-// [3] Exclusive UnibetOpen Tickets
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
-'imgPath'=> '/img/wallpaper/unibet_troia_wallpaper.jpg',
-'bgColor'=> '#000f0f',
-'showIn'=> '/unibet-poker/',
-'endDate'=> '2013-03-31 00:00:01',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/exclusive-unibetopen-tickets/',
-	'imgPath'=> '/img/wallpaper/unibet_troia_wallpaper.jpg',
-	'bgColor'=> '#000f0f',
-	'startDate'=> '2013-03-27 00:00:01',
-	'endDate'=> '2013-03-30 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
 // [5] $67,500 PokerStars PokerNews Freeroll Series [END: 2013-05-09]
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
