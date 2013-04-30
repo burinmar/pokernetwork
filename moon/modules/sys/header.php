@@ -34,6 +34,24 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// FullTilt TakeOver 2013
+if ($this->wallpaper($res, array(
+'roomID'=> 23,
+'url'=> '+download',
+'imgPath'=> '/img/wallpaper/FTfree10-1700x850_wallpaper.jpg',
+'bgColor'=> '#000',
+'geoTarget'=> '-us, ee, fr, it, es',
+'siteID'=> '-fr, it, ee, es',
+'startDate'=> '2013-05-01 00:00:01',
+'endDate'=> '2013-05-05 23:59:59',
+'showIn'=> 'home',
+)
+)) {
+	$psb =$tpl->parse('fulltilt');
+	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="/full-tilt-poker/download/" target="_blank"><img src="/img/wallpaper/FTfree10-1000x150.jpg" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
+	$res = $tb . $res;
+	return $res;
+}
 
 // SCOOP 2013
 if ($this->wallpaper($res, array(
