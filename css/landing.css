@@ -202,3 +202,15 @@
 #landing.pokerace .download:after {display: none;}
 #landing.pokerace a {color: #a7e318;}
 #landing.pokerace a:hover {color: #fff;}
+
+
+#landing.scoop2013 {background-image: url('/img/landing/scoop2013/intro.jpg'); background-color: #000;}
+#landing.scoop2013 .download {
+	background-image: -moz-linear-gradient(top, #fff100 0%, #fee900 100%);
+	background-image: -webkit-linear-gradient(top, #fff100 0%, #fee900 100%);
+	background-image: -o-linear-gradient(top, #fff100 0%, #fee900 100%);
+	background-image: -ms-linear-gradient(top, #fff100 0%, #fee900 100%);
+	background-color: #fff100;
+	color: #900;
+	}
+#landing.scoop2013 .download:after {background-image: url('/img/landing/scoop2013/logo.png')}
