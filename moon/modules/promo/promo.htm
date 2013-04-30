@@ -32,16 +32,6 @@ terms-and-conditions={!terms}
 
 
 <% index:content %>
-<%if {list.steps} %>
-<ul class="promoThumbs">
-	<%loop{list.steps += index:steps.item} %>
-	<li>
-		<img src="{img}">
-		<b>{title}</b>
-	</li>
-	<%end%>
-</ul>
-<%end%>
 <aside>
 	<section class="summary">
 		<%if{prize}%>
@@ -63,10 +53,20 @@ terms-and-conditions={!terms}
 	</section>
 	{leaderboard}
 </aside>
+<%if {list.steps} %>
+<ul class="promoThumbs">
+	<%loop{list.steps += index:steps.item} %>
+	<li>
+		<img src="{img}">
+		<b>{title}</b>
+	</li>
+	<%end%>
+</ul>
+<%end%>
 <section class="content">
 	{description}
 	{schedule}
-</section>	
+</section>
 
 
 <% index:leaderboard %>

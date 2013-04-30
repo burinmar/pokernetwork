@@ -185,6 +185,16 @@ article table, article ul, article ol {margin-bottom: 20px;}
 		margin-right: 340px;
 		vertical-align: top;
 	}
+	.promoThumbs li {
+		float: left;
+		width: 32%;
+		text-align: center;
+		padding: 0 20px;
+		font-size: 18px;
+		line-height: 24px;
+		box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box;
+	}
+	.promoThumbs li img {display: block; margin: 0 auto 15px;}
 
 .activePromo {margin-bottom: 60px;}
 .activePromo li {display: table; width: 100%; margin-bottom: 1px;}
