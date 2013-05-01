@@ -36,8 +36,7 @@ class header extends moon_com
 
 // FullTilt TakeOver 2013
 if ($this->wallpaper($res, array(
-'roomID'=> 23,
-'url'=> '+download',
+'url'=> 'http://www.fulltiltpoker.com/affiliates/ten-free?source=11532702',
 'imgPath'=> '/img/wallpaper/FTfree10-1700x850_wallpaper.jpg',
 'bgColor'=> '#000',
 'geoTarget'=> '-us, ee, fr, it, es',
@@ -48,7 +47,7 @@ if ($this->wallpaper($res, array(
 )
 )) {
 	$psb =$tpl->parse('fulltilt');
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="/full-tilt-poker/download/" target="_blank"><img src="/img/wallpaper/FTfree10-1000x150.jpg" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
+	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.fulltiltpoker.com/affiliates/ten-free?source=11532702" target="_blank"><img src="/img/wallpaper/FTfree10-1000x150.jpg" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
 	$res = $tb . $res;
 	return $res;
 }
