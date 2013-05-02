@@ -313,7 +313,7 @@ function wallpaper(&$res, $w) {
 
 	//
 	if (empty($w['geoTarget'])) {
-		$w['geoTarget'] = '-us,gb,in,gi';
+		$w['geoTarget'] = '-us';
 	}
 	$minus = $w['geoTarget']{0} === '-';
 	if ($minus && $w['geoTarget'] == '-') {
