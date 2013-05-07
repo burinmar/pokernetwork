@@ -34,23 +34,17 @@ class header extends moon_com
 		//	return $res;
 		//}
 
-// FullTilt TakeOver 2013
+
+// PKR WSOP
 if ($this->wallpaper($res, array(
-'url'=> 'http://www.fulltiltpoker.com/affiliates/ten-free?source=11532702',
-'imgPath'=> '/img/wallpaper/FTfree10-1700x850_wallpaper.jpg',
-'bgColor'=> '#000',
-'geoTarget'=> '-us, ee, fr, it, es',
-'siteID'=> '-fr, it, ee, es',
-'startDate'=> '2013-05-01 00:00:01',
-'endDate'=> '2013-05-05 23:59:59',
-'showIn'=> 'home',
+'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-wsop-deal/',
+'imgPath'=> '/img/wallpaper/pkr_wsopdeal_wallpaper.jpg',
+'bgColor'=> '#08141f',
+'showIn'=> '/pkr/',
+'endDate'=> '2013-05-30 23:59:59',
 )
-)) {
-	$psb =$tpl->parse('fulltilt');
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="http://www.fulltiltpoker.com/affiliates/ten-free?source=11532702" target="_blank"><img src="/img/wallpaper/FTfree10-1000x150.jpg" width="1000" alt="FullTilt Poker" height="150" /></a></div>';
-	$res = $tb . $res;
-	return $res;
-}
+)) return $res;
+
 
 // SCOOP 2013
 if ($this->wallpaper($res, array(
@@ -62,6 +56,7 @@ if ($this->wallpaper($res, array(
 'endDate'=> '2013-05-21 23:59:59',
 )
 )) return $res;
+
 
 // PokerAce 9K
 if ($this->wallpaper($res, array(
@@ -81,7 +76,6 @@ if ($this->wallpaper($res, array(
 	)
 	)) return $res;
 
-
 // BetAtHome BountyBrawl
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/5-000-bet-at-home-bounty-brawl/',
@@ -92,8 +86,7 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-
-// [4] $15k Titan Spring Freeroll Series
+// $15k Titan Spring Freeroll Series
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
 'imgPath'=> '/img/wallpaper/titan_spring5kchase_wallpaper.jpg',
@@ -112,26 +105,6 @@ if ($this->wallpaper($res, array(
 	'showIn'=> 'home',
 	)
 	)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
-
-
-// [5] $67,500 PokerStars PokerNews Freeroll Series [END: 2013-05-09]
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
-'imgPath'=> '/img/wallpaper/ps_frseries_v3_wallpaper.jpg',
-'bgColor'=> '#000',
-'showIn'=> '/pokerstars/',
-'endDate'=> '2013-05-09 00:00:01',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/67-500-pokerstars-pokernews-series/',
-	'imgPath'=> '/img/wallpaper/ps_frseries_v3_wallpaper.jpg',
-	'bgColor'=> '#000',
-	'startDate'=> '2013-04-04 00:00:01',
-	'endDate'=> '2013-04-07 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
 
 
 // Full Tilt Poker Free $10 
