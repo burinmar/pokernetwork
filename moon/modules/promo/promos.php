@@ -20,8 +20,6 @@ class promos extends moon_com
 			}
 		} elseif ($event == 'get-active-promos') {
 			return moon::page()->set_local('transporter', ($this->getActivePromosExport()));
-		} elseif ($event == 'get-room-active') {
-			return moon::page()->set_local('transporter', ($this->getActiveRoomIs($argv)));
 		}
 		$segments = explode('/', moon::page()->requested_event('REST'));
 		switch ($segments[0]) {
@@ -64,9 +62,9 @@ class promos extends moon_com
 		foreach ($this->db->array_query_assoc('
 			SELECT title, alias, skin_dir
 			FROM promos
-			WHERE is_hidden = 0
+			WHERE is_hidden = 0 
 			  AND date_end>"' . gmdate('Y-m-d', $time/* - 86400*/) . '"
-			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites)
+			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) 
 			ORDER BY date_start DESC
 		') as $row) {
 			$logoFn = rawurlencode($row['skin_dir']) . '/bg-list.jpg';
@@ -117,18 +115,9 @@ class promos extends moon_com
 		$time = time();
 		return array_keys($this->db->array_query_assoc('
 			SELECT ' . (_SITE_ID_ == 'com' ? 'id' : 'remote_id') . ' id FROM promos
-			WHERE is_hidden = 0
-			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites)
+			WHERE is_hidden = 0 
+			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) 
 			  AND ' . (_SITE_ID_ == 'com' ? '1' : 'remote_id>0') . '
 		', 'id'));
-	}
-
-	private function getActiveRoomIs($argv)
-	{
-		$room = $this->db->single_query_assoc('
-			SELECT id FROM ' . $this->table('Rooms') . '
-			WHERE id=' . intval($argv['room_id']) . ' AND is_hidden=0
-		');
-		return isset($room['id']);
 	}
 }
