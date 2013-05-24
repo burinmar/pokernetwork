@@ -214,3 +214,14 @@
 	color: #900;
 	}
 #landing.scoop2013 .download:after {background-image: url('/img/landing/scoop2013/logo.png')}
+
+#landing.pokerstars-me2013 {background-image: url('/img/landing/pokerstars-me2013/intro.jpg'); background-color: #000;}
+#landing.pokerstars-me2013 .download {
+	background-image: -moz-linear-gradient(top, #fd9595 0%, #ca0b0c 100%);
+	background-image: -webkit-linear-gradient(top, #fd9595 0%, #ca0b0c 100%);
+	background-image: -o-linear-gradient(top, #fd9595 0%, #ca0b0c 100%);
+	background-image: -ms-linear-gradient(top, #fd9595 0%, #ca0b0c 100%);
+	background-color: #fd9595;
+	color: #fff;
+	}
+#landing.pokerstars-me2013 .download:after {display: none;}
