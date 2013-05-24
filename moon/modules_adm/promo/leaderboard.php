@@ -6,17 +6,11 @@ class leaderboard extends moon_com
 	{
 		switch ($event) {
 		case 'save':
-			$page = &moon::page();
+			$page = moon::page();
 			$form = &$this->form();
 			$form->names('id', 'lb_data');
 			$form->fill($_POST);
 			$data = $form->get_values();
-
-			include_class('moon_file');
-			$file = new moon_file;
-			if ($file->is_upload('lb_data_file', $e5)) {
-				$data['lb_data'] = $this->xlsToCsv($file->file_path());
-			}
 
 			$this->saveEntry($data);
 			$this->redirect('#', $data['id']);
@@ -32,7 +26,7 @@ class leaderboard extends moon_com
 
 	function main($argv)
 	{
-		$page     = &moon::page();
+		$page     = moon::page();
 		$tpl      = $this->load_template();
 		$mainArgv  = array(
 			'url.back' => $this->linkas('#'),
@@ -108,11 +102,7 @@ class leaderboard extends moon_com
 			'id' => $data['id'],
 			'lb_auto' => 0
 		));
-		blame($this->my('fullname'), 'Updated', $saveData['id']);
-		return $saveData['id'];
-	}
-
-	private function xlsToCsv($p) {
-		return $this->object('promos')->xlsToCsv($p);
+		blame($this->my('fullname'), 'Updated', $data['id']);
+		return $data['id'];
 	}
 }

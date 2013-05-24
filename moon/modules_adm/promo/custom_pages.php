@@ -31,17 +31,17 @@ class custom_pages extends base_inplace_syncable
 		return $promo;
 	}
 
-	protected function getUrlNew() 
+	protected function urlNew() 
 	{
 		return array('#new', $this->promoId);
 	}
 
-	protected function getUrlEdit($id)
+	protected function urlEdit($id)
 	{
 		return array('#', $id . '.' . $this->promoId);
 	}
 
-	protected function getUrlList()
+	protected function urlList()
 	{
 		return array('#', $this->promoId);
 	}
@@ -53,15 +53,25 @@ class custom_pages extends base_inplace_syncable
 		return parent::main($argv);
 	}
 
+	protected function getEntriesListAdditionalFields()
+	{
+		return array('position');
+	}
+
+	protected function getEntriesListAdditionalWhere()
+	{
+		return array('promo_id=' . $this->promoId);
+	}
+
+	protected function getEntriesListOrderBy()
+	{
+		return array('position');
+	}
+
 	protected function partialRenderList(&$mainArgv, $tpl, $argv)
 	{
 		$mainArgv['title'] = htmlspecialchars($this->promo['title']) . ': ' . $mainArgv['title'];
 		$mainArgv['submenu'] = $argv['submenu'];
-	}
-
-	protected function getEntriesAdditionalFields()
-	{
-		return array('position');
 	}
 
 	protected function partialRenderListRow($row, &$rowArgv, $tpl)
@@ -69,39 +79,20 @@ class custom_pages extends base_inplace_syncable
 		$rowArgv['pos'] = $row['position'];
 	}
 
-	protected function getEntriesAdditionalWhere()
-	{
-		return array(
-			'promo_id=' . $this->promoId
-		);
-	}
-
-	protected function getEntriesAdditionalOrderBy()
-	{
-		return array('position');
-	}
-
-	protected function getEntriesCanBeAddedDeleted()
+	protected function getMasterEntriesCanBeAddedDeleted()
 	{
 		return !$this->getEntriesCanBeSynced();
 	}
 
 	protected function getEntriesCanBeSynced()
 	{
-		return $this->isSlaveHost() && !empty($this->promo['remote_id']);
+		return parent::getEntriesCanBeSynced() && !empty($this->promo['remote_id']);
 	}
 
 	protected function partialRenderEntry($argv, &$mainArgv)
 	{
 		$mainArgv['title'] = htmlspecialchars($this->promo['title']);
 		$mainArgv['submenu'] = $argv['submenu'];
-	}
-	
-	protected function getEntryTextFields()
-	{
-		return array(
-			'description'
-		);
 	}
 
 	protected function getEntryDefault()
@@ -121,12 +112,7 @@ class custom_pages extends base_inplace_syncable
 		$mainArgv['promo_uri'] = htmlspecialchars($this->promo['alias']);
 	}
 
-	protected function getSaveRequiredNoEmptyFields()
-	{
-		return array('title', 'alias', 'description');
-	}
-	
-	protected function getSaveCustomValidationErrors($saveData)
+	protected function eventSaveCustomValidateOrigin($saveData)
 	{
 		$errors = array();
 		$uriDupe = $this->db->single_query_assoc('

@@ -3,14 +3,6 @@
 require_once 'base_inplace_syncable.php';
 class promos extends base_inplace_syncable
 {
-	function onload()
-	{
-		parent::onload();
-		foreach (array('lb_data') as $k) {
-			$this->dataNoSave[] = $k;
-		}
-	}
-
 	function events($event, $argv)
 	{
 		if ($event == 'prepared-promos') { // accessed from js
@@ -19,14 +11,13 @@ class promos extends base_inplace_syncable
 		}
 
 		parent::events($event, $argv);
-		moon::page()->js('/js/modules_adm/promo.js');
 		if (isset($_GET['sync']) || isset($_POST['sync'])) {
 			$this->sync();
 			moon_close();exit;
 		}
 	}
 
-	protected function getEntriesAdditionalFields()
+	protected function getEntriesListAdditionalFields()
 	{
 		$return = array('date_start', 'date_end', 'room_id', 'sites', 'timezone');
 		if (_SITE_ID_ != 'com') {
@@ -34,8 +25,8 @@ class promos extends base_inplace_syncable
 		}
 		return $return;
 	}
-	
-	protected function getEntriesAdditionalOrderBy()
+
+	protected function getEntriesListOrderBy()
 	{
 		return array('date_start DESC');
 	}
@@ -51,7 +42,7 @@ class promos extends base_inplace_syncable
 				$roomIds[] = $row['room_id'];
 			} elseif ($row['room_id'] < 0) {
 				$cRoomIds[] = -$row['room_id'];
-			} 
+			}
 		}
 		$this->rooms = array();
 		if (0 != count($roomIds)) {
@@ -154,7 +145,7 @@ class promos extends base_inplace_syncable
 		}
 		$win = moon::shared('admin');
 		$win->active($active);
-		return $win->subMenu(array('*id*' => $promoId), $skip);		
+		return $win->subMenu(array('*id*' => $promoId), $skip);
 	}
 
 	private function hasCustomPages($id)
@@ -167,20 +158,6 @@ class promos extends base_inplace_syncable
 		return !empty($has);
 	}
 
-	protected function eventEntryFormFailedMerge(&$data)
-	{
-		if (is_array($data['sites'])) {
-			$data['sites'] = implode(',', $data['sites']);
-		}
-	}
-
-	protected function getEntryTextFields()
-	{
-		return array(
-			'terms_conditions'
-		);
-	}
-	
 	protected function partialRenderEntryFormOrigin(&$mainArgv, $entryData, $tpl)
 	{
 		$mainArgv['form.rooms'] = '';
@@ -198,15 +175,6 @@ class promos extends base_inplace_syncable
 				'value' => $k,
 				'name' => $v,
 				'selected' => $k == $entryData['timezone']
-			));
-		}
-
-		$mainArgv['form.currency'] = '';
-		foreach ($this->dbEnumList($this->table('Entries'), 'currency') as $entry) {
-			$mainArgv['form.currency'] .= $tpl->parse('entry:currency.item', array(
-				'value' => $entry,
-				'name' => $entry,
-				'selected' => $entry == $entryData['currency']
 			));
 		}
 
@@ -251,11 +219,6 @@ class promos extends base_inplace_syncable
 		if (!empty($entryData['id'])) {
 			$mainArgv['url.preview'] = '/promo-promos/?promo_id_redirect=' . $entryData['id'];
 		}
-
-		/*if (!empty($entryData['alias'])) {
-			$sitemap = moon::shared('sitemap');
-			$mainArgv['url.view_promo'] = sitemap->getLink('promos');
-		}*/
 	}
 
 	protected function partialRenderEntryFormSlave(&$mainArgv, $entryData, $tpl)
@@ -286,28 +249,22 @@ class promos extends base_inplace_syncable
 	{
 		if (isset($saveData['sites']) && is_array($saveData['sites'])) {
 			$saveData['sites'] = implode(',', $saveData['sites']);
-		}
+		} else
+			$saveData['sites'] = '';
 
-		$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
-		$saveData['descr_steps_images'] = implode("\n", $saveData['descr_steps_images']);
+		if (is_array($saveData['descr_steps']))
+			$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
+		if (is_array($saveData['descr_steps_images']))
+			$saveData['descr_steps_images'] = implode("\n", $saveData['descr_steps_images']);
 	}
 
 	protected function eventSaveSerializeSlave(&$saveData)
 	{
-		$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
+		if (is_array($saveData['descr_steps']))
+			$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
 	}
 
-	protected function getSaveRequiredNoEmptyFields()
-	{
-		return array('title', 'alias');
-	}
-	
-	protected function getSaveNoDupeFields()
-	{
-		return array('alias');
-	}
-	
-	protected function getSaveCustomValidationErrors($data)
+	protected function eventSaveCustomValidateOrigin($data)
 	{
 		$errors = array();
 
@@ -329,7 +286,7 @@ class promos extends base_inplace_syncable
 		return $errors;
 	}
 
-	protected function eventSavePreSaveOrigin(&$saveData)
+	protected function eventSavePreSaveMaster(&$saveData)
 	{
 		if ('' === $saveData['room_id']) {
 			$saveData['room_id'] = null;
@@ -445,20 +402,6 @@ class promos extends base_inplace_syncable
 		);
 	}
 
-	public function xlsToCsv($p)
-	{
-		$r = '';
-		include_class('excel_reader/reader');
-		$o = new Spreadsheet_Excel_Reader();
-		$o->setOutputEncoding('UTF-8');
-		$o->setRowColOffset(0);
-		$o->read($p);
-		$a = &$o->sheets[0]['cells'];
-		$r = array();
-		foreach ($a as $v) $r[] = implode("\t", $v);
-		return implode("\r\n", $r);
-	}	
-	
 	private function sync()
 	{
 		$sites = array(_SITE_ID_);
@@ -466,15 +409,15 @@ class promos extends base_inplace_syncable
 		unset($sites['com']);
 
 		$data = $this->db->array_query_assoc('
-			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on, 
-			( updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY ) as `update` 
+			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on,
+			( updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY ) as `update`
 			FROM ' . $this->table('Entries'), 'id');
 		foreach ($data as $k => $v) {
 			$data[$k]['custom_pages'] = array();
 		}
 
 		$dataCustomPages =  $this->db->array_query_assoc('
-			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on 
+			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on
 			FROM promos_pages
 			WHERE updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY
 		');
@@ -483,7 +426,8 @@ class promos extends base_inplace_syncable
 		}
 
 		$dataEvents =  $this->db->array_query_assoc('
-			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on, UNIX_TIMESTAMP(start_date) start_date, UNIX_TIMESTAMP(pwd_date) pwd_date 
+			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on, UNIX_TIMESTAMP(start_date) start_date, UNIX_TIMESTAMP(pwd_date) pwd_date,
+				-freeroll_id freeroll_id
 			FROM promos_events
 			WHERE updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY
 		');
@@ -499,15 +443,15 @@ class promos extends base_inplace_syncable
 				continue;
 			}
 			callPnEvent($siteId, 'promo.promo_sync#sync', array(
-			 	'data' => $siteData
+				'data' => $siteData
 			), $answer,FALSE);
 		}
 	}
 
 	private $currentFilter;
-	private function syncSiteDataFilter($row) 
+	private function syncSiteDataFilter($row)
 	{
-		return in_array($this->currentFilter, explode(',', $row['sites'])) && 
+		return in_array($this->currentFilter, explode(',', $row['sites'])) &&
 			(
 				!empty($row['update'])
 				 ||

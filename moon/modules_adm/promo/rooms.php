@@ -3,7 +3,7 @@ class rooms extends moon_com {
 	var $form, $view;
 
 	function events($ev, $par) {
-		$p = &moon::page();
+		$p = moon::page();
 		$t = &$this->load_template();
 		$info = $t->parse_array('info');
 		$this->use_page('Common', '');
@@ -96,7 +96,7 @@ class rooms extends moon_com {
 	}
 
 	function main($vars) {
-		$win = &moon::shared('admin');
+		$win = moon::shared('admin');
 		$win->active($this->my('fullname'));
 		$t = &$this->load_template();
 		if ('form' == $this->view) {
@@ -109,7 +109,7 @@ class rooms extends moon_com {
 			$a['id'] = $d['id'];
 			$a['name'] = $d['name'];
 			$a['url'] = $d['url'];		
-			$p = &moon::page();
+			$p = moon::page();
 			$p->title($info['new']);
 			if ($this->item) {
 				$title = htmlspecialchars($this->item['name']);
@@ -123,7 +123,7 @@ class rooms extends moon_com {
 		$r = $this->db->single_query('SELECT COUNT(*) FROM ' . $this->table('CustomRooms'));
 		$c = empty($r[0]) ? 0 : $r[0];
 		$a = array();
-		$win = &moon::shared('admin');
+		$win = moon::shared('admin');
 		$a['submenu'] = $win->subMenu();
 		$a['items'] = '';
 		$a['goAdd'] = $this->linkas('#add');

@@ -16,6 +16,7 @@ e.bad_results_columns=Results columns must include player name and player points
 	<h1>{title}</h1>
 	<%if {submenu} %>{submenu}<% end %>
 	<%if {url.add_entry} %><div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add item</a></div><%end%>
+	<%if {url.copy_entry} %><div class="fr"><a href="{url.copy_entry}" class="button buttonAddNew">Copy freerolls</a></div><%end%>
 </div>
 
 <%if {filter} %>{filter}<% end %>
@@ -93,17 +94,9 @@ e.bad_results_columns=Results columns must include player name and player points
 	<dl>
 		<dt><label>Title</label></dt>
 		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" /></dd>
-		
+
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
-
-		<dt><label>Room</label></dt>
-		<dd><select name="room_id">
-				<option value="">-</option>
-				<% loop {form.rooms += entry:rooms.item} %>
-				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
-				<% end %>
-			</select></dd>
 
 		<dt><label>Start date</label></dt>
 		<dd>Date: <input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="start_date_date" value="{form.start_date_date}" />
@@ -120,7 +113,7 @@ e.bad_results_columns=Results columns must include player name and player points
 		<dd>Date: <input type="text" maxlength="10" size="14" class="isDate" id="date-pwd" name="pwd_date_date" value="{form.pwd_date_date}" />
 			Time: <input type="text" maxlength="5" size="5" name="pwd_date_time" value="{form.pwd_date_time}" /> GMT
 		</dd>
-		
+
 		<dt><label>Results Columns</label></dt>
 		<dd><input type="text" maxlength="{form.results_columns.maxlen}" size="60" name="results_columns" value="{entry.results_columns}" />
 			<div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
@@ -129,10 +122,7 @@ e.bad_results_columns=Results columns must include player name and player points
 
 		<dt><label>Results</label></dt>
 		<dd class="w100"><textarea name="results" cols="105" rows="4">{entry.results}</textarea>
-			<div class="explain">Select &amp; Post data into the text area. Values must be tab separated.</div><br /><br />
-			<div class="explain">Or import from Microsoft Excel Spreadsheet (.xls file)</div>
-			<input type="file" name="results_file" />
-			
+			<div class="explain">Select &amp; Post data into the text area. Values must be tab separated.</div>
 		</dd>
 	</dl>
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
@@ -187,4 +177,30 @@ e.bad_results_columns=Results columns must include player name and player points
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
 	</dl>
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
+</form>
+
+<% copy:main %>
+<div class="tabzoneHeader clrfix">
+	<h1>Copy freerolls</h1>
+	<%if {submenu} %>{submenu}<% end %>
+	<a href="{url.back}" class="goBack">Back to list</a>
+</div>
+
+<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
+	<input type="hidden" name="event" value="{event.save}" />
+	<input type="hidden" name="promo_id" value="{entry.promo_id}" />
+	<h2 class="formTitle">Copy freerolls</h2>
+
+	<span class="clr"></span>
+
+	<dl>
+		<%loop {list.freerolls += copy:freerolls.item} %>
+		<dt><label><input type="checkbox" name="freeroll[]" value="{id}" /></label></dt>
+		<dd class="w100">
+			 {title}
+		</dd>
+		<%end%>
+	</dl>
+
+	<div class="footer"><div class="formButton"><input type="submit" name="save" value="Copy" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div></div>
 </form>

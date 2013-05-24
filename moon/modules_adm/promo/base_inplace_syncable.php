@@ -2,27 +2,12 @@
 
 class base_inplace_syncable extends moon_com
 {
-	protected $dataNoSave = array();
-
 	function onload()
 	{
 		$this->filter = array();
 		$this->formFilter = &$this->form();
-		// $this->formFilter->names();
-		$this->dataNoSave = array(
-			'remote_id',
-			'remote_updated_on',
-			'stayhere'
-		);
 	}
-/*	function onload()
-	{
-		parent::onload();
-		$this->formFilter->names('network');
-		$this->dataNoSave = array();
-	} 
-*/
-	
+
 	function properties()
 	{
 		return array(
@@ -38,7 +23,7 @@ class base_inplace_syncable extends moon_com
 			case 'filter':
 				$this->setFilter();
 				break;
-			
+
 			case 'save':
 				$keys = array_keys($this->getEntryDefault());
 				foreach ($this->getEntryImageFields() as $field) {
@@ -49,11 +34,12 @@ class base_inplace_syncable extends moon_com
 					$keys[] = $field;
 				}
 				$keys[] = 'stayhere';
-				
-				$form = &$this->form();
+
+				$form = $this->form();
 				$form->names($keys);
 				$form->fill($_POST);
 				$data = $form->get_values();
+
 				$page = moon::page();
 
 				foreach ($this->getEntryImageFields() as $field) {
@@ -83,16 +69,16 @@ class base_inplace_syncable extends moon_com
 					$page->set_global($this->my('fullname'), $gData);
 					switch ($data['id']) {
 					case '':
-						call_user_func_array(array($this, 'redirect'), $this->getUrlNew());
+						call_user_func_array(array($this, 'redirect'), $this->urlNew());
 					default:
-						call_user_func_array(array($this, 'redirect'), $this->getUrlEdit($data['id']));
+						call_user_func_array(array($this, 'redirect'), $this->urlEdit($data['id']));
 					}
 				} else {
 					switch ($data['stayhere']) {
 					case '':
-						call_user_func_array(array($this, 'redirect'), $this->getUrlList());
+						call_user_func_array(array($this, 'redirect'), $this->urlList());
 					default:
-						call_user_func_array(array($this, 'redirect'), $this->getUrlEdit($saved));
+						call_user_func_array(array($this, 'redirect'), $this->urlEdit($saved));
 					}
 				}
 				exit;
@@ -103,7 +89,7 @@ class base_inplace_syncable extends moon_com
 				$form->fill($_POST);
 				$data = $form->get_values();
 				$this->deleteEntry(explode(',', $data['ids']));
-				call_user_func_array(array($this, 'redirect'), $this->getUrlList());
+				call_user_func_array(array($this, 'redirect'), $this->urlList());
 				break;
 
 			case 'new':
@@ -111,6 +97,13 @@ class base_inplace_syncable extends moon_com
 				break;
 
 			default:
+				if (preg_match('~^([a-z\-]+)$~', $event, $possibleEvent)) {
+					$possibleEvent = 'eventsEvent' . str_replace(' ', '', ucwords(str_replace('-', ' ', $possibleEvent[1])));
+					if (method_exists($this, $possibleEvent)) {
+						$this->$possibleEvent($argv);
+						break;
+					}
+				}
 				if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
@@ -123,26 +116,26 @@ class base_inplace_syncable extends moon_com
 		$this->use_page('Common');
 	}
 
-	protected function getUrlNew() 
+	protected function urlNew()
 	{
 		return array('#new', '');
 	}
 
-	protected function getUrlEdit($id)
+	protected function urlEdit($id)
 	{
 		return array('#', $id);
 	}
 
-	protected function getUrlList()
+	protected function urlList()
 	{
 		return array('#', '');
 	}
 
 	function main($argv)
 	{
-		$page   = &moon::page();
+		$page   = moon::page();
 		$gArgv = $page->get_global($this->my('fullname'));
-		$window = &moon::shared('admin');
+		$window = moon::shared('admin');
 		$window->active($this->my('fullname'));
 		if (isset($gArgv['one-run']) && is_array($gArgv['one-run'])) {
 			foreach ($gArgv['one-run'] as $key => $value) {
@@ -161,7 +154,12 @@ class base_inplace_syncable extends moon_com
 			break;
 
 		default:
-			$output = $this->renderList($argv, $e);
+			$possibleRender = preg_match('~^[a-z]+$~', $argv['render'])
+				? 'render' . ucfirst($argv['render'])
+				: null;
+			$output = ($possibleRender && method_exists($this, $possibleRender))
+				? $this->$possibleRender($argv, $e)
+				: $this->renderList($argv, $e);
 			break;
 		}
 
@@ -184,8 +182,8 @@ class base_inplace_syncable extends moon_com
 		} else {
 			moon::page()->set_global($this->my('fullname') . '.filter', '');
 		}
-	}	
-	
+	}
+
 	protected function renderList($argv, &$e)
 	{
 		$page   = moon::page();
@@ -199,10 +197,10 @@ class base_inplace_syncable extends moon_com
 			'title' => isset($iAmHere[0])
 				? $iAmHere[0]['name']
 				: '',
-			'url.add_entry' => $this->getEntriesCanBeAddedDeleted()
-				? call_user_func_array(array($this, 'linkas'), $this->getUrlNew())
+			'url.add_entry' => $this->getMasterEntriesCanBeAddedDeleted()
+				? call_user_func_array(array($this, 'linkas'), $this->urlNew())
 				: NULL,
-			'event.delete'  => $this->getEntriesCanBeAddedDeleted()
+			'event.delete'  => $this->getMasterEntriesCanBeAddedDeleted()
 				? $this->my('fullname') . '#delete'
 				: NULL,
 			'list.entries'  => '',
@@ -215,12 +213,12 @@ class base_inplace_syncable extends moon_com
 
 		$pn = moon::shared('paginate');
 		$pn->set_curent_all_limit($argv['page'], $this->getEntriesCount(), $this->get_var('entriesPerPage'));
-		$pn->set_url(call_user_func_array(array($this, 'linkas'), 
-			$this->getUrlList() + array(2 => array('page' => '{pg}'))
+		$pn->set_url(call_user_func_array(array($this, 'linkas'),
+			$this->urlList() + array(2 => array('page' => '{pg}'))
 		));
 		$pnInfo = $pn->get_info();
 		$mainArgv['paging'] = $pn->show_nav();
-		
+
 		$list = $this->getEntriesList($pnInfo['sqllimit']);
 		$this->eventEntriesGotItems($list);
 
@@ -228,9 +226,9 @@ class base_inplace_syncable extends moon_com
 			$rowArgv = array(
 				'id' => $row['id'],
 				'class' => $row['is_hidden'] ? 'item-hidden' : '',
-				'url' => call_user_func_array(array($this, 'linkas'), $this->getUrlEdit($row['id'])),
+				'url' => call_user_func_array(array($this, 'linkas'), $this->urlEdit($row['id'])),
 				'name' => htmlspecialchars($this->getEntryTitle($row)),
-				'deletable' => $this->getEntriesCanBeAddedDeleted() && empty($row['remote_id'])
+				'deletable' => $this->getMasterEntriesCanBeAddedDeleted() && empty($row['remote_id'])
 			);
 			if (!empty($row['remote_id'])) {
 				$rowArgv['synced'] = true;
@@ -242,7 +240,7 @@ class base_inplace_syncable extends moon_com
 		return $tpl->parse('list:main', $mainArgv);
 	}
 
-	protected function getEntriesCanBeAddedDeleted()
+	protected function getMasterEntriesCanBeAddedDeleted()
 	{
 		return true;
 	}
@@ -268,11 +266,11 @@ class base_inplace_syncable extends moon_com
 		);
 		foreach ($this->filter as $filterName => $filterValue) {
 			if (!empty($filterValue)) {
-				$where[] = '`' . $this->db->escape($filterName) . '`' . 
+				$where[] = '`' . $this->db->escape($filterName) . '`' .
 				    ' LIKE "%' . $this->db->escape($filterValue). '%"';
 			}
 		}
-		foreach ($this->getEntriesAdditionalWhere() as $value) {
+		foreach ($this->getEntriesListAdditionalWhere() as $value) {
 			$where[] = $value;
 		}
 		return !empty($where)
@@ -280,21 +278,16 @@ class base_inplace_syncable extends moon_com
 			: '';
 	}
 
-	protected function getEntriesAdditionalWhere()
+	protected function getEntriesListAdditionalWhere()
 	{
 		return array();
 	}
 
-	protected function getEntriesAdditionalFields()
-	{
-		return array();
-	}
-	
-	protected function getEntriesAdditionalOrderBy()
+	protected function getEntriesListOrderBy()
 	{
 		return array('updated_on DESC');
 	}
-	
+
 	protected function getEntriesCount()
 	{
 		$cnt = $this->db->single_query_assoc('
@@ -304,7 +297,7 @@ class base_inplace_syncable extends moon_com
 		);
 		return $cnt['cnt'];
 	}
-	
+
 	protected function getEntriesList($limit)
 	{
 		$fields = array(
@@ -314,24 +307,29 @@ class base_inplace_syncable extends moon_com
 			$fields[] = 'remote_id';
 			$fields[] = 'UNIX_TIMESTAMP(remote_updated_on) remote_updated_on';
 		}
-		foreach ($this->getEntriesAdditionalFields() as $field) {
+		foreach ($this->getEntriesListAdditionalFields() as $field) {
 			$fields[] = $field;
 		}
 		$orderBy = array();
-		foreach ($this->getEntriesAdditionalOrderBy() as $field) {
+		foreach ($this->getEntriesListOrderBy($orderBy) as $field) {
 			$orderBy[] = $field;
 		}
 		return $this->db->array_query_assoc('
 			SELECT ' . implode(',', $fields) . '
 			FROM ' . $this->table('Entries') . ' e ' .
-			$this->getEntriesWhere() . 
+			$this->getEntriesWhere() .
 			(0 != count($orderBy)
 				? ' ORDER BY ' . implode(',', $orderBy)
 				: '') .
 			$limit
 		);
 	}
-	
+
+	protected function getEntriesListAdditionalFields()
+	{
+		return array();
+	}
+
 	private function partialRenderFilter()
 	{
 		if (empty($this->formFilter->names)) {
@@ -350,7 +348,7 @@ class base_inplace_syncable extends moon_com
 		}
 
 		$filter['is_active'] = '';
-		
+
 		foreach ($this->filter as $filterName => $filterValue) {
 			$filter['filter.' . $filterName] = $this->partialRenderFilterElement($filterName, $filterValue, $tpl);
 		}
@@ -369,7 +367,7 @@ class base_inplace_syncable extends moon_com
 		return $tpl->parse('list:filter', $filter);
 	}
 
-	protected function partialRenderFilterElement($filterName, $filterValue, $tpl) 
+	protected function partialRenderFilterElement($filterName, $filterValue, $tpl)
 	{}
 /*	protected function partialRenderFilterElement($filterName, $filterValue, $tpl)
 	{
@@ -396,7 +394,7 @@ class base_inplace_syncable extends moon_com
 		$locale = moon::locale();
 		$text = moon::shared('text');
 		$mainArgv  = array(
-			'url.back' => call_user_func_array(array($this, 'linkas'), $this->getUrlList()),
+			'url.back' => call_user_func_array(array($this, 'linkas'), $this->urlList()),
 			'event.save' => $this->my('fullname') . '#save'
 		);
 
@@ -408,23 +406,24 @@ class base_inplace_syncable extends moon_com
 				$e  = $messages['e.entry_not_found'];
 				return ;
 			}
-			
+
 		}
 		$this->partialRenderEntry($argv, $mainArgv, $entryData, $tpl);
 		if (!isset($mainArgv['title'])) {
 			$mainArgv['title'] = htmlspecialchars($this->getEntryTitle($entryData));
 		}
 
-		// $entryData = array_merge($entryData, array( // form fields to entry fields
-		// ));
 		if (isset($argv['failed-form-data'])) {
-			$entryData = array_merge($entryData, $argv['failed-form-data']);
-			$this->eventEntryFormFailedMerge($entryData);
+			if (!($this->isSlaveHost() && !empty($entryData['remote_id']))) {
+				$entryData = array_merge($entryData, $argv['failed-form-data']);
+				$this->eventSaveSerializeOrigin($entryData);
+			} else {
+				$entryData = array_merge($entryData, $argv['failed-form-data']);
+				$this->eventSaveSerializeSlave($entryData);
+			}
 		}
-		// $entryData = array_merge($entryData, array( // entry fields to form fields
-		// ));
-		
-		// 
+
+		//
 		foreach ($entryData as $key => $value) {
 			$mainArgv['entry.' . $key] = htmlspecialchars($value);
 		}
@@ -436,8 +435,8 @@ class base_inplace_syncable extends moon_com
 		foreach ($this->getEntryImageFields() as $k) {
 			$mainArgv['form.' . $k[0]] = !empty($entryData[$k[0]])
 				? (!empty($entryData['remote_id'])
-						? $this->get_var('imagesDmn') 
-						: '') 
+						? $this->get_var('imagesDmn')
+						: '')
 					. $this->get_var($k[2]) . $entryData[$k[0]]
 				: NULL;
 		}
@@ -446,7 +445,7 @@ class base_inplace_syncable extends moon_com
 		if ('' != ($varRtf = $this->get_var('rtf'))) {
 			$rtf->setInstance($varRtf);
 		}
-		foreach ($this->getEntryTextFields() as $k) {
+		foreach ($this->getEntryRtfFields() as $k) {
 			$mainArgv['entry.' . $k . '.toolbar'] = $rtf->toolbar($k, (int)$entryData['id']);
 		}
 		//
@@ -458,7 +457,7 @@ class base_inplace_syncable extends moon_com
 			$remote = $this->getOriginInfo($entryData['remote_id']);
 			foreach ($this->getEntryTranslatables() as $k) {
 				$mainArgv['form.origin_' . $k] = !empty($remote[$k . '_prev']) || $entryData['updated_on'] != '0'
-					? nl2br(htmlDiff(
+					? nl2br($text->htmlDiff(
 						htmlspecialchars($remote[$k . '_prev']),
 						htmlspecialchars($remote[$k])))
 					: nl2br(htmlspecialchars(@$remote[$k]));
@@ -467,7 +466,7 @@ class base_inplace_syncable extends moon_com
 		// if ($entryData['remote_id']) {
 		// 	$mainArgv['form.uri'] = moon::shared('sitemap')->getLink('free-games') . rawurlencode($entryData['uri']) . '.htm';
 		// }
-		
+
 		if (empty($entryData['remote_id'])) {
 			$this->partialRenderEntryFormOrigin($mainArgv, $entryData, $tpl);
 		} else {
@@ -545,13 +544,17 @@ class base_inplace_syncable extends moon_com
 	{
 		if (!isset($this->tableData[$table])) {
 			$database = moon::moon_ini()->get('database', 'database');
-			$this->tableData = $this->db->array_query_assoc('
-				SELECT column_name, column_default, data_type, character_maximum_length
-				FROM information_schema.columns 
+			$this->tableData[$table] = $this->db->array_query_assoc('
+				SELECT column_name, column_default, data_type, character_maximum_length, column_comment
+				FROM information_schema.columns
 				WHERE table_name="' . $this->table($table) . '"	AND table_schema="' . $this->db->escape($database) . '"
 			', 'column_name');
+			foreach ($this->tableData[$table] as $col => $descr)
+				$this->tableData[$table][$col]['column_comment'] = $descr['column_comment']
+					? array_map('trim', explode(',', $descr['column_comment']))
+					: array();
 		}
-		return $this->tableData;
+		return $this->tableData[$table];
 	}
 
 	protected function getEntryDefault()
@@ -576,9 +579,6 @@ class base_inplace_syncable extends moon_com
 		return $entry;
 	}
 
-	protected function eventEntryFormFailedMerge(&$data)
-	{}
-
 	private function getEntryCharLength()
 	{
 		$columns = array();
@@ -591,7 +591,12 @@ class base_inplace_syncable extends moon_com
 		return $columns;
 	}
 
-	private function getEntryTranslatables()
+	protected function getEntryRetainFieldsSlave()
+	{
+		return array('id', 'is_hidden', 'updated_on');
+	}
+
+	protected function getEntryTranslatables()
 	{
 		$columns = array();
 		$entry = $this->getTableData('EntriesMaster');
@@ -603,38 +608,79 @@ class base_inplace_syncable extends moon_com
 		return $columns;
 	}
 
-	protected function getEntryTextFields()
+	protected function getEntryRtfFields()
 	{
 		$columns = array();
-		$entry = $this->getTableData('Entries');
-		foreach ($entry as $column) {
-			if ($column['data_type'] == 'text') {
+		foreach ($this->getTableData('Entries') as $column)
+			if (in_array('rtf', $column['column_comment']))
 				$columns[] = $column['column_name'];
-			}
-		}
 		return $columns;
 	}
 
 	protected function getEntryImageFields()
 	{
-		return array();
+		$columns = array();
+		foreach ($this->getTableData('Entries') as $column)
+			if (in_array('image', $column['column_comment']))
+				$columns[] = $column['column_name'];
+		return $columns;
 	}
 
 	protected function getEntryTimestampFields()
 	{
 		$columns = array();
 		$entry = $this->getTableData('Entries');
-		foreach ($entry as $column) {
-			if ($column['data_type'] == 'timestamp') {
+		foreach ($entry as $column)
+			if ($column['data_type'] == 'timestamp')
 				$columns[] = $column['column_name'];
-			}
-		}
 		return $columns;
 	}
 
 	protected function getEntryAdditionalFields()
 	{
 		return array();
+	}
+
+	protected function getEntryMasterNoSave()
+	{
+		$columns = array();
+		foreach ($this->getTableData('Entries') as $column)
+			if (in_array('master:no-save', $column['column_comment']))
+				$columns[] = $column['column_name'];
+		return $columns;
+	}
+
+	protected function getEntryMasterUniqueFields()
+	{
+		$columns = array();
+		foreach ($this->getTableData('Entries') as $column)
+			if (in_array('master:unique', $column['column_comment']))
+				$columns[] = $column['column_name'];
+		return $columns;
+	}
+
+	protected function getEntryMasterRequiredFields()
+	{
+		$columns = array();
+		foreach ($this->getTableData('Entries') as $column) {
+			if (in_array('master:required', $column['column_comment']))
+				$columns[] = $column['column_name'];
+			if (in_array('required', $column['column_comment']))
+				$columns[] = $column['column_name'];
+		}
+		return $columns;
+	}
+
+	protected function getEntrySlaveRequiredFields()
+	{
+		$columns = array();
+		foreach ($this->getTableData('Entries') as $column) {
+			if (in_array('slave:required', $column['column_comment']))
+				$columns[] = $column['column_name'];
+			if (in_array('required', $column['column_comment']))
+				$columns[] = $column['column_name'];
+		}
+		return $columns;
 	}
 
 	protected function saveEntry($data)
@@ -645,57 +691,46 @@ class base_inplace_syncable extends moon_com
 
 		$saveData = $data;
 		foreach ($this->getEntryImageFields() as $field) {
-			unset($saveData[$field[0]]);	
-			unset($saveData['delete_' . $field[0]]);	
-		}
-		foreach ($this->dataNoSave as $field) {
-			unset($saveData[$field]);
+			unset($saveData[$field[0]]);
+			unset($saveData['delete_' . $field[0]]);
 		}
 		$saveData['updated_on'] = array('FROM_UNIXTIME', time());
 
-		$isInvalid = FALSE;
+		$errors = array();
 		if (isset($saveData['id']) && '' !== $saveData['id']) {
 			$saveData['id'] = filter_var($saveData['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
-			if (NULL === $saveData['id']) {
-				$page->alert($messages['e.invalid_id']);
-				$isInvalid = TRUE;
-			}
+			if (NULL === $saveData['id'])
+				$errors[] = $messages['e.invalid_id'];
 		} else {
 			$saveData['id'] = NULL; // autoincrement ok, later used
 		}
 		$saveData['is_hidden'] = empty($saveData['is_hidden']) ? 0 : 1;
 
 		if (!($this->isSlaveHost() && !empty($data['remote_id']))) {
+			foreach ($this->getEntryMasterNoSave() as $field)
+				unset($saveData[$field]);
 			$this->eventSaveSerializeOrigin($saveData);
-			foreach ($this->getSaveRequiredNoEmptyFields() as $key) {
-				if (empty($saveData[$key])) {
-					$page->alert($messages['e.empty_' . $key]);
-					$isInvalid = TRUE;
-				}
-			}
-			foreach ($this->getSaveNoDupeFields() as $key) {
+			foreach ($this->getEntryMasterRequiredFields() as $key)
+				if (empty($saveData[$key]))
+					$errors[] = $messages['e.empty_' . $key];
+			foreach ($this->getEntryMasterUniqueFields() as $key) {
 				$uriDupe = $this->db->single_query_assoc('
 					SELECT COUNT(id) cid FROM ' . $this->table('Entries') . '
-					WHERE ' . $key . '="' . $this->db->escape($saveData[$key])  . '"' .
+					WHERE `' . $this->db->escape($key) . '`="' . $this->db->escape($saveData[$key])  . '"' .
 					(($saveData['id'] !== NULL)
 						? ' AND id!=' . $saveData['id']
 						: '') . '
 				');
-				if ('0' != $uriDupe['cid']) {
-					$page->alert($messages['e.' . $key . '_duplicate']);
-					$isInvalid = TRUE;
-				}
+				if ('0' != $uriDupe['cid'])
+					$errors[] = $messages['e.' . $key . '_duplicate'];
 			}
-			foreach($this->getSaveCustomValidationErrors($saveData) as $key) {
-				$page->alert($messages[$key]);
-				$isInvalid = TRUE;
-			}
+			foreach($this->eventSaveCustomValidateOrigin($saveData) as $key)
+				$errors[] = $messages[$key];
 
 			foreach ($this->getEntryImageFields() as $k) {
 				if (NULL !== ($file[$k[0]] = $data[$k[0]]) && !$file[$k[0]]->has_extension('jpg,gif,png')) {
-					$page->alert($messages['e.invalid_file']);
+					$errors[] = $messages['e.invalid_file'];
 					$file[$k[0]] = NULL;
-					$isInvalid = TRUE;
 				}
 
 				if (NULL !== $saveData['id'] && (
@@ -727,33 +762,42 @@ class base_inplace_syncable extends moon_com
 					if ($file[$k[0]]->save_as($mediaDir . $fileName)) {
 						$saveData[$k[0]] = $fileName;
 					} else {
-						$page->alert($messages['e.file_save_error']);
-						$isInvalid = TRUE;
+						$errors[] = $messages['e.file_save_error'];
 					}
 				}
 			}
 
-			$this->eventSavePreSaveOrigin($saveData);
+			// foreach date field
+			// foreach nullable field
+
+			$saveData = array_intersect_key($saveData, $this->getEntryDefault());
+
+			$this->eventSavePreSaveMaster($saveData);
 		} else {
-			if (NULL === $saveData['id']) {
-				moon::page()->page404();
-			}
-			$this->eventSaveSerializeSlave($saveData);
-			$retainFields = array('id', 'is_hidden', 'updated_on');
-			foreach ($this->getEntryTranslatables() as $fld) {
+			if (NULL === $saveData['id'])
+				$page->page404();
+
+			$retainFields = $this->getEntryRetainFieldsSlave();
+			foreach ($this->getEntryTranslatables() as $fld)
 				$retainFields[] = $fld;
-			}
-			foreach ($saveData as $k => $v) {
-				if (!in_array($k, $retainFields)) {
+			foreach ($saveData as $k => $v)
+				if (!in_array($k, $retainFields))
 					unset($saveData[$k]);
-				}
-			}
+
+			$this->eventSaveSerializeSlave($saveData);
+			foreach ($this->getEntrySlaveRequiredFields() as $key)
+				if (empty($saveData[$key]))
+					$errors[] = $messages['e.empty_' . $key];
+			foreach($this->eventSaveCustomValidateSlave($saveData) as $key)
+				$errors[] = $messages[$key];
 		}
 
-		if (TRUE === $isInvalid) {
+		if (0 !== count($errors)) {
+			foreach ($errors as $error)
+				$page->alert($error);
 			return NULL;
 		}
-		
+
 		if (NULL === $saveData['id']) {
 			$this->dbInsert($saveData, $this->table('Entries'));
 			$rId = $this->db->insert_id();
@@ -780,7 +824,7 @@ class base_inplace_syncable extends moon_com
 			foreach ($this->getEntryTranslatables() as $value) {
 				$pushData[] = $value . '_prev=' . $value;
 			}
-			$this->db->query('UPDATE ' . $this->table('EntriesMaster') . ' 
+			$this->db->query('UPDATE ' . $this->table('EntriesMaster') . '
 				SET ' .
 				implode(', ', $pushData) . '
 				WHERE id=' . intval($data['remote_id'])
@@ -791,17 +835,12 @@ class base_inplace_syncable extends moon_com
 		return $rId;
 	}
 
-	protected function getSaveRequiredNoEmptyFields()
-	{
-		return array('title');
-	}
-
-	protected function getSaveNoDupeFields()
+	protected function eventSaveCustomValidateOrigin($saveData)
 	{
 		return array();
 	}
 
-	protected function getSaveCustomValidationErrors($saveData)
+	protected function eventSaveCustomValidateSlave($saveData)
 	{
 		return array();
 	}
@@ -814,7 +853,7 @@ class base_inplace_syncable extends moon_com
 	protected function eventSaveSerializeSlave(&$saveData)
 	{}
 
-	protected function eventSavePreSaveOrigin(&$saveData)
+	protected function eventSavePreSaveMaster(&$saveData)
 	{}
 
 	protected function eventSavePostSaveOrigin($saveData)
@@ -834,7 +873,7 @@ class base_inplace_syncable extends moon_com
 		if (empty($deleteIds)) {
 			return ;
 		}
-		
+
 		// $entries = $this->db->array_query_assoc('
 		// 	SELECT id, image FROM ' . $this->table('Entries') . '
 		// 	WHERE id IN (' . implode(',', $deleteIds) . ')
@@ -901,13 +940,13 @@ class base_inplace_syncable extends moon_com
 	{
 		$database = moon::moon_ini()->get('database', 'database');
 		$categories = $this->db->single_query_assoc('
-			SELECT column_type FROM information_schema.columns 
+			SELECT column_type FROM information_schema.columns
 			WHERE column_name="' . $this->db->escape($column) . '" and table_name="' . $this->db->escape($table) . '" AND table_schema="' . $this->db->escape($database) . '"
 		');
 		preg_match_all("~'([^']+)'~", $categories['column_type'], $ms);
 		return $ms[1];
 	}
-	
+
 	private $moon_locale;
 	protected function locale()
 	{

@@ -143,7 +143,7 @@ class promo extends moon_com
 
 		$promoTz = $locale->timezone($entry['timezone']);
 		list($tzName, $tzShift) = $this->userTzData($promoTz[0]);
-		
+
 		$result = '';
 		$groupArgv = array(
 			'pwdCol' => $pwdCol,
@@ -161,7 +161,9 @@ class promo extends moon_com
 				'pwdCol' => $pwdCol,
 				'entryFee' => round($event['entry_fee'], 2),
 				'fee'      => round($event['fee'], 2),
-				'currency' => $currencies[$entry['currency']],
+				'currency' => isset($entry['room']['currency']) && isset($currencies[$entry['room']['currency']])
+					? $currencies[$entry['room']['currency']]
+					: $entry['room']['currency'],
 				'url' => $event['has_results']
 					? $this->linkas('promos#' . $entry['alias'] . '/results/events/', $event['id'])
 					: '',
@@ -214,7 +216,7 @@ class promo extends moon_com
 			list ($timeWhere, $order) = $search;
 			$events_ = $this->db->array_query_assoc('
 				SELECT SQL_CALC_FOUND_ROWS id, title, UNIX_TIMESTAMP(start_date) start_date,
-					pwd, UNIX_TIMESTAMP(pwd_date) pwd_date, room_id,
+					pwd, UNIX_TIMESTAMP(pwd_date) pwd_date,
 					entry_fee, fee, IF(results <> "",1,0) has_results
 				FROM promos_events
 				WHERE is_hidden=0 AND promo_id=' . intval($promoId) . '
@@ -257,13 +259,13 @@ class promo extends moon_com
 		$locale = moon::locale();
 		$promoTz = $locale->timezone($entry['timezone']);
 		list($tzName, $tzShift) = $this->userTzData($promoTz[0]);
-		list($events, $pwdCol, $roomsInfo) = $this->getEventsGrouped($entry['id'], $tzShift, TRUE);
-		$contentArgv['list'] = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $roomsInfo, $tzName, $tzShift);
+		list($events, $pwdCol) = $this->getEventsGrouped($entry['id'], $tzShift, TRUE);
+		$contentArgv['list'] = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $tzName, $tzShift);
 
 		if ($contentArgv['list'] == '' && $contentArgv['has_archive']) {
 			$contentArgv['has_archive'] = false;
-			list($events, $pwdCol, $roomsInfo) = $this->getEventsGrouped($entry['id'], $tzShift, FALSE);
-			$contentArgv['list'] = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $roomsInfo, $tzName, $tzShift);
+			list($events, $pwdCol) = $this->getEventsGrouped($entry['id'], $tzShift, FALSE);
+			$contentArgv['list'] = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $tzName, $tzShift);
 			$contentArgv['instant_archive'] = 1;
 		}
 
@@ -280,19 +282,19 @@ class promo extends moon_com
 		$entry = $this->getPromo($argv['promo-alias']);
 		$promoTz = $locale->timezone($entry['timezone']);
 		list($tzName, $tzShift) = $this->userTzData($promoTz[0]);
-		list($events, $pwdCol, $roomsInfo) = $this->getEventsGrouped($entry['id'], $tzShift, FALSE);
+		list($events, $pwdCol) = $this->getEventsGrouped($entry['id'], $tzShift, FALSE);
 
-		$result = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $roomsInfo, $tzName, $tzShift);
+		$result = $this->partialRenderScheduleEvents($entry, $events, $pwdCol, $tzName, $tzShift);
 
 		$this->helperResondAjax($result);
 	}
 
-	private function partialRenderScheduleEvents($entry, $events, $pwdCol, $roomsInfo, $tzName, $tzShift)
+	private function partialRenderScheduleEvents($entry, $events, $pwdCol, $tzName, $tzShift)
 	{
 		$locale = moon::locale();
 		$tpl = $this->load_template();
 		$currencies = array('USD' => '$', 'EUR' => '€');
-		
+
 		$result = '';
 		foreach ($events as $group) {
 			$monthName = $locale->month_name(intval(gmdate('m', $group[0]['start_date'] + $tzShift)), 'm');
@@ -315,7 +317,9 @@ class promo extends moon_com
 					'pwdCol' => $pwdCol,
 					'entryFee' => round($event['entry_fee'], 2),
 					'fee'      => round($event['fee'], 2),
-					'currency' => $currencies[$entry['currency']],
+					'currency' => isset($entry['room']['currency']) && isset($currencies[$entry['room']['currency']])
+						? $currencies[$entry['room']['currency']]
+						: $entry['room']['currency'],
 					'url' => $event['has_results']
 						? $this->linkas('promos#' . $entry['alias'] . '/results/events/', $event['id'])
 						: '',
@@ -347,19 +351,18 @@ class promo extends moon_com
 			: 'start_date DESC';
 		$events_ = $this->db->array_query_assoc('
 			SELECT id, title, UNIX_TIMESTAMP(start_date) start_date,
-				pwd, UNIX_TIMESTAMP(pwd_date) pwd_date, room_id,
+				pwd, UNIX_TIMESTAMP(pwd_date) pwd_date,
 				entry_fee, fee, IF(results <> "",1,0) has_results
 			FROM promos_events
 			WHERE is_hidden=0 AND promo_id=' . intval($promoId) . '
 				AND ' . $timeWhere . '
 			ORDER BY ' . $order);
-		$roomsInfo = $this->roomsInfo($events_);
 		foreach ($events_ as $event) {
 			$events[gmdate('Y-m', $event['start_date'] + $tzShift)][] = $event;
 			$pwdCol |= !empty($event['pwd']);
 		}
 
-		return array($events, $pwdCol, $roomsInfo);
+		return array($events, $pwdCol);
 	}
 
 	private function eventsArchiveExist($promoId)
@@ -383,7 +386,7 @@ class promo extends moon_com
 		return !empty($events_);
 	}
 
-	private function userTzData($promoTzShift) 
+	private function userTzData($promoTzShift)
 	{
 		$locale = moon::locale();
 		$user   = moon::user();
@@ -394,36 +397,6 @@ class promo extends moon_com
 			$userTz[1],
 			$userTz[0] - $promoTzShift
 		);
-	}
-
-	// legacy code
-	private function roomsInfo($idsRef) 
-	{
-		if (empty($idsRef)) {
-			return;
-		}
-		$ids = array(array(), array());
-		foreach ($idsRef as $v) {
-			$t = 0;
-			if ($v['room_id'] < 0)  {
-				$t = 1;
-				$v['room_id'] = -$v['room_id'];
-			}
-			if(!in_array($v['room_id'], $ids[$t])) {
-				$ids[$t][] = intval($v['room_id']);
-			}
-		}
-		$i = array();
-		if (count($ids[0])) {
-			$r = $this->db->array_query('SELECT id, name, favicon FROM ' . $this->table('Rooms') . ' WHERE id IN (' . implode(',', $ids[0]) . ')');
-			//foreach ($r as $v) $i[$v[0]] = array($v[1], $this->get_dir('Room') . $v[2]);
-			foreach ($r as $v) $i[$v[0]] = array($v[1], img('rw', $v[0], $v[2]));
-		}
-		if (count($ids[1])) {
-			$r = $this->db->array_query('SELECT id, name, favicon FROM ' . $this->table('CustomRooms') . ' WHERE id IN (' . implode(',', $ids[1]) . ')');
-			foreach ($r as $v) $i[-$v[0]] = array($v[1], $this->get_dir('CustomRooms') . $v[2]);
-		}
-		return $i;
 	}
 
 	private function renderResults($argv)
@@ -788,7 +761,7 @@ class promo extends moon_com
 				$promo = null;
 			} else {
 				$promo['room'] = $this->db->single_query_assoc('
-					SELECT r.alias, r.name, r.logo, t.bonus_code FROM ' . $this->table('Rooms') . ' r
+					SELECT r.alias, r.name, r.logo, t.bonus_code, r.currency FROM ' . $this->table('Rooms') . ' r
 					INNER JOIN ' . $this->table('Trackers') . ' t
 						ON t.parent_id=r.id AND t.alias=""
 					WHERE id=' . intval($promo['room_id']) . '
@@ -804,7 +777,7 @@ class promo extends moon_com
 		return $this->promo;
 	}
 
-	
+
 	private $event_;
 	private function getEvent($id)
 	{
