@@ -34,6 +34,25 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// PKR WSOP DEAL 2
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-wsop-deal-2/',
+'imgPath'=> '/img/wallpaper/pkr_megadeal2_wallpaper.jpg',
+'bgColor'=> '#1a000a',
+'showIn'=> '/pkr/',
+'endDate'=> '2013-06-30 23:59:59',
+)
+)) return $res;
+
+// PokerStars 30K
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/pokernews-30k-main-event-freeroll/',
+'imgPath'=> '/img/wallpaper/ps_pnme2013_wallpaper.jpg',
+'bgColor'=> '#000',
+'showIn'=> '/pokerstars/',
+'endDate'=> '2013-07-06 23:59:59',
+)
+)) return $res;
 
 // PokerAce 9K
 if ($this->wallpaper($res, array(
@@ -82,17 +101,6 @@ if ($this->wallpaper($res, array(
 	'showIn'=> 'home',
 	)
 	)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
-
-
-// Full Tilt Poker Free $10 
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/full-tilt-poker-free-10/',
-'imgPath'=> '/img/wallpaper/ftp_free10_wallpaper.jpg',
-'bgColor'=> '#000',
-'showIn'=> '/full-tilt-poker/',
-'endDate'=> '2013-05-30 00:00:01',
-)
-)) return $res;
 
 
 		/************* SLAMSTAS *************/
