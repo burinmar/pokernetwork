@@ -9,7 +9,10 @@
 		<ul class="activePromo">
 			<%loop {list.active += index:active.item} %>
 			<li>
-				<a href="{url}" style="background-image: url('{logo}')">{title}</a>
+				<a href="{url}" style="background-image: url('{logo}')">
+					<strong>{title}</strong>
+					<b><span class="buttonBorder3 buttonBlue">Play</span></b>
+				</a>
 			</li>
 			<%end%>
 		</ul>
