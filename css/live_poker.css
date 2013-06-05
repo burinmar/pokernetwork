@@ -1162,6 +1162,7 @@ div.meta {margin-bottom: 1.5em}
 		position: absolute;
 		bottom: 10px;
 		right: 10px;
+		display: block;
 	}
 		.tweetActions a {
 			float: left;
