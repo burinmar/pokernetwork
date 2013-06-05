@@ -34,6 +34,26 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// 100 Bilion Hands, PokerStars
+if ($this->wallpaper($res, array(
+'url'=> 'http://pokerstars.com/en/ad/11216421/1000x150bntakeover.jpg.click?rq=noscript&vs=',
+'imgPath'=> '/img/wallpaper/100bn-hands.jpg',
+'bgColor'=> '#000',
+'showIn'=> 'home',
+'startDate'=> '2013-06-07 00:00:01',
+'endDate'=> '2013-06-13 23:59:59',
+)
+)) {
+	$psb =$tpl->parse('pokerstars');
+	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px">' .$psb. '</div>';
+	$res = $tb . $res;
+	return $res;
+}
+
+
+
+
+
 // PKR WSOP DEAL 2
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-mega-deal-2/',
