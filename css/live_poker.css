@@ -1180,3 +1180,10 @@ div.meta {margin-bottom: 1.5em}
 
 		.tweetFavorite:active {background-position: -64px 0;}
 		.tweetRetweet:active {background-position: -112px 0;}
+		.tweet .tweetActions {
+			right: -90px;
+			bottom: 0;
+			background-color: #f2f2f2;
+			padding: 5px 10px;
+			transition: all .2s;
+		} .tweet:hover .tweetActions {right: 0}
