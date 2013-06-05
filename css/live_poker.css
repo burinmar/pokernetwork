@@ -1122,3 +1122,60 @@ div.meta {margin-bottom: 1.5em}
 }
 .widgetChipsCount .widgetTitle {margin: 0}
 .widgetChipsCount table {margin-top: 0; font-size: 11px}
+
+
+/*New tweets*/
+.tweet {
+	border: 1px solid #e8e8e8;
+	padding: 10px;
+	position: relative;
+}
+	.tweet img {float: left;}
+	.tweet .author {
+		margin-left: 83px;
+		min-height: 73px;
+	}
+		.tweet .pnAlias {
+			font-size: 16px;
+			text-transform: uppercase;
+			color: #000;
+		}
+		.tweet .twitterAlias {
+			opacity: 0.4;
+			font-size: 12px;
+			color: #000;
+		}
+		.tweet .author a:hover {color: #0069d0;}
+	.tweet q {
+		display: block;
+		margin: 15px 0;
+	}
+
+	.tweet time {font-size: 12px}
+	.twitter-follow-button {
+		position: absolute;
+		top: 10px;
+		right: 10px;
+	}
+	.tweetActions {
+		position: absolute;
+		bottom: 10px;
+		right: 10px;
+	}
+		.tweetActions a {
+			float: left;
+			background-image: url('http://www.pokernews.com/img/spriteTweeterBar.png');
+			width: 16px;
+			height: 16px;
+			overflow: hidden;
+			text-indent: -999px;
+			margin-right: 5px;
+		}	.tweetActions a:last-child {margin-right: 0;}
+		.tweetReply:hover {background-position: -16px 0;}
+		.tweetFavorite {background-position: -32px 0;}
+		.tweetFavorite:hover {background-position: -48px 0;}
+		.tweetRetweet {background-position: -80px 0;}
+		.tweetRetweet:hover {background-position: -96px 0;}
+
+		.tweetFavorite:active {background-position: -64px 0;}
+		.tweetRetweet:active {background-position: -112px 0;}
