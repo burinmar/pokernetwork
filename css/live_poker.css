@@ -1130,6 +1130,7 @@ div.meta {margin-bottom: 1.5em}
 	padding: 10px;
 	position: relative;
 	overflow: hidden;
+	margin-bottom: 20px;
 }
 	.tweet img {float: left;}
 	.tweet .author {
