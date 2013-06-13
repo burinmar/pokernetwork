@@ -225,3 +225,10 @@
 	color: #fff;
 	}
 #landing.pokerstars-me2013 .download:after {display: none;}
+
+#landing.pokerstars-wr {background-image: url('/img/landing/pokerstars-wr/intro.jpg'); background-color: #000;}
+#landing.pokerstars-wr .download {
+	background: #0066de;
+	color: #fff;
+	}
+#landing.pokerstars-wr .download:after {background-image: url('/img/landing/pokerstars-wr/logo.png')}
