@@ -160,7 +160,7 @@ function rtfObject(config)
         },
 		hide: true
     }
-	
+
     this.button['smiles'] = {
         title: 'Smiles',
 		image: this.imgPath + 'smilies.png',
@@ -571,7 +571,7 @@ rtfObject.prototype.formCards = function() {
 					'onclick="rtfObject.instances[' + index + '].insert(rtfObject.instances[' + index + '].selectedText()+\'' + code + '\');" '+
 					' /></li>';
 	}
-	
+
     for(var i=0; i<c3.length; i++) {
         var cards_row = '';
         for(var j=0; j<c1.length; j++) {
@@ -689,16 +689,38 @@ rtfObject.prototype.getTwitterMsg = function( url)
 		alert('Not a twitter url?');
 		return;
 	}
-	var func = function (d) {
-    	if (d['text']) {
-			var img = d['user']['profile_image_url'];
-			var str='[TWITTER="' + url + '"]\nimg=' + (img ? img : '')+'\nnick=' + d['user']['screen_name'] + '\nname=' + d['user']['name'] + '\ndate=' + d['created_at'] + '\ntext=' + d['text'] +  '\nid=' + d['id_str'] + '\n[/TWITTER]';
-			me.insert(str, 12 + url.length, 10);
-		}
-		me.buttonEvent('twitter','close');
-	}
 	var a = /([0-9]+)$/.exec(url);
-    if (a[1]) {
-		jQuery.getJSON('http://api.twitter.com/1/statuses/show.json?id='+a[1]+'&include_entities=false&callback=?',func);
+	if (a && a[1]) {
+		jQuery.ajax({
+			url: '/other-twitter/statuses-show',
+			data: {id: a[1]},
+			dataType: 'json',
+			success: function(d) {
+				if (d['text']) {
+					var img = d['user']['profile_image_url'];
+					var str='[TWITTER="' + url + '"]\nimg=' + (img ? img : '')+'\nnick=' + d['user']['screen_name'] + '\nname=' + d['user']['name'] + '\ndate=' + d['created_at'] + '\ntext=' + d['text'] +  '\nid=' + d['id_str'] + '\n[/TWITTER]';
+					me.insert(str, 12 + url.length, 10);
+				}
+				me.buttonEvent('twitter','close');
+			}
+		});
+	}
+
+	function filterUTF8mb4(str, subst) {
+		var outStr = [];
+
+		for (var i=0; i < str.length; i++) {
+			var charcode = str.charCodeAt(i),
+				char = str.charAt(i);
+			if (charcode < 0x80) outStr.push(char);
+			else if (charcode < 0x800) outStr.push(char)
+			else if (charcode < 0xd800 || charcode >= 0xe000) outStr.push(char)
+			// surrogate pair
+			else {
+				i++;
+				outStr.push(subst);
+			}
+		}
+		return outStr.join('');
 	}
 }

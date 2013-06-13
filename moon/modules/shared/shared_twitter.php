@@ -23,6 +23,7 @@ class shared_twitter
 	{
 		switch (strtolower($account)) {
 		case 'pokernetwork_socialimport':
+		case 'pokernews_rtfembed':
 			return is_dev() // .dev -> pntest1
 				? array('oqY0t7uKsjyTN4Vb6nQ', 'XdyKYe9MyrfWE9247x5E4KQ49ClY6JUXbyzJvRZr30', '297837556-nlHyQvRt2Klc4E8DkS1XNYKQtAZp7PhYo2ZdFR5j', 'yQcn7FWiFtaK6eQu8JvP9nA5v98tvvitVOIJfCF1sU')
 				: $this->getKeysSocialImport();

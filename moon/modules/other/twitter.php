@@ -36,6 +36,10 @@ class twitter extends moon_com {
 				print '<ul class="suggestion-list">'.$items.'</ul>';
 				moon_close();
 				exit;
+			} elseif ($pUri == 'statuses-show') {
+				if (!empty($_GET['id']))
+					$this->proxiedFetchTweet($_GET['id']);
+				moon_close(); exit;
 			} elseif($pUri) {
 				// author messages
 				$this->sqlWhere($pUri);
@@ -388,5 +392,21 @@ class twitter extends moon_com {
 		return $this->db->array_query_assoc($sql);
 	}
 
+	private function proxiedFetchTweet($id)
+	{
+		if (!moon::user()->i_admin())
+			moon::page()->page404();
+
+		$twitter = moon::shared('twitter')->getInstance('pokernews_rtfembed');
+		$r = $twitter->get('statuses/show', array(
+			'id' => $id,
+			'include_entities' => false
+		));
+		if (empty($r->id_str))
+			moon::page()->page404();
+
+		header('content-type: application/json; charset=utf-8');
+		echo json_encode($r);
+	}
 }
 ?>
