@@ -232,3 +232,11 @@
 	color: #fff;
 	}
 #landing.pokerstars-wr .download:after {background-image: url('/img/landing/pokerstars-wr/logo.png')}
+
+
+#landing.pkr-irongamer {background-image: url('/img/landing/pkr-irongamer/intro.jpg'); background-color: #000000;}
+#landing.pkr-irongamer .download {
+	background: #1b76d4;
+	color: #fff;
+	}
+#landing.pkr-irongamer .download:after {display: none;}
