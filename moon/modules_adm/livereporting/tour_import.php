@@ -95,35 +95,27 @@ class tour_import extends moon_com
 		$cache = moon::cache();
 
 		if (FALSE == ($data = $cache->get('adm.reporting.tour_import.data'))) {
-			$url = is_dev()
-				? 'http://www.pokernews.dev/live-reporting/export.tournaments-homerun.xml'
-				: 'http://www.pokernews.com/live-reporting/export.tournaments-homerun.xml';
-			$ch = curl_init($url);
-			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			$data = curl_exec($ch);
-
+			callPnEvent('com', 'livereporting.livereporting_hub#tournaments-homerun', null, $data);
 			$data_ = @simplexml_load_string($data);
-			
 			if (isset($data_->tournament)) {
 				$cache->save('adm.reporting.tour_import.data', $data, 30);
 			}
 		}
-		
+
 		$data = @simplexml_load_string($data);
-		
+
 		return $data;
 	}
-	
+
 	private function getTours()
 	{
 		$result = array();
 		$data = $this->getSrcData();
-		
+
 		if (!isset($data->tournament)) {
 			return array();
 		}
-		
+
 		foreach ($data->tournament as $row) {
 			$result[] = array(
 				'id' => (int)$row->id,
@@ -135,7 +127,7 @@ class tour_import extends moon_com
 				'events' => count($row->event),
 			);
 		}
-		
+
 		return $result;
 	}
 
@@ -155,12 +147,12 @@ class tour_import extends moon_com
 			$e  = $messages['e.entry_not_found'];
 			return ;
 		}
-		
+
 		$mainArgv['title'] = htmlspecialchars($entryData['name']);
 
 		$mainArgv['events_all'] = $entryData['sync'] == 'all';
 		$mainArgv['events_selected'] = !$mainArgv['events_all'];
-		
+
 		foreach ($entryData['events'] as $event) {
 			$mainArgv['list.events'] .= $tpl->parse('entry:events.item', array(
 				'id' => $event['id'],
@@ -169,7 +161,7 @@ class tour_import extends moon_com
 			));
 		}
 		unset($entryData['events']);
-		
+
 		foreach ($entryData as $key => $value) {
 			$mainArgv['entry.' . $key] = htmlspecialchars($value);
 		}
@@ -189,7 +181,7 @@ class tour_import extends moon_com
 			return ;
 		}
 		$entry = $entry[0];
-		
+
 		$result = array(
 			'id' => (int)$entry->id,
 			'from_date' => (int)$entry->from_date,
@@ -204,7 +196,7 @@ class tour_import extends moon_com
 				'name' => (string)$event->name,
 			);
 		}
-		
+
 		$existing = $this->db->single_query_assoc('
 			SELECT id, sync_id FROM ' . $this->table('Tournaments') . '
 			WHERE sync_id LIKE "com:' . $id . '%"
@@ -222,7 +214,7 @@ class tour_import extends moon_com
 			}
 			$result['local_id'] = $existing['id'];
 		}
-		
+
 		switch ($result['sync']) {
 		case 'all':
 		case 'main-event':
@@ -244,8 +236,8 @@ class tour_import extends moon_com
 			}
 			break;
 		}
-		
-		return $result;		
+
+		return $result;
 	}
 
 	/* data *must* be an array of strings */
@@ -257,7 +249,7 @@ class tour_import extends moon_com
 			$e  = $messages['e.entry_not_found'];
 			return ;
 		}
-		
+
 		$gData = $page->get_global($this->my('module') . '.tour_list');
 		if ('' === $gData) {
 			$gData = array();
@@ -278,7 +270,7 @@ class tour_import extends moon_com
 			);
 		}
 		$page->set_global($this->my('module') . '.tour_list', $gData);
-		
+
 		if (!empty($entryData['local_id'])) {
 			$this->redirect('livereporting.tour_list', $entryData['local_id']);
 		} else {
