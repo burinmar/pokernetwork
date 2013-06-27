@@ -1463,6 +1463,8 @@ class SyncZip {
 		}
 		foreach ($filelist as $file => $fileInfo) {
 			$file = realpath($file);
+			if (!is_file($file))
+				continue;
 			if (true !== $zip->addFile($file, substr($file, $shortOffset)))
 				return false;
 		}
