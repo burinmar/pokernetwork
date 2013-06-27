@@ -34,26 +34,6 @@ class header extends moon_com
 		//	return $res;
 		//}
 
-// 100 Bilion Hands, PokerStars
-if ($this->wallpaper($res, array(
-'url'=> 'http://pokerstars.com/en/ad/11216421/1000x150bntakeover.jpg.click?rq=noscript&vs=',
-'imgPath'=> '/img/wallpaper/100bn-hands.jpg',
-'bgColor'=> '#000',
-'showIn'=> 'home',
-'startDate'=> '2013-06-07 00:00:01',
-'endDate'=> '2013-06-13 23:59:59',
-)
-)) {
-	$psb =$tpl->parse('pokerstars');
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px">' .$psb. '</div>';
-	$res = $tb . $res;
-	return $res;
-}
-
-
-
-
-
 // PKR WSOP DEAL 2
 if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-mega-deal-2/',
@@ -101,27 +81,6 @@ if ($this->wallpaper($res, array(
 'endDate'=> '2013-06-29 23:59:59',
 )
 )) return $res;
-
-// $15k Titan Spring Freeroll Series
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
-'imgPath'=> '/img/wallpaper/titan_spring5kchase_wallpaper.jpg',
-'bgColor'=> '#002807',
-'showIn'=> '/titan-poker/',
-'endDate'=> '2013-06-09 23:59:59',
-)
-)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
-	
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/15k-titan-spring-freeroll-series/',
-	'imgPath'=> '/img/wallpaper/titan_spring5kchase_wallpaper.jpg',
-	'bgColor'=> '#002807',
-	'startDate'=> '2013-03-31 00:00:01',
-	'endDate'=> '2013-04-03 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res. '<script type="text/javascript">var bgURL2 = "http://www.pokernetwork.com/leagues/5-000-pokernews-rakechase/";</script>';
-
 
 		/************* SLAMSTAS *************/
 		/*
