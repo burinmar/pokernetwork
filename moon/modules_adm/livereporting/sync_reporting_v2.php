@@ -1,7 +1,7 @@
 <?php
 
-/** 
- * each data block should either send all items minimum data, 
+/**
+ * each data block should either send all items minimum data,
  * or pass exception rules (like ng_events do)
  */
 
@@ -34,8 +34,6 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 	 */
 	public function syncAll()
 	{
-		set_include_path(get_include_path() . PATH_SEPARATOR . MOON_CLASSES . 'pear');
-		require_once(MOON_CLASSES . 'pear/Archive/Tar.php');
 		include_class('lock');
 
 		if (isset($_GET['debug'])) {
@@ -53,7 +51,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 
 		$tournaments = $this->db->array_query_assoc('
 			SELECT id, name, sync_id, autopublish, state, updated_on FROM reporting_ng_tournaments
-			WHERE is_syncable=1 AND is_live>=0 
+			WHERE is_syncable=1 AND is_live>=0
 			ORDER BY from_date DESC
 		');
 		echo 'Pending ' . count($tournaments) . ' item(s).' . "\n";
@@ -106,7 +104,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 
 		echo 'All done. (' . round(memory_get_peak_usage() / 1024 / 1024, 3) . 'MiB maxmem)' . "\n";
 	}
-	
+
 	/**
 	 * Sync one specific tournament, called by syncAll
 	 */
@@ -122,22 +120,22 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->rTournamentId = $remoteId;
 		$this->rEventsIdFilter = $eventsIdFilter;
 		$this->lAutopublish = $autopublishLog;
-		
+
 		$baseDir = 'tmp/reporting-sync-' . strftime('%Y%m%d%H%M%S');
 		mkdir($baseDir);
 		mkdir($baseDir . '/request');
 		mkdir($baseDir . '/response');
-		
+
 		if (FALSE !== $this->syncTournamentRequestData($syncUrl, $baseDir . '/request', $baseDir)) {
 			$this->syncTournamentReplicateChanges($baseDir . '/response', $baseDir);
 		}
-		
+
 		$this->rmdir_rec($baseDir . '/');
 		$time2 = microtime(true);
-		
+
 		echo "	done in " . round($time2 - $time1, 4) . " s.\n\n";
 	}
-	
+
 	/**
 	 * Step 1 of syncTournament() - prepare and execute request
 	 */
@@ -147,18 +145,18 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		 * List of methods to prepare data for sending
 		 */
 		file_put_contents($requestDir . '/version.txt', $this->version);
+		$this->db->ping();
 		$this->_sendBase($requestDir . '/00_base');
 		$this->_sendEventMisc($requestDir . '/05_event_misc');
 		$this->_sendReporting($requestDir . '/10_reports');
 		file_put_contents($requestDir . '/timestamp.txt', time());
-		
+
 		// Pack, encrypt, sign
-		$tar = new Archive_Tar($requestDir. '.tbz2', 'bz2');
-		$tar->createModify($requestDir, '', $requestDir);	
+		SyncZip::create($requestDir . '/', $requestDir. '.zip');
 		$this->rmdir_rec($requestDir . '/');
-		
-		$plain     = fopen($requestDir. '.tbz2', 'rb');
-		$encrypted = fopen($requestDir. '.tbz2.enc', 'wb');
+
+		$plain     = fopen($requestDir. '.zip', 'rb');
+		$encrypted = fopen($requestDir. '.zip.enc', 'wb');
 		if ($plain === false || $encrypted === false) {
 			echo "\tfailed to open request file\n";
 			return FALSE;
@@ -185,11 +183,11 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		fclose($plain);
 		fclose($encrypted);
-		unlink($requestDir. '.tbz2');
-		echo '	sending ' . round(filesize($requestDir. '.tbz2.enc')/1024, 2) . "kb,\n";
+		unlink($requestDir. '.zip');
+		echo '	sending ' . round(filesize($requestDir. '.zip.enc')/1024, 2) . "kb,\n";
 
 		// Send & receive response
-		$receiveFile = $workDir. '/response.tbz2.enc';
+		$receiveFile = $workDir. '/response.zip.enc';
 		$fh = fopen($receiveFile,'wb');
 		$ch = curl_init($url);
 		curl_setopt($ch, CURLOPT_HEADER, 0);
@@ -199,18 +197,18 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		curl_setopt($ch, CURLOPT_TIMEOUT, 60*20);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-			'request' => '@' . realpath($requestDir. '.tbz2.enc'),
-			'signature' => $this->signFile($this->requestPrivKey, realpath($requestDir. '.tbz2.enc')),
+			'request' => '@' . realpath($requestDir. '.zip.enc'),
+			'signature' => $this->signFile($this->requestPrivKey, realpath($requestDir. '.zip.enc')),
 			'site' => _SITE_ID_
 		));
 		curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-		
+
 		curl_exec($ch);
 		fclose($fh);
 		echo curl_error($ch);
-		unlink($requestDir. '.tbz2.enc');
+		unlink($requestDir. '.zip.enc');
 	}
-	
+
 	private function _sendBase($baseDir)
 	{
 		mkdir($baseDir);
@@ -222,17 +220,17 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		// Days
 		$this->_sendBaseDays($baseDir);
 	}
-	
+
 	private function _sendBaseTournament($baseDir)
 	{
 		$this->sendBaseTournament($baseDir);
 	}
-	
+
 	private function _sendBaseEvents($baseDir)
 	{
 		$this->sendBaseEvents($baseDir);
 	}
-	
+
 	private function sendBaseTournament($baseDir)
 	{
 		$data = $this->db->single_query_assoc('
@@ -255,7 +253,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$send = json_encode($data);
 		file_put_contents($baseDir . '/tournament.txt', $send);
 	}
-	
+
 	private function sendBaseEvents($baseDir)
 	{
 		$this->lrEventsMap = array();
@@ -280,31 +278,31 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			)) . "\n";
 		}
 		file_put_contents($baseDir . '/events.txt', $send);
-		
+
 		if ($this->rEventsIdFilter !== null) {
 			file_put_contents($baseDir . '/events_limit.txt', implode(',', $this->rEventsIdFilter));
 		}
-		
+
 		$exevs = $this->db->array_query_assoc('
 			SELECT sync_id FROM reporting_ng_events
-			WHERE tournament_id=' . $this->lTournamentId . ' 
+			WHERE tournament_id=' . $this->lTournamentId . '
 				AND is_syncable=0 AND sync_id IS NOT NULL
 		', 'sync_id'); // add "AND sync_id IS NOT NULL", and deleted events will be undeleted, regardless of is_syncable
 		if (0 != count($exevs)) {
 			file_put_contents($baseDir . '/events_exclude.txt', implode(',', array_keys($exevs)));
 		}
 	}
-	
+
 	private function _sendBaseDays($baseDir)
 	{
 		$this->sendStd(
-			$baseDir . '/days.txt', 
-			'lrDaysMap', 
-			'reporting_ng_days', 
+			$baseDir . '/days.txt',
+			'lrDaysMap',
+			'reporting_ng_days',
 			'1'
-		);		
+		);
 	}
-	
+
 	private function _sendEventMisc($baseDir)
 	{
 		mkdir($baseDir);
@@ -313,37 +311,37 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->_sendEventMiscPayouts($baseDir);
 		$this->_sendEventMiscPlayers($baseDir);
 	}
-	
+
 	private function _sendEventMiscWinners($baseDir)
 	{
 		$this->sendStd(
-			$baseDir . '/winners.txt', 
-			'lrWinnersMap', 
-			'reporting_ng_winners', 
+			$baseDir . '/winners.txt',
+			'lrWinnersMap',
+			'reporting_ng_winners',
 			'1'
 		);
 	}
-	
+
 	private function _sendEventMiscPayouts($baseDir)
 	{
 		$this->sendStd(
-			$baseDir . '/payouts.txt', 
-			'lrPayoutsMap', 
-			'reporting_ng_payouts', 
+			$baseDir . '/payouts.txt',
+			'lrPayoutsMap',
+			'reporting_ng_payouts',
 			'1'
 		);
 	}
-	
+
 	private function _sendEventMiscPlayers($baseDir)
 	{
 		$this->sendStd(
-			$baseDir . '/players.txt', 
-			'lrPlayersMap', 
-			'reporting_ng_players', 
+			$baseDir . '/players.txt',
+			'lrPlayersMap',
+			'reporting_ng_players',
 			'1'
 		);
 	}
-	
+
 	private function _sendReporting($baseDir)
 	{
 		mkdir($baseDir);
@@ -351,34 +349,34 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->_sendReportingSingleChips($baseDir);
 		$this->_sendReportingSinglePhotos($baseDir);
 	}
-	
+
 	private function _sendReportingLog($baseDir)
 	{
 		$this->sendStd(
-			$baseDir . '/log.txt', 
-			'lrLogMap', 
-			'reporting_ng_log', 
+			$baseDir . '/log.txt',
+			'lrLogMap',
+			'reporting_ng_log',
 			'1',
 			array('sync_id', 'type')
 		);
 	}
-	
+
 	private function _sendReportingSingleChips($baseDir)
 	{
 		$this->sendTimed(
-			$baseDir . '/single_chips.txt', 
+			$baseDir . '/single_chips.txt',
 			'reporting_ng_chips'
 		);
 	}
-	
+
 	private function _sendReportingSinglePhotos($baseDir)
 	{
 		$this->sendTimed(
-			$baseDir . '/single_photos.txt', 
+			$baseDir . '/single_photos.txt',
 			'reporting_ng_photos'
 		);
 	}
-	
+
 	// rely on exids/inids passed earlier
 	private function sendStd($responseFile, $lrMapName, $baseTable, $sendCondition, $sendFields = array('sync_id'))
 	{
@@ -390,7 +388,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				SELECT id,' . implode(',', $sendFields) . ',synced_on,
 					(' . $sendCondition . ') sendable
 				FROM ' . $baseTable . '
-				WHERE tournament_id=' . $this->lTournamentId . ' 
+				WHERE tournament_id=' . $this->lTournamentId . '
 					AND event_id IN(' . implode(',', $this->lEventsIdInitFilter) . ')
 					AND sync_id IS NOT NULL
 			');
@@ -411,14 +409,14 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		file_put_contents($responseFile, $send);
 	}
-	
+
 	/*
 	 * Fetch last hour. If synced table in 30 min, fetch only last 10 min
 	 */
 	private function sendTimed($responseFile, $baseTable)
 	{
 		$send = '# ' . json_encode(array('created_from')) . "\n";
-		
+
 		$requestSendFrom = time() - 2.5 * 24 * 3600;
 		$timestampsFn = 'tmp/cache/lrep.' . $this->version . '.cache';
 		$timestamps = array();
@@ -428,44 +426,44 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				$timestamps = array();
 			}
 		}
-		
+
 		if (isset($timestamps[$baseTable]) && (time() - $timestamps[$baseTable]) < 1800) {
 			$requestSendFrom = time() - 1 * 600;
 		} else {
 			$timestamps[$baseTable] = time();
 			file_put_contents($timestampsFn, serialize($timestamps));
 		}
-		
+
 		if (isset($_GET['timed_full'])) {
 			$requestSendFrom = 0;
 		}
-		
+
 		$send .= $requestSendFrom . "\n";
 		$this->lrTimed[$baseTable] = $requestSendFrom;
-		
+
 		file_put_contents($responseFile, $send);
 	}
-		
+
 	/**
 	 * Step 2 of syncTournament() - process request
 	 */
 	private function syncTournamentReplicateChanges($responseDir, $workDir)
 	{
-		if (!file_exists($workDir . '/response.tbz2.enc')) {
+		if (!file_exists($workDir . '/response.zip.enc')) {
 			echo "\tfailed to locate response file\n";
 			return ;
 		}
-		echo '	received ' . round(filesize($workDir . '/response.tbz2.enc')/1024, 2) . "kb,\n";
-		
-		//echo mb_substr(file_get_contents($workDir . '/response.tbz2.enc'), 0, 400);
-		
-		$plain     = fopen($workDir . '/response.tbz2', 'wb');
-		$encrypted = fopen($workDir . '/response.tbz2.enc', 'rb');
+		echo '	received ' . round(filesize($workDir . '/response.zip.enc')/1024, 2) . "kb,\n";
+
+		//echo mb_substr(file_get_contents($workDir . '/response.zip.enc'), 0, 400);
+
+		$plain     = fopen($workDir . '/response.zip', 'wb');
+		$encrypted = fopen($workDir . '/response.zip.enc', 'rb');
 		if ($plain === false || $encrypted === false) {
 			echo '	failed to open response file' . "\n";
 			return ;
 		}
-		
+
 		if (function_exists('mcrypt_get_iv_size')) {
 			$iv_size = mcrypt_get_iv_size(MCRYPT_BLOWFISH, MCRYPT_MODE_ECB);
 			$iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
@@ -485,27 +483,27 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		fclose($plain);
 		fclose($encrypted);
-		//unlink($workDir . '/response.tbz2.enc');
-		
-		$tar = new Archive_Tar($workDir . '/response.tbz2');
-		$tar->extract($responseDir);
-		unlink($workDir . '/response.tbz2');
-		
+		//unlink($workDir . '/response.zip.enc');
+
+		SyncZip::extract($workDir . '/response.zip', $responseDir);
+		unlink($workDir . '/response.zip');
+
 		if (!file_exists($responseDir . '/note.txt')) {
 			echo '	failed to read response' . "\n";
-			echo file_get_contents($workDir . '/response.tbz2.enc');
+			echo file_get_contents($workDir . '/response.zip.enc');
 			return;
 		}
 		echo "\tmsg: " . trim(file_get_contents($responseDir . '/note.txt')) . "\n";
-		
+
+		$this->db->ping();
 		$this->_replicateBase($responseDir . '/00_base');
 		moon::cache('memcache')->delete('reporting.tourns_uris');
 		moon::cache('memcache')->delete('reporting.events_uris');
 		$this->_replicateEventMisc($responseDir . '/05_event_misc');
 		$this->_replicateReporting($responseDir . '/10_reports');
-	
+
 	}
-	
+
 	private function _replicateBase($responseDir)
 	{
 		$this->replicateBaseTournament($responseDir);
@@ -514,7 +512,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->_replicateBaseDaysDeleted($responseDir);
 		$this->_replicateBaseDays($responseDir);
 	}
-	
+
 	private function replicateBaseTournament($responseDir)
 	{
 		if (!file_exists($responseDir . '/tournament.txt')) {
@@ -539,7 +537,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			: max($data['created_on'], $data['updated_on']);
 		//unset($data['created_on']);
 		$data['updated_on'] = time();
-		
+
 		foreach (array(
 			array('logo_mid',   'fs:LogosMid'),
 			array('logo_big_bg','fs:LogosBigBg'),
@@ -554,7 +552,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 					@unlink($filename);
 				}
 			}
-			
+
 			$filename = $responseDir . '/' . $img . '_' . $data[$img];
 			if (is_file($filename)) {
 				copy($filename, $this->get_dir($dir) . $data[$img]);
@@ -566,50 +564,50 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		));
 		livereporting_adm_alt_log($this->lTournamentId, 0, 0, 'update', 'tournaments', $this->lTournamentId, '', -1);
 	}
-	
+
 	private function _replicateBaseEvents($responseDir)
 	{
 		$this->replicateStd(
-			'reporting_ng_events', 
-			$responseDir . '/events.txt', 
-			'lrEventsMap', 
-			'events', 
+			'reporting_ng_events',
+			$responseDir . '/events.txt',
+			'lrEventsMap',
+			'events',
 			__METHOD__,
 			'tgt_event'
 		);
 	}
-	
+
 	private function _replicateBaseEventsDeleted($responseDir)
 	{
 		$this->replicateStdDelete(
-			'reporting_ng_events', 
-			$responseDir . '/events_deleted.txt', 
-			'lrEventsMap', 
+			'reporting_ng_events',
+			$responseDir . '/events_deleted.txt',
+			'lrEventsMap',
 			'events_d'
 		);
 	}
-	
+
 	private function _replicateBaseDays($responseDir)
 	{
 		$this->replicateStd(
-			'reporting_ng_days', 
-			$responseDir . '/days.txt', 
-			'lrDaysMap', 
-			'days', 
+			'reporting_ng_days',
+			$responseDir . '/days.txt',
+			'lrDaysMap',
+			'days',
 			__METHOD__
-		);		
+		);
 	}
-	
+
 	private function _replicateBaseDaysDeleted($responseDir)
 	{
 		$this->replicateStdDelete(
-			'reporting_ng_days', 
-			$responseDir . '/days_deleted.txt', 
-			'lrDaysMap', 
+			'reporting_ng_days',
+			$responseDir . '/days_deleted.txt',
+			'lrDaysMap',
 			'days_d'
 		);
 	}
-	
+
 	private function _replicateEventMisc($responseDir)
 	{
 		$this->_replicateEventMiscWinnersDeleted($responseDir);
@@ -621,110 +619,110 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$this->lrWinnersMap = null;
 		$this->lrPayoutsMap = null;
 	}
-	
+
 	private function _replicateEventMiscWinners($responseDir)
 	{
 		$this->replicateStd(
-			'reporting_ng_winners', 
-			$responseDir . '/winners.txt', 
-			'lrWinnersMap', 
-			'winners', 
+			'reporting_ng_winners',
+			$responseDir . '/winners.txt',
+			'lrWinnersMap',
+			'winners',
 			__METHOD__
 		);
 	}
-	
+
 	private function _replicateEventMiscWinnersDeleted($responseDir)
 	{
 		$this->replicateStdDelete(
-			'reporting_ng_winners', 
-			$responseDir . '/winners_deleted.txt', 
-			'lrWinnersMap', 
+			'reporting_ng_winners',
+			$responseDir . '/winners_deleted.txt',
+			'lrWinnersMap',
 			'winners_d'
 		);
 	}
-	
+
 	private function _replicateEventMiscPayouts($responseDir)
 	{
 		$this->replicateStd(
-			'reporting_ng_payouts', 
-			$responseDir . '/payouts.txt', 
-			'lrPayoutsMap', 
-			'payouts', 
+			'reporting_ng_payouts',
+			$responseDir . '/payouts.txt',
+			'lrPayoutsMap',
+			'payouts',
 			__METHOD__
 		);
 	}
-	
+
 	private function _replicateEventMiscPayoutsDeleted($responseDir)
 	{
 		$this->replicateStdDelete(
-			'reporting_ng_payouts', 
-			$responseDir . '/payouts_deleted.txt', 
-			'lrPayoutsMap', 
+			'reporting_ng_payouts',
+			$responseDir . '/payouts_deleted.txt',
+			'lrPayoutsMap',
 			'payouts_d'
 		);
 	}
-	
+
 	private function _replicateEventMiscPlayers($responseDir)
 	{
 		$this->replicateStd(
-			'reporting_ng_players', 
-			$responseDir . '/players.txt', 
-			'lrPlayersMap', 
-			'players', 
+			'reporting_ng_players',
+			$responseDir . '/players.txt',
+			'lrPlayersMap',
+			'players',
 			__METHOD__
 		);
 	}
-	
+
 	private function _replicateEventMiscPlayersDeleted($responseDir)
 	{
 		$this->replicateStdDelete(
-			'reporting_ng_players', 
-			$responseDir . '/players_deleted.txt', 
-			'lrPlayersMap', 
+			'reporting_ng_players',
+			$responseDir . '/players_deleted.txt',
+			'lrPlayersMap',
 			'players_d'
 		);
 	}
-	
+
 	private function _replicateReporting($responseDir) {
 		$this->_replicateReportingLogDeleted($responseDir);
 		$this->_replicateReportingLog($responseDir);
 		$this->_replicateReportingSingleChips($responseDir);
 		$this->_replicateReportingSinglePhotos($responseDir);
 	}
-	
+
 	private function _replicateReportingLogDeleted($responseDir)
 	{
 		$this->replicateLogDelete($responseDir . '/log_deleted.txt', 'log_d');
 	}
-	
+
 	private function _replicateReportingLog($responseDir)
 	{
 		$this->replicateLog(
-			$responseDir . '/log.txt', 
+			$responseDir . '/log.txt',
 			__METHOD__
 		);
 	}
-	
+
 	private function _replicateReportingSingleChips($responseDir)
 	{
 		$this->replicateTimed(
 			'reporting_ng_chips',
-			$responseDir . '/single_chips.txt', 
+			$responseDir . '/single_chips.txt',
 			'single_chips',
 			__METHOD__
 		);
 	}
-	
+
 	private function _replicateReportingSinglePhotos($responseDir)
 	{
 		$this->replicateTimed(
 			'reporting_ng_photos',
-			$responseDir . '/single_photos.txt', 
+			$responseDir . '/single_photos.txt',
 			'single_photos',
 			__METHOD__
 		);
 	}
-	
+
 	/**
 	 * Events, days, winners, payouts, players
 	 */
@@ -733,20 +731,20 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		if ('tgt_event' != $hint) {
 			$this->replicateHelperDeleteLostByEvent($baseTable, $msgCntPrefix);
 		}
-		
+
 		if (!file_exists($responseFile)) {
 			return;
 		}
 		$remoteData = fopen($responseFile, 'rb');
 		$remoteDataCnt = 0;
-		
+
 		while (($row = fgets($remoteData)) !== FALSE) {
 			$row = json_decode($row, true);
 			$remoteDataCnt++;
-			
+
 			$this->replicateStdRow($row, $baseTable, $lrMapName, $msgMethod);
 		}
-		
+
 		fclose($remoteData);
 		echo "\t" . $msgCntPrefix . '(' . $remoteDataCnt . ');' . "\n";
 	}
@@ -786,7 +784,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				'id' => $lrMap[$syncId]
 			));
 			livereporting_adm_alt_log(
-				$this->lTournamentId, isset($row['event_id']) ? $row['event_id'] : 0, 0, 
+				$this->lTournamentId, isset($row['event_id']) ? $row['event_id'] : 0, 0,
 				'update', str_replace('reporting_ng_', '', $baseTable), $lrMap[$syncId], '', -1);
 
 			if ($this->db->affected_rows() == 0) {
@@ -800,7 +798,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			if ($id) {
 				$lrMap[$syncId] = $id;
 				livereporting_adm_alt_log(
-					$this->lTournamentId, isset($row['event_id']) ? $row['event_id'] : 0, 0, 
+					$this->lTournamentId, isset($row['event_id']) ? $row['event_id'] : 0, 0,
 					'insert', str_replace('reporting_ng_', '', $baseTable), $id, '', -1);
 			} else {
 				moon::error($msgMethod . '() failed insert' . "\n");
@@ -808,27 +806,27 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			if ($cnt > 1) {
 				moon::error($msgMethod . '() warn insert (dupe handled unsafely)' . "\n");
 			}
-		}		
+		}
 	}
-	
+
 	/**
 	 * Log (sub_*, tags)
 	 */
 	private function replicateLog($responseFile, $msgMethod)
 	{
 		$this->replicateHelperDeleteLostByEvent('reporting_ng_log', 'log');
-		
+
 		if (!file_exists($responseFile)) {
 			return;
 		}
-		
+
 		//$this->db->query('SET autocommit=0');
 		$remoteData = fopen($responseFile, 'rb');
 		$remoteDataCnt = 0;
 		while (($row = fgets($remoteData)) !== FALSE) {
 			$row = json_decode($row, true);
 			$remoteDataCnt++;
-			
+
 			$this->replicateLogRow($row, $msgMethod);
 			//$this->db->query('COMMIT');
 		}
@@ -837,7 +835,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		fclose($remoteData);
 		echo "\t" . 'log(' . $remoteDataCnt . ');' . "\n";
 	}
-	
+
 	private function replicateLogRow($row, $msgMethod)
 	{
 		$logRow = &$row['log'];
@@ -847,8 +845,8 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		// "synced" timestamp
 		$logRow['synced_on'] = ($logRow['updated_on'] == NULL)
 			? $logRow['created_on']
-			: max($logRow['created_on'], $logRow['updated_on']);		
-		
+			: max($logRow['created_on'], $logRow['updated_on']);
+
 		// retranslate remote ids to local ids ("log" row) (part 1)
 		$logRow['tournament_id'] = $this->lTournamentId;
 		if (!isset($this->lrEventsMap[$logRow['event_id']])) {
@@ -870,11 +868,11 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		// $logRow['updated_on'] must be reset later
 
 		// special case: update to already-translated entry
-		if (!empty($lrMap[$syncId])) {			
+		if (!empty($lrMap[$syncId])) {
 			$exists = $this->db->single_query_assoc('
 				SELECT id,updated_on FROM reporting_ng_log
 				WHERE tournament_id="' . intval($logRow['tournament_id']) . '"
-					AND sync_id="' . intval($logRow['sync_id']) . '" 
+					AND sync_id="' . intval($logRow['sync_id']) . '"
 					AND type="' . $this->db->escape($logRow['type']) . '"
 			');
 			// bump translated posts to prevent endless downloading of updates to translated items
@@ -916,7 +914,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			default:
 				$subTable = 'reporting_ng_sub_' . $logRow['type'] . 's';
 				break;
-		}			
+		}
 
 		// retranslate remote ids to local ids ("log", "sub", "ext" rows) (m.b. unreliable)
 		// "dirty"
@@ -931,7 +929,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 
 		// replication (log, sub)
-		if (!empty($lrMap[$syncId])) { 
+		if (!empty($lrMap[$syncId])) {
 			// update
 			$logRow['id'] = $lrMap[$syncId];
 			$this->db->update($subRow, $subTable, array(
@@ -964,12 +962,12 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				moon::error($msgMethod . '() warn insert (dupe handled unsafely)' . "\n");
 			}
 		}
-	
+
 		// replication (ext)
 		// "dirty"
 		switch ($logRow['type']) {
 			case 'photos':
-				$this->replicateLogRowExtPhotos($logRow, $row);		
+				$this->replicateLogRowExtPhotos($logRow, $row);
 				break;
 			case 'chips':
 				$this->replicateLogRowExtChips($logRow, $row);
@@ -1011,7 +1009,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		$logRow['contents'] = serialize($contents);
 	}
-	
+
 	private function replicateLogRowRetranslateChips(&$logRow, &$subRow, &$row)
 	{
 		$contents = unserialize($logRow['contents']);
@@ -1040,7 +1038,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				: NULL;
 		}
 	}
-	
+
 	private function replicateLogRowExtPhotos(&$logRow, &$row)
 	{
 		// delete old photos and corresponding tags
@@ -1091,7 +1089,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		livereporting_adm_alt_log($this->lTournamentId, $logRow['event_id'], $logRow['day_id'], 'update', 'photos', $logRow['id'], 'repl imprt all', -1);
 	}
-	
+
 	private function replicateLogRowExtChips(&$logRow, &$row)
 	{
 		// delete old chips
@@ -1116,7 +1114,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		livereporting_adm_alt_log($this->lTournamentId, $logRow['event_id'], $logRow['day_id'], 'update', 'chips', $logRow['id'], 'repl imprt all', -1);
 	}
-	
+
 	private function replicateLogRowSpecialBumpChips(&$row, $msgMethod)
 	{
 		$logRow = &$row['log'];
@@ -1124,11 +1122,11 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$lrMap = &$this->lrLogMap;
 		$subTable = 'reporting_ng_sub_chips';
 		$syncId = $logRow['sync_id'] . '-chips';
-		
+
 		$this->replicateLogRowRetranslateChips($logRow, $subRow, $row);
-		
+
 		$logRow['id'] = $lrMap[$syncId];
-		
+
 		// primary update
 		$this->db->update(array(
 			'chips' => $subRow['chips']
@@ -1136,7 +1134,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			'id' => $logRow['id']
 		));
 		livereporting_adm_alt_log($this->lTournamentId, $logRow['event_id'], $logRow['day_id'], 'update', 'sub_chips', $logRow['id'], 'numbers bump', -1);
-		
+
 		// secondary update
 		$logRowOld = $this->db->single_query_assoc('
 			SELECT contents FROM reporting_ng_log
@@ -1182,18 +1180,18 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		return $rounds[$k];
 	}
-	
-	
+
+
 	private function replicateHelperDeleteLostByEvent($baseTable, $msgCntPrefix)
 	{
 		$evIds = array_keys($this->db->array_query_assoc('
 			SELECT id FROM reporting_ng_events
-			WHERE tournament_id=' . $this->lTournamentId . '	
+			WHERE tournament_id=' . $this->lTournamentId . '
 		', 'id'));
 		if (0 != count($evIds)) {
 			$this->db->query('
 				DELETE FROM ' . $baseTable . '
-				WHERE tournament_id=' . $this->lTournamentId . ' 
+				WHERE tournament_id=' . $this->lTournamentId . '
 					AND event_id NOT IN(' . implode(',', $evIds) . ')
 			');
 			$cnt = $this->db->affected_rows();
@@ -1203,7 +1201,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			}
 		}
 	}
-	
+
 	/**
 	 * Events, days, winners, payouts, players
 	 */
@@ -1217,7 +1215,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		if (empty($data)) {
 			return;
 		}
-		
+
 		// only delete what really belongs to the tournament (tournament_id=?, from lrDaysMap in this case)
 		$lrMap = &$this->$lrMapName;
 		foreach ($data as $row) {
@@ -1231,10 +1229,10 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				livereporting_adm_alt_log($this->lTournamentId, 0, 0, 'delete', str_replace('reporting_ng_', '', $baseTable), $id, '', -1);
 			}
 		}
-		
+
 		echo "\t" . $msgCntPrefix . '(' . count($data) . ');' . "\n";
 	}
-	
+
 	/**
 	 * Log
 	 */
@@ -1248,7 +1246,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			return;
 		}
 		$data = explode(',', $data);
-		
+
 		// "dirty"
 		// only delete what really belongs to the tournament (tournament_id=?, from lrDaysMap in this case)
 		// @todo maybe check if was translated, and then delete conditionally
@@ -1257,7 +1255,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				list($syncId, $type) = explode('-', $row);
 				$id = $this->lrLogMap[$row];
 				unset($this->lrLogMap[$row]);
-				
+
 				switch ($type) {
 					case 'chips':
 					case 'photos':
@@ -1267,10 +1265,10 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 						$subTable = 'reporting_ng_sub_' . $type . 's';
 						break;
 				}
-				
+
 				$exists = $this->db->single_query_assoc('
 					SELECT tournament_id, event_id FROM reporting_ng_log
-					WHERE id=' . intval($id) . ' 
+					WHERE id=' . intval($id) . '
 					  AND type="' . $this->db->escape($type) . '"
 				');
 				$exists += array(
@@ -1288,7 +1286,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 					WHERE id=' . intval($id) . '
 				');
 				livereporting_adm_alt_log($this->lTournamentId, $exists['tournament_id'], $exists['event_id'], 'delete', str_replace('reporting_ng_', '', $subTable), $id, '', -1);
-				
+
 				// ext, tags (if any)
 				if ('post' == $type) {
 					$this->db->query('
@@ -1321,11 +1319,11 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				}
 			}
 		}
-		
+
 		// livereporting_ng_event.notifyLogEntryDeleted() may possibly be here, but better not
 		echo "\t" . $msgCntPrefix . '(' . count($data) . ');' . "\n";
 	}
-	
+
 	private function replicateTimed($baseTable, $responseFile, $msgCntPrefix, $msgMethod)
 	{
 		if (!file_exists($responseFile)) {
@@ -1334,13 +1332,13 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		$remoteData = fopen($responseFile, 'rb');
 		$remoteDataCnt = 0;
 		$requestedDataSince = $this->lrTimed[$baseTable];
-		
+
 		if (0 != count($this->lEventsIdInitFilter)) {
 			// synced days
 			$days = $this->db->array_query_assoc('
 				SELECT id
 				FROM reporting_ng_days
-				WHERE tournament_id=' . $this->lTournamentId . ' 
+				WHERE tournament_id=' . $this->lTournamentId . '
 					AND event_id IN(' . implode(',', $this->lEventsIdInitFilter) . ')
 					AND sync_id IS NOT NULL
 			', 'id');
@@ -1349,7 +1347,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				// delete data from latest timeslice, to replace with new
 				$this->db->query('
 					DELETE FROM ' . $baseTable . '
-					WHERE created_on>' . intval($requestedDataSince) . ' 
+					WHERE created_on>' . intval($requestedDataSince) . '
 					  AND day_id IN(' . implode(',', $days) . ')
 					  AND import_id IS NULL
 				');
@@ -1359,21 +1357,21 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				}
 			}
 		}
-			
+
 		while (($row = fgets($remoteData)) !== FALSE) {
 			$row = json_decode($row, true);
 			$remoteDataCnt++;
-			
+
 			$this->replicateTimedRow($row, $baseTable, $msgMethod);
 		}
-		
+
 		fclose($remoteData);
 		echo "\t" . $msgCntPrefix . '(' . $remoteDataCnt . ');' . "\n";
 		if ($remoteDataCnt) {
 			livereporting_adm_alt_log($this->lTournamentId, 0, 0, 'insert', str_replace('reporting_ng_', '', $baseTable), 0, $remoteDataCnt . ' from ' . $requestedDataSince, -1);
 		}
 	}
-	
+
 	private function replicateTimedRow($row, $baseTable, $msgMethod)
 	{
 		$row['day_id'] = $this->lrDaysMap[$row['day_id']];
@@ -1386,7 +1384,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 				? $this->lrPlayersMap[$row['player_id']]
 				: NULL;
 		}
-		
+
 		// insert
 		$this->db->insert($row, $baseTable);
 		$id = $this->db->insert_id();
@@ -1394,7 +1392,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			moon::error($msgMethod . '() failed insert' . "\n");
 		}
 	}
-	
+
 	private function rmdir_rec($dir)
 	{
 		$files = glob($dir . '*');
@@ -1407,7 +1405,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 		rmdir($dir);
 	}
-	
+
 	public function cleanupFailedSyncs()
 	{
 		$files = glob('tmp/reporting-sync-*', GLOB_ONLYDIR);
@@ -1420,7 +1418,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		}
 	}
 
-	private function signFile($privKey, $file) 
+	private function signFile($privKey, $file)
 	{
 		$digest = hash_file('sha1', $file, true);
 		$asn1  = chr(0x30).chr(0x21); // SEQUENCE, 33
@@ -1449,5 +1447,38 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			);
 		}
 		return $tasks;
+	}
+}
+
+class SyncZip {
+	static function create($inDir, $outZip)
+	{
+		$inDir = realpath($inDir);
+		$shortOffset = strlen($inDir) + 1;
+		$dirlist = new RecursiveDirectoryIterator($inDir);
+		$filelist = new RecursiveIteratorIterator($dirlist);
+		$zip = new ZipArchive();
+		if (true != $zip->open($outZip, ZipArchive::CREATE)) {
+			return false;
+		}
+		foreach ($filelist as $file => $fileInfo) {
+			$file = realpath($file);
+			if (true !== $zip->addFile($file, substr($file, $shortOffset)))
+				return false;
+		}
+		$zip->close();
+		return true;
+	}
+
+	static function extract($inZip, $outDir)
+	{
+		$zip = new ZipArchive;
+		if ($zip->open($inZip) === TRUE) {
+			$zip->extractTo($outDir);
+			$zip->close();
+			return true;
+		} else {
+			return false;
+		}
 	}
 }
