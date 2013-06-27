@@ -34,15 +34,6 @@ class header extends moon_com
 		//	return $res;
 		//}
 
-// PKR WSOP DEAL 2
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-mega-deal-2/',
-'imgPath'=> '/img/wallpaper/pkr_megadeal2_wallpaper.jpg',
-'bgColor'=> '#1a000a',
-'showIn'=> '/pkr/',
-'endDate'=> '2013-06-30 23:59:59',
-)
-)) return $res;
 
 // PokerStars 30K
 if ($this->wallpaper($res, array(
