@@ -748,6 +748,7 @@ html {
 		padding: 5px;
 	}
 	.twoBanners .banner {float: left; width: 220px}
+	.right .baneris object {max-width: 200px; max-height: 200px;}
 
 /*Homepage*/
 .tweets li {
