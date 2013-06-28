@@ -76,7 +76,7 @@
 	margin-bottom: 20px;
 	text-align: center;
 	clear: both;
-} .article .video-object iframe {margin-bottom: 0}
+} .article .video-object iframe {margin-bottom: 0; max-width: 100%;}
 
 .article iframe {margin-bottom: 20px;}
 
