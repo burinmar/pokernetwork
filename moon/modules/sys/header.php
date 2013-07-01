@@ -34,6 +34,15 @@ class header extends moon_com
 		//	return $res;
 		//}
 
+// PKR Iron Gamer
+if ($this->wallpaper($res, array(
+'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-iron-gamer/',
+'imgPath'=> '/img/wallpaper/pkr_irongamer_wallpaper.jpg',
+'bgColor'=> '#081520',
+'showIn'=> '/pkr/',
+'endDate'=> '2013-08-31 23:59:59',
+)
+)) return $res;
 
 // PokerStars 30K
 if ($this->wallpaper($res, array(
@@ -63,15 +72,6 @@ if ($this->wallpaper($res, array(
 	)
 	)) return $res;
 
-// BetAtHome BountyBrawl
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/5-000-bet-at-home-bounty-brawl/',
-'imgPath'=> '/img/wallpaper/betathome_bountybrawl_wallpaper.jpg',
-'bgColor'=> '#110000',
-'showIn'=> '/bet-at-home/',
-'endDate'=> '2013-06-29 23:59:59',
-)
-)) return $res;
 
 		/************* SLAMSTAS *************/
 		/*
