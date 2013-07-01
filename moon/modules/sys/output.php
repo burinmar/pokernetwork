@@ -119,6 +119,25 @@ class output extends moon_com {
 		$footScripts .= '<script type="text/javascript" src="https://platform.twitter.com/widgets.js"></script>';
 		//Justino prasymu
 		$footScripts .= '<img src="https://pixel.mathtag.com/event/img?mt_id=134403&mt_adid=101145&v1=&v2=&v3=&s1=&s2=&s3=" width="1" height="1" />';
+		//PN-3748
+		if (in_array(geo_my_country(),array('au','nz')) && moon::locale()->now()<1373846400) {
+			$m['head.tags'] .= "\t" . '<script type="text/javascript" src="/js/popunder.js?' . $this->getFileModTime('/js/popunder.js') . '"></script>' . "\n";
+			$footScripts .='<script type="text/javascript">
+				jQuery(document).ready(function(){
+					if (!readCookie("b130701eztrader")) {
+						createCookie("b130701eztrader","1",1);
+						var url="http://www.pokernews.com/eztutorial-pnet.htm";
+						jQuery(document).ready(function(e){
+							if (url!="") {
+								makePopunder(url);
+								url="";
+							}
+						});
+					}
+				});
+				</script>';
+		}
+		//
 		$hl = $p->head_link();
 		foreach ($hl as $k => $v) {
 			$m['head.tags'] .= "\t" . $v;
