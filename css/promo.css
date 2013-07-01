@@ -125,7 +125,7 @@ article table, article ul, article ol {margin-bottom: 20px;}
 		}
 		
 		#promo aside .summary .howToQualify h3 {margin-bottom: 10px;}
-		#promo aside .summary .howToQualify {font-size: 18px}
+		#promo aside .summary .howToQualify {font-size: 18px; line-height: 22px;}
 		#promo aside .summary p, #promo aside .summary ul, #promo aside .summary ol {margin-bottom: 0; text-align: left;}
 		#promo aside .summary ul, #promo aside .summary ol {padding-left: 25px;}
 
