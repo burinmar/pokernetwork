@@ -54,25 +54,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-// PokerAce 9K
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
-'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
-'bgColor'=> '#141414',
-'showIn'=> '/pokerace/',
-'endDate'=> '2013-07-13 23:59:59',
-)
-)) return $res;
-	if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/leagues/9-000-pokerace-depositors-freeroll-series/',
-	'imgPath'=> '/img/wallpaper/pokerace_9k_wallpaper.jpg',
-	'bgColor'=> '#141414',
-	'endDate'=> '2013-04-29 23:59:59',
-	'showIn'=> 'home',
-	)
-	)) return $res;
-
-
 		/************* SLAMSTAS *************/
 		/*
 		// PokerStars SCOOP 2012
