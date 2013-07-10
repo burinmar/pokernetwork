@@ -240,3 +240,10 @@
 	color: #fff;
 	}
 #landing.pkr-irongamer .download:after {display: none;}
+
+#landing.pokerstars-20K {background-image: url('/img/landing/pokerstars-20K/intro.jpg'); background-color: #000000;}
+#landing.pokerstars-20K .download {
+	background: #e9a028;
+	color: #fff;
+	}
+#landing.pokerstars-20K .download:after {display: none;}
