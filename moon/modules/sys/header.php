@@ -44,16 +44,6 @@ if ($this->wallpaper($res, array(
 )
 )) return $res;
 
-// PokerStars 30K
-if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/pokernews-30k-main-event-freeroll/',
-'imgPath'=> '/img/wallpaper/ps_pnme2013_wallpaper.jpg',
-'bgColor'=> '#000',
-'showIn'=> '/pokerstars/',
-'endDate'=> '2013-07-06 23:59:59',
-)
-)) return $res;
-
 		/************* SLAMSTAS *************/
 		/*
 		// PokerStars SCOOP 2012
