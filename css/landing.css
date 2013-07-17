@@ -247,3 +247,10 @@
 	color: #fff;
 	}
 #landing.pokerstars-20K .download:after {display: none;}
+
+#landing.poker770-mps {background-image: url('/img/landing/poker770-mps/intro.jpg'); background-color: #000000;}
+#landing.poker770-mps .download {
+	background: #000;
+	color: #fff;
+	}
+#landing.poker770-mps .download:after {display: none;}
