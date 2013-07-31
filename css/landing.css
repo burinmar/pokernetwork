@@ -254,3 +254,11 @@
 	color: #fff;
 	}
 #landing.poker770-mps .download:after {display: none;}
+
+
+#landing.william-hill {background-image: url('/img/landing/william-hill/intro.jpg'); background-color: #393939;}
+#landing.william-hill .download {
+	background: #ffcc00;
+	color: #393939;
+	}
+#landing.william-hill .download:after {display: none;}
