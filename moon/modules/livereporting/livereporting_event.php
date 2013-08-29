@@ -18,7 +18,7 @@ class livereporting_event extends moon_com
 	private $tabsSafeDisplay = array();
 	private $subObjCache = array();
 	private $logPageBy = 10;
-	
+
 	function events($event, $argv)
 	{
 		// _POST (start limited)
@@ -42,7 +42,7 @@ class livereporting_event extends moon_com
 		foreach (self::$requestArgv as $rKey => $rArg) {
 			$this->set_var($rKey, $rArg);
 		}
-		
+
 		// shoutbox
 		if (isset($argv['uri']['path'][0]) && $argv['uri']['path'][0] == 'shoutbox') {
 			return $this->object('shoutbox')
@@ -75,10 +75,10 @@ class livereporting_event extends moon_com
 				$page->set_global('lrepAdmSwitch', '');
 			}
 		}
-		
+
 		$this->use_page('LiveReporting1col');
 	}
-	
+
 	/**
 	 * Event delegate: redirect standard save request
 	 */
@@ -200,12 +200,12 @@ class livereporting_event extends moon_com
 		sort($recommended);
 		return $recommended;
 	}
-	
+
 	private function eEntryPages($argv)
 	{
 		$this->set_var('action', $argv['uri']['argv'][0]);
 		$this->set_var('hide_write_controls', 'true');
-		
+
 		if (in_array($argv['uri']['argv'][0], array('edit', 'view'))) { //std view/edit
 		switch ($argv['uri']['argv'][1]) {
 			case 'post':
@@ -220,7 +220,7 @@ class livereporting_event extends moon_com
 				$this->set_var('id', $argv['uri']['argv'][2]);
 				return;
 		}}
-		
+
 		if ($argv['uri']['argv'][0] == 'delete') { // std delete
 		switch ($argv['uri']['argv'][1]) {
 			case 'post':
@@ -233,7 +233,7 @@ class livereporting_event extends moon_com
 				$object->synthEvent('delete' . (!is_numeric($argv['uri']['argv'][2]) ? '-' . $argv['uri']['argv'][2] : ''), $argv);
 				exit;
 		}}
-		
+
 		if ($argv['uri']['argv'][0] == 'save') { // std supplimentary saves (using _GET to attach to endpoint, but may have _POST too)
 		switch ($argv['uri']['argv'][1]) {
 			case 'chips':   //`chips tab` save single chip
@@ -245,8 +245,8 @@ class livereporting_event extends moon_com
 				$object = $this->$object();
 				$object->synthEvent('save-' . $argv['uri']['argv'][2], $argv);
 				exit;
-		}}		
-		
+		}}
+
 		// exceptions/etc.
 		switch ($argv['uri']['argv'][1]) {
 			case 'event':
@@ -261,10 +261,10 @@ class livereporting_event extends moon_com
 				}
 				break;
 		}
-		
+
 		moon::page()->page404();
 	}
-	
+
 	private function eFreightPages($argv)
 	{
 		switch ($argv['uri']['argv'][0]) {
@@ -280,7 +280,7 @@ class livereporting_event extends moon_com
 				break;
 		}
 	}
-	
+
 	private function eSpecialPages($argv)
 	{
 		switch ($argv['uri']['argv'][0]) {
@@ -302,10 +302,10 @@ class livereporting_event extends moon_com
 				self::$requestArgv['tab'] = $tabId;
 				$this->set_var('tab', $tabId);
 				$this->set_var('render', 'log');
-				return; 
+				return;
 			}
 		}
-		
+
 		moon::page()->page404();
 	}
 
@@ -348,7 +348,7 @@ class livereporting_event extends moon_com
 	{
 		return self::$requestArgv[$key];
 	}
-	
+
 	/**
 	 * Get request arguments
 	 * @return array
@@ -357,12 +357,12 @@ class livereporting_event extends moon_com
 	{
 		return self::$requestArgv;
 	}
-	
+
 	public function setRequestArgv($key, $value)
 	{
 		self::$requestArgv[$key] = $value;
 	}
-	
+
 	private function lrep()
 	{
 		static $lrepObj = null;
@@ -371,7 +371,7 @@ class livereporting_event extends moon_com
 		}
 		return $lrepObj;
 	}
-	
+
 	private function lrepEv()
 	{
 		static $lrepEvObj = null;
@@ -380,8 +380,8 @@ class livereporting_event extends moon_com
 		}
 		return $lrepEvObj;
 	}
-	
-	/** 
+
+	/**
 	 * note: sets `tab` = null always, see eSpecialPages
 	 */
 	private function getRequestArgv($argv)
@@ -389,7 +389,7 @@ class livereporting_event extends moon_com
 		$dayName = !empty($argv['uri']['path'])
 			? $argv['uri']['path'][0]
 			: NULL;
-		
+
 		switch ($dayName) {
 			case 'all':
 				$dayId = 0;
@@ -457,6 +457,7 @@ class livereporting_event extends moon_com
 		}
 
 		$this->bannerRoomAssign($eventInfo['ad_rooms']);
+		$this->gaAssign($argv['event_id'], $eventInfo, $page);
 
 		$mainArgv = array(
 			'tournament_name' => htmlspecialchars($eventInfo['tname']),
@@ -468,7 +469,7 @@ class livereporting_event extends moon_com
 			)),
 			'url_tournaments' => $lrep->makeUri('index#tour-archive'),
 		);
-		
+
 		switch ($argv['tab']) {
 			case 'chips':
 				$this->partialRenderChipsTab($argv, $mainArgv);
@@ -544,7 +545,7 @@ class livereporting_event extends moon_com
 		), array(
 			'variation'=> 'logTab'
 		));
-	
+
 		$mainArgv['mainContainerId'] = 'livePokerPhotoGallery';
 	}
 
@@ -555,7 +556,7 @@ class livereporting_event extends moon_com
 		$paginator->set_curent_all_limit(
 			intval($argv['page']),
 			$this->lrepEv()->getLogEntriesCount(
-				$argv['event_id'], $argv['day_id'], 
+				$argv['event_id'], $argv['day_id'],
 				$argv['filter'] + array('showHidden' => $showHidden)
 			),
 			$this->logPageBy
@@ -576,8 +577,8 @@ class livereporting_event extends moon_com
 		$mainArgv['paginator'] = $paginator->show_nav();
 
 		$logEntries = $this->lrepEv()->getLogEntries(
-			$argv['event_id'], $argv['day_id'], 
-			$argv['filter'] + array('showHidden' => $showHidden), 
+			$argv['event_id'], $argv['day_id'],
+			$argv['filter'] + array('showHidden' => $showHidden),
 			$paginatorInfo['sqllimit']
 		);
 		foreach ($logEntries as $logEntry) {
@@ -616,7 +617,7 @@ class livereporting_event extends moon_com
 	{
 		$mainArgv['list.days'] = '';
 		$mainArgv['list.tabs'] = '';
-		
+
 		if (in_array($argv['tab'], array('log', 'chips'))) {
 			$days = $this->lrepEv()->getDaysData($argv['event_id']);
 			$dayUrl = $lrep->makeUri('event#view', array(
@@ -709,7 +710,7 @@ class livereporting_event extends moon_com
 	private function partialRenderSidewidgets(&$mainArgv, &$argv, &$tpl, &$lrep, &$eventInfo, &$page)
 	{
 		$cacheable = !$page->get_global('adminView') || !$lrep->instTools()->isAllowed('writeContent');
-		
+
 		if ($cacheable) {
 			$cache = moon::cache();
 			$ckey = 'reporting.sidebar-argv-' . $argv['event_id'] . '-' . $argv['day_id'];
@@ -722,13 +723,13 @@ class livereporting_event extends moon_com
 				return ;
 			}
 		}
-		
+
 		// events dropdown
 		list ($mainArgv_['eventlist.list.events'],
 			$mainArgv_['eventlist.list.events.pager'],
 			$mainArgv_['eventlist.paged'],
 			$mainArgv_['eventlist.singleevent']) = $this->partialRenderSidewidgetEventsList($argv, $page, $lrep, $tpl);
-		
+
 		$mainArgv_['widget.key_hands'] = $this->partialRenderTopwidgetKeyHands($argv, $page, $lrep, $tpl);
 
 		list (
@@ -763,7 +764,7 @@ class livereporting_event extends moon_com
 			$mainArgv_['pl.prizepool']
 		) = $this->partialRenderSidewidgetPlayersStats($eventInfo, $winner, $playersLeft);
 		$mainArgv_['widget.latest_updates'] |= $mainArgv_['pl.players_block'];
-		
+
 		list (
 			$this->tabsSafeDisplay['payouts'],
 			$mainArgv_['npj.npj_block'],
@@ -771,13 +772,13 @@ class livereporting_event extends moon_com
 			$mainArgv_['npj.sum']
 		) = $this->partialRenderSidewidgetNextPayJump($eventInfo, $argv, $lrep);
 		$mainArgv_['widget.latest_updates'] |= $mainArgv_['npj.npj_block'];
-		
+
 		list (
 			$this->tabsSafeDisplay['chips'],
 			$mainArgv_['widget.top_chip_counts'],
 			$mainArgv_['chips.top_chip_counts'],
 		) = $this->partialRenderSidewidgetChips($winner, $page, $lrep, $eventInfo, $argv, $tpl);
-		
+
 		list (
 			$this->tabsSafeDisplay['gallery'],
 			$mainArgv_['list.event_photos'],
@@ -799,7 +800,7 @@ class livereporting_event extends moon_com
 
 		$mainArgv_['com_social'] = _SITE_ID_ == 'com';
 		$mainArgv_['nl_social'] = _SITE_ID_ == 'nl';
-		
+
 		if ($cacheable) {
 			$cache->save($ckey, array(
 					$mainArgv_,
@@ -811,17 +812,17 @@ class livereporting_event extends moon_com
 				: 10  // is live or not started
 			);
 		}
-		
+
 		$mainArgv += $mainArgv_;
 	}
-	
+
 	private function partialRenderTopwidgetKeyHands(&$argv, &$page, &$lrep, &$tpl)
 	{
 		return ;
 		$keyHands = $this->lrepEv()->getKeyHandEntries($argv['event_id']);
 		if (count($keyHands) < 4)
 			return ;
-		
+
 		$tplArgv = array(
 			'list.entries' => '',
 		);
@@ -848,10 +849,10 @@ class livereporting_event extends moon_com
 		// events list dropdown
 		$return['list.events.pop'] = '';
 		$return['list.event.pop.pager'] = '';
-		
+
 		$events = $this->lrepEv()->getLiveEvents($argv['tournament_id'], $page->get_global('adminView'));
 		$eventsUris = $lrep->instHierarchyModel()->getEventsUris();
-		
+
 		$activePageNr = 0;
 		$tournamentUrl = $lrep->makeUri('#', array(
 			'tournament_id' => $argv['tournament_id']
@@ -881,7 +882,7 @@ class livereporting_event extends moon_com
 		}
 		$return['paged'] = ceil(count($events) / 10) > 1;
 		$return['singleevent'] = count($events) < 2;
-		
+
 		return array(
 			$return['list.events.pop'],
 			$return['list.event.pop.pager'],
@@ -889,7 +890,7 @@ class livereporting_event extends moon_com
 			$return['singleevent']
 		);
 	}
-	
+
 	private function partialRenderSidewidgetRound($argv)
 	{
 		$round = $this->lrepEv()->getLastRound($argv['event_id'], $argv['day_id']);
@@ -904,13 +905,13 @@ class livereporting_event extends moon_com
 			);
 		}
 	}
-	
+
 	private function partialRenderSidewidgetWinner($eventInfo, $argv, $lrep, $tpl)
 	{
 		$playersLeft = 0;
 		$winner = NULL;
 		$return = array();
-		
+
 		if (intval($eventInfo['pleft']) == 0) {
 			if (intval($eventInfo['ptotal']) != 0) {
 				$playersLeft = intval($eventInfo['ptotal']);
@@ -918,7 +919,7 @@ class livereporting_event extends moon_com
 		} else {
 			$playersLeft = intval($eventInfo['pleft']);
 		}
-		
+
 		if ($playersLeft == 1) {
 			$winner = $this->lrepEv()->getWinner($argv['event_id']);
 			if (NULL != $winner) {
@@ -937,7 +938,7 @@ class livereporting_event extends moon_com
 				);
 			}
 		}
-		
+
 		return @array(
 			$playersLeft,
 			$winner,
@@ -949,16 +950,16 @@ class livereporting_event extends moon_com
 			$return['pw.winnerimg'],
 		);
 	}
-	
+
 	private function partialRenderSidewidgetPlayersStats($eventInfo, $winner, $playersLeft)
 	{
 		$return = array();
 		$avgStack = 0;
-		
+
 		if ($playersLeft != 0 && intval($eventInfo['cp']) != 0) {
 			$avgStack = number_format(round($eventInfo['cp'] / $playersLeft));
 		}
-		
+
 		if ($playersLeft && $winner == NULL) {
 			$return['pl.players_block'] = true;
 			$return['pl.pleft'] = $playersLeft;
@@ -972,12 +973,12 @@ class livereporting_event extends moon_com
 				? number_format($eventInfo['cp'])
 				: '';
 		}
-		
+
 		if ($eventInfo['ppool']) {
 			$return['pl.players_block'] = true;
 			$return['pl.prizepool']   = number_format($eventInfo['ppool']);
-		}		
-		
+		}
+
 		return @array(
 			$return['pl.players_block'],
 			$return['pl.pleft'],
@@ -1001,7 +1002,7 @@ class livereporting_event extends moon_com
 				'sum' => $lrep->instTools()->helperCurrencyWrite(number_format($payouts['next_payout']['prize']), $eventInfo['currency'])
 			);
 		}
-		
+
 		return @array(
 			$retrun['has_payouts'],
 			$retrun['block'],
@@ -1009,7 +1010,7 @@ class livereporting_event extends moon_com
 			$retrun['sum'],
 		);
 	}
-	
+
 	private function partialRenderSidewidgetChips($winner, $page, $lrep, $eventInfo, $argv, $tpl)
 	{
 		$return = array();
@@ -1075,7 +1076,7 @@ class livereporting_event extends moon_com
 			$return['list.top_chip_counts']
 		);
 	}
-	
+
 	private function partialRenderSidewidgetPhotos($argv, $tpl, $lrep, $eventInfo)
 	{
 		$mainArgv = array(
@@ -1085,7 +1086,7 @@ class livereporting_event extends moon_com
 		);
 		$mainArgv['list.event_photos'] = '';
 		$mainArgv['url.more_photos'] = '';
-		
+
 		if ($argv['tab'] != 'gallery') {
 			$lastPhotos = $this->lrepEv()->getLastPhotos($argv['event_id']);
 			if (0 != count($lastPhotos)) {
@@ -1096,7 +1097,7 @@ class livereporting_event extends moon_com
 				'path' => $this->getUriPath(),
 				'leaf' => $this->getUriTab('gallery')
 			));
-	
+
 			$ipnReadBase = $this->get_var('ipnReadBase');
 			$tpl->save_parsed('log:event_photos.item', array(
 				'event_name' => htmlspecialchars($eventInfo['ename']),
@@ -1114,14 +1115,14 @@ class livereporting_event extends moon_com
 				));
 			}
 		}
-		
+
 		return array(
 			$mainArgv['tab_safe_display'],
 			$mainArgv['list.event_photos'],
 			$mainArgv['url.more_photos']
 		);
 	}
-		
+
 	private function partialRenderControls(&$mainArgv, $page, $lrep, $argv, $eventInfo)
 	{
 		$mainArgv['controls'] = '';
@@ -1134,7 +1135,7 @@ class livereporting_event extends moon_com
 				'tzOffset' => $eventInfo['tzOffset'],
 				'show_wsop_eod' => $eventInfo['show_wsop_eod'], // _chips
 			));
-			
+
 			if (!isset($argv['hide_write_controls'])) {
 				foreach (array('event', 'profile') as $object) {
 					$object = 'instEvent' . ucfirst($object);
@@ -1153,7 +1154,7 @@ class livereporting_event extends moon_com
 					));
 				}
 			}
-			
+
 			//
 			$page->css('/css/live-poker-adm.css');
 			//
@@ -1168,7 +1169,39 @@ class livereporting_event extends moon_com
 			moon::page()->set_local('banner.roomID', $adRooms[0]);
 		}
 	}
-	
+
+	private function gaAssign($eventId, $eventInfo, $page)
+	{
+		if (!is_array($gaCustomVars = $page->get_local('gaCustomVars')))
+			$gaCustomVars = array();
+
+		$eventGaId = !empty($eventInfo['esync_id'])
+			? array($eventInfo['sync_origin'], $eventInfo['esync_id'])
+			: array(_SITE_ID_,                 $eventId);
+		array_push($gaCustomVars, array(
+			'index' => 2, 'scope' => 3,
+			'name' => 'LiveReporting',
+			'value' => implode(':', $eventGaId)
+		));
+
+		$roomId = explode(',', $eventInfo['ad_rooms']);
+		if ($roomId = reset($roomId)) {
+			$roomData = $this->db->single_query_assoc('
+				SELECT id,network_id
+				FROM rw_rooms
+				WHERE id = ' . intval($roomId) . '
+			');
+			if (!empty($roomData))
+				array_push($gaCustomVars, array(
+					'index' => 5, 'scope' => 3,
+					'name' => 'Sponsor',
+					'value' => $roomData['network_id'] . '-' . $roomData['id']
+				));
+		}
+
+		$page->set_local('gaCustomVars', $gaCustomVars);
+	}
+
 	private function renderEntry($argv)
 	{
 		$page = moon::page();
@@ -1182,6 +1215,7 @@ class livereporting_event extends moon_com
 		}
 
 		$this->bannerRoomAssign($eventInfo['ad_rooms']);
+		$this->gaAssign($argv['event_id'], $eventInfo, $page);
 
 		if ($argv['type'] == 'profile') {
 			$entry = $argv;
@@ -1205,7 +1239,7 @@ class livereporting_event extends moon_com
 				$page->page404();
 			}
 		}
-		
+
 		if (isset($entry['sync_id']) && isset($entry['type']) && empty($entry['updated_on'])) { // freshly synced, untranslated
 			$page->head_link($lrep->makeAltUri($eventInfo['sync_origin'], 'event#view', array(
 					'event_id' => $entry['event_id'],
@@ -1215,7 +1249,7 @@ class livereporting_event extends moon_com
 				), $this->getUriFilter(NULL)
 			), 'canonical');
 		}
-		
+
 		$mainArgv = array(
 			'tournament_name' => htmlspecialchars($eventInfo['tname']),
 			'event_name' => htmlspecialchars($eventInfo['ename']),
@@ -1378,7 +1412,7 @@ class livereporting_event extends moon_com
 					'dregress' => $t9n['day.undo_completed'],
 				);
 			}
-			
+
 			// is event progress changeable at this point
 			$mainArgv['show_event_progress_change'] = false;
 			$lastDay = $days;
@@ -1430,7 +1464,7 @@ class livereporting_event extends moon_com
 				'id' => 'sbplayers'
 			), $this->getUriFilter(NULL, TRUE)));
 		}
-		
+
 		foreach ($days as $day) {
 			$mainArgv['days'] .= $tpl->parse('sidebar:day', array(
 				'url' => $lrep->makeUri('event#view', array(
@@ -1542,7 +1576,7 @@ class livereporting_event extends moon_com
 				$error = true;
 			}
 		}
-		
+
 		$page->set_global($this->my('fullname') . '_ipnSid', $sid);
 
 		if (!empty($sid[$key]) && !$error) {
@@ -1667,9 +1701,9 @@ class livereporting_event extends moon_com
 		if (NULL == ($entry = $this->lrepEv()->getLogEntryRedirectable($entry['id'], $entry['type']))) {
 			moon::page()->page404();
 		}
-		
+
 		$redirToDayAll = intval($this->requestArgv('day_id')) === 0;
-		
+
 		$redirDayId = $redirToDayAll // *must* be rewritten to not null
 			? 0
 			: $entry['day_id'];
@@ -1778,7 +1812,7 @@ class livereporting_event extends moon_com
 	{
 		return $this->getEventPylonObject('profile');
 	}
-	
+
 	/**
 	 * @return mixed
 	 */
