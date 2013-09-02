@@ -35,7 +35,7 @@ class header extends moon_com
 		//}
 
 
-// 100 Bilion Hands, PokerStars
+// WCOOP 2013 Takeover
 if ($this->wallpaper($res, array(
 'url'=> 'http://pokerstars.com/en/ad/11216421/1000x150wcooptakeover.jpg.click?rq=noscript&vs=',
 'imgPath'=> '/img/wallpaper/wcoop2013.jpg',
