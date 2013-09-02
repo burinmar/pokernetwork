@@ -1,0 +1,9 @@
+/*BG, Title*/
+#promo header {background-image: url('bg.jpg'); background-color: #393939}		/* bg: #000 */
+
+/*Bonus bg, Bonus text*/
+#promo header .playCode div {background-color: #393939 !important; color: #ffcc00;}								/* bg: #b3b3b3; c: #000 */
+#promo header .playCode div span {color: #ffcc00;}
+
+/*Play bg, Play text*/
+#promo header .playCode a {background-color: #ffcc00; color: #393939;}												/* bg: #333; c: #fff */
