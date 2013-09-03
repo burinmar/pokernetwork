@@ -1186,17 +1186,11 @@ class livereporting_event extends moon_com
 
 		$roomId = explode(',', $eventInfo['ad_rooms']);
 		if ($roomId = reset($roomId)) {
-			$roomData = $this->db->single_query_assoc('
-				SELECT id,network_id
-				FROM rw_rooms
-				WHERE id = ' . intval($roomId) . '
-			');
-			if (!empty($roomData))
-				array_push($gaCustomVars, array(
-					'index' => 5, 'scope' => 3,
-					'name' => 'Sponsor',
-					'value' => $roomData['network_id'] . '-' . $roomData['id']
-				));
+			array_push($gaCustomVars, array(
+				'index' => 5, 'scope' => 3,
+				'name' => 'Sponsor',
+				'value' => '0-' . $roomId
+			));
 		}
 
 		$page->set_local('gaCustomVars', $gaCustomVars);
