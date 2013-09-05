@@ -22,9 +22,9 @@ class tour_list extends moon_com
 				$page = moon::page();
 				$form = &$this->form();
 				$form->names('id', 'name', 'name_short', 'from_date', 'duration',
-					'currency', 'intro', 'tour', 'is_live', 'alias', 
+					'currency', 'intro', 'tour', 'is_live', 'alias',
 					'delete_logo_main', 'delete_logo_wgbg', 'delete_logo_mobile_1', 'delete_logo_mobile_2',
-					'delete_logo_big_bg', 'delete_logo_small', 'delete_logo_mid', 'delete_logo_idx', 'logo_bgcolor', 'logo_is_dark', 'skin', 
+					'delete_logo_big_bg', 'delete_logo_small', 'delete_logo_mid', 'delete_logo_idx', 'logo_bgcolor', 'logo_is_dark', 'skin',
 					'timezone', 'place', 'address', 'geolocation',
 					'sync_id','is_syncable','autopublish','show_wsop_eod',
 					'ad_rooms', 'priority', 'stayhere');
@@ -110,7 +110,7 @@ class tour_list extends moon_com
 					$this->set_var('render', 'entry');
 					$this->set_var('id', $id);
 				}
-				if (isset($_GET['page'])) 
+				if (isset($_GET['page']))
 					$this->set_var('page', intval($_GET['page']));
 				break;
 		}
@@ -440,14 +440,14 @@ class tour_list extends moon_com
 	private function saveEntry($data)
 	{
 		$page     = moon::page();
-		$tpl      = &$this->load_template();
+		$tpl      = $this->load_template();
 		$messages = $tpl->parse_array('messages');
 
 		$saveData = array();
 		foreach (array(
 			'id', 'alias', 'name', 'name_short', 'place', 'address', 'geolocation',
 			'ad_rooms', 'is_live', 'currency', 'intro', 'tour',
-			'timezone', 'from_date', 'duration',
+			'timezone', 'from_date', 'to_date', 'duration',
 			'sync_id', 'is_syncable', 'autopublish', 'priority', 'show_wsop_eod',
 			'logo_bgcolor', 'logo_is_dark', 'skin',
 		) as $key) {
@@ -457,6 +457,9 @@ class tour_list extends moon_com
 		}
 
 		$saveData['from_date'] = strtotime($saveData['from_date'] . ' 00:00:00 +0000');
+		$saveData['to_date'] = $saveData['to_date'] != ''
+			? strtotime($saveData['to_date'] . ' 00:00:00 +0000')
+			: null;
 
 		$adRooms = array();
 		if (is_array($saveData['ad_rooms'])) {
@@ -472,7 +475,7 @@ class tour_list extends moon_com
 			return ;
 		}
 
-		foreach (array('tour', 'alias', 'intro', 'place', 'address', 'geolocation', 'ad_rooms','sync_id') as $key) {
+		foreach (array('tour', 'sync_id') as $key) {
 			if (empty($saveData[$key])) {
 				$saveData[$key] = NULL;
 			}
@@ -525,8 +528,9 @@ class tour_list extends moon_com
 
 		$locale = moon::locale();
 		list($tzOffset) = $locale->timezone($saveData['timezone']);
-		foreach (array('from_date') as $key) {
-			$saveData[$key] -= $tzOffset;
+		foreach (array('from_date', 'to_date') as $key) {
+			if (null !== $saveData[$key])
+				$saveData[$key] -= $tzOffset;
 		}
 
 		foreach (array(
