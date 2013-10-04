@@ -1,13 +1,16 @@
 <?php
 
-class promo_sync extends moon_com 
+class promo_sync extends moon_com
 {
 	function events($event, $argv)
 	{
 		switch ($event) {
+			case 'pre-sync':
+				moon::page()->set_local('transporter', $this->getMergeStatus());
+				return ;
 			case 'sync':
 				ob_start();
-				$this->mergeData($argv['data']);
+					$this->mergeData($argv['data']);
 				moon::page()->set_local('transporter', ob_get_contents());
 				ob_end_clean();
 				return ;
@@ -16,30 +19,37 @@ class promo_sync extends moon_com
 		}
 	}
 
+	private function getMergeStatus()
+	{
+		$lastSyncedAt = 0;
+		$lastSyncedAt = max($lastSyncedAt, $this->mergeStatusAbstract('Promos'));
+		$lastSyncedAt = max($lastSyncedAt, $this->mergeStatusAbstract('PromosPages'));
+		$lastSyncedAt = max($lastSyncedAt, $this->mergeStatusAbstract('PromosEvents'));
+		return $lastSyncedAt;
+	}
+
+	private function mergeStatusAbstract($localTable)
+	{
+		$synced = $this->db->single_query_assoc('
+			SELECT UNIX_TIMESTAMP(MAX(remote_updated_on)) remote_updated_on
+			FROM ' . $this->table($localTable) . '
+		');
+		return intval($synced['remote_updated_on']);
+	}
+
 	private function mergeData($data)
 	{
-		$customPages = array();
-		$events = array();
-		foreach ($data as $k => $v) {
-			if (isset($v['custom_pages'])) {
-			foreach ($v['custom_pages'] as $v2) {
-				$customPages[] = $v2;
-			}}
-			unset($data[$k]['custom_pages']);
+		$promosIds = $this->db->array_query_assoc('
+			SELECT id, remote_id FROM promos
+			WHERE remote_id!=0
+		', 'remote_id');
 
-			if (isset($v['events'])) {
-			foreach ($v['events'] as $v2) {
-				$events[] = $v2;
-			}}
-			unset($data[$k]['events']);
-			
-			if ('0' == $data[$k]['update']) {
-				unset($data[$k]);
-			} else {
-				unset($data[$k]['update']);
-			}
-		}
-		$this->importAbstract($data, 'Promos', 'PromosMaster', array(
+		$domainData = array();
+		array_walk($data, function($row) use (&$domainData) {
+			if (!isset($row['self'])) return ;
+			$domainData[] = $row['self'];
+		});
+		$this->importAbstract($domainData, 'Promos', 'PromosMaster', array(
 			'title',
 			'prize',
 			'descr_intro',
@@ -56,44 +66,50 @@ class promo_sync extends moon_com
 			SELECT id, remote_id FROM promos
 			WHERE remote_id!=0
 		', 'remote_id');
-		
-		foreach ($customPages as $k => $v) {
-			$customPages[$k]['promo_id'] = $promosIds[$v['promo_id']]['id'];
-			if (empty($customPages[$k]['promo_id'])) {
-				unset($customPages[$k]);
+
+		$domainData = array();
+		array_walk($data, function($row) use (&$domainData, $promosIds) {
+			if (!isset($row['custom_pages'])) return ;
+			foreach ($row['custom_pages'] as $k => $v) {
+				if (!isset($promosIds[$v['promo_id']])) continue;
+				$v['promo_id'] = $promosIds[$v['promo_id']]['id'];
+				$domainData[] = $v;
 			}
-		}
-		$this->importAbstract($customPages, 'PromosPages', 'PromosPagesMaster', array(
+		});
+		$this->importAbstract($domainData, 'PromosPages', 'PromosPagesMaster', array(
 			'title',
 			'description',
 			'meta_kwd',
 			'meta_descr'
 		), array(), FALSE);
 
-		foreach ($events as $k => $v) {
-			$events[$k]['promo_id'] = $promosIds[$v['promo_id']]['id'];
-			if (empty($events[$k]['promo_id'])) {
-				unset($events[$k]);
+		$domainData = array();
+		array_walk($data, function($row) use (&$domainData, $promosIds) {
+			if (!isset($row['events'])) return ;
+			foreach ($row['events'] as $k => $v) {
+				if (!isset($promosIds[$v['promo_id']])) continue;
+				$v['promo_id'] = $promosIds[$v['promo_id']]['id'];
+				$domainData[] = $v;
 			}
-		}
-		$this->importAbstract($events, 'PromosEvents', 'PromosEventsMaster', array(
+		});
+		$this->importAbstract($domainData, 'PromosEvents', 'PromosEventsMaster', array(
 			'title',
 			'results_columns'
 		), array(
 			'start_date',
 			'pwd_date'
-		), FALSE);		
+		), FALSE);
 	}
 
 	/**
 	 * Fork of club.import
-	 * Requirements: 
+	 * Requirements:
 	 * data[] = {id, is_hidden, updated_on}
 	 * table {id, is_hidden, updated_on, remote_updated_on}
 	 * table_push {id, updated_on}
 	 */
 	private function importAbstract(
-		$data, $localTable, $localTablePush, 
+		$data, $localTable, $localTablePush,
 		$translatableFlds, $timestampFlds,
 		$autoUnhide
 	) {
@@ -170,7 +186,7 @@ class promo_sync extends moon_com
 					foreach ($translatableFlds as $value) {
 						$data[] = $value . '_prev=' . $value;
 					}
-					$this->db->query('UPDATE ' . $this->table($localTablePush) . ' 
+					$this->db->query('UPDATE ' . $this->table($localTablePush) . '
 						SET ' .
 						implode(', ', $data) . '
 						WHERE id=' . $item['id']);
@@ -272,5 +288,5 @@ class promo_sync extends moon_com
 		return $r
 			? $this->db->insert_id()
 			: FALSE;
-	}	
+	}
 }
