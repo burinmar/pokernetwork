@@ -232,7 +232,7 @@ class base_inplace_syncable extends moon_com
 			);
 			if (!empty($row['remote_id'])) {
 				$rowArgv['synced'] = true;
-				$rowArgv['sync_state'] = intval($row['updated_on'])>=intval($row['remote_updated_on']) ? 1 : 2;
+				$rowArgv['sync_state'] = intval($row['updated_on'])>intval($row['remote_updated_on']) ? 1 : 2;
 			}
 			$this->partialRenderListRow($row, $rowArgv, $tpl);
 			$mainArgv['list.entries'] .= $tpl->parse('list:entries.item', $rowArgv);
@@ -452,7 +452,7 @@ class base_inplace_syncable extends moon_com
 		$mainArgv['form.hide'] = empty($entryData['is_hidden']) ? '1' : '1" checked="checked';
 		//
 		if ($this->isSlaveHost() && !empty($entryData['remote_id'])) {
-			$mainArgv['syncStatus'] = intval($entryData['updated_on'])>=intval($entryData['remote_updated_on']) ? 1 : 2;
+			$mainArgv['syncStatus'] = intval($entryData['updated_on'])>intval($entryData['remote_updated_on']) ? 1 : 2;
 			$mainArgv['remote_id'] = $entryData['remote_id'];
 			$remote = $this->getOriginInfo($entryData['remote_id']);
 			foreach ($this->getEntryTranslatables() as $k) {

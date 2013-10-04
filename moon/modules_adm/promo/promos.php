@@ -404,59 +404,87 @@ class promos extends base_inplace_syncable
 
 	private function sync()
 	{
-		$sites = array(_SITE_ID_);
+		$sites = getSitesList();
 		$sendSites = array();
 		unset($sites['com']);
+		$sites['pnw:com'] = null;
+		$sites['learn'] = null;
 
-		$data = $this->db->array_query_assoc('
-			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on,
-			( updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY ) as `update`
-			FROM ' . $this->table('Entries'), 'id');
-		foreach ($data as $k => $v) {
-			$data[$k]['custom_pages'] = array();
+		$return = array(
+			'ok' => 1,
+			'failed_sites' => array()
+		);
+		header('content-type: application/json');
+		error_reporting(0);
+
+		$sendStates = array();
+		foreach ($sites as $siteId => $null) {
+			$sent = callPnEvent($siteId, 'promo.promo_sync#pre-sync', array(
+				'data' => $siteData
+			), $syncedAt,FALSE);
+			if (Ssent && is_int($syncedAt))
+				$sendStates[$siteId] = $syncedAt;
+			else {
+				$return['ok'] = 0;
+				$return['failed_sites'][] = $siteId;
+			}
 		}
+		$fetchSince = min($sendStates);
+		$fetchAddIds = array(0);
+		$data = array();
 
 		$dataCustomPages =  $this->db->array_query_assoc('
 			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on
 			FROM promos_pages
-			WHERE updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY
+			WHERE updated_on>FROM_UNIXTIME(' . $fetchSince . ')
+			ORDER BY updated_on
 		');
 		foreach ($dataCustomPages as $k => $v) {
 			$data[$v['promo_id']]['custom_pages'][] = $v;
+			$fetchAddIds[] = $v['promo_id'];
 		}
 
 		$dataEvents =  $this->db->array_query_assoc('
 			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on, UNIX_TIMESTAMP(start_date) start_date, UNIX_TIMESTAMP(pwd_date) pwd_date,
 				-freeroll_id freeroll_id
 			FROM promos_events
-			WHERE updated_on>CURRENT_TIMESTAMP-INTERVAL 2 DAY
+			WHERE updated_on>FROM_UNIXTIME(' . $fetchSince . ')
+			ORDER BY updated_on
 		');
 		foreach ($dataEvents as $k => $v) {
 			$data[$v['promo_id']]['events'][] = $v;
+			$fetchAddIds[] = $v['promo_id'];
+		}
+
+		$dataPromos = $this->db->array_query_assoc('
+			SELECT *, UNIX_TIMESTAMP(updated_on) updated_on
+			FROM ' . $this->table('Entries') . '
+			WHERE updated_on>FROM_UNIXTIME(' . $fetchSince . ') OR id IN (' . implode(',', $fetchAddIds) . ')
+			ORDER BY updated_on',
+		'id');
+		foreach ($dataPromos as $k => $v) {
+			$data[$v['id']]['self'] = $v;
 		}
 
 		foreach ($sites as $siteId => $null) {
-			$this->currentFilter = $siteId;
-			$siteData = array_filter($data, array($this, 'syncSiteDataFilter'));
-
-			if (0 == count($siteData)) {
+			if (!isset($sendStates[$siteId]))
 				continue;
-			}
-			callPnEvent($siteId, 'promo.promo_sync#sync', array(
+			$siteData = array_filter($data, function($row) use ($siteId) {
+				return in_array($siteId, explode(',', $row['self']['sites']));
+			});
+			if (0 == count($siteData))
+				continue;
+
+			$sent = callPnEvent($siteId, 'promo.promo_sync#sync', array(
 				'data' => $siteData
 			), $answer,FALSE);
+			if (!$sent) {
+				$return['ok'] = 0;
+				$return['failed_sites'][] = $siteId;
+			}
 		}
-	}
 
-	private $currentFilter;
-	private function syncSiteDataFilter($row)
-	{
-		return in_array($this->currentFilter, explode(',', $row['sites'])) &&
-			(
-				!empty($row['update'])
-				 ||
-				0 != count($row['custom_pages'])
-			);
+		echo json_encode($return);
 	}
 
 	public function updates()
@@ -467,19 +495,19 @@ class promos extends base_inplace_syncable
 		// index
 		$updatesBatch[0] = $this->db->array_query('
 			SELECT id, title FROM promos
-			WHERE remote_updated_on>updated_on
+			WHERE remote_updated_on>=updated_on
 			  AND is_hidden<2
 		');
 		$updatesBatch[1] = $this->db->array_query('
 			SELECT pp.id, pp.promo_id, pp.title FROM promos_pages pp
 			INNER JOIN promos p ON p.id=pp.promo_id
-			WHERE pp.remote_updated_on>pp.updated_on
+			WHERE pp.remote_updated_on>=pp.updated_on
 			  AND pp.is_hidden<2 AND p.is_hidden<2
 		');
 		$updatesBatch[2] = $this->db->array_query('
 			SELECT pe.id, pe.promo_id, pe.title FROM promos_events pe
 			INNER JOIN promos p ON p.id=pe.promo_id
-			WHERE pe.remote_updated_on>pe.updated_on
+			WHERE pe.remote_updated_on>=pe.updated_on
 			  AND pe.is_hidden<2 AND p.is_hidden<2
 		');
 		return $updatesBatch;
@@ -490,6 +518,7 @@ class promos extends base_inplace_syncable
 		$preparedPromos = array();
 		$sites = getSitesList();
 		$sites['pnw:com'] = null;
+		$sites['learn'] = null;
 		foreach ($sites as $siteId => $null) {
 			callPnEvent($siteId, 'promo.promos#get-active-promos', null, $answer);
 			if (!is_array($answer))
