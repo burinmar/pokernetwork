@@ -37,11 +37,13 @@ class promos extends base_inplace_syncable
 		$roomIds = array();
 		$cRoomIds = array();
 		foreach ($list as $row) {
-			$row['room_id'] = intval($row['room_id']);
-			if ($row['room_id'] > 0) {
-				$roomIds[] = $row['room_id'];
-			} elseif ($row['room_id'] < 0) {
-				$cRoomIds[] = -$row['room_id'];
+			foreach (explode(',', $row['room_id']) as $roomId) {
+				$roomId = intval($roomId);
+				if ($roomId > 0) {
+					$roomIds[] = $roomId;
+				} elseif ($roomId < 0) {
+					$cRoomIds[] = -$roomId;
+				}
 			}
 		}
 		$this->rooms = array();
@@ -73,12 +75,15 @@ class promos extends base_inplace_syncable
 	protected function partialRenderListRow($row, &$argv, $tpl)
 	{
 		$argv = array_merge($argv, array(
-			'room' => htmlspecialchars($this->getRoomName($row['room_id'])),
+			'room' => array(),
 			'is_completed' => '',
 			'date_start' => $row['date_start'],
 			'date_end' => $row['date_end'],
 			'page_previews' => '',
 		));
+		foreach (explode(',', $row['room_id']) as $roomId)
+			$argv['room'][]= htmlspecialchars($this->getRoomName($roomId));
+		$argv['room'] = implode(', ', $argv['room']);
 		$tz = $this->locale()->timezone($row['timezone']);
 		if (empty($argv['class']) && strtotime($row['date_end'] . ' GMT') + $tz[0] < time()) {
 			$argv['class'] = 'item-inactive';

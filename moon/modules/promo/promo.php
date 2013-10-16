@@ -764,7 +764,7 @@ class promo extends moon_com
 					SELECT r.alias, r.name, r.logo, t.bonus_code, r.currency FROM ' . $this->table('Rooms') . ' r
 					INNER JOIN ' . $this->table('Trackers') . ' t
 						ON t.parent_id=r.id AND t.alias=""
-					WHERE id=' . intval($promo['room_id']) . '
+					WHERE id IN(' . implode(',', array_map('intval', explode(',', $promo['room_id']))) . ')
 				');
 				if (0 == count($promo['room'])) {
 					$promo['room'] = null;

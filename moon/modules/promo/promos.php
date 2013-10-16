@@ -125,9 +125,11 @@ class promos extends moon_com
 
 	private function getActiveRoomIs($argv)
 	{
+		$roomIds = array_map('intval', $argv['room_ids']);
 		$room = $this->db->single_query_assoc('
 			SELECT id FROM ' . $this->table('Rooms') . '
-			WHERE id=' . intval($argv['room_id']) . ' AND is_hidden=0
+			WHERE id IN (' . implode(',', $roomIds) . ') AND is_hidden=0
+			LIMIT 1
 		');
 		return isset($room['id']);
 	}
