@@ -105,7 +105,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 	<h2 class="formTitle">Entry :: {title}</h2>
 	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
 	<span class="clr"></span>
-	
+
 	<dl>
 		<dt><label>Title</label></dt>
 		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" />
@@ -176,7 +176,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 		<dd class="w100"><textarea name="descr_qualify" cols="105" rows="4" id="descr_qualify">{entry.descr_qualify}</textarea></dd>
 
 		<dt><label>Prize/home description</label></dt>
-		<dd class="w100"><textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea></dd>
+		<dd class="w100">{entry.descr_prize.toolbar}<textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea></dd>
 
 		<dt><label>Terms and conditions</label></dt>
 		<dd class="w100">{entry.terms_conditions.toolbar}<textarea name="terms_conditions" cols="105" rows="15" id="terms_conditions">{entry.terms_conditions}</textarea></dd>
@@ -288,7 +288,7 @@ step5.png=First Deposit
 		<dt><label>Prize/home description</label></dt>
 		<dd class="w100">
 			<div class="forSlaveOriginalText">{form.origin_descr_prize}</div>
-			<textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea>
+			{entry.descr_prize.toolbar}<textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea>
 		</dd>
 
 		<dt><label>Terms and conditions</label></dt>

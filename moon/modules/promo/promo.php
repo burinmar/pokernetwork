@@ -92,6 +92,11 @@ class promo extends moon_com
 		$promoTz = moon::locale()->timezone($entry['timezone']);
 		list(, $tzShift) = $this->userTzData($promoTz[0]);
 
+		if (is_object( $rtf = $this->object('rtf') )) {
+			$rtf->setInstance($this->get_var('rtf'));
+			list(, $entry['descr_prize']) = $rtf->parseText('', $entry['descr_prize']);
+		}
+
 		$contentArgv = array(
 			'description' => $this->parseRoomVars($entry['descr_prize'], $entry['room']),
 			'leaderboard' => '',
