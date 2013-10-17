@@ -104,7 +104,7 @@ class promo extends moon_com
 			'list.steps' => $this->partialRenderSteps($entry),
 			'prize' => htmlspecialchars($entry['prize']),
 			'prize_small' => strlen($entry['prize']) > 7,
-			'qualification' => $entry['descr_qualify'],
+			'qualification' => $this->parseRoomVars($entry['descr_qualify'], $entry['room']),
 			'when' => $text->dateRange(
 				strtotime($entry['date_start']) + $tzShift,
 				strtotime($entry['date_end']) + $tzShift,
@@ -206,7 +206,7 @@ class promo extends moon_com
 			));
 		}
 
-		return $return;
+		return $this->parseRoomVars($return, $entry['room']);
 	}
 
 	private function getEventsIndex($promoId)
