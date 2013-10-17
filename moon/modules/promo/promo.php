@@ -661,7 +661,7 @@ class promo extends moon_com
 			'room.bonus_code'     => htmlspecialchars($entry['room']['bonus_code']),
 			'room.marketing_code' => htmlspecialchars($entry['room']['marketing_code']),
 			'room.download'       => htmlspecialchars('/' . $entry['room']['alias'] . '/download/?EL=League'),
-			'room.logo' => img('rw', $entry['room_id'], $entry['room']['logo'])
+			'room.logo' => img('rw', $entry['room']['id'], $entry['room']['logo'])
 		));
 
 		// tab menu
