@@ -701,13 +701,13 @@ class promo extends moon_com
 		if (!$room)
 			return $text;
 		$tplArgs = array(
-			'bonus_code'     => $room['bonus_code'],
-			'marketing_code' => $room['marketing_code'],
-			'visit'    => '/' . $room['alias'] . '/ext/?EL=League',
-			'download' => '/' . $room['alias'] . '/download/?EL=League',
+			'{bonus_code}'     => $room['bonus_code'],
+			'{marketing_code}' => $room['marketing_code'],
+			'http://{visit}'    => '/' . $room['alias'] . '/ext/?EL=League',
+			'http://{download}' => '/' . $room['alias'] . '/download/?EL=League',
 		);
 		foreach ($tplArgs as $key => $value) {
-			$text = str_replace('{' . $key . '}', htmlspecialchars($value), $text);
+			$text = str_replace($key, htmlspecialchars($value), $text);
 		}
 		return $text;
 	}
