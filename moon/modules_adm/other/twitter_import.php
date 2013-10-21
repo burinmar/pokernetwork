@@ -42,12 +42,12 @@ class twitter_import extends moon_com {
 			$msg .= 'Clearly out of rate limits. ' . "\n";
 			return $msg;
 		}
-		
+
 		// Find and, if necessarey, create PokerPlayers list
 		// List is identified by slug, which is a normalized name with a max of 25 characters
 		$playersListId = null;
 		$lists = $twitter->get('lists/list');
-		if (isset($lists->errors)) {
+		if (isset($lists->errors) || !is_array($lists)) {
 			$msg .= 'Failed retrieveing lists list. ' . "\n";
 			return $msg;
 		}
@@ -58,6 +58,10 @@ class twitter_import extends moon_com {
 			}
 		}
 		if (!$playersListId) {
+			if (!isset($_GET['create-inital'])) {
+				$msg .= 'Failed retrieveing list. ' . "\n";
+				return ;
+			}
 			$list = $twitter->post('lists/create', array(
 				'name' => 'pnw.com tracker',
 				'mode' => 'private',
@@ -114,12 +118,12 @@ class twitter_import extends moon_com {
 		}
 
 		// Calculate users, missing in twitter list.
-		// Check if those players exists on twitter at all, if not - mark as hidden in db 
+		// Check if those players exists on twitter at all, if not - mark as hidden in db
 		$missingListUsers = array_diff(array_keys($users), $usersInList);
 		$missingListUsers = array_slice($missingListUsers, 0, 99); // max 100 users limit for any operation, 1 script-reserved
 		if (0 != count($missingListUsers)) {
 			// include one existing account, otherwise if all users are non-existent, an error is returned
-			// that's one way to check 
+			// that's one way to check
 			$usersInfo = $twitter->get('users/lookup', array(
 				'screen_name' => implode(',', $missingListUsers) . ',pokernews',  // +absolutely any existing account, that's where reserve goes
 				'include_entities' => false
@@ -163,7 +167,7 @@ class twitter_import extends moon_com {
 			$msg .= 'Deleting PokerPlayers members list cache. ' . "\n";
 			$cache->delete($this->my('fullname').'.usersInList');
 		} elseif (count($extraListUsers) > 0) {
-			// removing 
+			// removing
 			$msg .= 'Removing ' . count($extraListUsers) . ' player(s): ' . implode(',', $extraListUsers) . '. ' . "\n";
 			$twitter->post('lists/members/destroy_all', array(
 				'list_id' => $playersListId,
@@ -203,7 +207,7 @@ class twitter_import extends moon_com {
 
 			if ($isLastMessage) {
 				// it is ok to update image on new visible tweet only, i guess
-				// otherwise, just 
+				// otherwise, just
 				$this->db->update(array(
 					'is_last_message' => 0,
 					'image_url' => $tweet->user->profile_image_url,
@@ -264,7 +268,7 @@ class twitter_import extends moon_com {
 		foreach ($tweet->entities->urls as $url) {
 			$msg = str_replace(
 				$url->url,
-				sprintf('<a href="%s" target="_blank" rel="nofollow">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)), 
+				sprintf('<a href="%s" target="_blank" rel="nofollow">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)),
 				$msg);
 		}
 		// links to images
@@ -272,7 +276,7 @@ class twitter_import extends moon_com {
 		foreach ($tweet->entities->media as $url) {
 			$msg = str_replace(
 				$url->url,
-				sprintf('<a href="%s" target="_blank" rel="nofollow" class="twitter-image">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)), 
+				sprintf('<a href="%s" target="_blank" rel="nofollow" class="twitter-image">%s</a>', htmlspecialchars($url->url), htmlspecialchars($url->display_url)),
 				$msg);
 		}
 
@@ -280,8 +284,8 @@ class twitter_import extends moon_com {
 		if (isset($tweet->entities->user_mentions) && is_array($tweet->entities->user_mentions))
 		foreach ($tweet->entities->user_mentions as $twitterUser) {
 			$msg = str_replace(
-				'@' . $twitterUser->screen_name, 
-				sprintf('@<a href="http://twitter.com/%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($twitterUser->screen_name), htmlspecialchars($twitterUser->screen_name)), 
+				'@' . $twitterUser->screen_name,
+				sprintf('@<a href="http://twitter.com/%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($twitterUser->screen_name), htmlspecialchars($twitterUser->screen_name)),
 				$msg);
 		}
 
@@ -289,8 +293,8 @@ class twitter_import extends moon_com {
 		if (isset($tweet->entities->hashtags) && is_array($tweet->entities->hashtags))
 		foreach ($tweet->entities->hashtags as $hashtag) {
 			$msg = str_replace(
-				'#' . $hashtag->text, 
-				sprintf('#<a href="http://twitter.com/search/?src=hash&amp;q=%%23%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($hashtag->text), htmlspecialchars($hashtag->text)), 
+				'#' . $hashtag->text,
+				sprintf('#<a href="http://twitter.com/search/?src=hash&amp;q=%%23%s" target="_blank" rel="nofollow">%s</a>', rawurlencode($hashtag->text), htmlspecialchars($hashtag->text)),
 				$msg);
 		}
 
