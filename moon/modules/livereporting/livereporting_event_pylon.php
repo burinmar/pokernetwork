@@ -11,7 +11,7 @@ require_once 'livereporting_event.php';
 class livereporting_event_pylon extends livereporting_event
 {
 	/**
-	 * @var livereporting_event 
+	 * @var livereporting_event
 	 */
 	protected $parent = NULL;
 
@@ -20,7 +20,7 @@ class livereporting_event_pylon extends livereporting_event
 		parent::__construct($a, $b, $c);
 		$this->parent = $this->object('livereporting_event');
 	}
-	
+
 	/**
 	 * override livereporting_event -- default empty method
 	 */
@@ -42,30 +42,30 @@ class livereporting_event_pylon extends livereporting_event
 	protected function render($data, $argv) {}
 	/**
 	 * Method to process events
-	 * 
+	 *
 	 * May 404(), exit, redirect.
-	 * @param string $event 
-	 * @param array $argv 
+	 * @param string $event
+	 * @param array $argv
 	 * @return mixed
 	 */
 	protected function synthEvent($event, $argv) {}
 
 	/**
 	 * Redirect helper function, which accepts reporting uri schema
-	 * @param string $event 
-	 * @param array $argv 
-	 * @param array $filter 
+	 * @param string $event
+	 * @param array $argv
+	 * @param array $filter
 	 */
-	protected function redirect_($event, $argv = array(), $filter = array()) 
+	protected function redirect_($event, $argv = array(), $filter = array())
 	{
 		moon::page()->redirect(htmlspecialchars_decode($this->lrep()->makeUri($event, $argv, $filter)));
 	}
-	
+
 	/**
 	 * Redirect to log entry after save
-	 * @param int $entryId 
-	 * @param string $entryType 
-	 * @param array $getParamsAdditional 
+	 * @param int $entryId
+	 * @param string $entryType
+	 * @param array $getParamsAdditional
 	 */
 	protected function redirectAfterSave($entryId, $entryType, $getParamsAdditional = array())
 	{
@@ -74,26 +74,26 @@ class livereporting_event_pylon extends livereporting_event
 			'type' => $entryType
 		), $getParamsAdditional);
 	}
-	
+
 	/**
 	 * Redirect to log after entry delete
 	 *
 	 * executes forget() method
-	 * @param int $eventId 
-	 * @param mixed $dayId 
-	 * @param mixed $filterAdd 
+	 * @param int $eventId
+	 * @param mixed $dayId
+	 * @param mixed $filterAdd
 	 */
 	protected function redirectAfterDelete($eventId, $dayId, $filterAdd = NULL)
 	{
 		$this->forget();
-		
+
 		// $this->redirect does not work for the same reason as $this->linkas()
 		$this->redirect_('event#view', array(
 			'event_id' => filter_var($eventId, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
 			'path' => $this->getUriPath($dayId)
 		), $this->getUriFilter($filterAdd, TRUE));
 	}
-	
+
 	/**
 	 * Macro to get $fields keys from $_POST
 	 *
@@ -122,10 +122,10 @@ class livereporting_event_pylon extends livereporting_event
 			}
 			unset($data['datetime_options']);
 		}
-		
+
 		return $data;
 	}
-	
+
 	/**
 	 * Macro to get entry-attached image fields from _POST
 	 * @param array &$data Array to append image data to
@@ -145,11 +145,11 @@ class livereporting_event_pylon extends livereporting_event
 			);
 		}
 	}
-	
+
 	/**
 	 * Macro to render common livereporting date form fields
 	 * @param array $argv Combo of entry data and event tz data
-	 * @param livereporting $lrep 
+	 * @param livereporting $lrep
 	 * @return array
 	 */
 	protected function helperRenderControlDatetime($argv, $lrep)
@@ -166,22 +166,22 @@ class livereporting_event_pylon extends livereporting_event
 		foreach ($timeOptions as $k => $v) {
 			$controlsArgv['datetime_options'] .= '<option value="' . $k . '">' . $v . '</option>';
 		}
-		
+
 		$controlsArgv['custom_datetime'] = $lrep->instTools()
 			->helperCustomDatetimeWrite('+Y #m +d +H:M -S -z', (
-				isset($argv['created_on']) 
-					? intval($argv['created_on']) 
-					: time()) + $argv['tzOffset'], 
+				isset($argv['created_on'])
+					? intval($argv['created_on'])
+					: time()) + $argv['tzOffset'],
 				$argv['tzOffset']);
 		$controlsArgv['custom_tz'] = $argv['tzName'];
-		
+
 		return array(
 			$controlsArgv['datetime_options'],
 			$controlsArgv['custom_datetime'],
 			$controlsArgv['custom_tz']
 		);
 	}
-	
+
 	/**
 	 * Macro to render entry image attachement snippet
 	 * @param array $argv Entry data
@@ -191,7 +191,7 @@ class livereporting_event_pylon extends livereporting_event
 	protected function helperRenderIpn($argv, $xApp)
 	{
 		$controlsArgv['url.ipn'] = $this->get_var('ipnReadBase');
-		$controlsArgv['url.ipnpreview'] = 
+		$controlsArgv['url.ipnpreview'] =
 			$this->lrep()->makeUri('event#ipn-browse',
 				array(
 					'event_id' => filter_var($argv['event_id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
@@ -219,7 +219,7 @@ class livereporting_event_pylon extends livereporting_event
 				'ipnimagesrc'   => htmlspecialchars($argv['image_src'])
 			);
 		}
-		
+
 		return array(
 			$controlsArgv['url.ipn'],
 			$controlsArgv['url.ipnpreview'],
@@ -234,16 +234,16 @@ class livereporting_event_pylon extends livereporting_event
 				? $controlsArgv['ipnimagesrc'] : NULL,
 		);
 	}
-	
+
 	/**
-	 * Macro to populate entry template arguments array with most commons attributes. 
+	 * Macro to populate entry template arguments array with most commons attributes.
 	 *
 	 * Essentially is spaghetti, which includes anything common in entry rendering.
 	 * May 404().
 	 * @param array &$data Entry data (may be modified in process)
 	 * @param array $argv Rendering hints array
 	 * @param mixed $tpl moon_com_template
-	 * @return array 
+	 * @return array
 	 */
 	protected function helperRenderCommonArgv(&$data, $argv, $tpl = NULL)
 	{
@@ -257,12 +257,12 @@ class livereporting_event_pylon extends livereporting_event
 			$ipnReadBase = $this->get_var('ipnReadBase');
 			$allowWrite = $page->get_global('adminView') && $this->lrep()->instTools()->isAllowed('writeContent');
 		}
-		
+
 		$createdOn = $text->ago($data['created_on']);
 		if ($createdOn == '' || $data['created_on'] > time()) {
 			$createdOn = $locale->gmdatef($data['created_on'] + $data['tzOffset'], 'Reporting') . ' ' . $data['tzName'];
 		}
-		
+
 		if (is_string($data['contents']))
 			$data['contents'] = unserialize($data['contents']);
 		$rArgv = array(
@@ -282,7 +282,7 @@ class livereporting_event_pylon extends livereporting_event
 					'id' => $data['id']
 				), $this->getUriFilter(NULL))
 		);
-		
+
 		if (isset($data['contents']['contents'])) {
 			if ($data['type'] == 'post') {
 				$data['contents']['contents'] = preg_replace('~{poll:[0-9]+}~', '', $data['contents']['contents']);
@@ -305,9 +305,7 @@ class livereporting_event_pylon extends livereporting_event
 
 		if (!empty($data['contents']['i_src'])) {
 			//$rArgv['src'][strlen($rArgv['src']) - 15] = 'b';
-			$data['contents']['i_misc'] = is_array($data['contents']['i_misc']) // @ should not be an array, fixing temporarily
-				? array($data['contents']['i_misc'], NULL)
-				: explode(',', $data['contents']['i_misc']);
+			$data['contents']['i_misc'] = '';
 			$rArgv += array(
 				'image' => true,
 				'image_src' => $ipnReadBase . $data['contents']['i_src'],
@@ -342,7 +340,7 @@ class livereporting_event_pylon extends livereporting_event
 				$rArgv['round_ante'] = number_format($round['ante']);
 			}
 		}
-		
+
 		if ($argv['variation'] == 'logEntry') {
 			if ($allowWrite) {
 				$rArgv += array(
@@ -382,15 +380,15 @@ class livereporting_event_pylon extends livereporting_event
 			$commentsComp = $this->object('comments');
 			if (in_array($data['type'], array('post', 'chips', 'photos'))  && is_object($commentsComp)) {
 				$shift = array(
-					'post'   => 0, 
+					'post'   => 0,
 					'chips'  => 1,
 					'photos' => 2
 				);
 				$rArgv['comments'] = $commentsComp->show($data['id'] * 10 + $shift[$data['type']]);
-  			} else 
+  			} else
   				$rArgv['comments'] = '';
 		}
-		
+
 		return $rArgv;
 	}
 
@@ -402,17 +400,17 @@ class livereporting_event_pylon extends livereporting_event
 		$page->meta('twitter:creator', '@Pokernews');
 		$page->fbMeta['og:title'] = $rArgv['title']; // required, or twitter:title
 		$page->fbMeta['og:description'] = $this->lrep()->instTools()->helperHtmlExcerpt(
-			strip_tags($rArgv['body']), 
+			strip_tags($rArgv['body']),
 			220, 1, '...', false, false); // required, or twitter:description
 		if (empty($page->fbMeta['og:description'])) // it may be empty sometimes, and twitter requires it be non-empty
 			$page->meta('twitter:description', htmlspecialchars_decode($rArgv['title']));
 		if (!empty($rArgv['image_src']))
 			$page->fbMeta['og:image'] = $rArgv['image_src']; // twitter:image
 		elseif (isset($data['contents']['xphotos'][0]))
-			$page->fbMeta['og:image'] = $this->get_var('ipnReadBase') . $data['contents']['xphotos'][0]['src'];	
+			$page->fbMeta['og:image'] = $this->get_var('ipnReadBase') . $data['contents']['xphotos'][0]['src'];
 		$page->fbMeta['og:url'] = htmlspecialchars(rtrim($page->home_url(), '/') . $rArgv['url.view']); // required, or twitter:url
 	}
-	
+
 	public function helperRenderCommonArgvMobileapp(&$data, $argv, $tpl)
 	{
 		return $this->helperRenderCommonArgv($data, $argv, $tpl);
@@ -420,7 +418,7 @@ class livereporting_event_pylon extends livereporting_event
 
 	/**
 	 * Pre-save location check macro
-	 * @param int $dayId 
+	 * @param int $dayId
 	 * @return mixed Location data array on success, null on failure
 	 */
 	protected function helperSaveCheckPrerequisitesLocationByDay($dayId)
@@ -436,15 +434,15 @@ class livereporting_event_pylon extends livereporting_event
 		if (empty($location)) {
 			return ;
 		}
-		
+
 		return array(
 			$location,
-		);		
+		);
 	}
-	
+
 	/**
 	 * Pre-save location check macro
-	 * @param int $eventId 
+	 * @param int $eventId
 	 * @return mixed Location data array on success, null on failure
 	 */
 	protected function helperSaveCheckPrerequisitesLocationByEvent($eventId)
@@ -460,17 +458,17 @@ class livereporting_event_pylon extends livereporting_event
 		if (empty($location)) {
 			return ;
 		}
-		
+
 		return array(
 			$location,
-		);		
+		);
 	}
-	
+
 	/**
 	 * Entry pre-save access rights check macro
-	 * @param int $dayId 
-	 * @param int $rowId 
-	 * @param string $rowType 
+	 * @param int $dayId
+	 * @param int $rowId
+	 * @param string $rowType
 	 * @param array $additionalTextFields Additional data row fields to fetch
 	 * @return mixed On success - [0:location, 1:entry] array. Null on failure
 	 */
@@ -482,7 +480,7 @@ class livereporting_event_pylon extends livereporting_event
 		list (
 			$location
 		) = $prereq;
-		
+
 		$entry = array(
 			'id' => NULL,
 			'is_hidden' => NULL,
@@ -496,7 +494,7 @@ class livereporting_event_pylon extends livereporting_event
 				SELECT id, is_hidden' . (0 != count($additionalTextFields)
 					? ',' . implode(',', $additionalTextFields)
 					: ''
-				) . 
+				) .
 				' FROM ' . $this->table('Log') . '
 				WHERE id=' . filter_var($rowId, FILTER_VALIDATE_INT) . ' AND type="' . addslashes($rowType) . '"
 			');
@@ -506,16 +504,16 @@ class livereporting_event_pylon extends livereporting_event
 			$entry['id'] = filter_var($entry['id'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 			$entry['is_hidden'] = filter_var($entry['is_hidden'], FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 		}
-		
+
 		return array(
 			$location,
 			$entry
 		);
 	}
-	
+
 	/**
 	 * Macro to parse tags string to tags array
-	 * @param string $tags 
+	 * @param string $tags
 	 * @return array
 	 */
 	protected function helperSaveGetTags($tags)
@@ -530,11 +528,11 @@ class livereporting_event_pylon extends livereporting_event
 		}
 		return array_unique($tags);
 	}
-	
+
 	/**
 	 * Macro to populate common `log` table row fields
 	 * @param array &$saveDataLog Array to populate
-	 * @param int $userId 
+	 * @param int $userId
 	 * @param array $entry Entry data, if available (`id` field required)
 	 * @param array $data Data to use for population (probably from _POST)
 	 * @param array $location Location data to use for population
@@ -546,7 +544,7 @@ class livereporting_event_pylon extends livereporting_event
 				$saveDataLog['created_on'] = $data['datetime'];
 			}
 			$saveDataLog['updated_on'] = time();
-			
+
 			// now publishing when was hidden
 			if (!$saveDataLog['is_hidden'] && $entry['is_hidden']) {
 				$saveDataLog['author_id'] = $userId;
@@ -593,14 +591,14 @@ class livereporting_event_pylon extends livereporting_event
 		}
 		$saveDataLogContents = $serialized;
 	}
-	
+
 	/**
 	 * Macro to save entry tags to db (per-entry tags only)
-	 * @param array $tags 
-	 * @param int $entryId 
-	 * @param string $entryType 
-	 * @param bool $entryIsHidden 
-	 * @param array $location 
+	 * @param array $tags
+	 * @param int $entryId
+	 * @param string $entryType
+	 * @param bool $entryIsHidden
+	 * @param array $location
 	 */
 	protected function helperSaveDbUpdateTags($tags, $entryId, $entryType, $entryIsHidden, $location)
 	{
@@ -620,13 +618,13 @@ class livereporting_event_pylon extends livereporting_event
 			), $this->table('Tags'));
 		}
 	}
-	
+
 	/**
 	 * Method to be called on entry save
 	 *
 	 * Currently, only entries that affect event visibility should be calling this
-	 * @param bool $isHidden 
-	 * @param array $location 
+	 * @param bool $isHidden
+	 * @param array $location
 	 */
 	protected function helperSaveNotifyEvent($isHidden, $location)
 	{
@@ -644,11 +642,11 @@ class livereporting_event_pylon extends livereporting_event
 			);
 		}
 	}
-	
+
 	/**
 	 * Entry pre-delete access rights check
-	 * @param int $rowId 
-	 * @param string $rowType 
+	 * @param int $rowId
+	 * @param string $rowType
 	 * @return mixed On success -- [0:location] array. Null on failure.
 	 */
 	protected function helperDeleteCheckPrerequisites($rowId, $rowType)
@@ -664,20 +662,20 @@ class livereporting_event_pylon extends livereporting_event
 		if (empty($location)) {
 			return ;
 		}
-		
+
 		return array(
 			$location,
 		);
 	}
-	
+
 	/**
 	 * Macro to delete common log entry from db
 	 *
 	 * AC may be done using helperDeleteCheckPrerequisites()
-	 * @param int $rowId 
-	 * @param string $rowType 
-	 * @param string $rowTable 
-	 * @param bool $withTags 
+	 * @param int $rowId
+	 * @param string $rowType
+	 * @param string $rowTable
+	 * @param bool $withTags
 	 */
 	protected function helperDeleteDbDelete($rowId, $rowType, $rowTable = NULL, $withTags = FALSE)
 	{
@@ -706,12 +704,12 @@ class livereporting_event_pylon extends livereporting_event
 
 		return $deletedRows;
 	}
-	
+
 	/**
 	 * Method to be called on entry deletion
 	 *
 	 * Currently, only entries that affect event visibility should be calling this
-	 * @param array $location 
+	 * @param array $location
 	 */
 	protected function helperDeleteNotifyEvent($location)
 	{
