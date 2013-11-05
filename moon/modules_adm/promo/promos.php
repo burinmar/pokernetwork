@@ -19,7 +19,7 @@ class promos extends base_inplace_syncable
 
 	protected function getEntriesListAdditionalFields()
 	{
-		$return = array('date_start', 'date_end', 'room_id', 'sites', 'timezone');
+		$return = array('date_start', 'date_end', 'room_id', 'sites', 'timezone', 'alias');
 		if (_SITE_ID_ != 'com') {
 			$return[] = 'remote_id';
 		}
@@ -110,16 +110,8 @@ class promos extends base_inplace_syncable
 				$domain .= is_dev()
 					? '.dev'
 					: '.com';
-				$redirect = '';
-				if ('com' == $site && !empty($row['remote_id'])) { // from slave synced promo to master
-					$redirect = '?promo_id_redirect=' . $row['remote_id'];
-				} elseif ('com' != $site && 'com' == _SITE_ID_) { // from master to slave synced promo
-					$redirect = '?promo_id_redirect_master=' . $row['id'];
-				} else { // from slave or master original promo to self
-					$redirect = '?promo_id_redirect=' . $row['id'];
-				}
 				$argv['page_previews'] .= $tpl->parse('list:entries.page_previews.item', array(
-					'url' => 'http://' . $domain . '/promo-promos/' . $redirect,
+					'url' => 'http://' . $domain . '/promo-promos/?promo_alias_redirect=' . rawurlencode($row['alias']),
 					'title' => $site,
 					'siteid'=> $site
 				)) . ' ';

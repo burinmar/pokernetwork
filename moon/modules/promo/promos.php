@@ -4,15 +4,8 @@ class promos extends moon_com
 {
 	function events($event, $argv)
 	{
-		if (isset($_GET['promo_id_redirect'])) {
-			if (null != ($url = $this->getPromoAlias($_GET['promo_id_redirect']))) {
-				$url = moon::shared('sitemap')->getLink('promotions') . $url . '/';
-				moon::page()->redirect($url, 301);
-			} else {
-				moon::page()->page404();
-			}
-		} elseif (isset($_GET['promo_id_redirect_master'])) {
-			if (null != ($url = $this->getPromoMasterAlias($_GET['promo_id_redirect_master']))) {
+		if (isset($_GET{'promo_alias_redirect'})) {
+			if (null != ($url = $this->getPromoAlias($_GET['promo_alias_redirect']))) {
 				$url = moon::shared('sitemap')->getLink('promotions') . $url . '/';
 				moon::page()->redirect($url, 301);
 			} else {
@@ -93,19 +86,10 @@ class promos extends moon_com
 		return $tpl->parse('index:main', $mainArgv);
 	}
 
-	private function getPromoAlias($id)
+	private function getPromoAlias($alias)
 	{
 		$alias = $this->db->single_query_assoc('
-			SELECT alias FROM promos WHERE id=' . intval($id) . '
-		');
-		return !empty($alias['alias'])
-			? $alias['alias']
-			: null;
-	}
-	private function getPromoMasterAlias($remoteId)
-	{
-		$alias = $this->db->single_query_assoc('
-			SELECT alias FROM promos WHERE remote_id=' . intval($remoteId) . '
+			SELECT alias FROM promos WHERE alias="' . $this->db->escape($alias) . '"
 		');
 		return !empty($alias['alias'])
 			? $alias['alias']
