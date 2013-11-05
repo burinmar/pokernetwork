@@ -33,7 +33,7 @@ class promo extends moon_com
 			if (isset($_GET['filter']) && 'results' == $sub) {
 				$this->set_var('filter', $_GET['filter']);
 			}
-			if ($argv[2] == 'events' && 'results' == $sub) {
+			if (isset($argv[2]) && $argv[2] == 'events' && 'results' == $sub) {
 				$this->set_var('render', $sub . '-event');
 				$this->set_var('event-id', $argv[3]);
 				break;
@@ -766,7 +766,7 @@ class promo extends moon_com
 				$promo = null;
 			} else {
 				$promo['room'] = $this->db->single_query_assoc('
-					SELECT r.alias, r.name, r.logo, t.bonus_code, r.currency FROM ' . $this->table('Rooms') . ' r
+					SELECT r.id, r.alias, r.name, r.logo, t.bonus_code, r.currency FROM ' . $this->table('Rooms') . ' r
 					INNER JOIN ' . $this->table('Trackers') . ' t
 						ON t.parent_id=r.id AND t.alias=""
 					WHERE id IN(' . implode(',', array_map('intval', explode(',', $promo['room_id']))) . ')
