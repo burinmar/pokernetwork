@@ -36,14 +36,14 @@ class header extends moon_com
 
 
 // WCOOP 2013 Takeover
-$bgURL='/pokerstars/';
+$bgURL='http://www.pokernews.com/news/2013/11/win-your-way-to-the-2014-pokerstars-caribbean-adventure-main-16643.htm';
 if ($this->wallpaper($res, array(
 'url'=> $bgURL,
 'imgPath'=> '/img/wallpaper/PCA2014_Wallpaper.jpg',
 'bgColor'=> '#000',
 'showIn'=> 'home',
 //'startDate'=> '2013-09-06 00:00:01',
-//'endDate'=> '2013-09-12 23:59:59',
+'endDate'=> '2013-11-23 23:59:59',
 )
 )) {
 	$psb =$tpl->parse('pokerstars');
