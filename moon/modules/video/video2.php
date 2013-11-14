@@ -99,12 +99,12 @@ class video2 extends moon_com {
 				} else {
 					$page->page404();
 				}
-				
+
 			} elseif ($cnt === 3 && is_numeric($segments[0]) && $segments[0] > 2000 && is_numeric($segments[1]) && checkdate($segments[1], 1, 1) && $segments[2] == '' ) {
 				//month archive
 				$year = intval($segments[0]);
 				$month = intval($segments[1]);
-				
+
 				if (checkdate($month, 1, $year)) {
 					$this->set_var('year', $year);
 					$this->set_var('month', $month);
@@ -112,7 +112,7 @@ class video2 extends moon_com {
 				} else {
 					$page->page404();
 				}
-				
+
 			} else {
 				// playlist uri
 				$playlistUri = trim($uri, '/');
@@ -388,7 +388,7 @@ class video2 extends moon_com {
 			$page->meta('twitter:site', '@Poker_Network');
 			$page->meta('twitter:creator', '@Pokernews');
 			$page->fbMeta['og:url'] =                                                  // required, or twitter:url
-				htmlspecialchars(rtrim($page->home_url(), '/') . $this->linkas('#', $video['uri'] . '-' . $video['id'])); 
+				htmlspecialchars(rtrim($page->home_url(), '/') . $this->linkas('#', $video['uri'] . '-' . $video['id']));
 			$page->fbMeta['og:image'] = $this->defaultThumbnail($video['youtube_video_id']);        // twitter:image			$page->fbMeta['og:title'] = htmlspecialchars($video['name']);              // required, or twitter:title
 			$page->fbMeta['og:description'] = htmlspecialchars($video['description']); // required, or twitter:description
 			//
@@ -428,17 +428,6 @@ class video2 extends moon_com {
 
 		$pnPlayer = moon::shared('pnplayer');
 		$m['video'] = $pnPlayer->getHtml($video['player_uri'], $video['length'], 'videoPage', null, $pnPlayer->getDefaultAdsConfig('video'));
-
-		$playlists = $this->getPlaylists();
-		$playlistIds = explode(',',$video['playlist_ids']);
-		$s = '';
-		foreach ($playlistIds as $id) {
-			$catName = isset($playlists[$id]) && !empty($playlists[$id]['name']) ? json_encode($playlists[$id]['name']) : '';
-			if ($catName) {
-				$s .= "_gaq.push(['_setCustomVar',1,'video',$catName,3]);";
-			}
-		}
-		if ($s) $page->set_local('_gaq', $s);
 
 		// comments
 		$homeUrl = rtrim($page->home_url(), '/');
@@ -649,8 +638,8 @@ class video2 extends moon_com {
 		$now = (floor(moon::locale()->now() / 300) * 300);
 		$sql = '
 			SELECT FROM_UNIXTIME(created, \'%Y-%M\') as short_date, FROM_UNIXTIME(created, \'%Y\') as year, FROM_UNIXTIME(created, \'%m\') as month, count(*) as cnt
-			FROM ' . $this->tblVideos . ' 
-			WHERE 
+			FROM ' . $this->tblVideos . '
+			WHERE
 				created < ' . $now . ' AND
 				hide = 0
 			GROUP BY short_date
@@ -689,7 +678,7 @@ class video2 extends moon_com {
 			case '228x282':
 				$preset = 'w230';
 				break;
-			
+
 			case '478x320':
 			default:
 				$preset = 'homePage';
@@ -748,7 +737,7 @@ class video2 extends moon_com {
 		} else {
 			return array();
 		}
-		$idField = (strlen($id) >= 9) 
+		$idField = (strlen($id) >= 9)
 			? 'brightcove_id'
 			: 'id';
 		$sql = 'SELECT id,title name,uri,description,duration length,created published_date,tags,category playlist_ids,youtube_video_id,comm_count
@@ -827,7 +816,7 @@ class video2 extends moon_com {
 			$this->tmpPlaylists = $this->db->array_query_assoc($sql,'id');
 		}
 		return $this->tmpPlaylists;
-	}	
+	}
 
 	private function getListCount($playlistID = FALSE, $tag = FALSE, $year = 0, $month = 0)
 	{
@@ -911,7 +900,7 @@ class video2 extends moon_com {
 			if ($year > 2000) {
 				$monthFrom = $month;
 				$monthTo = $month;
-				
+
 				if ($month > 0) {
 					$from = mktime(0, 0, 0, $month, 1, $year);
 					$to = strtotime('+1 month', $from);
@@ -1052,7 +1041,7 @@ class video2 extends moon_com {
 			LIMIT ' . $limit;
 		return $this->db->array_query_assoc($sql);
 	}
-	
+
 	private function getRssFeedItemsTwitter()
 	{
 		$sql = 'SELECT id,title name,uri,created published_date
@@ -1084,6 +1073,6 @@ class video2 extends moon_com {
 			FROM ' . $this->tblVideos . '
 			WHERE hide=0 AND id IN(' . implode(',', $ids) . ')
 		');
-	}	
+	}
 }
 

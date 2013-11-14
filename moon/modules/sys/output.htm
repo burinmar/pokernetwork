@@ -12,6 +12,7 @@
 	<% if {googleID} %>
 		<script type="text/javascript">
 		var _gaq = _gaq || [];
+		<% loop {gaCustomVars} %>_gaq.push(['_setCustomVar', {index}, {name}, {value}, {scope}]);<% end %>
 		_gaq.push(['_setAccount', '{googleID}']);
 		_gaq.push(['_trackPageview']);
 		_gaq.push(['_trackPageLoadTime']);

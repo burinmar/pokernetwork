@@ -42,7 +42,7 @@ class output extends moon_com {
 		if ($output === 'modal') {
 			$p->css('/css/modal.css');
 		}
-		
+
 		$loc = & moon :: locale();
 		//title
 		$title = $p->title();
@@ -156,6 +156,25 @@ class output extends moon_com {
 		else {
 			$ini = & moon :: moon_ini();
 			$m['googleID'] = $ini->get('other', 'googleStatsID');
+			$m['gaCustomVars'] = '';
+			$gaVars = $p->get_local('gaCustomVars');
+			if (!is_array($gaVars)) $gaVars = array();
+			array_push($gaVars, array(
+				'index' => 1,
+				'name'  => 'User Type',
+				'value' => moon::user()->get_user_id() ? 'Member' : 'Visitor',
+				'scope' => 2
+			));
+			foreach ($gaVars as $gaVar) {
+				if (empty($gaVar['name']) || empty($gaVar['value']) || empty($gaVar['scope'])) continue;
+				$tplVars = array(
+					'index' => intval($gaVar['index']),
+					'name'  => json_encode((string)$gaVar['name']),
+					'value' => json_encode((string)$gaVar['value']),
+					'scope' => intval($gaVar['scope'])
+				);
+				$m['gaCustomVars'] .= $t->parse('gaCustomVars', $tplVars);
+			}
 		}
 		$head = $t->parse('common_header', $m);
 		if ($output == '' || !$t->has_part($output)) {
