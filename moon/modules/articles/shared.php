@@ -5,11 +5,11 @@ class shared extends moon_com {
 	{
 		$this->articleType = null;
 		$this->typeNews = $this->get_var('typeNews');
-		
+
 		$this->tblArticles = $this->table('Articles');
 		$this->tblCategories = $this->table('Categories');
 		$this->tblAuthors = $this->table('Authors');
-		
+
 		$this->addToSuffix = $this->get_var('addToSuffix');
 		$this->suffixStartId = $this->get_var('suffixStartId');
 	}
@@ -22,7 +22,7 @@ class shared extends moon_com {
 	function properties() {
 		return array();
 	}
-	
+
 	function main($vars)
 	{
 		return '';
@@ -76,7 +76,7 @@ class shared extends moon_com {
 			} else {
 				$r = $idsArr;
 			}
-			
+
 			// create names string
 			$au = explode(',', $idsString);
 			if (count($au)) {
@@ -139,7 +139,7 @@ class shared extends moon_com {
 			}
 		}
 		//kas yra istrinti ir turi pakaitala
-		if (!count($ids)) return '';
+		if (!count($ids)) return array();
 		$m = $this->db->array_query_assoc(
 			"SELECT duplicates,id FROM " . $this->table('Authors') .
 			" WHERE id IN (" . implode(', ', $ids) . ") AND duplicates>0"
@@ -168,7 +168,7 @@ class shared extends moon_com {
 		}
 		return $r;
 	}
-	
+
 	//***************************************
 	//           --- DB ---
 	//***************************************
@@ -206,18 +206,18 @@ class shared extends moon_com {
 		}
 		return $items;
 	}
-	
+
 	function getToursByTags($tags = '')
 	{
 		if ($tags == '') return array();
 		$tags = explode(',', strtolower($tags));
 		$tours = poker_tours();
-		
+
 		$items = array();
 		foreach ($tours as $tour) {
 			$uri = (!empty($tour['uri'])) ? str_replace('-', ' ', $tour['uri']) : null;
 			$title = (!empty($tour['title'])) ? $tour['title'] : null;
-			
+
 			if (
 				in_array(strtolower($uri), $tags, true) ||
 				in_array(strtolower($title), $tags, true)
@@ -232,7 +232,7 @@ class shared extends moon_com {
 		}
 		return $items;
 	}
-	
+
 	//***************************************
 	//           --- URLS ---
 	//***************************************
@@ -240,7 +240,7 @@ class shared extends moon_com {
 	 * Returns article uri with suffix at the end if needed
 	 * If published arg provided - /year/month/ prefix will be added
 	 * Additionally used from sys.rss
-	 * 
+	 *
 	 * @param int article id
 	 * @param string article uri
 	 * @param int published
@@ -260,10 +260,10 @@ class shared extends moon_com {
 		$uri = $this->url('#', $uri, $articleType);
 		return $uri;
 	}
-	
+
 	/**
 	 * Returns category uri
-	 * 
+	 *
 	 * @param string category uri
 	 * @param int article type
 	 */
@@ -271,7 +271,7 @@ class shared extends moon_com {
 	{
 		return $this->url('#' . $uri, '', $articleType);
 	}
-	
+
 	/**
 	 * Returns article tag url
 	 * @param string tag
@@ -295,7 +295,7 @@ class shared extends moon_com {
 		//return $uri . 'tags/' . moon::shared('text')->make_uri(urlencode($tag)) . '/';
 		//return $this->linkas("$uri");
 	}
-	
+
 	/**
 	* If article type set, calls $this->linkas() of that component
 	* @return string uri
@@ -316,7 +316,7 @@ class shared extends moon_com {
 		}
 		return '';
 	}
-	
+
 	//***************************************
 	//           --- HELPERS ---
 	//***************************************
@@ -329,7 +329,7 @@ class shared extends moon_com {
 	{
 		$uriChunks = explode('-', $uri);
 		$cnt = count($uriChunks);
-		
+
 		$suffix = FALSE;
 		if ($cnt > 1 && isset($uriChunks[$cnt - 1]) AND is_numeric($uriChunks[$cnt - 1])) {
 			$nr = $uriChunks[$cnt - 1];
@@ -340,7 +340,7 @@ class shared extends moon_com {
 		}
 		return $suffix;
 	}
-	
+
 	//***************************************
 	//          --- OTHER ---
 	//***************************************
@@ -352,6 +352,6 @@ class shared extends moon_com {
 			SET views_count=views_count+1 WHERE id = ' . intval($id)
 		);
 	}
-	
+
 }
 ?>

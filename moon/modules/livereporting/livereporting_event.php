@@ -1175,23 +1175,20 @@ class livereporting_event extends moon_com
 		if (!is_array($gaCustomVars = $page->get_local('gaCustomVars')))
 			$gaCustomVars = array();
 
+		$gaSponsor = '';
+		$roomId = explode(',', $eventInfo['ad_rooms']);
+		if ($roomId = reset($roomId)) {
+			$gaSponsor = '~0-' . $roomId;
+		}
+
 		$eventGaId = !empty($eventInfo['esync_id'])
 			? array($eventInfo['sync_origin'], $eventInfo['esync_id'])
 			: array(_SITE_ID_,                 $eventId);
 		array_push($gaCustomVars, array(
 			'index' => 2, 'scope' => 3,
 			'name' => 'LiveReporting',
-			'value' => implode(':', $eventGaId)
+			'value' => implode(':', $eventGaId) . $gaSponsor
 		));
-
-		$roomId = explode(',', $eventInfo['ad_rooms']);
-		if ($roomId = reset($roomId)) {
-			array_push($gaCustomVars, array(
-				'index' => 5, 'scope' => 3,
-				'name' => 'Sponsor',
-				'value' => '0-' . $roomId
-			));
-		}
 
 		$page->set_local('gaCustomVars', $gaCustomVars);
 	}

@@ -158,6 +158,7 @@ class output extends moon_com {
 			$m['googleID'] = $ini->get('other', 'googleStatsID');
 			$m['gaCustomVars'] = '';
 			$gaVars = $p->get_local('gaCustomVars');
+			$gaUniversalVars = array();
 			if (!is_array($gaVars)) $gaVars = array();
 			array_push($gaVars, array(
 				'index' => 1,
@@ -174,7 +175,22 @@ class output extends moon_com {
 					'scope' => intval($gaVar['scope'])
 				);
 				$m['gaCustomVars'] .= $t->parse('gaCustomVars', $tplVars);
+				if ($gaVar['name'] == 'User Type')
+					$gaUniversalVars['dimension1'] = $gaVar['value'];
+				else if ($gaVar['name'] == 'Author')
+					$gaUniversalVars['dimension4'] = $gaVar['value'];
+				else if ($gaVar['name'] == 'PublishedDate')
+					$gaUniversalVars['dimension5'] = $gaVar['value'];
+				else if ($gaVar['index'] == 2) {
+					$gaUniversalVars['dimension2'] = $gaVar['name'];
+					if (strpos($gaVar['value'], '~') === false)
+						$gaUniversalVars['dimension3'] = $gaVar['value'];
+					else
+						list($gaUniversalVars['dimension3'], $gaUniversalVars['dimension6']) = explode('~', $gaVar['value']);
+				} else moon::error('unknown ga var: ' . json_encode($gaVar));
 			}
+			ksort($gaUniversalVars);
+			$m['gaUniversalCustomVars'] = json_encode($gaUniversalVars);
 		}
 		$head = $t->parse('common_header', $m);
 		if ($output == '' || !$t->has_part($output)) {

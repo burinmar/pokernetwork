@@ -19,7 +19,7 @@ class news extends moon_com {
 
 		$page = &moon::page();
 		if ($uri = $page->requested_event('REST')) {
-			
+
 			$segments = $page->requested_event('segments');
 			$cnt = count($segments);
 
@@ -119,7 +119,7 @@ class news extends moon_com {
 					$tag = urldecode($segments[1]);
 
 					$page->redirect($this->oShared->getTagUrl($tag), 301);
-					
+
 					$tagData = $this->getTagData($tag);
 					if (empty($tagData)) {
 						$page->page404();
@@ -139,19 +139,19 @@ class news extends moon_com {
 				} else {
 					$page->page404();
 				}
-				
+
 			} elseif ($cnt === 3 && is_numeric($segments[0]) && $segments[0] > 2000 && is_numeric($segments[1]) && checkdate($segments[1], 1, 1) && $segments[2] == '' ) {
 				//month archive
 				$year = intval($segments[0]);
 				$month = intval($segments[1]);
-				
+
 				if (checkdate($month, 1, $year)) {
 					$this->set_var('year', $year);
 					$this->set_var('month', $month);
 				} else {
 					$page->page404();
 				}
-				
+
 			} else {
 				//category uri
 				$catFullUri = trim($uri, '/');
@@ -213,7 +213,7 @@ class news extends moon_com {
 		$tpl = $this->load_template();
 		$oShared = $this->oShared;
 		$sitemap = &moon::shared('sitemap');
-		
+
 		$m = array(
 			'list:items' => '',
 			'categories:items' => '',
@@ -233,7 +233,7 @@ class news extends moon_com {
 		$pageTitle = '';
 		if (count($category = $vars['category'])) {
 			$catUri = $category['uri'];
-			
+
 			$cUrl = $this->linkas('#' . $catUri);
 			$sitemap->breadcrumb(array($cUrl => $category['title']));
 
@@ -285,11 +285,11 @@ class news extends moon_com {
 			} else {
 				$robots = 'index,follow';
 			}
-			
+
 			$locale = &moon::locale();
-			
+
 			$items = $this->getList($catID, false, $year, $month);
-			
+
 			// sarase rodysim autorius
 			$authors = array();
 			foreach ($items as $item) {
@@ -378,6 +378,22 @@ class news extends moon_com {
 			$page->js('/js/pnslideshow.js');
 		}
 
+		//google custom vars
+		if (!is_array($gaCustomVars = $page->get_local('gaCustomVars'))) $gaCustomVars = array();
+		array_push($gaCustomVars, array('index' => 4, 'name' => 'PublishedDate', 'value' => date('y-m-d', $article['published']), 'scope' => 3));
+		$gaSponsor = '';
+		if (!empty ($article['room_id']))
+			$gaSponsor = '~0-' . $article['room_id'];
+		$categoryTitle = 'None';
+		if (null != ($category = $this->getCategoryById($article['category'])))
+			$categoryTitle = $category['title'];
+		array_push($gaCustomVars, array('index' => 2, 'name' => 'news', 'value' => $categoryTitle . $gaSponsor, 'scope' => 3));
+		foreach ($oShared->getAuthorsData($article['authors']) as $author) {
+			array_push($gaCustomVars, array('index' => 3, 'name'  => 'Author', 'value' => $author['name'], 'scope' => 3));
+			break;
+		}
+		$page->set_local('gaCustomVars', $gaCustomVars);
+
 		$sharedTxt->agoMaxMin = 60*24*30; // 30 days;
 
 		$m = array(
@@ -400,8 +416,6 @@ class news extends moon_com {
 		);
 		$m['authorsLinks'] = '';
 		if (isset($oShared->htmlAuthorsData) && is_array($oShared->htmlAuthorsData)) {
-			$gaVars = $page->get_local('gaCustomVars');
-			if (!is_array($gaVars)) $gaVars = array();
 			$markedTwitterAuthor = false;
 
 			foreach ($oShared->htmlAuthorsData as $authorData) {
@@ -564,8 +578,8 @@ class news extends moon_com {
 		$now = floor(moon::locale()->now() / 300) * 300;
 		$sql = '
 			SELECT FROM_UNIXTIME(a.published, \'%Y-%M\') as short_date, FROM_UNIXTIME(a.published, \'%Y\') as year, FROM_UNIXTIME(a.published, \'%m\') as month, count(*) as cnt
-			FROM ' . $this->tblArticles . ' a 
-			WHERE 
+			FROM ' . $this->tblArticles . ' a
+			WHERE
 				a.published < ' . $now . ' AND
 				a.article_type = ' . $this->type . ' AND
 				a.is_hidden = 0
@@ -637,9 +651,9 @@ class news extends moon_com {
 	function getList($catId = FALSE, $tag = FALSE, $year = 0, $month = 0)
 	{
 		$sql = 'SELECT a.id,a.title,a.published,a.summary,a.img,a.img_alt,a.uri,a.authors,a.comm_count,c.is_au as isAu
-			FROM ' . $this->tblArticles . ' a USE INDEX (i_articles) 
+			FROM ' . $this->tblArticles . ' a USE INDEX (i_articles)
 			LEFT JOIN ' . $this->tblCategories . ' c ON a.category_id=c.id ' .
-			$this->sqlWhere($catId, $tag, $year, $month) . ' 
+			$this->sqlWhere($catId, $tag, $year, $month) . '
 			ORDER BY published DESC ' .
 			$this->sqlLimit();
 		return $this->db->array_query_assoc($sql);
@@ -682,7 +696,7 @@ class news extends moon_com {
 			if ($year > 2000) {
 				$monthFrom = $month;
 				$monthTo = $month;
-				
+
 				if ($month > 0) {
 					$from = mktime(0, 0, 0, $month, 1, $year);
 					$to = strtotime('+1 month', $from);
@@ -692,7 +706,7 @@ class news extends moon_com {
 				}
 				$w[] = '(' . $from . ' <= a.published AND a.published < ' . $to . ')';
 			}
-			
+
 			$where = count($w) ? (' WHERE ' . implode(' AND ', $w)) : '';
 			$this->tmpWhere = $where;
 		}
@@ -719,6 +733,21 @@ class news extends moon_com {
 			$this->tmpCategory = $this->db->single_query_assoc($sql);
 		}
 		return (isset($this->tmpCategory) ? $this->tmpCategory : array());
+	}
+
+	function getCategoryById($id)
+	{
+		if (!$id)
+			return ;
+
+		$sql = 'SELECT id, uri, title
+			FROM ' . $this->tblCategories . '
+			WHERE id = "' . $this->db->escape($id) . '" AND
+				category_type = ' . $this->type . ' AND
+				is_hidden = 0';
+		$this->tmpCategoryById = $this->db->single_query_assoc($sql);
+
+		return (!empty($this->tmpCategoryById) ? $this->tmpCategoryById : null);
 	}
 
 	function getCategories()
