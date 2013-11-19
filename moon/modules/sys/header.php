@@ -43,7 +43,7 @@ if ($this->wallpaper($res, array(
 'bgColor'=> '#000',
 'showIn'=> 'home',
 //'startDate'=> '2013-09-06 00:00:01',
-'endDate'=> '2013-11-23 23:59:59',
+'endDate'=> '2013-11-10 23:59:59',
 )
 )) {
 	$psb =$tpl->parse('pokerstars');
