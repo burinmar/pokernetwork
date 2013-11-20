@@ -2,7 +2,7 @@
 
 class moon_vb_relay
 {
-	public function getInstance()
+	public static function getInstance()
 	{
 		static $instance;
 		if (!$instance) {
