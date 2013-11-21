@@ -54,14 +54,7 @@ class promos extends moon_com
 
 		$time = time();
 		// active
-		foreach ($this->db->array_query_assoc('
-			SELECT title, alias, skin_dir
-			FROM promos
-			WHERE is_hidden = 0
-			  AND date_end>"' . gmdate('Y-m-d', $time/* - 86400*/) . '"
-			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites)
-			ORDER BY date_start DESC
-		') as $row) {
+		foreach ($this->getActivePromos($time) as $row) {
 			$logoFn = rawurlencode($row['skin_dir']) . '/bg-list.jpg';
 			$mainArgv['list.active'] .= $tpl->parse('index:active.item', array(
 				'url' => $this->linkas('#' . $row['alias']),
@@ -72,11 +65,7 @@ class promos extends moon_com
 			));
 		}
 		// inactive
-		foreach ($this->db->array_query_assoc('
-			SELECT title, alias
-			FROM promos
-			WHERE is_hidden=0 AND date_end<="' . gmdate('Y-m-d', $time) . '" AND FIND_IN_SET("' . _SITE_ID_ . '", sites) ORDER BY date_start DESC
-		') as $row) {
+		foreach ($this->getInactivePromos($time) as $row) {
 			$mainArgv['list.inactive'] .= $tpl->parse('index:inactive.item', array(
 				'url' => $this->linkas('#' . $row['alias']),
 				'title' => htmlspecialchars($row['title']),
@@ -85,6 +74,44 @@ class promos extends moon_com
 
 		return $tpl->parse('index:main', $mainArgv);
 	}
+
+	public function getSitemapPromos()
+	{
+		$promos = $this->db->array_query_assoc('
+			SELECT menu_title title, alias url
+			FROM promos
+			WHERE is_hidden = 0
+			  AND date_end>"' . gmdate('Y-m-d', time()) . '"
+			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) AND menu_title != ""
+			ORDER BY date_start
+		');
+		foreach ($promos as $k => $promo) {
+			$promos[$k]['url'] = $this->linkas('#' . $promo['url']);
+		}
+		return $promos;
+	}
+
+	private function getActivePromos($time)
+	{
+		return $this->db->array_query_assoc('
+			SELECT title, alias, skin_dir
+			FROM promos
+			WHERE is_hidden = 0
+			  AND date_end>"' . gmdate('Y-m-d', $time/* - 86400*/) . '"
+			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites)
+			ORDER BY date_start DESC
+		');
+	}
+
+	private function getInactivePromos($time)
+	{
+		return $this->db->array_query_assoc('
+			SELECT title, alias
+			FROM promos
+			WHERE is_hidden=0 AND date_end<="' . gmdate('Y-m-d', $time) . '" AND FIND_IN_SET("' . _SITE_ID_ . '", sites) ORDER BY date_start DESC
+		');
+	}
+
 
 	private function getPromoAlias($alias)
 	{

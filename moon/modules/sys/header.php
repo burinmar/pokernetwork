@@ -19,6 +19,7 @@ class header extends moon_com
 		$tplArgv['isHome'] = 'home' == $navi->on();
 
 		$mainMenu = $this->getMenuTree($navi->items);
+		$this->appendLeagues($mainMenu);
 		$page->set_local('sys.footer:menu', $mainMenu);
 
 		foreach ($mainMenu as $item) {
@@ -83,6 +84,34 @@ if ($this->wallpaper($res, array(
 		*/
 	return $res;
 
+	}
+
+	private function appendLeagues(&$sitemapItems)
+	{
+		$freerollsId = null;
+		foreach ($sitemapItems as $item) {
+			if ($item['page_id'] == 'freerolls-special') {
+				$freerollsId = $item['id'];
+				break;
+			}
+		}
+		if ($freerollsId) {
+			$leagues = $this->object('promo.promos')->getSitemapPromos();
+			foreach ($leagues as $league) {
+				array_unshift($sitemapItems[$freerollsId]['children'], array(
+					'children' => array(),
+					'url' => $league['url'],
+					'id' => null,
+					'parent' => $freerollsId,
+					'sort' => 0,
+					'page_id' => null,
+					'title' => $league['title'],
+					'class' => '',
+				));
+			}
+		}
+
+		return $sitemapItems;
 	}
 
 	private function partialRenderUserBlock($tpl)

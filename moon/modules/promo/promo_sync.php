@@ -51,6 +51,7 @@ class promo_sync extends moon_com
 		});
 		$this->importAbstract($domainData, 'Promos', 'PromosMaster', array(
 			'title',
+			'menu_title',
 			'prize',
 			'descr_intro',
 			'descr_meta',
