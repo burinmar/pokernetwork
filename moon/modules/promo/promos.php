@@ -81,7 +81,7 @@ class promos extends moon_com
 			SELECT menu_title title, alias url
 			FROM promos
 			WHERE is_hidden = 0
-			  AND date_end>"' . gmdate('Y-m-d', time()) . '"
+			  AND date_end>="' . gmdate('Y-m-d', time()) . '"
 			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) AND menu_title != ""
 			ORDER BY date_start
 		');
@@ -97,7 +97,7 @@ class promos extends moon_com
 			SELECT title, alias, skin_dir
 			FROM promos
 			WHERE is_hidden = 0
-			  AND date_end>"' . gmdate('Y-m-d', $time/* - 86400*/) . '"
+			  AND date_end>="' . gmdate('Y-m-d', $time/* - 86400*/) . '"
 			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites)
 			ORDER BY date_start DESC
 		');
@@ -108,7 +108,7 @@ class promos extends moon_com
 		return $this->db->array_query_assoc('
 			SELECT title, alias
 			FROM promos
-			WHERE is_hidden=0 AND date_end<="' . gmdate('Y-m-d', $time) . '" AND FIND_IN_SET("' . _SITE_ID_ . '", sites) ORDER BY date_start DESC
+			WHERE is_hidden=0 AND date_end<"' . gmdate('Y-m-d', $time) . '" AND FIND_IN_SET("' . _SITE_ID_ . '", sites) ORDER BY date_start DESC
 		');
 	}
 

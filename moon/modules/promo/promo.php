@@ -106,8 +106,8 @@ class promo extends moon_com
 			'prize_small' => strlen($entry['prize']) > 7,
 			'qualification' => $this->parseRoomVars($entry['descr_qualify'], $entry['room']),
 			'when' => $text->dateRange(
-				strtotime($entry['date_start']) + $tzShift,
-				strtotime($entry['date_end']) + $tzShift,
+				strtotime($entry['date_start'] . ' 00:00:00 +0000') + $tzShift,
+				strtotime($entry['date_end']   . ' 00:00:00 +0000') + $tzShift/* + 24*3600 - 1*/,
 				shared_text::dataRangeShorter
 			),
 		);
