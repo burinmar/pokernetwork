@@ -70,14 +70,15 @@
 		ga('send', 'pageview');
 		ga('ecommerce:addTransaction', {
 			'id': '{pgTrackerOrderID}',
-			'affiliation': 'PokerNetwork'
+			'affiliation': 'PokerNetwork',
+			'revenue': '1.00'
 		});
 		ga('ecommerce:addItem', {
 			'id': '{pgTrackerOrderID}',
 			'name': '{roomUri}',
 			'sku': 'rw{roomID}',
 			'category': '{category}',
-			'price': '1',
+			'price': '1.00',
 			'quantity': '1'
 		});
 		ga('ecommerce:send');
