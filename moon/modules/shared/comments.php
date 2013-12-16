@@ -185,7 +185,7 @@ class comments extends moon_com {
 				$userIds[] = intval($v['user_id']);
 			}
 			$users = $this->getUsersData($userIds);
-			$uLink = &moon::shared('sitemap')->getLink('users');
+			$uLink = moon::shared('sitemap')->getLink('users');
 
 			foreach ($dat as $v) {
 				$d = array();
