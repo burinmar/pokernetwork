@@ -190,56 +190,56 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		<h1>Tournament Skin Settings</h1>
 	</div>
 	<dl>
-		<dt class="is_live_dep"><label>Live background color:</label></dt>
-		<dd class="is_live_dep"><input type="text" name="logo_bgcolor" value="{entry.logo_bgcolor}" /></dd>
+		<dt><label>Live background color:</label></dt>
+		<dd><input type="text" name="logo_bgcolor" value="{entry.logo_bgcolor}" /></dd>
 
-		<dt class="is_live_dep"></dt>
-		<dd class="is_live_dep"><label><input type="checkbox" id="logo_is_dark" name="logo_is_dark" value="1" <%if{entry.logo_is_dark}%>checked="checked"<%end%> /> Post dark background</label>
+		<dt></dt>
+		<dd><label><input type="checkbox" id="logo_is_dark" name="logo_is_dark" value="1" <%if{entry.logo_is_dark}%>checked="checked"<%end%> /> Post dark background</label>
 		</dd>
 
-		<dt class="is_live_dep"><label>Live background image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_big_bg" accept="image/*" />
+		<dt><label>Live background image:</label></dt>
+		<dd><input type="file" name="logo_big_bg" accept="image/*" />
 			<%if {entry.logo_big_bg} %><br /><label><input type="checkbox" name="delete_logo_big_bg" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{entry.logo_big_bg}" alt="" /><%end%>
+			<img src="{entry.logo_big_bg}" style="max-width: 700px" alt="" /><%end%>
 			<div class="explain">w: 700px<br />h: 140px and more</div>
 		</dd>
 
-		<dt class="is_live_dep"><label>Tournament image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_mid" accept="image/*" />
+		<dt><label>Tournament image:</label></dt>
+		<dd><input type="file" name="logo_mid" accept="image/*" />
 			<%if {entry.logo_mid} %><br /><label><input type="checkbox" name="delete_logo_mid" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{entry.logo_mid}" alt="" /><%end%>
+			<img src="{entry.logo_mid}" style="max-width: 700px" alt="" /><%end%>
 			<div class="explain">w: 700px<br />h: 126px</div>
 		</dd>
 
-		<dt class="is_live_dep"><label>Index page image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_idx" accept="image/*" />
+		<dt><label>Index page image:</label></dt>
+		<dd><input type="file" name="logo_idx" accept="image/*" />
 			<%if {entry.logo_idx} %><br /><label><input type="checkbox" name="delete_logo_idx" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{entry.logo_idx}" alt="" /><%end%>
+			<img src="{entry.logo_idx}" style="max-width: 700px" alt="" /><%end%>
 			<div class="explain">w: 440px<br />h: 106px</div>
 		</dd>
 
-		<dt class="is_live_dep"><label>Archive list image:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_small" accept="image/*" />
+		<dt><label>Archive list image:</label></dt>
+		<dd><input type="file" name="logo_small" accept="image/*" />
 			<%if {entry.logo_small} %><br /><label><input type="checkbox" name="delete_logo_small" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{entry.logo_small}" alt="" /><%end%>
+			<img src="{entry.logo_small}" style="max-width: 700px" alt="" /><%end%>
 			<div class="explain">w: 260px<br />h: 106px</div>
 		</dd>
 
 		<%if {mobile_provider} %>
-		<dt class="is_live_dep"><label>Mobile app image 1:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_mobile_1" accept="image/*" />
+		<dt><label>Mobile app image 1:</label></dt>
+		<dd><input type="file" name="logo_mobile_1" accept="image/*" />
 			<%if {entry.logo_mobile_1} %><br /><label><input type="checkbox" name="delete_logo_mobile_1" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_mobile_1}" alt="" /><%end%>
 			<div class="explain">w: 440px<br />h: 160px</div>
 		</dd>
 
-		<dt class="is_live_dep"><label>Mobile app image 2:</label></dt>
-		<dd class="is_live_dep"><input type="file" name="logo_mobile_2" accept="image/*" />
+		<dt><label>Mobile app image 2:</label></dt>
+		<dd><input type="file" name="logo_mobile_2" accept="image/*" />
 			<%if {entry.logo_mobile_2} %><br /><label><input type="checkbox" name="delete_logo_mobile_2" />
 			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
 			<img src="{entry.logo_mobile_2}" alt="" /><%end%>
@@ -247,8 +247,8 @@ e.ncommdupe=There is already subforum assigned to display news comments
 		</dd>
 		<%end%>
 
-		<dt class="is_live_dep"><label>Default skin</label></dt>
-		<dd class="is_live_dep">
+		<dt><label>Default skin</label></dt>
+		<dd>
 			<select name="skin" id="entry-skin">
 			{list.skins}
 			</select>

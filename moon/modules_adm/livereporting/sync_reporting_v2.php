@@ -234,22 +234,10 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 	private function sendBaseTournament($baseDir)
 	{
 		$data = $this->db->single_query_assoc('
-			SELECT synced_on,logo_big_bg,logo_mid,logo_idx,logo_small FROM reporting_ng_tournaments
+			SELECT synced_on FROM reporting_ng_tournaments
 			WHERE id=' . $this->lTournamentId . ' AND is_live!=-1
 		');
 		$data['id'] = $this->rTournamentId;
-		foreach (array(
-			array('logo_mid',   'fs:LogosMid'),
-			array('logo_big_bg','fs:LogosBigBg'),
-			array('logo_small', 'fs:LogosSmall'),
-			array('logo_idx',   'fs:LogosIdx'),
-		) as $k) {
-			$filename = $this->get_dir($k[1]) . @$data[$k[0]];
-			if (!empty($data[$k[0]]) && !is_file($filename)) {
-				$data[$k[0]] = null;
-				$data['synced_on'] = null;
-			}
-		}
 		$send = json_encode($data);
 		file_put_contents($baseDir . '/tournament.txt', $send);
 	}
@@ -524,7 +512,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			return;
 		}
 		$localTournament = $this->db->single_query_assoc('
-			SELECT logo_big_bg,logo_mid,logo_idx,logo_small,duration,intro,place FROM reporting_ng_tournaments
+			SELECT duration,intro,place FROM reporting_ng_tournaments
 			WHERE id=' . $this->lTournamentId . '
 		');
 		foreach (array('duration', 'intro', 'place') as $localPreferKey) {
@@ -537,27 +525,6 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 			: max($data['created_on'], $data['updated_on']);
 		//unset($data['created_on']);
 		$data['updated_on'] = time();
-
-		foreach (array(
-			array('logo_mid',   'fs:LogosMid'),
-			array('logo_big_bg','fs:LogosBigBg'),
-			array('logo_small', 'fs:LogosSmall'),
-			array('logo_idx',   'fs:LogosIdx'),
-		) as $k) {
-			$img = $k[0];
-			$dir = $k[1];
-			if (@$localTournament[$img] != @$data[$img]) {
-				$filename = $this->get_dir($dir) . @$localTournament[$img];
-				if (!empty($localTournament[$img]) && is_file($filename)) {
-					@unlink($filename);
-				}
-			}
-
-			$filename = $responseDir . '/' . $img . '_' . $data[$img];
-			if (is_file($filename)) {
-				copy($filename, $this->get_dir($dir) . $data[$img]);
-			}
-		}
 
 		$this->db->update($data, 'reporting_ng_tournaments', array(
 			'id' => $this->lTournamentId
