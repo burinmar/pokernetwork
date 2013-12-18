@@ -112,7 +112,7 @@ class contactus extends moon_com {
 
 		/* send message */
 		$mail->charset('UTF-8');
-		$mail->from($d['email']);
+		$mail->from('dontreply@pokernews.com');
 		$mail->subject($subjects[$d['subject']]);
 		$txt = $t->parse('mail_body', array('name' => $d['name'], 'from' => $d['email'], 'body' => $d['body']));
 		$mail->body($txt);
