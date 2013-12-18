@@ -1,6 +1,6 @@
 <?/*************************************************
-modified: 2012-12-06 11:01
-version: 2.12
+modified: 2013-12-18 13:30
+version: 2.14
 project: Moon
 author: Audrius Naslenas, a.naslenas@gmail.com
 *************************************************/
@@ -24,7 +24,6 @@ case 'moon_file': break;
 case 'moon_xml_read': break;
 case 'moon_xml_write': break;
 case 'moon_paginate': break;
-case 'mysql4': break;
 case 'mysql': break;
 default:
 include_once(MOON_CLASSES.$name.'.php');
@@ -434,52 +433,40 @@ $page = & moon :: page();
 $page->set_request_mask($mask,substr($url,strlen($mask)));
 }if (substr($par,-4)=='.htm') $par=substr($par,0,-4);
 return array($ev,$par);
-}function url_construct($ev,$par)
-{if (FALSE!==($k=strpos($ev,'?'))) {
-$get=substr($ev,$k+1);
-$ev=substr($ev,0,$k);
-} else $get='';
-$uri='';
-$handler='';
-$event=$ev;
-if ($ev!='') {
-if (strpos($ev,'#')) list($ev,$sev)=explode('#',$ev);
-else $sev='';
-if (strpos($ev,'.')) list($mod,$com)=explode('.',$ev);
-else {
-$mod='sys';
-$com=$ev;
-}if (
-($uri1=$this->map_find_alias(rtrim($ev.'#'.$sev,'#'))) === false &&
-($uri2=$this->map_find_alias($ev.'*')) === false &&
-($uri3=$this->map_find_alias($mod.'*')) === false
-) {
-$uri = ($mod==='sys' ? '':"$mod-").$com.'/'.($sev!=='' ? $sev.'/' : '');
-} else {
-if ($uri1 === false) {
-if ($uri2 == false) {
-if ($uri3[0]==='&') $handler=$uri3;
-else $uri = ($mod==='sys' ? '':"$mod-") . $com . '/' . ($sev!=='' ? $sev.'/' : '');
-} else {
-if ($uri2[0]==='&') $handler=$uri2;
-else $uri= ($sev!=='' ? rtrim($uri2,'/') . '/' . $sev.'/' : $uri2);
-}} else {
-if ($uri1[0]==='&') $handler=$uri1;
-else $uri=$uri1;
-}}if ($par!==false && $par!=='') $uri= rtrim($uri,'/') . '/' . $par.'.htm';
-$uri=$this->urlPrefix.$uri;
-}if ($handler!=='') {
-$d=explode('#',ltrim(substr(rtrim($handler,'/'),1)));
-if (!isset($d[1])) $d[1]='';
-$comp=&$this->_load_component($d[0]);
-if (!is_object($comp)) {
-$this->_error('bad_event','N',__LINE__,array('name'=>$handler));
+}function url_construct($event,$par)
+{$uri = $sev = $get='';
+if (FALSE !== strpos($event, '?')) {
+list($event, $get) = explode('?', $event, 2);
+}if ($event!='') {
+list($ev, $sev) = explode('#', $event . '#');
+if (strpos($ev, '.')) {
+list($mod, $com)=explode('.',$ev);
+}else {
+$mod = 'sys';
+$com = $ev;
+}if (($uri = $this->map_find_alias(rtrim($ev.'#'.$sev,'#'))) !== false) {
+$sev = '';
+}else {
+(($uri = $this->map_find_alias($ev . '*')) !== false) ||
+(($uri = $this->map_find_alias($mod . '*')) !== false) ||
+($uri = ($mod==='sys' ? '' : "$mod-") . $com . '/');
+}if ($uri !== '' && $uri[0] == '&') {
+$d = explode('#', ltrim(substr(rtrim($uri, '/'), 1)) . '#');
+$comp = $this->_load_component($d[0]);
+if (is_object($comp = $this->_load_component($d[0]))) {
+$uri = (string)$comp->events($d[1], array('event'=>$event, 'params' => $par ));
+}else {
+$this->_error('bad_event','N',__LINE__,array('name'=>$uri));
 return '';
-} else {
-$par=array('event'=>$event, 'params' => $par );
-if (is_string($s=$comp->events($d[1],$par))) $uri=$s;
-}}if ($get!=='') $uri.= (strpos($uri,'?') ? '&':'?').$get;
-return $uri;
+}$par = FALSE;
+}elseif ($sev !== '') {
+$uri = rtrim($uri, '/') . "/$sev/";
+}if ((string)$par !== '') {
+$uri= rtrim($uri,'/') . '/' . $par.'.htm';
+}$uri = $this->urlPrefix . $uri;
+if ($get!=='') {
+$uri .= (strpos($uri, '?') ? '&' : '?') . $get;
+}}return $uri;
 }function txt_constants()
 {return $this->txtConstants;
 }function _load_xml($xmlName)
@@ -2092,7 +2079,7 @@ $blockNo=0;
 foreach ($m as $k=>$v) {
 if ($k % 2) {
 $a=trim($v);
-if ($a==='end' ) $a.='{}';
+if ($a==='/end' || $a==='end' ) $a.='{}';
 if ( ($pos1=strpos($a,'{'))!==false && ($pos2=strrpos($a,'}'))!==false) {
 $tag=strtolower(rtrim(substr($a,0,$pos1)));
 $a=trim(substr($a,$pos1+1,$pos2-$pos1-1));
@@ -2112,7 +2099,10 @@ break;
 $ifs[$ifNo][1]=$blockNo;
 $block=array(true,$blockNo+1);
 break;
-case '':
+case '/end':
+if (count($restorePoint)) {
+$noTrim[]=$name;
+}case '':
 case 'end':
 if (count($ifs)) {
 $el=array_pop($ifs);
@@ -2204,9 +2194,10 @@ $cache = moon::cache($dirCache);
 if (FALSE !== ($str = $cache->get($name.'.cxml', $ts)) && is_array($str)) {
 return $str;
 }}$this->_reset();
-include_class('moon_xml_read');
+if ($name != '') {
+libxml_use_internal_errors(true);
 $this->_add_xml($name);
-$this->info['name']=$name;
+}$this->info['name']=$name;
 $this->info['com']=$this->comp;
 if ($dirCache){
 $cache->save($name.'.cxml', $this->info, '24h');
@@ -2215,44 +2206,42 @@ $cache->save($name.'.cxml', $this->info, '24h');
 {$this->info=array('name'=>'','title'=>'','layout'=>'','parent'=>'','set_local'=>'','forget'=>'');
 $this->comp=array();
 }function _add_xml($xmlName,$may_extend=true)
-{$xml=new moon_xml_read();
-$arr=array();
-$arr[]='page.com';
-$arr[]='page.delayed.com';
-$xml->define_arrays($arr);
-$doc=&$xml->parse_file($this->_get_path($xmlName));
-unset($xml);
-if (!isset($doc['page'])) return false;
-$d=&$doc['page'];
-if (isset($d['extends']) && strlen($d['extends']) && $may_extend) {
-$delayed=$this->_add_xml($d['extends'],false);
-$this->info['parent']=$d['extends'];
+{if ('' == ($filePath = $this->_get_path($xmlName))) {
+return;
+}$xml = simplexml_load_file($filePath);
+if ($xml === FALSE) {
+foreach (libxml_get_errors() as $error) {
+moon::error(trim($error->message) . " in $error->file ($error->line) ");
+break;
+}return;
+}if ('page' !==$xml->getName()) return false;
+if (!empty($xml->{'extends'}) && $may_extend) {
+$v = (string)$xml->{'extends'};
+$delayed=$this->_add_xml($v,false);
+$this->info['parent']=$v;
 } else $delayed=false;
-if (isset($d['clear']) && strlen($d['clear'])) {
-$dp=explode(',',$d['clear']);
+if (!empty($xml->{'clear'})) {
+$dp=explode(',',(string)$xml->{'clear'});
 foreach ($dp as $v) $this->_delete_part($v);
-}if (isset($d['set_local']) && isset($d['set_local']['var']) && is_array($d['set_local']['var'])){
-if (!is_array($this->info['set_local'])) $this->info['set_local']=array();
-foreach($d['set_local']['var'] as $vname=>$vmas) $this->info['set_local'][$vname]=$vmas;
-}if (isset($d['com'])) $this->_get_components($d['com']);
-if (isset($d['template'])) $this->info['layout']=$d['template'];
-elseif (isset($d['layout'])) $this->info['layout']=$d['layout'];
-if (isset($d['no_history'])) $this->info['forget']=$d['no_history'];
-if (isset($d['title'])) $this->info['title']=$d['title'];
-if($delayed!==false) $this->_get_components($delayed);
-if ($may_extend && isset($d['delayed']['com'])) $this->_get_components($d['delayed']['com']);
-if(isset($d['delayed']['com'])) return $d['delayed']['com'];
+}if ($xml->com) {
+$this->_get_components($xml->com);
+}if ($xml->template) $this->info['layout'] = (string)$xml->template;
+elseif ($xml->layout) $this->info['layout'] = (string)$xml->layout;
+if ($xml->no_history) $this->info['forget']= (int)$xml->no_history;
+if ($xml->title) $this->info['title'] = (string)$xml->title;
+if($delayed!==false) {
+$this->_get_components($delayed);
+}if ($may_extend && $xml->delayed->count()) $this->_get_components($xml->delayed->com);
+if($xml->delayed && $xml->delayed->com) return $xml->delayed->com;
 else return false;
-}function _get_components(&$coms)
-{if (is_array($coms)){
-foreach($coms as $k=>$v){
-if (isset($v['var']) && is_array($v['var'])){
-$vars=array();
-foreach($v['var'] as $vname=>$vmas) $vars[$vname]=$vmas ;
-} else $vars='';
-if (isset($v['id']) && $v['id']!=='') $v['name'].='.'.$v['id'];
-$this->comp[]=array('part'=>$v['part'],'name'=>$v['name'],'vars'=>$vars);
-}}}function _delete_part($name)
+}function _get_components($xmlCom)
+{foreach ($xmlCom as $com) {
+$vars = array();
+if ($com->{'var'}) {
+foreach ($com->{'var'} as $var) {
+$vars[(string)$var['name']] = (string)$var;
+}}$this->comp[]=array('part'=>(string)$com->part,'name'=>(string)$com->name,'vars'=>$vars);
+}}function _delete_part($name)
 {$name=trim($name);
 foreach ($this->comp as $k=>$v)
 if ($v['part']==$name) unset($this->comp[$k]);
@@ -2633,7 +2622,9 @@ var $parser;
 var $hist,$tags;
 var $isArray;
 var $fileName='n/a';
-function &parse_data($simple)
+function __construct() {
+$this->_error('moon_xml_read class is DEPRECATED','F',__LINE__);
+}function &parse_data($simple)
 {$this->doc=array();
 $this->hist=array(0=>-1);
 $this->tags=array();
@@ -2887,205 +2878,6 @@ $this->sqlorder=$k.($sort<10 ? ' Desc':'');
 }return $m;
 }function sql_order(){
 return $this->sqlorder;
-}}class mysql4 {
-var $active = false;
-var $dblink;
-var $lastOwner = '';
-var $reconnectInfo = NULL;
-var $newLink = FALSE;
-private $error = FALSE;
-function moon_connect($vars) {
-$check = array('server', 'user', 'password', 'database');
-foreach ($check as $v) {
-if (!isset ($vars[$v])) {
-return;
-}}$this->dblink = $this->connect($vars['server'], $vars['user'], $vars['password'], $vars['database']);
-if (!$this->dblink) {
-$this->_error(1, 'F', array('server' => $vars['server'], 'error' => mysql_error()));
-$pg503 = isset ($vars['page503']) ? $vars['page503'] : '';
-if ($pg503 == 0 || strtolower($pg503) == 'false') {
-return;
-}header('HTTP/1.1 503 Service Temporarily Unavailable', true, 503);
-header('Status: 503 Service Temporarily Unavailable');
-if (function_exists('moon_close')) {
-moon_close();
-}if ($pg503 && file_exists($pg503)) {
-require ($pg503);
-}exit;
-}$this->reconnectInfo = $vars;
-$set = array();
-if (!empty ($vars['charset'])) {
-$m = explode(':', $vars['charset']);
-$collate = isset ($m[1]) ? trim($m[1]) : '';
-$set[] = " NAMES '" . $this->escape(trim($m[0])) . "'" . ($collate != '' ? " COLLATE '" . $this->escape($collate) . "'" : '');
-}if (!empty ($vars['timezone'])) {
-$set[] = " time_zone='" . $this->escape($vars['timezone']) . "'";
-}if (isset ($set[0])) {
-$this->query('SET ' . implode(', ', $set));
-}}function connect($server, $user, $password, $dbname) {
-$r = @ mysql_connect($server, $user, $password, $this->newLink);
-if ($r && $dbname) {
-if (!@ mysql_select_db($dbname, $r)) {
-$r = FALSE;
-$this->_error(2, 'F', array('database' => $dbname, 'error' => mysql_error()));
-}}return $r;
-}function select_db($dbname) {
-if ($this->dblink) {
-if (mysql_select_db($dbname, $this->dblink)) {
-return TRUE;
-}$this->_error(2, 'F', array('database' => $dbname, 'error' => mysql_error($this->dblink)));
-}return FALSE;
-}function & query($sql, $unbuffered = FALSE) {
-$r = $this->error = FALSE;
-if ($this->dblink) {
-$r = $unbuffered ? mysql_unbuffered_query($sql, $this->dblink) : mysql_query($sql, $this->dblink);
-if (!$r) {
-$this->error = mysql_errno($this->dblink) . ': ' . mysql_error($this->dblink);
-$info = array('sql' => $sql, 'error' => mysql_error($this->dblink));
-$this->_error(3, 'F', $info);
-}}else {
-$this->error = 'Connection does not exist';
-}return $r;
-}function escape($s, $escapeSpec = FALSE) {
-if ($this->dblink) {
-$s = mysql_real_escape_string($s, $this->dblink);
-}else {
-$s = addslashes($s);
-}if ($escapeSpec) {
-$s = addcslashes($s, '%_');
-}return $s;
-}function insert($m, $table, $returnID = FALSE) {
-if (count($m)) {
-foreach ($m as $k => $v) {
-$m[$k] = is_null($v) ? 'NULL' : (is_array($v) ? $v[0] : "'" . $this->escape($v) . "'");
-}$sql = "INSERT INTO `$table` (`" . implode("`, `", array_keys($m)) . "`) VALUES (" . implode(',', array_values($m)) . ')';
-$r = & $this->query($sql);
-return ($returnID && $r ? $this->insert_id() : FALSE);
-}else {
-$this->error = 'Invalid query.';
-}return FALSE;
-}function update($m, $table, $id = FALSE) {
-if (!count($m)) {
-$this->error = 'Invalid query.';
-return FALSE;
-}$set = array();
-foreach ($m as $k => $v) {
-$set[] = "`$k`=" . (is_null($v) ? 'NULL' : "'" . $this->escape($v) . "'");
-}$where = '';
-if (is_array($id)) {
-foreach ($id as $k => $v) {
-$where .= $where === '' ? ' WHERE ' : ' AND ';
-$where .= "(`$k`='" . $this->escape($v) . "')";
-}}elseif (is_numeric($id)) {
-$where = " WHERE `id`='" . $this->escape($id) . "'";
-}elseif (is_string($id)) {
-$where = ' WHERE ' . $id;
-}$this->query("UPDATE `$table` SET " . implode(',', $set) . $where);
-}function replace($m, $table) {
-if (count($m)) {
-foreach ($m as $k => $v) {
-$m[$k] = is_null($v) ? 'NULL' : ("'" . $this->escape($v) . "'");
-}$sql = "REPLACE INTO `$table` (`" . implode('`, `', array_keys($m)) . '`) VALUES (' . implode(',', array_values($m)) . ')';
-$r = & $this->query($sql);
-return ($r ? $this->affected_rows() : 0);
-}else {
-$this->error = 'Invalid query.';
-}return 0;
-}function insert_query($mas, $table, $returnID = FALSE) {
-return $this->insert($mas, $table, $returnID);
-}function update_query($mas, $table, $id = FALSE) {
-return $this->update($mas, $table, $id);
-}function replace_query($mas, $table) {
-return $this->replace($mas, $table);
-}function array_query($sql, $indexField = FALSE) {
-$array = array();
-if (is_resource($sql)) {
-$r = & $sql;
-}else {
-$r = & $this->query($sql, TRUE);
-}if ($r) {
-$first = TRUE;
-while ($row = mysql_fetch_row($r)) {
-if ($first) {
-if ($indexField !== FALSE) {
-if (($indexField === TRUE && !isset ($row[1])) || ($indexField !== TRUE && !isset ($row[$indexField]))) {
-$indexField = FALSE;
-}}$first = FALSE;
-}if ($indexField === FALSE) {
-$array [] = $row;
-}elseif ($indexField === TRUE) {
-$array [$row[0]] = $row[1];
-}else {
-$array [$row[$indexField]] = $row;
-}}}return $array;
-}function array_query_assoc($sql, $indexField = FALSE) {
-$array = array();
-if (is_resource($sql)) {
-$r = & $sql;
-}else {
-$r = & $this->query($sql, TRUE);
-}if ($r) {
-$first = TRUE;
-while ($row = mysql_fetch_assoc($r)) {
-if ($first) {
-if (!isset ($row[$indexField])) {
-$indexField = FALSE;
-}$first = FALSE;
-}if ($indexField === FALSE) {
-$array [] = $row;
-}else {
-$array [$row[$indexField]] = $row;
-}}}return $array;
-}function single_query($sql) {
-$array = $this->array_query($sql);
-if ($kiek = count($array)) {
-$array = $array [0];
-if ($kiek > 1) {
-$this->_error(4, 'N', array('sql' => $sql));
-}}return $array;
-}function single_query_assoc($sql) {
-$array = $this->array_query_assoc($sql);
-if ($kiek = count($array)) {
-$array = $array [0];
-if ($kiek > 1) {
-$this->_error(4, 'N', array('sql' => $sql));
-}}return $array;
-}function fetch_row_assoc($result) {
-return ($result ? mysql_fetch_assoc($result) : FALSE);
-}function num_rows($result) {
-return ($result ? mysql_num_rows($result) : 0);
-}function affected_rows() {
-return ($this->dblink ? mysql_affected_rows($this->dblink) : 0);
-}function insert_id() {
-return ($this->dblink ? mysql_insert_id($this->dblink) : '');
-}function ping() {
-if ($this->dblink && !@mysql_ping($this->dblink)) {
-$this->newLink = TRUE;
-$this->moon_connect($this->reconnectInfo);
-}}function close() {
-if ($this->dblink) {
-mysql_close($this->dblink);
-}$this->dblink = FALSE;
-}function error() {
-return $this->error;
-}function _error($code, $tipas, $m = '') {
-$file = $this->_whereError();
-if (!is_callable('moon::error')) {
-echo $code . '(mysql4) ' . basename($file) . ' ' . serialize($m);
-return;
-}$m['where'] = $file;
-moon :: error(array("@mysql.$code", $m), $tipas);
-}function _whereError()
-{$a = debug_backtrace();
-$failas = $line = '';
-foreach ($a as $v) {
-$c = empty($v['class']) ? '' : $v['class'];
-if ($c == __CLASS__ || $c == get_class($this) ) {
-$failas = $v['file'];
-$line = $v['line'];
-continue;
-}break;
-}return $failas . ':' .  $line;
 }}class mysql {
 protected $ready = false;
 protected $dblink;
@@ -3117,16 +2909,10 @@ moon_close();
 }if ($pg503 && file_exists($pg503)) {
 require ($pg503);
 }exit;
-}$set = array();
-if (!empty ($vars['charset'])) {
-$m = explode(':', $vars['charset']);
-$collate = isset ($m[1]) ? trim($m[1]) : '';
-mysqli_set_charset($this->dblink, trim($m[0]));
-$set[] = " NAMES '" . $this->escape(trim($m[0])) . "'" . ($collate != '' ? " COLLATE '" . $this->escape($collate) . "'" : '');
-}if (!empty ($vars['timezone'])) {
-$set[] = " time_zone='" . $this->escape($vars['timezone']) . "'";
-}if (isset ($set[0])) {
-$this->query('SET ' . implode(', ', $set));
+}if (!empty ($vars['charset'])) {
+mysqli_set_charset($this->dblink, trim($vars['charset']));
+}if (!empty ($vars['query'])) {
+$this->query($vars['query']);
 }}function connect($server, $user, $password, $dbname) {
 if (strpos($server,':')) {
 list($server, $port) = explode(':', $server, 2);
@@ -3151,10 +2937,10 @@ if ($this->dblink) {
 $r = $unbuffered ? mysqli_query($this->dblink, $sql, MYSQLI_USE_RESULT) : mysqli_query($this->dblink, $sql );
 if (!$r) {
 $this->error = mysqli_errno($this->dblink) . ': ' . mysqli_error($this->dblink);
-$info = array('sql' => $sql, 'error' => mysqli_error($this->dblink));
-$this->_error(3, 'F', $info);
 if ($this->throwExceptions) {
-throw new Exception('Bad query: ' . $sql . ' Error: ' . $info['error']);
+throw new Exception('Bad query: ' . $sql . ' Error: ' . $this->error);
+}else {
+$this->_error(3, 'F', array('sql' => $sql, 'error' =>$this->error));
 }}}else {
 $this->error = 'Connection does not exist';
 if ($this->throwExceptions) {
