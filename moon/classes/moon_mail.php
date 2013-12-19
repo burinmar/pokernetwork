@@ -1,6 +1,6 @@
 <?/*************************************************
-modified: 2012-12-06 11:01
-version: 2.12
+modified: 2013-12-19 10:10
+version: 2.14a
 project: Moon
 author: Audrius Naslenas, a.naslenas@gmail.com
 *************************************************/
@@ -417,9 +417,10 @@ return FALSE;
 return FALSE;
 }$this->headers['To'] = $this->smtpTo;
 $this->headers['Subject'] = $this->subject;
-$bcc = $this->headers['Bcc'];
+$bccHeader = $this->headers['Bcc'];
 $this->headers['Bcc'] = '';
 list($headers, $msg) = explode($this->eol . $this->eol, $this->construct_mail(), 2);
+$this->headers['Bcc'] = $bccHeader;
 $bad_rcpt = array();
 if ($this->smtpReset) {
 $this->smtp->Reset();

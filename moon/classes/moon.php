@@ -1,6 +1,6 @@
 <?/*************************************************
-modified: 2013-12-18 13:30
-version: 2.14
+modified: 2013-12-19 10:10
+version: 2.14a
 project: Moon
 author: Audrius Naslenas, a.naslenas@gmail.com
 *************************************************/
@@ -455,6 +455,7 @@ $d = explode('#', ltrim(substr(rtrim($uri, '/'), 1)) . '#');
 $comp = $this->_load_component($d[0]);
 if (is_object($comp = $this->_load_component($d[0]))) {
 $uri = (string)$comp->events($d[1], array('event'=>$event, 'params' => $par ));
+$uri = ltrim($uri, '/');
 }else {
 $this->_error('bad_event','N',__LINE__,array('name'=>$uri));
 return '';
