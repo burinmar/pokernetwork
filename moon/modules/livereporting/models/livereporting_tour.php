@@ -8,7 +8,7 @@ require_once 'livereporting_model_pylon.php';
 /**
  * Tour-related data
  *
- * All methods should be protected, and overridden in ancestor classes. This helps in filtering out numerous 
+ * All methods should be protected, and overridden in ancestor classes. This helps in filtering out numerous
  * data accesses, and check if requesters still receive what they expect to, after changes are made.
  * @package livereporting
  * @subpackage models
@@ -31,7 +31,7 @@ class livereporting_model_tour extends livereporting_model_pylon
 			? $result
 			: NULL;
 	}
-	
+
 	/**
 	 * Return visible tours data
 	 * @return array
@@ -48,9 +48,9 @@ class livereporting_model_tour extends livereporting_model_pylon
 		foreach($result as $r) {
 			$items[$r['id']] = $r;
 		}
-		return array_intersect_assoc($tours, $items);
-	}	
-	
+		return array_intersect_key($tours, $items);
+	}
+
 	/**
 	 * Get tour tournaments, with winners of main events, etc.
 	 * @param <int> $tourId
@@ -73,7 +73,7 @@ class livereporting_model_tour extends livereporting_model_pylon
 			GROUP BY t.id
 			ORDER BY from_date DESC'
 		);
-		
+
 		// get all players mentioned
 		$playersNameList = array();
 		foreach ($tournaments as $tournament) {
@@ -84,15 +84,15 @@ class livereporting_model_tour extends livereporting_model_pylon
 				$playersNameList[] = $this->db->escape($tournament['runner_up']);
 			}
 		}
-		
+
 		return array(
-			$tournaments, 
+			$tournaments,
 			$this->getPokerPlayersByName($playersNameList)
 		);
 	}
-	
+
 	/**
-	 * @param array $players 
+	 * @param array $players
 	 * @return mixed null or array
 	 */
 	private function getPokerPlayersByName($players = array())
@@ -103,10 +103,10 @@ class livereporting_model_tour extends livereporting_model_pylon
 		$sql = '
 			SELECT id, title, uri, img
 			FROM ' . $this->table('PlayersPoker') . '
-			WHERE title IN ("' . implode('","', $players) . '") 
+			WHERE title IN ("' . implode('","', $players) . '")
 				AND hidden = 0';
 		$result = $this->db->array_query_assoc($sql);
-		
+
 		$items = array();
 		foreach ($result as $row) {
 			$items[$row['title']] = $row;
