@@ -197,7 +197,7 @@ kiyQMrKMzzoSiMPFCs0XrbV8cjmfWJc9+/uzhJyj8g==
 		curl_setopt($ch, CURLOPT_TIMEOUT, 60*20);
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-			'request' => '@' . realpath($requestDir. '.zip.enc'),
+			'request' => new CurlFile($requestDir. '.zip.enc', 'application/octet-stream'),
 			'signature' => $this->signFile($this->requestPrivKey, realpath($requestDir. '.zip.enc')),
 			'site' => _SITE_ID_
 		));
