@@ -1033,7 +1033,7 @@ class video2 extends moon_com {
 		$sql = 'SELECT id,title name,uri,description short_description,created published_date,created last_modified_date
 			FROM ' . $this->table('Videos') . '
 			WHERE	' . (!empty($playlistId)
-					? 'FIND_IN_SET(' . $this->db->escape($playlistId) . ', playlist_ids) AND'
+					? 'FIND_IN_SET(' . $this->db->escape($playlistId) . ', category) AND'
 					: ''
 				) . '
 				hide = 0
