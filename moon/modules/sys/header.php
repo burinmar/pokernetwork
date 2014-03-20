@@ -37,23 +37,20 @@ class header extends moon_com
 
 
 // WCOOP 2013 Takeover
-$bgURL='http://www.pokernews.com/news/2013/11/win-your-way-to-the-2014-pokerstars-caribbean-adventure-main-16643.htm';
 if ($this->wallpaper($res, array(
-'url'=> $bgURL,
-'imgPath'=> '/img/wallpaper/PCA2014_Wallpaper.jpg',
-'bgColor'=> '#000',
-'showIn'=> 'home',
-//'startDate'=> '2013-09-06 00:00:01',
-'endDate'=> '2013-11-10 23:59:59',
+	'url'=> '/full-tilt-poker/download/',
+	'imgPath'=> '/img/wallpaper/FTP_Wallpaper-1700x1000_v3.jpg',
+	'bgColor'=> '#000',
+	'showIn'=> 'home',
+	'endDate'=> '2014-03-24 23:59:59',
 )
 )) {
-	$psb =$tpl->parse('pokerstars');
-	//$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px">' .$psb. '</div>';
-	$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px"><a href="'.$bgURL.'"><img src="/img/wallpaper/PCA2014_Pushdown.jpg" alt=""></a></div>';
+	$trID = strtoupper(moon::locale()->language());
+	$psb =$tpl->parse('pokerstars', array('siteID'=>$trID));
+	$tb = '<div style="background: #000; margin: 0; width: 1000px"><a href="/full-tilt-poker/download/" target="_blank"><img src="/img/wallpaper/ftp-flipout-pushdown.jpg" alt=""></a></div>';
 	$res = $tb . $res;
 	return $res;
 }
-
 
 // PKR Iron Gamer
 if ($this->wallpaper($res, array(
