@@ -95,7 +95,7 @@ class tour_import extends moon_com
 		$cache = moon::cache();
 
 		if (FALSE == ($data = $cache->get('adm.reporting.tour_import.data'))) {
-			callPnEvent('com', 'livereporting.livereporting_hub#tournaments-homerun', null, $data);
+			callPnEvent('com', 'livereporting.livereporting_export#tournaments-homerun', null, $data);
 			$data_ = @simplexml_load_string($data);
 			if (isset($data_->tournament)) {
 				$cache->save('adm.reporting.tour_import.data', $data, 30);
