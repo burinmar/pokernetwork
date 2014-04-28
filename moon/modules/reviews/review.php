@@ -272,12 +272,6 @@ class review extends moon_com {
                   	$m['review'] = substr($article,$pos+4);
 			}
 		}
-
-		//PN-3042 PKR 3 bonus kodai
-		if (40 == $roomId) {
-			$m['isPKR'] = 1;
-		}
-
 		/* Ratings*/
 		$m['editors_rating'] = number_format($room['editors_rating'] / 10, 1);
 		$ratings = $this->ratings($room['ratings']);
