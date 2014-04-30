@@ -341,6 +341,12 @@ function img($dir, $name, $arg3=null) {
 			$s = 'http://pnimg.net/w/rw-logo/0/' . substr_replace($name, '/', 3, 0);
 			break;
 			
+		case 'rw-gallery':
+			list(,$name) = explode('-', $name);
+			list($name,$size) = explode('?', $name . '?');
+			$s = 'http://pnimg.net/w/rw-screenshots/'.($size ? '0' : '1').'/' . substr_replace($name, '/', 3, 0);
+			break;
+
 		case 'avatar':
 			list(,$name) = explode('-', $name, 2);
 			return $name;
