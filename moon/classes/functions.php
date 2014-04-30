@@ -334,6 +334,13 @@ function img($dir, $name, $arg3=null) {
 		$name = $name . '-' . $arg3;
 	}
 	switch ($dir) {
+		//reikia pries tai updeiinti sarasa
+		case 'rw':
+			list(,$name) = explode('-', $name);
+			list($name,$size) = explode('?', $name . '?');
+			$s = 'http://pnimg.net/w/rw-logo/0/' . substr_replace($name, '/', 3, 0);
+			break;
+			
 		case 'avatar':
 			list(,$name) = explode('-', $name, 2);
 			return $name;
