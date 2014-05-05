@@ -54,14 +54,14 @@ if ($this->wallpaper($res, array(
 }
 
 // PKR Iron Gamer
-if ($this->wallpaper($res, array(
+/*if ($this->wallpaper($res, array(
 'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-iron-gamer/',
 'imgPath'=> '/img/wallpaper/pkr_irongamer_wallpaper.jpg',
 'bgColor'=> '#081520',
 'showIn'=> '/pkr/',
 'endDate'=> '2013-08-31 23:59:59',
 )
-)) return $res;
+)) return $res;*/
 
 		/************* SLAMSTAS *************/
 		/*
