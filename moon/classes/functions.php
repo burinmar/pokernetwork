@@ -340,7 +340,7 @@ function img($dir, $name, $arg3=null) {
 			list($name,$size) = explode('?', $name . '?');
 			$s = 'http://pnimg.net/w/rw-logo/0/' . substr_replace($name, '/', 3, 0);
 			break;
-			
+
 		case 'rw-gallery':
 			list(,$name) = explode('-', $name);
 			list($name,$size) = explode('?', $name . '?');
@@ -568,7 +568,7 @@ class smtpMail extends moon_mail {
 		$cfg['host'] = 'ssl://smtp.gmail.com';
 		$cfg['port'] = '465';
 		$cfg['username'] = 'info@pokernetwork.com';
-		$cfg['password'] = '4AHpXtsa';
+		$cfg['password'] = 'VmvP66Hyz2mU';
 
 		//$cfg['debug'] = '0';
 		$cfg['hostname'] = 'pokernews.com';
