@@ -659,14 +659,14 @@ function _tag($tag,$param,$txt){
 			$tpls['video_youtube'] = str_replace(array('{url}', '{txt}'), 'http://www.youtube.com/watch?v=\1', $tags['url_newwin']);
 			$tpls['video_vimeo'] = str_replace(array('{url}', '{txt}'), 'http://vimeo.com/\1', $tags['url_newwin']);
 		}
-		
-		$patterns[] = "#.*?youtube\.com.*?watch\?v=([^&\[]+).*#is"; // link
+
+		$patterns[] = "#.*?youtube\.com.*?watch\?v=([a-z0-9]+).*#is"; // link
 		$replacements[] = $tpls['video_youtube'];
 
-		$patterns[] = "#.*?youtu\.be/([^&\[]+).*#is"; // link
+		$patterns[] = "#.*?youtu\.be/([a-z0-9]+).*#is"; // link
 		$replacements[] = $tpls['video_youtube'];
 
-		$patterns[] = "#.*?youtube\.com/(?:embed|v)/([^&\[\"]+).*#is"; // embed
+		$patterns[] = "#.*?youtube\.com/(?:embed|v)/([a-z0-9]+).*#is"; // embed
 		$replacements[] = $tpls['video_youtube'];
 
 		$patterns[] = "#.*?vimeo\.com/([0-9]+).*#is"; // link
@@ -674,7 +674,7 @@ function _tag($tag,$param,$txt){
 
 		$patterns[] = "#.*?pokertube\.com/ext-player/([0-9a-z]+).*#is"; // embed
 		$replacements[] = $tpls['video_pokertube'];
-		
+
 		$patterns[] = "#.*?pokertube\.streamingbolaget\.se.*?content=([0-9]+).*#is"; // embed
 		$replacements[] = $tpls['video_pokertube2'];
 
@@ -683,19 +683,19 @@ function _tag($tag,$param,$txt){
 
 		$patterns[] ="#.*?value=&quot;(.+?brightcove\.com.+?)&quot;.*?&quot;(videoId.+?)&quot;.*#is"; // embed
 		$replacements[] = $tpls['video_brightcove'];
-		
+
 		$patterns[] = "#.*?dailymotion\.com/video/([a-z0-9]+).*#is"; // link
 		$replacements[] = $tpls['video_dailymotion'];
-		
+
 		$patterns[] = "#.*?myhands\.com/.+(?:handId=|nid=)([0-9]+).*#is"; // link
 		$replacements[] = $tpls['video_myhands'];
-		
+
 		$patterns[] = "#.*?pokerhandreplays\.com/.+id[=/]([0-9]+).*#is"; //link
 		$replacements[] = $tpls['video_handreplays'];
-		
+
 		$patterns[] = "#.*?pokerreplay\.com/video/([0-9a-z]+).*#is"; //link
 		$replacements[] = $tpls['video_pokerreplay'];
-		
+
 		foreach ($patterns as $k => $pattern) {
 			if (preg_match($pattern, $txt)) {
 				$txt = preg_replace($pattern, $replacements[$k], $txt);
