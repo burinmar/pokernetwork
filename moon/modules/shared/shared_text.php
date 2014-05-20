@@ -165,11 +165,16 @@ const dateRangeStd = 'std';
 const dataRangeShorter = 'short';
 function dateRange($from, $to, $variant = self::dateRangeStd)
 {
-	list($locale, $fmtMonthDay, $fmtYearDate) = $this->dateRangeEnv($variant);
+	list($locale, $fmtMonthDay, $fmtYearDate, $fmtDay, $fmtTBD) = $this->dateRangeEnv($variant);
 	$fromDate = $locale->gmdatef($from, $fmtMonthDay);
 	$fromYear = $locale->gmdatef($from, $fmtYearDate);
-	$toDate   = $locale->gmdatef($to, $fmtMonthDay);
-	$toYear   = $locale->gmdatef($to, $fmtYearDate);
+	if (null !== $to) {
+		$toDate   = $locale->gmdatef($to, $fmtMonthDay);
+		$toYear   = $locale->gmdatef($to, $fmtYearDate);
+	} else {
+		$toDate   = '';
+		$toYear   = $fmtTBD;
+	}
 
 	if ($fromYear != $toYear)
 		return sprintf('%s - %s',
@@ -180,7 +185,7 @@ function dateRange($from, $to, $variant = self::dateRangeStd)
 		return str_replace('{date}',
 			sprintf('%s - %s', $fromDate, $toDate),
 			$fromYear);
-	if ($fromDate != $toDate && $toDate = $locale->gmdatef($to, '%D'))
+	if ($fromDate != $toDate && $toDate = $locale->gmdatef($to, $fmtDay))
 		return str_replace('{date}',
 			sprintf('%s - %s', $fromDate, $toDate),
 			$fromYear);
@@ -194,7 +199,7 @@ private function dateRangeEnv($variant) {
 		$return = array(
 			'locale' => moon::locale()
 		);
-		foreach (array('fmtMonthDay', 'fmtYearDate') as $var) {
+		foreach (array('fmtMonthDay', 'fmtYearDate', 'fmtDay', 'fmtTBD') as $var) {
 			$return[$var] = '';
 			foreach (array(
 				sprintf('%s.%s.%s', $var, $zone, $variant),

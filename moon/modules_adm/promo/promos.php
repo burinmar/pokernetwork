@@ -78,14 +78,14 @@ class promos extends base_inplace_syncable
 			'room' => array(),
 			'is_completed' => '',
 			'date_start' => $row['date_start'],
-			'date_end' => $row['date_end'],
+			'date_end' => $row['date_end'] === null ? 'TBD' : $row['date_end'],
 			'page_previews' => '',
 		));
 		foreach (explode(',', $row['room_id']) as $roomId)
 			$argv['room'][]= htmlspecialchars($this->getRoomName($roomId));
 		$argv['room'] = implode(', ', $argv['room']);
 		$tz = $this->locale()->timezone($row['timezone']);
-		if (empty($argv['class']) && strtotime($row['date_end'] . ' GMT') + $tz[0] < time()) {
+		if (empty($argv['class']) && null !== $row['date_end'] && strtotime($row['date_end'] . ' GMT') + $tz[0] < time()) {
 			$argv['class'] = 'item-inactive';
 		}
 		// if (!$row['is_hidden'] && strtotime($row['date_end'] . ' GMT') + $tz[0] + 3600*24 > time()) {
@@ -205,7 +205,7 @@ class promos extends base_inplace_syncable
 		}
 
 		foreach (array('date_start', 'date_end') as $key) {
-			$mainArgv['form.' . $key] = $entryData[$key] == '0000-00-00'
+			$mainArgv['form.' . $key] = in_array($entryData[$key], ['0000-00-00', null], true)
 				? ''
 				: $entryData[$key];
 		}
@@ -214,7 +214,7 @@ class promos extends base_inplace_syncable
 
 		$mainArgv['form.lb_auto'] = empty($entryData['lb_auto']) ? '1' : '1" checked="checked';
 		if (!empty($entryData['id'])) {
-			$mainArgv['url.preview'] = '/promo-promos/?promo_id_redirect=' . $entryData['id'];
+			$mainArgv['url.preview'] = '/promo-promos/?promo_alias_redirect=' . rawurlencode($entryData['alias']);
 		}
 	}
 
@@ -222,7 +222,7 @@ class promos extends base_inplace_syncable
 	{
 		$mainArgv['form.not_lb_auto'] = empty($entryData['lb_auto']);
 		if (!empty($entryData['id'])) {
-			$mainArgv['url.preview'] = '/promo-promos/?promo_id_redirect=' . $entryData['id'];
+			$mainArgv['url.preview'] = '/promo-promos/?promo_alias_redirect=' . rawurlencode($entryData['alias']);
 		}
 
 		$stepsDescr = explode("\n", $entryData['descr_steps'] . "\n\n");
@@ -274,10 +274,11 @@ class promos extends base_inplace_syncable
 		if (NULL == ($resultChunks = $this->parseResults('', $data['lb_columns']))) {
 			$errors[] = 'e.bad_lb_columns';
 		}
-		foreach (array('date_start', 'date_end') as $date) {
-			if (empty($data[$date]) || !strtotime($data[$date])) {
-				$errors[] = 'e.bad_' . $date;
-			}
+		if (empty($data['date_start']) || !strtotime($data['date_start'])) {
+			$errors[] = 'e.bad_date_start';
+		}
+		if (!empty($data['date_end']) && !strtotime($data['date_end'])) {
+			$errors[] = 'e.bad_date_end';
 		}
 
 		return $errors;
@@ -287,6 +288,9 @@ class promos extends base_inplace_syncable
 	{
 		if ('' === $saveData['room_id']) {
 			$saveData['room_id'] = null;
+		}
+		if ('' === $saveData['date_end']) {
+			$saveData['date_end'] = null;
 		}
 		if ($this->isSlaveHost()) {
 			$saveData['sites'] = _SITE_ID_;

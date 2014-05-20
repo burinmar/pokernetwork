@@ -132,7 +132,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
  		<dt><label>Start date</label></dt>
 		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="date_start" value="{form.date_start}" /></dd>
  		<dt><label>End date</label></dt>
-		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-end" name="date_end" value="{form.date_end}" /></dd>
+		<dd><input type="text" maxlength="10" size="14" class="isDate" id="date-end" name="date_end" value="{form.date_end}" /></dd>
 		<dt><label>Timezone</label></dt>
 		<dd><select name="timezone">
 				<% loop {form.timezones += entry:timezones.item} %>
