@@ -123,6 +123,7 @@ class promos extends base_inplace_syncable
 	{
 		if (NULL !== $argv['id']) {
 			$mainArgv['submenu'] = $this->getPreferredSubmenu($argv['id'], $entryData, $this->my('fullname'));
+			// $mainArgv['edits'] = $this->object('sys.blame_edits')->getEditsSnippet('promo', $argv['id']);
 		}
 
 		if (isset($entryData['is_live_league'])) {
@@ -297,11 +298,20 @@ class promos extends base_inplace_syncable
 		}
 	}
 
-	protected function eventSavePostSaveOrigin($saveData)
+	protected function eventSavePostSaveOrigin($saveData, $id)
 	{
 		if (!empty($saveData['id'])) {
 			$this->eventUpdatedPlayerPoints($saveData['id']);
 		}
+
+		//$store = $saveData; unset($store['updated_on']);
+		//store_edit($this->my('module'), $id, $store);
+	}
+
+	protected function eventSavePostSaveSlave($saveData, $id)
+	{
+		//$store = $saveData; unset($store['updated_on']);
+		//store_edit($this->my('module'), $id, $store);
 	}
 
 	public function eventUpdatedPlayerPoints($promoId)

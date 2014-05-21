@@ -829,8 +829,9 @@ class base_inplace_syncable extends moon_com
 				implode(', ', $pushData) . '
 				WHERE id=' . intval($data['remote_id'])
 			);
+			$this->eventSavePostSaveSlave($saveData, $rId);
 		} else {
-			$this->eventSavePostSaveOrigin($saveData);
+			$this->eventSavePostSaveOrigin($saveData, $rId);
 		}
 		return $rId;
 	}
@@ -856,7 +857,10 @@ class base_inplace_syncable extends moon_com
 	protected function eventSavePreSaveMaster(&$saveData)
 	{}
 
-	protected function eventSavePostSaveOrigin($saveData)
+	protected function eventSavePostSaveOrigin($saveData, $id)
+	{}
+
+	protected function eventSavePostSaveSlave($saveData, $id)
 	{}
 
 	private function deleteEntry($ids)

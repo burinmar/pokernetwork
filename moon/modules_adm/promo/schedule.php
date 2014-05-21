@@ -287,7 +287,7 @@ class schedule extends base_inplace_syncable
 		return $errors;
 	}
 
-	protected function eventSavePostSaveOrigin($saveData)
+	protected function eventSavePostSaveOrigin($saveData, $id)
 	{
 		$this->object('promos')->eventUpdatedPlayerPoints($saveData['promo_id']);
 	}

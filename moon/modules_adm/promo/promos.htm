@@ -205,6 +205,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 	</dl>
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
 </form>
+<%if{edits}%>{edits}<%end%>
 <script type="text/javascript">
 function cToggleByCheckboxI(ctrl, dep, idep) {
 	if (!$(ctrl)[0].checked) {
@@ -332,3 +333,4 @@ step5.png=First Deposit
 	</dl>
 	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
 </form>
+<%if{edits}%>{edits}<%end%>
