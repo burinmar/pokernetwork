@@ -1,6 +1,6 @@
 /*BG:, Title:*/
 #promo header {background-image: url('bg.jpg'); background-color: #eeecf2; color: #ffffff;}					/*Default: bg: #000 */
-#promo header .subheadline {color: #000;}
+#promo header .subheadline {color: #fff;}
 /*Bonus bg:, Bonus text*/
 #promo header .playCode div {background-color: #082a4b; color: #fff;}	/*Default: bg: #b3b3b3; c: #000 */
 #promo header .playCode div span {color: #fff;}
