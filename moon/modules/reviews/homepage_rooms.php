@@ -135,7 +135,7 @@ class homepage_rooms extends moon_com {
 		$sql = 'SELECT `id`, `name`, r.`alias`, `favicon`, `logo`, `editors_rating`,`ratings`
 			FROM ' . $this->table('Rooms') . ' r, ' . $this->table('Trackers') . " t
 			WHERE is_hidden = 0 AND r.id=t.parent_id AND t.alias=''".$and.'
-			ORDER BY editors_rating DESC, sort_1 ASC
+			ORDER BY sort_1 ASC, editors_rating DESC
 			LIMIT 10
 			';
 		$result = $this->db->array_query_assoc($sql);
