@@ -1548,7 +1548,7 @@ class livereporting_event extends moon_com
 			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-				'event' => 'core.login#remotelogin',
+				'event' => 'app.login#remotelogin',
 				'data' => $sendData,
 				'signature' => base64_encode($signature)
 			));

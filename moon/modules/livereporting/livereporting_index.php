@@ -21,7 +21,7 @@ class livereporting_index extends moon_com
 				$uri = $argv['uri'];
 				break;
 		}
-		
+
 		if (isset($uri['argv'][0])) {
 			switch ($uri['argv'][0]) {
 				case 'archive':
@@ -73,7 +73,7 @@ class livereporting_index extends moon_com
 			case 'tour-archive':
 				$output = $this->renderTournamentsArchive($argv, $e);
 				break;
-			
+
 			case 'index-widget':
 				return $this->renderIndexWidget();
 
@@ -102,7 +102,7 @@ class livereporting_index extends moon_com
 
 	/**
 	 * Ajax requests from various tournaments, redirected to single entry point
-	 * @param <array> $argv 
+	 * @param <array> $argv
 	 */
 	private function eAjax($argv)
 	{
@@ -119,11 +119,11 @@ class livereporting_index extends moon_com
 	}
 
 	/**
-	 * Export xml's of various tournaments, 
+	 * Export xml's of various tournaments,
 	 * e.g. /export.tournaments.xml
 	 * Bluff xml's are redirected.
 	 * @param <array> $argv
-	 * @return type 
+	 * @return type
 	 */
 	private function eExport($argv)
 	{
@@ -289,14 +289,14 @@ class livereporting_index extends moon_com
 		moon_close();
 		exit;
 	}
-	
+
 	private function renderExportTEBundle()
 	{
 		$xml=new moon_xml_write;
 		$xml->encoding('utf-8');
 		$xml->open_xml();
 		$xml->start_node('tournaments');
-		
+
 		$tournaments = $this->object('livereporting')->instTournamentModel('_src_index')
 			->getTournamentsEventsSyncTree();
 		foreach ($tournaments as $tnm) {
@@ -323,7 +323,7 @@ class livereporting_index extends moon_com
 		moon_close();
 		exit;
 	}
-	
+
 	private function renderExportEvents($tournamentId)
 	{
 		$lrep = $this->object('livereporting');
@@ -355,7 +355,7 @@ class livereporting_index extends moon_com
 			$xml->end_node('event');
 		}
 		$xml->end_node('tournament');
-		
+
 		Header('Content-Type: application/xml');
 		echo $xml->close_xml();
 		moon_close();
@@ -383,7 +383,7 @@ class livereporting_index extends moon_com
 			$xml->end_node('winner');
 		}
 		$xml->end_node('winners');
-		
+
 		Header('Content-Type: application/xml');
 		echo $xml->close_xml();
 		moon_close();
@@ -392,14 +392,14 @@ class livereporting_index extends moon_com
 
 	/**
 	 * Renders widget for *site* index page
-	 * @return <string> 
+	 * @return <string>
 	 */
 	private function renderIndexWidget()
 	{
 		$tpl = $this->load_template();
 		$lrep = $this->object('livereporting');
 		$lrepTools = $lrep->instTools();
-		
+
 		$running = $lrep->instTournamentModel('_src_index')->getRunningTournaments(TRUE, FALSE, FALSE, FALSE);
 		if (empty($running)) {
 			return ;
@@ -413,7 +413,7 @@ class livereporting_index extends moon_com
 			'tournaments' => 0,
 			'events' => 0,
 		);
-		
+
 		// {{ wsop11
 		/*
 		$runningSpecial = array();
@@ -438,7 +438,7 @@ class livereporting_index extends moon_com
 				'url.reporting' => $lrep->makeUri('index#view'),
 			));
 		}
-		
+
 		moon::page()->set_local('reporting-news-widget', $newsCountVar);
 		return $result;
 	}
@@ -486,7 +486,7 @@ class livereporting_index extends moon_com
 			}
 			$result .= $tpl->parse('widget_index:tournaments.item', $rtArgv);
 		}
-		
+
 		return $result;
 	}
 
@@ -514,7 +514,7 @@ class livereporting_index extends moon_com
 				'logoDir' => $this->get_dir('web:LogosSmall')
 			));
 			if (!isset($rowArgv['logo']))
-				continue; 
+				continue;
 			list($tzOffset, ) = $locale->timezone($tournament['timezone']);
 
 			$tplArgv['list'] .= $tpl->parse('widget_countdown:item', array(
@@ -534,7 +534,7 @@ class livereporting_index extends moon_com
 				'logoDir' => $this->get_dir('web:LogosSmall')
 			));
 			if (!isset($rowArgv['logo']))
-				continue; 
+				continue;
 			$tplArgv['list'] .= $tpl->parse('widget_countdown:item.end', array(
 				'url' => $lrep->makeUri('#', array(
 					'tournament_id' => $tournament['id'],
@@ -545,11 +545,11 @@ class livereporting_index extends moon_com
 
 		return $tpl->parse('widget_countdown:main', $tplArgv);
 	}
-	
+
 	/**
-	 * Renders live tournaments in a small column sidebox. 
+	 * Renders live tournaments in a small column sidebox.
 	 * Currently called by xml file. Set `hideSLW` var to hide this.
-	 * @return <string> 
+	 * @return <string>
 	 */
 	private function renderSidebarLiveWidget()
 	{
@@ -611,7 +611,7 @@ class livereporting_index extends moon_com
 		$text   = &moon::shared('text');
 		$lrep = $this->object('livereporting');
 		$lrepTournament = $lrep->instTournamentModel('_src_index');
-		
+
 		$page->title($t9n['live_reporting']);
 		$page->css('/css/live_poker.css');
 		$page->set_local('hideSLW', TRUE);
@@ -800,7 +800,7 @@ class livereporting_index extends moon_com
 			'render' => 'partial-render-tour',
 			'running' => $running
 		));
-		
+
 		return $tpl->parse('index:main', $mainArgv);
 	}
 
@@ -874,7 +874,7 @@ class livereporting_index extends moon_com
 
 		return $tpl->parse('tournaments-archive:main', $mainArgv);
 	}
-	
+
 	/**
 	 * Sets up image.pokernews.com session
 	 * @return <null> Redirects
@@ -918,7 +918,7 @@ class livereporting_index extends moon_com
 			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-				'event' => 'core.login#remotelogin',
+				'event' => 'app.login#remotelogin',
 				'data' => $sendData,
 				'signature' => base64_encode($signature)
 			));
@@ -937,7 +937,7 @@ class livereporting_index extends moon_com
 				$error = true;
 			}
 		}
-		
+
 		$page->set_global($this->my('module') . '.livereporting_event_ipnSid', $sid);
 
 		if (!empty($sid[$key]) && !$error) {
