@@ -9,6 +9,7 @@ class sync_reporting extends moon_com
 		$this->use_page('Common');
 		switch ($event) {
 			case 'imgsrv-import':
+				return ; // out of date
 				ob_start();
 				$this->doImgsrvImport();
 				$page = & moon :: page();
@@ -32,6 +33,7 @@ class sync_reporting extends moon_com
 				return;
 
 			case 'imgsrv-local-reimport':
+				return ; // out of date
 				$this->doImgsrvLocalReimport();
 				return;
 
@@ -58,7 +60,7 @@ class sync_reporting extends moon_com
 		$fp = fopen($fn, 'wb');
 		fwrite($fp, $data);
 		fclose($fp);
-		
+
 		$ch = curl_init(is_dev()
 			? 'http://imgsrv.pokernews.dev/import.php'
 			: 'http://imgsrv.pokernews.com/import.php');
@@ -261,7 +263,7 @@ class sync_reporting extends moon_com
 					), $this->table('Tags'));
 					$replacedTags++;
 				}
-			}			
+			}
 		}
 
 		echo 'ok';
