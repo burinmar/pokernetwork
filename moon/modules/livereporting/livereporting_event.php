@@ -1540,29 +1540,8 @@ class livereporting_event extends moon_com
 				}
 			}
 
-			$sendData = serialize($sendData);
-			openssl_sign($sendData, $signature, $this->get_var('pnetworkIpnPubKey'));
-
-			$ch = curl_init($this->get_var('ipnWriteBase') . $this->get_var('ipnLoginUrl'));
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_TIMEOUT, 30);
-			curl_setopt($ch, CURLOPT_POST, true);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, array(
-				'event' => 'app.login#remotelogin',
-				'data' => $sendData,
-				'signature' => base64_encode($signature)
-			));
-			curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-			$gotData = curl_exec($ch);
-			curl_close($ch);
-
-			$gotData = @unserialize($gotData);
-
-			if (is_array($gotData)) {
-				$sid[$key] = array(
-					$gotData['sid'],
-					time()
-				);
+			if (moon::shared('rpc')->getInstance('pnw-imgsrv')->send('app_login#remoteLogin', $sendData, $response) && is_array($response)) {
+				$sid[$key] = [$response['sid'], time()];
 			} else {
 				$error = true;
 			}
@@ -1571,7 +1550,7 @@ class livereporting_event extends moon_com
 		$page->set_global($this->my('fullname') . '_ipnSid', $sid);
 
 		if (!empty($sid[$key]) && !$error) {
-			// @no way to check if logged in -- reswitch [A] instead
+			// @no way to check if logged in
 			$page->redirect($this->get_var('ipnWriteBase') . $this->get_var($redirUriName) . '?sid=' . $sid[$key][0] . '&key=' . (isset($_GET['x']) ? $_GET['x'] : ''));
 		} else {
 			$page->page404();
