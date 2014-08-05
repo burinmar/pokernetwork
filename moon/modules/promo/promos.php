@@ -67,7 +67,7 @@ class promos extends moon_com
 		foreach ($this->getActivePromos($baseWhere, $time, $considerLiveLeagues) as $row) {
 			$logoFn = $this->get_dir('web:Css') . 'default/bg-list.jpg';
 			if ('' != $row['img_list'])
-				$logoFn = $storage->location('promo-list')->url($row['img_list'], 1);
+				$logoFn = $storage->location('promo-list')->url($row['img_list'], 0);
 			$tplTgt = $considerLiveLeagues
 				? ($row['is_live_league']
 					? 'list.active.live_league'

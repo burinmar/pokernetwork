@@ -279,7 +279,7 @@ class promos extends moon_com_ext
 		$storage = moon::shared('storage');
 		foreach ($this->getEntryImageFields() as $k) {
 			$mainArgv['form.' . $k[0]] = !empty($entryData[$k[0]])
-				? $storage->location($k[2])->url($entryData[$k[0]], $k[1])
+				? $storage->location($k[2])->url($entryData[$k[0]], 0)
 				: NULL;
 		}
 		// text toolbars

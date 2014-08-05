@@ -662,7 +662,7 @@ class promo extends moon_com
 			'id' => $entry['id'],
 		);
 		if ('' != $entry['img_main'])
-			$mainArgv['img_main'] = $storage->location('promo-main')->url($entry['img_main'], 1);
+			$mainArgv['img_main'] = $storage->location('promo-main')->url($entry['img_main'], 0);
 		if ($entry['room']) {
 			$mainArgv = array_merge($mainArgv, array(
 				'room.name'           => htmlspecialchars($entry['room']['name']),
