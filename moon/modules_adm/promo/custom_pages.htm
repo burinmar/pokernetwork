@@ -89,12 +89,12 @@ e.reserved_alias=Uri is reserved
 	<dl>
 		<dt><label>Title</label></dt>
 		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" /></dd>
-		
+
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item </label></dd>
 
  		<dt><label>Uri</label></dt>
-		<dd>/promos/{promo_uri}/ <input type="text" maxlength="{form.alias.maxlen}" size="50" class="required" name="alias" value="{entry.alias}" onfocus="fillUri(this,'entry-title')" /> /</dd>
+		<dd>~/{promo_uri}/ <input type="text" maxlength="{form.alias.maxlen}" size="50" class="required" name="alias" value="{entry.alias}" onfocus="fillUri(this,'entry-title')" /> /</dd>
 
 		<dt><label>Content</label></dt>
 		<dd class="w100">{entry.description.toolbar}<textarea name="description" cols="105" rows="9" class="required" id="description">{entry.description}</textarea></dd>
@@ -133,7 +133,7 @@ e.reserved_alias=Uri is reserved
 			<div class="forSlaveOriginalText">{form.origin_title}</div>
 			<input type="text" maxlength="60" size="50" class="width60 required" name="title" id="entry-title" value="{entry.title}" />
 		</dd>
-		
+
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
 

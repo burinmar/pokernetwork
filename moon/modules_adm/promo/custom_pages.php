@@ -210,20 +210,13 @@ class custom_pages extends moon_com_ext
 		}
 
 		if (empty($entryData['remote_id'])) {
-			$this->partialRenderEntryFormOrigin($mainArgv, $entryData, $tpl);
-		} else {
-			// pass
+			$mainArgv['promo_uri'] = htmlspecialchars($this->promo['alias']);
 		}
 
 		$tplName = empty($entryData['remote_id'])
 			? 'entry:main'
 			: 'entry:slaveMain';
 		return $tpl->parse($tplName, $mainArgv);
-	}
-
-	protected function partialRenderEntryFormOrigin(&$mainArgv, $entryData, $tpl)
-	{
-		$mainArgv['promo_uri'] = htmlspecialchars($this->promo['alias']);
 	}
 
 	/**
@@ -260,12 +253,6 @@ class custom_pages extends moon_com_ext
 		}
 		return $entry;
 	}
-
-	protected function entryFromPost($data)
-	{
-		return $data;
-	}
-
 
 	/**
 	 * Save
