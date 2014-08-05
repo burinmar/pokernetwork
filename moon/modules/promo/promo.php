@@ -110,11 +110,17 @@ class promo extends moon_com
 				$entry['date_end'] === null ? null : strtotime($entry['date_end']   . ' 00:00:00 +0000') + $tzShift/* + 24*3600 - 1*/,
 				shared_text::dataRangeShorter
 			),
+			'skrill' => in_array(_SITE_ID_, array('de', 'fr', 'it', 'es', 'gr', 'pl', 'ro', 'ru', 'bg'))
+				? str_replace('{site_id}', _SITE_ID_, 'https://www.skrill.com/{site_id}/affiliates-partners/poker-news-fixed-{site_id}')
+				: 'https://www.skrill.com/affiliates-partners/poker-news-fixed'
 		);
 
 		if (NULL != ($lbChunks = $this->parseResults($entry['lb_data'], $entry['lb_columns']))) {
 			$lbChunks['data'] = array_slice($lbChunks['data'], 0, 10);
-			if (0 != count($lbChunks['data'])) {
+			if (0 != count($lbChunks['data'])
+				&& isset($lbChunks['data'][0][$lbChunks['idx.player']])
+				&& isset($lbChunks['data'][0][$lbChunks['idx.points']])
+			) {
 				$lbArgv = array(
 					'url.results' => $this->linkas('promos#' . $entry['alias'] . '/results'),
 					'rows' => ''
@@ -131,9 +137,9 @@ class promo extends moon_com
 		}
 
 		$mainArgv = array_merge($mainArgv, array(
-			'content' => $tpl->parse('index:content', $contentArgv)
+			'content' => $tpl->parse('index:content', $contentArgv + $mainArgv)
 		));
-		return $tpl->parse('all:main', $mainArgv);
+		return $tpl->parse($this->altTpl('all:main', $entry), $mainArgv);
 	}
 
 	private function partialRenderIndexEvents($entry)
@@ -278,7 +284,7 @@ class promo extends moon_com
 			'content' => $tpl->parse('schedule:content', $contentArgv)
 		));
 
-		return $tpl->parse('all:main', $mainArgv);
+		return $tpl->parse($this->altTpl('all:main', $entry), $mainArgv);
 	}
 
 	private function renderScheduleArchive($argv)
@@ -397,7 +403,7 @@ class promo extends moon_com
 		$user   = moon::user();
 		$userTz = $user->id()
 			? $locale->timezone((int)$user->get_user('timezone'))
-			: array(date('Z'), 'GMT' . str_replace(array('+0','-0','00'), array('+','-',''), date('O')), date('P'), '', '');
+			: array(intval(date('Z')), 'GMT' . str_replace(array('+0','-0','00'), array('+','-',''), date('O')), date('P'), '', '');
 		return array(
 			$userTz[1],
 			$userTz[0] - $promoTzShift
@@ -414,12 +420,10 @@ class promo extends moon_com
 		$this->partialRenderCommon($mainArgv, $entry, 'results');
 
 		$pageInfo = $sitemap->getPage();
-		$ajaxUri = array_merge(explode('/', rtrim($pageInfo['uri'], '/')), array(
-			$entry['alias'], 'results'
-		));
-		foreach ($ajaxUri as $k=>$v) {
-			$ajaxUri[$k] = urlencode($v);
-		}
+		$ajaxUri = explode('/', rtrim($sitemap->getLink(), '/'));
+		$ajaxUri[] = $entry['alias'];
+		$ajaxUri[] = 'results';
+		$ajaxUri = array_map('urlencode', $ajaxUri);
 
 		$contentArgv = array(
 			'description' => $entry['lb_descr'],
@@ -497,7 +501,7 @@ class promo extends moon_com
 			'content' => $tpl->parse('results:content', $contentArgv)
 		));
 
-		return $tpl->parse('all:main', $mainArgv);
+		return $tpl->parse($this->altTpl('all:main', $entry), $mainArgv);
 	}
 
 	private function renderResultsEvent($argv)
@@ -560,7 +564,7 @@ class promo extends moon_com
 			'content' => $tpl->parse('schedule:content.results', $contentArgv)
 		));
 
-		return $tpl->parse('all:main', $mainArgv);
+		return $tpl->parse($this->altTpl('all:main', $entry), $mainArgv);
 	}
 
 	private function renderResultsSearch($argv)
@@ -616,7 +620,7 @@ class promo extends moon_com
 			'content' => $this->parseRoomVars($entry['terms_conditions'], $entry['room'])
 		));
 
-		return $tpl->parse('all:main', $mainArgv);
+		return $tpl->parse($this->altTpl('all:main', $entry), $mainArgv);
 	}
 
 	private function renderCustomPage($argv)
@@ -636,33 +640,48 @@ class promo extends moon_com
 
 		$this->partialRenderCommon($mainArgv, $entry, $cp['alias']);
 		$mainArgv = array_merge($mainArgv, array(
-			'content' => $cp['description']
+			'content' => $this->parseRoomVars($cp['description'], $entry['room'])
 		));
 
 		$page->meta('keywords',    $cp['meta_kwd']);
 		$page->meta('description', $cp['meta_descr']);
 
-		return $tpl->parse('all:main', $mainArgv);
+		return $tpl->parse($this->altTpl('all:main', $entry), $mainArgv);
 	}
 
 	private function partialRenderCommon(&$mainArgv, $entry, $src)
 	{
 		$tpl = $this->load_template();
 		$page = moon::page();
+		$storage = moon::shared('storage');
 		// misc
 		$mainArgv = array(
 			'title' => htmlspecialchars($entry['title']),
 			'menu' => '',
 			'intro' => $this->parseRoomVars($entry['descr_intro'], $entry['room']),
+			'id' => $entry['id'],
 		);
-		if ($entry['room'])
-		$mainArgv = array_merge($mainArgv, array(
-			'room.name'           => htmlspecialchars($entry['room']['name']),
-			'room.bonus_code'     => htmlspecialchars($entry['room']['bonus_code']),
-			'room.marketing_code' => htmlspecialchars($entry['room']['marketing_code']),
-			'room.download'       => htmlspecialchars('/' . $entry['room']['alias'] . '/download/?EL=League'),
-			'room.logo' => img('rw', $entry['room']['id'], $entry['room']['logo'])
-		));
+		if ('' != $entry['img_main'])
+			$mainArgv['img_main'] = $storage->location('promo-main')->url($entry['img_main'], 1);
+		if ($entry['room']) {
+			$mainArgv = array_merge($mainArgv, array(
+				'room.name'           => htmlspecialchars($entry['room']['name']),
+				'room.bonus_code'     => htmlspecialchars($entry['room']['bonus_code']),
+				'room.marketing_code' => htmlspecialchars($entry['room']['marketing_code']),
+			));
+			if ($entry['room']['id'] > 0)
+				$mainArgv = array_merge($mainArgv, array(
+					'room.download' => htmlspecialchars('/' . $entry['room']['alias'] . '/download/?EL=League'),
+					'room.visit'    => htmlspecialchars('/' . $entry['room']['alias'].'/?EL=League'),
+					'room.logo' => img('rw', $entry['room']['id'], $entry['room']['logo'])
+				));
+			else
+				$mainArgv = array_merge($mainArgv, array(
+					'room.download' => htmlspecialchars($entry['room']['download']),
+					'room.visit'    => htmlspecialchars($entry['room']['visit']),
+					'room.logo' => !empty($entry['room']['logo']) ? $this->get_dir('CustomRooms') . $entry['room']['logo'] : ''
+				));
+		}
 
 		// tab menu
 		$menu = $tpl->parse_array('all:menuTitles');
@@ -703,9 +722,12 @@ class promo extends moon_com
 		$tplArgs = array(
 			'{bonus_code}'     => $room['bonus_code'],
 			'{marketing_code}' => $room['marketing_code'],
-			'http://{visit}'    => '/' . $room['alias'] . '/ext/?EL=League',
-			'http://{download}' => '/' . $room['alias'] . '/download/?EL=League',
 		);
+		if (isset($room['uri']))
+			$tplArgs = array_merge($tplArgs, array(
+				'http://{visit}'    => '/' . $room['alias'] . '/ext/?EL=League',
+				'http://{download}' => '/' . $room['alias'] . '/download/?EL=League',
+			));
 		foreach ($tplArgs as $key => $value) {
 			$text = str_replace($key, htmlspecialchars($value), $text);
 		}
@@ -754,10 +776,13 @@ class promo extends moon_com
 	private function getPromo($alias)
 	{
 		if (!$this->promo) {
-			$iAdmin = moon::user()->i_admin('content') && moon::page()->get_global('adminView');;
+			$iAdmin = moon::user()->i_admin('content') && moon::page()->get_global('adminView');
+			$altView = $this->getPromoPreFilter($alias);
+			$hidePokernewsCup = (_SITE_ID_ === 'com') ? 'pokernewscup = 0' : 'pokernewscup < 2';
+
 			$promo = $this->db->single_query_assoc('
 				SELECT * FROM promos
-				WHERE alias="' . $this->db->escape($alias) . '"
+				WHERE alias="' . $this->db->escape($alias) . '" AND ' . $hidePokernewsCup . '
 					AND ' . ($iAdmin
 						? 'is_hidden!=2'
 						: 'is_hidden=0')
@@ -765,23 +790,61 @@ class promo extends moon_com
 			if (0 == count($promo)) {
 				$promo = null;
 			} else {
-				$promo['room'] = $this->db->single_query_assoc('
-					SELECT r.id, r.alias, r.name, r.logo, t.bonus_code, r.currency FROM ' . $this->table('Rooms') . ' r
-					INNER JOIN ' . $this->table('Trackers') . ' t
-						ON t.parent_id=r.id AND t.alias=""
-					WHERE id IN(' . implode(',', array_map('intval', explode(',', $promo['room_id']))) . ')
-				');
-				if (0 == count($promo['room'])) {
-					$promo['room'] = null;
-				} else {
-					list($promo['room']['bonus_code'], $promo['room']['marketing_code']) = explode('|', $promo['room']['bonus_code'] . '|');
-				}
+				$promo['room'] = $this->getPromoRoom($promo['room_id']);
+				$this->getPromoPostFilter($promo, $altView);
 			}
 			$this->promo = $promo;
 		}
 		return $this->promo;
 	}
 
+	private $promoAltView = null;
+	private function getPromoPreFilter(&$alias)
+	{
+		switch ($alias) {
+		case '888-4-500-wsop-package-1':
+		case '888-4-500-wsop-package-2':
+			$altView = ['alias' => $alias, 'variant' => str_replace('888-4-500-wsop-package', '', $alias)];
+			$alias = '888-4-500-wsop-package';
+			return $altView;
+		case 'team-everest-7200-wsop-package-1':
+		case 'team-everest-7200-wsop-package-2':
+			$altView = ['alias' => $alias, 'variant' => str_replace('team-everest-7200-wsop-package', '', $alias)];
+			$alias = 'team-everest-7200-wsop-package';
+			return $altView;
+		case 'pokernews-20k-freerolls-1':
+		case 'pokernews-20k-freerolls-2':
+			$altView = ['alias' => $alias, 'variant' => str_replace('pokernews-20k-freerolls', '', $alias)];
+			$alias = 'pokernews-20k-freerolls';
+			return $altView;
+		}
+	}
+
+	private function getPromoPostFilter(&$promo, $altView)
+	{
+		if ($altView) {
+			$promo['alias'] = $altView['alias'];
+			if ($promo['skin_dir'])
+				$promo['skin_dir'] .= $altView['variant'];
+		}
+	}
+
+	private function getPromoRoom($roomIds)
+	{
+		$room = $this->db->single_query_assoc('
+			SELECT r.id, r.alias, r.name, r.logo, t.bonus_code, r.currency FROM ' . $this->table('Rooms') . ' r
+			INNER JOIN ' . $this->table('Trackers') . ' t
+				ON t.parent_id=r.id AND t.alias=""
+			WHERE id IN(' . implode(',', array_map('intval', explode(',', $roomIds))) . ')
+		');
+		if (0 == count($room)) {
+			$room = null;
+		} else {
+			list($room['bonus_code'], $room['marketing_code']) = explode('|', $room['bonus_code'] . '|');
+		}
+
+		return $room;
+	}
 
 	private $event_;
 	private function getEvent($id)
@@ -822,5 +885,13 @@ class promo extends moon_com
 				: null;
 		}
 		return $this->customPage;
+	}
+
+	private function altTpl($tplName, $entry)
+	{
+		$tpl = $this->load_template();
+		return $tpl->has_part($tplName . ':' . $entry['alias'])
+			? $tplName . ':' . $entry['alias']
+			: $tplName;
 	}
 }

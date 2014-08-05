@@ -10,7 +10,12 @@ class promo_sync extends moon_com
 				return ;
 			case 'sync':
 				ob_start();
+				include_class('lock');
+				$lock = SunLock::dbLock($this->db, 'promo_promos_sync.' . _SITE_ID_ . '.lock', 30);
+				if ($lock->tryLock()) {
 					$this->mergeData($argv['data']);
+					$lock->unlock();
+				}
 				moon::page()->set_local('transporter', ob_get_contents());
 				ob_end_clean();
 				return ;
@@ -119,20 +124,6 @@ class promo_sync extends moon_com
 			FROM ' . $this->table($localTable) . '
 		', 'remote_id');
 
-		// $deletedIds = array();
-		// foreach ($localItems as $item) {
-		// 	$deletedIds[$item['id']] = $item['id'];
-		// }
-		// foreach ($data as $item) {
-		// 	unset($deletedIds[$item['id']]);
-		// }
-		// if (0 != count($deletedIds)) {
-		// $this->db->query('
-		// 	UPDATE ' . $this->table($localTable) . '
-		// 	SET is_hidden=2
-		// 	WHERE id IN(' . implode(',', $deletedIds) . ')
-		// ');}
-
 		foreach ($data as $item) {
 			$local = isset($localItems[$item['id']])
 				? $localItems[$item['id']]
@@ -236,7 +227,7 @@ class promo_sync extends moon_com
 				}
 				$data = array_merge($data, array( // either leave updated_on as it was, or bump to mark as translated
 					'updated_on' => $autoUnhide || (!$updatingTranslations && $wasLocalTranslated)
-						? array('FROM_UNIXTIME', $item['updated_on'])
+						? array('FROM_UNIXTIME', $item['updated_on'] + 1)
 						: array('FROM_UNIXTIME', $local['updated_on']) // don't allow to auto-update "updated_on"
 				));
 				if ($data['updated_on'][1] == 0) {

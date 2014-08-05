@@ -8,7 +8,7 @@ terms-and-conditions={!terms}
 <% all:main %>
 <div id="body">
 	<section id="promo" class="noBorder">
-		<header<%if{room.download}%><%else{room.download}%> class="noDownload"<%end%>>
+		<header<%if{room.download}%><%else{room.download}%> class="noDownload"<%end%> <%if{img_main}%>style="background-image: url('{img_main}')"<%end%>>
 			<%if{room.download}%><a href="{room.download}" class="logo"><img src="{room.logo}" alt="{room.name}"></a><%end%>
 			<h1>{title}</h1>
 			<div class="subheadline hMobile">{intro}</div>

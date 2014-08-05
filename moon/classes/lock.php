@@ -13,7 +13,14 @@ abstract class SunLock
 		return new SunLockfile($lockname, $ignoreLockAfter);
 	}
 
-	function __construct($lockname, $ignoreLockAfter)
+	static function dbLock($db, $lockname, $ignoreLockAfter = 3600)
+	{
+		$lock = new SunLockdb($lockname, $ignoreLockAfter);
+		$lock->setDb($db);
+		return $lock;
+	}
+
+	final function __construct($lockname, $ignoreLockAfter)
 	{
 		$this->lockName = $this->normalizeLockName($lockname);
 		$this->ignoreLockAfter = intval($ignoreLockAfter);
@@ -39,11 +46,9 @@ abstract class SunLock
 				if (strpos($lockId, '.') === 13) {
 					list(, $lockTime) = explode('.', $lockId);
 					$isLockStale = ($selfTime - $lockTime) > $this->ignoreLockAfter;
-				} else {
-					$isLockStale = true; // old or unspported format
 				}
 				if ($isLockStale) {
-					$this->deleteExistingLockfile($this->lockName);
+					$this->deleteExistingLock($this->lockName);
 					$lockId = $this->lockSaveLoad($this->lockName, $selfId);
 					if ($lockId === $selfId) {
 						$this->isLocked = true;
@@ -69,7 +74,7 @@ abstract class SunLock
 		if (false == $this->isLocked)
 			return;
 
-		$this->deleteExistingLockfile($this->lockName);
+		$this->deleteExistingLock($this->lockName);
 	}
 
 	public final function unlock()
@@ -78,7 +83,7 @@ abstract class SunLock
 			return $this->error('not locked');
 
 		try {
-			$this->deleteExistingLockfile($this->lockName);
+			$this->deleteExistingLock($this->lockName);
 			$this->isLocked = false;
 			return $this->success();
 		} catch (SynLockOperationException $e) {
@@ -86,7 +91,7 @@ abstract class SunLock
 		}
 	}
 
-	abstract protected function deleteExistingLockfile($lockname);
+	abstract protected function deleteExistingLock($lockname);
 
 	private function error($msg)
 	{
@@ -132,7 +137,7 @@ class SunLockfile extends SunLock
 		return $id;
 	}
 
-	protected function deleteExistingLockfile($filename)
+	protected function deleteExistingLock($filename)
 	{
 		if (is_file($filename)) {
 			if (false == @unlink($filename)) {
@@ -143,6 +148,57 @@ class SunLockfile extends SunLock
 				}
 			}
 		}
+	}
+}
+
+class SunLockdb extends SunLock
+{
+	private $db;
+	function setDb($db)
+	{
+		$this->db = $db;
+	}
+
+	function normalizeLockName($rawLockname)
+	{
+		return $rawLockname;
+	}
+
+	protected function lockSaveLoad($lockName, $lockContents)
+	{
+		$this->db->ping();
+		$lockName     = $this->db->escape($lockName);
+		$lockContents = $this->db->escape($lockContents);
+
+		$this->db->query('
+			INSERT IGNORE INTO sys_locks (lockid, state)
+			VALUES("' . $lockName . '", "rw");
+		');
+
+		$this->db->query('
+			UPDATE sys_locks
+			SET payload="' . $lockContents . '", state="ro"
+			WHERE lockid="' . $lockName . '" AND state="rw"
+		');
+
+		$id = $this->db->single_query_assoc('
+			SELECT payload FROM sys_locks
+			WHERE lockid="' . $lockName . '"
+		');
+		if (!isset($id['payload']))
+			return '';
+
+		return $id['payload'];
+	}
+
+	protected function deleteExistingLock($lockName)
+	{
+		$this->db->ping();
+		$lockName = $this->db->escape($lockName);
+		$this->db->query('
+			DELETE FROM sys_locks
+			WHERE lockid="' . $lockName . '"
+		');
 	}
 }
 
