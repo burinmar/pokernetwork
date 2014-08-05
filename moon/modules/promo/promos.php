@@ -48,24 +48,40 @@ class promos extends moon_com
 		$mainArgv = array(
 			'title' => $pageInfo['title'],
 			'description' => $pageInfo['content_html'],
-			'list.active' => '',
 			'list.inactive' => '',
 		);
 
+		$considerLiveLeagues = in_array(_SITE_ID_, array('si'));
+		if ($considerLiveLeagues) {
+			$mainArgv['list.active.live_league'] = '';
+			$mainArgv['list.active.not_live_league'] = '';
+		} else {
+			$mainArgv['list.active'] = '';
+		}
+
+		$baseWhere = $this->getPromosBaseWhere('com' == _SITE_ID_ /* ignore geo */);
 		$time = time();
+
 		// active
-		foreach ($this->getActivePromos($time) as $row) {
-			$logoFn = rawurlencode($row['skin_dir']) . '/bg-list.jpg';
-			$mainArgv['list.active'] .= $tpl->parse('index:active.item', array(
+		$storage = moon::shared('storage');
+		foreach ($this->getActivePromos($baseWhere, $time, $considerLiveLeagues) as $row) {
+			$logoFn = $this->get_dir('web:Css') . 'default/bg-list.jpg';
+			if ('' != $row['img_list'])
+				$logoFn = $storage->location('promo-list')->url($row['img_list'], 1);
+			$tplTgt = $considerLiveLeagues
+				? ($row['is_live_league']
+					? 'list.active.live_league'
+					: 'list.active.not_live_league')
+				: 'list.active';
+			$mainArgv[$tplTgt] .= $tpl->parse('index:active.item', array(
 				'url' => $this->linkas('#' . $row['alias']),
-				'logo' => '' != $row['skin_dir'] && file_exists($this->get_dir('fs:Css') . $logoFn)
-					? $this->get_dir('web:Css') . $logoFn
-					: $this->get_dir('web:Css') . 'default/bg-list.jpg',
+				'logo' => $logoFn,
 				'title' => htmlspecialchars($row['title']),
+				'alias' => $row['skin_dir'],
 			));
 		}
 		// inactive
-		foreach ($this->getInactivePromos($time) as $row) {
+		foreach ($this->getInactivePromos($baseWhere, $time) as $row) {
 			$mainArgv['list.inactive'] .= $tpl->parse('index:inactive.item', array(
 				'url' => $this->linkas('#' . $row['alias']),
 				'title' => htmlspecialchars($row['title']),
@@ -75,15 +91,33 @@ class promos extends moon_com
 		return $tpl->parse('index:main', $mainArgv);
 	}
 
+	private function getPromosBaseWhere($geoIgnore = false)
+	{
+		// $roomsWhere = array_map(function($roomId) { // oh my god why
+		//	return 'FIND_IN_SET(' . $roomId . ',room_id)';
+		// }, $this->object('reviews.review')->recomendRooms($geoIgnore));
+
+		$hidePokernewsCup = (_SITE_ID_ === 'com') ? 'pokernewscup = 0' : 'pokernewscup < 2';
+
+		return array(
+			'is_hidden=0',
+			$hidePokernewsCup,
+			'FIND_IN_SET("' . _SITE_ID_ . '", sites)',
+			// (0 != count($roomsWhere)
+			// 	? '(room_id IS NULL OR ' . implode(' OR ', $roomsWhere) . ')'
+			// 	: '(room_id IS NULL)')
+		);
+	}
+
 	public function getSitemapPromos()
 	{
 		$promos = $this->db->array_query_assoc('
 			SELECT menu_title title, alias url
 			FROM promos
-			WHERE is_hidden = 0
-			  AND date_start<="' . gmdate('Y-m-d', time()) . '"
-			  AND (date_end>="' . gmdate('Y-m-d', time()) . '" OR date_end IS NULL)
-			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) AND menu_title != ""
+			WHERE ' . implode(' AND ', array_merge($this->getPromosBaseWhere(), array(
+				'date_start<="' . gmdate('Y-m-d', time()) . '"',
+				'(date_end>="' . gmdate('Y-m-d', time()) . '" OR date_end IS NULL)',
+			))) . ' AND menu_title != ""
 			ORDER BY date_start
 		');
 		foreach ($promos as $k => $promo) {
@@ -92,31 +126,29 @@ class promos extends moon_com
 		return $promos;
 	}
 
-	private function getActivePromos($time)
+	private function getActivePromos($baseWhere, $time, $considerLiveLeagues)
 	{
 		return $this->db->array_query_assoc('
-			SELECT title, alias, skin_dir
+			SELECT title, alias, img_list, skin_dir' . ($considerLiveLeagues ? ', is_live_league' : '') . '
 			FROM promos
-			WHERE is_hidden = 0
-			  AND date_start<="' . gmdate('Y-m-d', time()) . '"
-			  AND (date_end>="' . gmdate('Y-m-d', $time/* - 86400*/) . '" OR date_end IS NULL)
-			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites)
+			WHERE ' . implode(' AND ', array_merge($baseWhere, array(
+				'(date_end>="' . gmdate('Y-m-d', $time) . '" OR date_end IS NULL)'
+			))) . '
 			ORDER BY date_start DESC
 		');
 	}
 
-	private function getInactivePromos($time)
+	private function getInactivePromos($baseWhere, $time)
 	{
 		return $this->db->array_query_assoc('
 			SELECT title, alias
 			FROM promos
-			WHERE is_hidden=0
-			  AND date_start<="' . gmdate('Y-m-d', time()) . '"
-			  AND (date_end<"' . gmdate('Y-m-d', $time) . '" OR date_end IS NULL)
-			  AND FIND_IN_SET("' . _SITE_ID_ . '", sites) ORDER BY date_start DESC
+			WHERE ' . implode(' AND ', array_merge($baseWhere, array(
+				'(date_end<"' . gmdate('Y-m-d', $time) . '" OR date_end IS NULL)'
+			))) . '
+			ORDER BY date_start DESC
 		');
 	}
-
 
 	private function getPromoAlias($alias)
 	{
