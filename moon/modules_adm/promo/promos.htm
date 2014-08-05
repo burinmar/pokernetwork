@@ -23,6 +23,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 <%if {show_sync} %>
 	<div class="n sync"><a href="javascript:;" id="sync_promos">Synchronize promotions</a></div>
 	<div class="n sync" style="margin-left: 40px"><a href="javascript:;" id="check_translations">Check translations</a></div>
+	<div id="sync_result" style="margin: -10px 0 10px 20px"></div>
 <%end%>
 
 <%if {filter} %>{filter}<% end %>
@@ -82,7 +83,10 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 	<td>{date_end}</td>
 	<td>
 		<a href="{url}" ><%if {name} %>{name}<%else{name}%>&mdash;<%end%></a>
-		<%if {page_previews} %><div class="explain">Page preview: <%loop {page_previews += list:entries.page_previews.item} %><a href="{url}" target="_blank">{title}</a>; <%end%></div><%end%>
+		<div class="explain" id="trn{id}">
+			<%if {weight} %>Weight: <strong>{weight}</strong>.<%end%>
+			<%if {page_previews} %>Page preview: <%loop {page_previews += list:entries.page_previews.item} %><a href="{url}" class="_{siteid}" target="_blank">{title}</a>; <%end%><%end%>
+		</div>
 	</td>
 	<td>{room}</td>
 	<td><% if {deletable} %><input type="checkbox" class="row-mark" id="row:{id}" /><% end %></td>
@@ -114,6 +118,11 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 		<dt></dt>
 		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
 
+		<%if {form.is_live_league.show} %>
+		<dt></dt>
+		<dd><label><input type="checkbox" name="is_live_league" id="i_is_live_league" value="{form.is_live_league}" /> Live league</label></dd>
+		<%end%>
+
 		<dt><label>Uri</label></dt>
 		<dd>/promos/ <input type="text" maxlength="{form.alias.maxlen}" size="50" class="required" name="alias" value="{entry.alias}" onfocus="fillUri(this,'entry-title')" /> /</dd>
 		<%if {url.view_promo} %><dd class="explain"><a href="{url.view_promo}" target="_blank">View this promo</a></dd><%end%>
@@ -122,8 +131,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 		<dd class="w100"><input type="text" maxlength="{form.menu_title.maxlen}" size="50" name="menu_title" value="{entry.menu_title}" /></dd>
 
 		<dt><label>Room</label></dt>
-		<dd><select name="room_id" class="required">
-				<option value="">-</option>
+		<dd><select name="room_id[]" class="required" multiple size="6">
 				<% loop {form.rooms += entry:rooms.item} %>
 				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
 				<% end %>
@@ -169,7 +177,7 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 			<fieldset style="border: 1px solid #ccc">
 				<legend><input type="checkbox" id="sites-all" value="1" onclick="checkAllLangs();"/> <label for="sites-all">Check all sites</label></legend>
 				<div id="sites-all-cnt">
-				<table style="width: 100%"><tr>
+				<table style="width: 100%" id="sites-checkboxes"><tr>
 					<td valign="top"><%loop {languages0 += entry:sites.item} %>
 						<input type="checkbox" id="site-{value}" name="sites[]" value="{value}" <%if {selected} %>checked="checked"<%end%> /><label for="site-{value}">{name}</label><br/>
 					<%end%></td>

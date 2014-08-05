@@ -8,6 +8,11 @@ class promos extends moon_com_ext
 		if ($event == 'prepared-promos') { // accessed from js
 			echo $this->renderPreparedPromos();
 			exit;
+		} elseif ($event == 'active-sites-for-room') { // accessed from js
+			echo $this->renderActiveSitesForRoom(is_array($_POST['room_ids'])
+				? $_POST['room_ids']
+				: array());
+			exit;
 		}
 
 		switch ($event) {
@@ -318,11 +323,12 @@ class promos extends moon_com_ext
 	private function partialRenderEntryFormOrigin(&$mainArgv, $entryData, $tpl)
 	{
 		$mainArgv['form.rooms'] = '';
+		$roomIds = explode(',', $entryData['room_id']);
 		foreach ($this->getRoomsList() as $entry) {
 			$mainArgv['form.rooms'] .= $tpl->parse('entry:rooms.item', array(
 				'value' => $entry['id'],
 				'name' => htmlspecialchars($entry['name']),
-				'selected' => $entry['id'] == $entryData['room_id']
+				'selected' => in_array($entry['id'], $roomIds)
 			));
 		}
 
@@ -395,7 +401,6 @@ class promos extends moon_com_ext
 	{
 		return $this->db->array_query_assoc('
 			SELECT id, name FROM ' . $this->table('Rooms') . '
-			WHERE is_hidden=0
 			UNION
 			SELECT -id id, name FROM ' . $this->table('CustomRooms') . '
 			ORDER BY name
@@ -453,6 +458,11 @@ class promos extends moon_com_ext
 			$saveData['sites'] = implode(',', $saveData['sites']);
 		} else
 			$saveData['sites'] = '';
+
+		if (isset($saveData['room_id']) && is_array($saveData['room_id'])) {
+			$saveData['room_id'] = implode(',', $saveData['room_id']);
+		} else
+			$saveData['room_id'] = '';
 
 		if (is_array($saveData['descr_steps']))
 			$saveData['descr_steps'] = implode("\n", $saveData['descr_steps']);
