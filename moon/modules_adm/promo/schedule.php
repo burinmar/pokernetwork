@@ -1,33 +1,58 @@
 <?php
-/**
- * Everything below is just terrible
- */
-require_once 'base_inplace_syncable.php';
-class schedule extends base_inplace_syncable
+
+class schedule extends moon_com_ext
 {
+	use promos_base;
 	private $promoId;
 	private $promo;
 	function events($event, $argv)
 	{
-		if ('' === $argv) {
+		if ('' === $argv)
 			moon::page()->page404();
-		}
 		$promoId = array_pop($argv);
-		if (empty($promoId) || !($this->promo = $this->getPromo($promoId))) {
+		if (empty($promoId) || !($this->promo = $this->getPromo($promoId)))
 			moon::page()->page404();
-		}
 		$this->promoId = intval($promoId);
-		parent::events($event, $argv);
-	}
 
-	protected function eventsEventCopy($args)
-	{
-		$this->set_var('render', 'copy');
-	}
+		switch ($event) {
+			case 'save':
+				$data = $this->eventPostData(array_merge(array_keys($this->entryFromVoid()), [
+					'stayhere', 'start_date_date', 'start_date_time', 'pwd_date_date', 'pwd_date_time'
+				]));
+				$savedId = $this->saveEntry($data);
+				return $this->eventSaveRedirect($savedId, $data, ['#', $this->promoId], ['#', '{id}.' . $this->promoId]);
 
-	protected function eventsEventSaveCopy($args)
-	{
-		$this->saveCopy();
+			case 'save-copy':
+				$this->saveCopy();
+				exit;
+
+			case 'delete':
+				$data = $this->eventPostData('ids');
+				$this->deleteEntry(explode(',', $data['ids']));
+				$this->redirect('#', $this->promoId);
+				exit;
+
+			case 'new':
+				$this->set_var('render', 'entry');
+				break;
+
+			case 'copy':
+				$this->set_var('render', 'copy');
+				break;
+
+			default:
+				if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
+					$this->set_var('render', 'entry');
+					$this->set_var('id', $id);
+				}
+				if (isset ($_GET['page'])) {
+					$this->set_var('page', (int)$_GET['page']);
+				}
+				break;
+		}
+
+		$this->use_page('Common');
+		moon::page()->js('/js/modules_adm/promo.js');
 	}
 
 	private function getPromo($id)
@@ -45,69 +70,99 @@ class schedule extends base_inplace_syncable
 		return $promo;
 	}
 
-	protected function urlNew()
-	{
-		return array('#new', $this->promoId);
-	}
-
-	protected function urlEdit($id)
-	{
-		return array('#', $id . '.' . $this->promoId);
-	}
-
-	protected function urlList()
-	{
-		return array('#', $this->promoId);
-	}
-
 	function main($argv)
 	{
-		$argv['submenu'] = $this->object('promos')->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname'));
+		moon::shared('admin')->active($this->my('fullname'));
 
 		return parent::main($argv);
 	}
 
-	protected function getEntriesListAdditionalFields()
+	/**
+	 * List
+	 */
+	protected function renderList($argv, &$e)
 	{
-		return array('start_date', 'entry_fee', 'fee');
+		$page   = moon::page();
+		$tpl    = $this->load_template();
+
+		$page->js('/js/modules_adm/ng-list.js');
+
+		$iAmHere = array_reverse(moon::shared('admin')->breadcrumb());
+		$mainArgv  = array(
+			'title' => isset($iAmHere[0])
+				? $iAmHere[0]['name']
+				: '',
+			'url.add_entry' => !$this->isSlaveHost() || empty($this->promo['remote_id'])
+				? $this->link('#new', $this->promoId) : null,
+			'url.copy_entry' => !$this->isSlaveHost() || empty($this->promo['remote_id'])
+				? $this->linkas('#copy', $this->promoId) : null,
+			'event.delete'  => !$this->isSlaveHost() || empty($this->promo['remote_id'])
+				? $this->my('fullname') . '#delete' : null,
+			'list.entries'  => '',
+			'paging' => '',
+			'submenu' => $this->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname')),
+			'synced_notice' => $this->isSlaveHost() && !empty($this->promo['remote_id']),
+		);
+
+		$pn = moon::shared('paginate');
+		$pn->set_curent_all_limit($argv['page'], $this->getEntriesCount(), $this->get_var('entriesPerPage'));
+		$pn->set_url($this->link('#', $this->promoId, ['page' => '{pg}']), $this->link('#', $this->promoId));
+		$pnInfo = $pn->get_info();
+		$mainArgv['paging'] = $pn->show_nav();
+
+		$list = $this->getEntriesList($pnInfo['sqllimit']);
+		foreach ($list as $row) {
+			$rowArgv = array(
+				'id' => $row['id'],
+				'class' => $row['is_hidden'] ? 'item-hidden' : '',
+				'url' => $this->link('#', $row['id'] . '.' . $this->promoId),
+				'name' => htmlspecialchars($this->getEntryTitle($row)),
+				'deletable' => empty($row['remote_id']),
+				'start_date' => $row['start_date'],
+				'entry_fee' => $row['entry_fee'],
+				'fee' => $row['fee'],
+			);
+			if (!empty($row['remote_id'])) {
+				$rowArgv['synced'] = true;
+				$rowArgv['sync_state'] = intval($row['updated_on'])>intval($row['remote_updated_on']) ? 1 : 2;
+			}
+			$mainArgv['list.entries'] .= $tpl->parse('list:entries.item', $rowArgv);
+		}
+		return $tpl->parse('list:main', $mainArgv);
 	}
 
-	protected function getEntriesListAdditionalWhere()
+	private function getEntriesCount()
 	{
-		return array('promo_id=' . $this->promoId);
+		$cnt = $this->db->single_query_assoc('
+			SELECT count(*) cnt
+			FROM ' . $this->table('Entries') . ' e
+			WHERE is_hidden<2 AND promo_id=' . $this->promoId
+		);
+		return $cnt['cnt'];
 	}
 
-	protected function getEntriesListOrderBy()
+	private function getEntriesList($limit)
 	{
-		return array('start_date');
+		$fields = array(
+			'id', 'title', 'is_hidden', 'UNIX_TIMESTAMP(updated_on) updated_on',
+			'start_date', 'entry_fee', 'fee'
+		);
+		if ($this->isSlaveHost()) {
+			$fields[] = 'remote_id';
+			$fields[] = 'UNIX_TIMESTAMP(remote_updated_on) remote_updated_on';
+		}
+		return $this->db->array_query_assoc('
+			SELECT ' . implode(',', $fields) . '
+			FROM ' . $this->table('Entries') . ' e
+			WHERE is_hidden<2 AND promo_id=' . $this->promoId .'
+			ORDER BY start_date ' .
+			$limit
+		);
 	}
 
-	protected function partialRenderList(&$mainArgv, $tpl, $argv)
-	{
-		$mainArgv['title'] = htmlspecialchars($this->promo['title']) . ': ' . $mainArgv['title'];
-		$mainArgv['submenu'] = $argv['submenu'];
-		$mainArgv['url.copy_entry'] = $this->getMasterEntriesCanBeAddedDeleted()
-			? $this->linkas('#copy', $this->promoId)
-			: NULL;
-	}
-
-	protected function partialRenderListRow($row, &$rowArgv, $tpl)
-	{
-		$rowArgv['start_date'] = $row['start_date'];
-		$rowArgv['entry_fee'] = $row['entry_fee'];
-		$rowArgv['fee'] = $row['fee'];
-	}
-
-	protected function getMasterEntriesCanBeAddedDeleted()
-	{
-		return !$this->getEntriesCanBeSynced();
-	}
-
-	protected function getEntriesCanBeSynced()
-	{
-		return parent::getEntriesCanBeSynced() && !empty($this->promo['remote_id']);
-	}
-
+	/**
+	 * Copy
+	 */
 	protected function renderCopy($argv)
 	{
 		$page   = moon::page();
@@ -115,10 +170,10 @@ class schedule extends base_inplace_syncable
 		$locale = moon::locale();
 		$text = moon::shared('text');
 		$mainArgv  = array(
-			'url.back' => call_user_func_array(array($this, 'linkas'), $this->urlList()),
+			'url.back' => $this->link('#', $this->promoId),
 			'event.save' => $this->my('fullname') . '#save-copy',
 			'entry.promo_id' => $this->promoId,
-			'submenu' => $argv['submenu'],
+			'submenu' => $this->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname')),
 			'list.freerolls' => '',
 		);
 
@@ -187,18 +242,87 @@ class schedule extends base_inplace_syncable
 		$this->redirect('#', $promoId);
 	}
 
-	protected function getEntryDefault()
+	/**
+	 * Entry
+	 */
+	protected function renderEntry($argv, &$e)
 	{
-		$entry = parent::getEntryDefault();
-		$entry['promo_id'] = $this->promo['id'];
-		return $entry;
-	}
+		$page   = moon::page();
+		$tpl    = $this->load_template();
+		$locale = moon::locale();
+		$text = moon::shared('text');
+		$mainArgv  = array(
+			'url.back' => $this->link('#', $this->promoId),
+			'event.save' => $this->my('fullname') . '#save'
+		);
 
-	protected function partialRenderEntry($argv, &$mainArgv, $entryData)
+		if (NULL === $argv['id']) {
+			$entryData = $this->entryFromVoid();
+		} else {
+			if (NULL === ($entryData = $this->entryFromDB($argv['id']))) {
+				$messages = $tpl->parse_array('messages');
+				$e  = $messages['e.entry_not_found'];
+				return ;
+			}
+		}
+		$entryData = array_merge($entryData, $this->popFailedFormData());
+
+		if (NULL !== $argv['id']) {
+			$mainArgv['submenu'] = $this->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname'));
+		}
+		if (!isset($mainArgv['title'])) {
+			$mainArgv['title'] = htmlspecialchars($this->getEntryTitle($entryData));
+		}
+
+		//
+		foreach ($entryData as $key => $value) {
+			$mainArgv['entry.' . $key] = htmlspecialchars($value);
+		}
+		// varchar maxlen
+		foreach ($this->getEntryCharLength() as $key => $value) {
+			$mainArgv['form.' . $key . '.maxlen'] = $value;
+		}
+		// text toolbars
+		$rtf = $this->object('rtf');
+		if ('' != ($varRtf = $this->get_var('rtf'))) {
+			$rtf->setInstance($varRtf);
+		}
+		foreach ($this->getEntryRtfFields() as $k) {
+			$mainArgv['entry.' . $k . '.toolbar'] = $rtf->toolbar($k, (int)$entryData['id']);
+		}
+		//
+		$mainArgv['form.hide'] = empty($entryData['is_hidden']) && !(NULL === $argv['id']) ? '1' : '1" checked="checked';
+
+		//
+		if ($this->isSlaveHost() && !empty($entryData['remote_id'])) {
+			$mainArgv['syncStatus'] = intval($entryData['updated_on'])>intval($entryData['remote_updated_on']) ? 1 : 2;
+			$mainArgv['remote_id'] = $entryData['remote_id'];
+			$remote = $this->getOriginInfo($entryData['remote_id']);
+			foreach ($this->getEntryTranslatables() as $k) {
+				$mainArgv['form.origin_' . $k] = !empty($remote[$k . '_prev']) || $entryData['updated_on'] != '0'
+					? nl2br($text->htmlDiff($remote[$k . '_prev'], $remote[$k]))
+					: nl2br(htmlspecialchars(@$remote[$k]));
+			}
+		}
+
+		if (empty($entryData['remote_id'])) {
+			$this->partialRenderEntryFormOrigin($mainArgv, $entryData, $tpl);
+		} else {
+			// pass
+		}
+
+		$tplName = empty($entryData['remote_id'])
+			? 'entry:main'
+			: 'entry:slaveMain';
+		return $tpl->parse($tplName, $mainArgv);
+	}
+	private function getOriginInfo($id)
 	{
-		$mainArgv['submenu'] = $argv['submenu'];
+		return $this->db->single_query_assoc('
+			SELECT * FROM ' . $this->table('EntriesMaster') . '
+			WHERE id=' . intval($id)
+		);
 	}
-
 	protected function partialRenderEntryFormOrigin(&$mainArgv, $entryData, $tpl)
 	{
 		$mainArgv['promo_uri'] = htmlspecialchars($this->promo['alias']);
@@ -207,21 +331,21 @@ class schedule extends base_inplace_syncable
 
 		$locale = moon::locale();
 		if (!empty($entryData['start_date'])) {
-			$mainArgv['form.start_date_date'] = $locale->gmdatef($entryData['start_date'], '%Y-%M-%d');
+			$mainArgv['form.start_date_date'] = $locale->gmdatef($entryData['start_date'], '%Y-%M-%D');
 			$mainArgv['form.start_date_time'] = $locale->gmdatef($entryData['start_date'], '%H:%I');
 		} else {
 			$mainArgv['form.start_date_date'] = '';
 			$mainArgv['form.start_date_time'] = '';
 		}
 		if (!empty($entryData['start_date'])) {
-			$mainArgv['form.pwd_date_date'] = $locale->gmdatef($entryData['pwd_date'], '%Y-%M-%d');
+			$mainArgv['form.pwd_date_date'] = $locale->gmdatef($entryData['pwd_date'], '%Y-%M-%D');
 			$mainArgv['form.pwd_date_time'] = $locale->gmdatef($entryData['pwd_date'], '%H:%I');
 		} else {
 			$mainArgv['form.pwd_date_date'] = '';
 			$mainArgv['form.pwd_date_time'] = '';
 		}
 
-		if (NULL != ($resultChunks = $this->object('promos')->parseResults($entryData['results'], $entryData['results_columns']))) {
+		if (NULL != ($resultChunks = $this->parseResults($entryData['results'], $entryData['results_columns']))) {
 			if (count($resultChunks['data']) > 0) {
 				$dataError = false;
 				$mainArgv += array(
@@ -255,40 +379,87 @@ class schedule extends base_inplace_syncable
 		}
 	}
 
-	protected function getEntryAdditionalFields()
+	/**
+	 * Entry/save shared
+	 */
+	protected function entryFromVoid()
 	{
-		return array('start_date_date', 'start_date_time', 'pwd_date_date', 'pwd_date_time');
+		$entry = $this->entryFromMetadata($this->table('Entries'));
+		$entry['promo_id'] = $this->promo['id'];
+		return $entry;
 	}
 
-	protected function eventSaveSerializeOrigin(&$saveData)
+	private function entryFromDB($id)
 	{
-		foreach(array('start_date', 'pwd_date') as $key) {
-			$saveData[$key] = '0000-00-00 00:00:00';
-			if (!empty($saveData[$key . '_date'])) {
-				$date = strtotime($saveData[$key . '_date'] . ' ' . $saveData[$key . '_time'] . ' +0000');
-				if ($date) {
-					$saveData[$key] = array('FROM_UNIXTIME', $date);
+		if (false === filter_var($id, FILTER_VALIDATE_INT)) {
+			return NULL;
+		}
+		$fields = array('*');
+		foreach ($this->getEntryTimestampFields() as $field) {
+			$fields[] = 'UNIX_TIMESTAMP(' . $field . ') ' . $field . '';
+		}
+		$entry = $this->db->single_query_assoc('
+			SELECT ' . implode(', ', $fields) . '
+			FROM ' . $this->table('Entries') . '
+			WHERE id=' . $id . '
+		');
+		if (empty($entry)) {
+			return NULL;
+		}
+		return $entry;
+	}
+
+	protected function entryFromPost($data)
+	{
+		if (!$this->isSlaveHost() || empty($this->promo['remote_id'])) {
+			foreach(array('start_date', 'pwd_date') as $key) {
+				$data[$key] = '0000-00-00 00:00:00';
+				if (!empty($data[$key . '_date'])) {
+					$date = strtotime($data[$key . '_date'] . ' ' . $data[$key . '_time'] . ' +0000');
+					if ($date) {
+						$data[$key] = $date;
+					}
 				}
 			}
+			foreach (array('start_date_date', 'start_date_time', 'pwd_date_date', 'pwd_date_time') as $field) {
+				unset($data[$field]);
+			}
 		}
-		foreach ($this->getEntryAdditionalFields() as $field) {
-			unset($saveData[$field]);
-		}
+		return $data;
 	}
 
-	protected function eventSaveCustomValidateOrigin($data)
+	/**
+	 * Save
+	 */
+	protected function saveEntry($data)
 	{
-		$errors = array();
+		return $this->saveEntryFlow($data, [
+			'origin_validate' => function($data) {
+				$errors = array();
 
-		if (NULL == ($resultChunks = $this->object('promos')->parseResults('', $data['results_columns']))) {
-			$errors[] = 'e.bad_results_columns';
-		}
+				if (NULL == ($resultChunks = $this->parseResults('', $data['results_columns']))) {
+					$errors[] = 'e.bad_results_columns';
+				}
 
-		return $errors;
+				return $errors;
+			},
+			'origin_pre_save' => function(&$saveData) {
+				if (!empty($saveData['start_date']))
+				$saveData['start_date'] = ['FROM_UNIXTIME(' . intval($saveData['start_date']) . ')'];
+				if (!empty($saveData['pwd_date']))
+				$saveData['pwd_date'] = ['FROM_UNIXTIME(' . intval($saveData['pwd_date']) . ')'];
+			},
+			'origin_post_save' => function($saveData, $id) {
+				$this->eventUpdatedPlayerPoints($saveData['promo_id']);
+			}
+		]);
 	}
 
-	protected function eventSavePostSaveOrigin($saveData, $id)
+	/**
+	 * Delete
+	 */
+	private function deleteEntry($ids)
 	{
-		$this->object('promos')->eventUpdatedPlayerPoints($saveData['promo_id']);
+		return $this->deleteEntryWorkflow($ids);
 	}
 }

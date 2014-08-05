@@ -29,3 +29,6 @@ $cfg['promo'] = array(
 	'tb.CustomRooms' => 'promos_rooms',
 	'comp.rtf' => 'MoonShared.rtf',
 );
+
+require_once dirname(__FILE__) . '/../sys/moon_com_ext.php';
+require_once dirname(__FILE__) . '/promos_base.php';
