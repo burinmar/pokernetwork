@@ -2,10 +2,10 @@ RewriteEngine on
 RewriteBase    /
 
 # kad apache nesiustu Vary: Host headerio
-RewriteRule .*  - [E=MY_HTTP_HOST:%{HTTP_HOST}]
+#RewriteRule .*  - [E=MY_HTTP_HOST:%{HTTP_HOST}]
 
-RewriteCond {ENV:MY_HTTP_HOST} ^pokernetwork.com [NC]
-RewriteRule ^(.*) http://www.pokernetwork.com/$1 [L,R=301]
+#RewriteCond {ENV:MY_HTTP_HOST} ^pokernetwork.com [NC]
+#RewriteRule ^(.*) http://www.pokernetwork.com/$1 [L,R=301]
 
 RewriteCond %{HTTP_HOST} ^pokernetwork.com [NC]
 RewriteRule ^(.*) http://www.pokernetwork.com/$1 [L,R=301]
