@@ -137,41 +137,6 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 				<% end %>
 			</select></dd>
 
- 		<dt><label>Start date</label></dt>
-		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="date_start" value="{form.date_start}" /></dd>
- 		<dt><label>End date</label></dt>
-		<dd><input type="text" maxlength="10" size="14" class="isDate" id="date-end" name="date_end" value="{form.date_end}" /></dd>
- 		<dt><label>Weight</label></dt>
-		<dd><input type="text" maxlength="3" size="14" name="weight" value="{entry.weight}" /><div class="explain">Higher value means higher on the list</div></dd>
-		<dt><label>Timezone</label></dt>
-		<dd><select name="timezone">
-				<% loop {form.timezones += entry:timezones.item} %>
-				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
-				<% end %>
-			</select></dd>
-
- 		<dt><label>Prize value</label></dt>
-		<dd><input type="text" maxlength="{form.prize.maxlen}" size="50" name="prize" value="{entry.prize}" /></dd>
-
-		<dt><label>Skin</label></dt>
-		<dd>/img/promo/<input type="text" maxlength="{form.skin_dir.maxlen}" size="40" name="skin_dir" value="{entry.skin_dir}" />/style.css</dd>
-
-		<dt><label>Main image:</label></dt>
-		<dd><input type="file" name="img_main" accept="image/*" />
-			<%if {form.img_main} %><br /><label><input type="checkbox" name="delete_img_main" />
-			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{form.img_main}" alt="" style="max-width: 200px" /><%end%>
-			<div class="explain">w: 1000px; h: 735px</div>
-		</dd>
-
-		<dt><label>List image:</label></dt>
-		<dd><input type="file" name="img_list" accept="image/*" />
-			<%if {form.img_list} %><br /><label><input type="checkbox" name="delete_img_list" />
-			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{form.img_list}" alt="" style="max-width: 200px" /><%end%>
-			<div class="explain">w: 332px; h: 300px</div>
-		</dd>
-
 		<%if {form.is_master} %><dt><label>Sites</label></dt>
 		<dd>
 			<fieldset style="border: 1px solid #ccc">
@@ -189,6 +154,44 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 			</div>
 			</fieldset>
 		</dd><%end%>
+
+ 		<dt><label>Start date</label></dt>
+		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="date_start" value="{form.date_start}" /></dd>
+ 		<dt><label>End date</label></dt>
+		<dd><input type="text" maxlength="10" size="14" class="isDate" id="date-end" name="date_end" value="{form.date_end}" /></dd>
+		<dt><label>Timezone</label></dt>
+		<dd><select name="timezone">
+				<% loop {form.timezones += entry:timezones.item} %>
+				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
+				<% end %>
+			</select></dd>
+		<dt><label>Weight</label></dt>
+		<dd><input type="text" maxlength="3" size="14" name="weight" value="{entry.weight}" /></dd>
+
+		<dt><label>Main image:</label></dt>
+		<dd><input type="file" name="img_main" accept="image/*" />
+			<%if {form.img_main} %><br /><label><input type="checkbox" name="delete_img_main" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{form.img_main}" alt="" style="max-width: 200px" /><%end%>
+			<div class="explain">w: 1000px; h: 735px</div>
+		</dd>
+
+		<dt><label>List image:</label></dt>
+		<dd><input type="file" name="img_list" accept="image/*" />
+			<%if {form.img_list} %><br /><label><input type="checkbox" name="delete_img_list" />
+			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
+			<img src="{form.img_list}" alt="" style="max-width: 200px" /><%end%>
+			<div class="explain">w: 332px; h: 300px</div>
+		</dd>
+
+		<dt><label>CSS</label></dt>
+		<dd class="w100">
+			<textarea name="css" cols="105" rows="2" id="css">{entry.css}</textarea>
+			<input type="hidden" name="skin_dir" value="{entry.skin_dir}" />
+		</dd>
+
+		<dt><label>Prize value</label></dt>
+		<dd><input type="text" maxlength="{form.prize.maxlen}" size="50" name="prize" value="{entry.prize}" /></dd>
 
 		<dt><label>Intro text</label></dt>
 		<dd class="w100"><textarea name="descr_intro" cols="105" rows="2" id="descr_intro">{entry.descr_intro}</textarea></dd>

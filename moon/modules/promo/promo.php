@@ -708,7 +708,10 @@ class promo extends moon_com
 			));
 
 		// css, title
-		if ($entry['skin_dir'] != '') {
+		if (!$entry['is_alt_view']) {
+			if ($entry['css'])
+				$page->css(sprintf("\t<style>%s</style>", str_replace(["\r", "\n"], ' ', $entry['css'])));
+		} else if ($entry['skin_dir'] != '') {
 			$page->css('/img/promo/' . rawurlencode($entry['skin_dir']) . '/style.css');
 		}
 		$page->css('/css/article.css');
@@ -791,6 +794,7 @@ class promo extends moon_com
 				$promo = null;
 			} else {
 				$promo['room'] = $this->getPromoRoom($promo['room_id']);
+				$promo['is_alt_view'] = !is_null($altView);
 				$this->getPromoPostFilter($promo, $altView);
 			}
 			$this->promo = $promo;
@@ -798,7 +802,6 @@ class promo extends moon_com
 		return $this->promo;
 	}
 
-	private $promoAltView = null;
 	private function getPromoPreFilter(&$alias)
 	{
 		switch ($alias) {

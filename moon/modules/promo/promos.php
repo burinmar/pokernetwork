@@ -77,7 +77,6 @@ class promos extends moon_com
 				'url' => $this->linkas('#' . $row['alias']),
 				'logo' => $logoFn,
 				'title' => htmlspecialchars($row['title']),
-				'alias' => $row['skin_dir'],
 			));
 		}
 		// inactive
@@ -129,7 +128,7 @@ class promos extends moon_com
 	private function getActivePromos($baseWhere, $time, $considerLiveLeagues)
 	{
 		return $this->db->array_query_assoc('
-			SELECT title, alias, img_list, skin_dir' . ($considerLiveLeagues ? ', is_live_league' : '') . '
+			SELECT title, alias, img_list' . ($considerLiveLeagues ? ', is_live_league' : '') . '
 			FROM promos
 			WHERE ' . implode(' AND ', array_merge($baseWhere, array(
 				'(date_end>="' . gmdate('Y-m-d', $time) . '" OR date_end IS NULL)'
