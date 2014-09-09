@@ -38,7 +38,7 @@ class header extends moon_com
 
 // WCOOP 2013 Takeover
 if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokernetwork.com/pokerstars/download/',
+	'url'=> 'http://www.pokerstars.com/wcoop/?source=pokernetwork',
 	'imgPath'=> '/img/wallpaper/WCOOP2014-wallpaper.jpg',
 	'bgColor'=> '#000',
 	'showIn'=> 'home',
@@ -48,7 +48,7 @@ if ($this->wallpaper($res, array(
 )) {
 	$trID = strtoupper(moon::locale()->language());
 	$psb =$tpl->parse('pokerstars', array('siteID'=>$trID));
-	$tb = '<div style="background: #000; margin: 0; width: 1000px"><a href="http://www.pokernetwork.com/pokerstars/download/" target="_blank"><img src="/img/wallpaper/WCOOP2014-1000x150.jpg" alt=""></a></div>';
+	$tb = '<div style="background: #000; margin: 0; width: 1000px"><a href="http://www.pokerstars.com/wcoop/?source=pokernetwork" target="_blank"><img src="/img/wallpaper/WCOOP2014-1000x150.jpg" alt=""></a></div>';
 	$res = $tb . $res;
 	return $res;
 }
