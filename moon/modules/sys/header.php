@@ -35,20 +35,19 @@ class header extends moon_com
 		//	return $res;
 		//}
 
-
 // WCOOP 2013 Takeover
 if ($this->wallpaper($res, array(
-	'url'=> 'http://www.pokerstars.com/poker/promotions/free20-spin-and-go/?source=pokernetwork',
-	'imgPath'=> '/img/wallpaper/2014SpinGo-wallpaper.jpg',
+	'url'=> '/full-tilt-poker/',
+	'imgPath'=> '/img/wallpaper/ftpRegBonus-1700x1200.jpg',
 	'bgColor'=> '#000',
 	'showIn'=> 'home',
-	'startDate'=> '2014-10-6 00:00:01',
-	'endDate'=> '2014-10-12 23:59:59',
+	'startDate'=> '2014-10-22 00:00:01',
+	'endDate'=> '2014-10-27 23:59:59',
 )
 )) {
 	$trID = strtoupper(moon::locale()->language());
 	$psb =$tpl->parse('pokerstars', array('siteID'=>$trID));
-	$tb = '<div style="background: #000; margin: 0; width: 1000px"><a href="http://www.pokerstars.com/poker/promotions/free20-spin-and-go/?source=pokernetwork" target="_blank"><img src="/img/wallpaper/2014SpinGo-1000x150.jpg" alt=""></a></div>';
+	$tb = '<div style="background: #000; margin: 0; width: 1000px"><a href="/full-tilt-poker/" target="_blank"><img src="/img/wallpaper/ftpRegBonus-1000x150.jpg" alt=""></a></div>';
 	$res = $tb . $res;
 	return $res;
 }
