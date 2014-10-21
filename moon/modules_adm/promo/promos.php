@@ -36,7 +36,6 @@ class promos extends moon_com_ext
 		}
 
 		$this->use_page('Common');
-		moon::page()->js('/js/modules_adm/promo.js');
 	}
 
 	function main($argv)
@@ -230,7 +229,6 @@ class promos extends moon_com_ext
 		}
 
 		$page->set_local('output', 'modal');
-		$page->js('/js/modules_adm/promo.js');
 		return $tpl->parse('sync_tool:main', $mainArgv);
 	}
 //

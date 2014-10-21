@@ -34,7 +34,6 @@ class custom_pages extends moon_com_ext
 		}
 
 		$this->use_page('Common');
-		moon::page()->js('/js/modules_adm/promo.js');
 	}
 
 	private function getPromo($id)
