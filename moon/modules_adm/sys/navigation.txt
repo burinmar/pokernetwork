@@ -13,7 +13,7 @@ Tournaments {ico=tournaments, admin=tournaments}
 Reviews {ico=reviews, admin=reviews, hide=0,sites=}
 	Reviews {link=reviews.reviews}
 		reviews.reviews = Room Profile {link=reviews.reviews#edit|*id*}
-		reviews.roomtrackers = Trackers {link=reviews.roomtrackers|*id*} 
+		reviews.roomtrackers = Trackers {link=reviews.roomtrackers|*id*}
 		reviews.promo = Promotions {link=reviews.promo#|*id*}
  #		reviews.pages = Additional Pages {link=reviews.pages#|*id*}
 		reviews.statisticsRoom = Statistics {link=reviews.statistics#|*id*}
@@ -51,11 +51,9 @@ Poker Players {ico=players, admin=content}
 Promotions {ico=promotions, admin=tournaments, hide=0, sites=}
 	promo.promos_=Promos {link=promo.promos}
 		promo.promos = Profile {link=promo.promos#edit|*id*}
-		promo.leaderboard = Leaderboard {link=promo.leaderboard#|*id*}
 		promo.schedule = Schedule {link=promo.schedule#|*id*}
 		promo.custom_pages = Custom pages {link=promo.custom_pages#|*id*}
-	promo.rooms=Custom Rooms
-	
+
 Live Reporting {ico=reporting, hide=0,admin=content, sites=}
 	livereporting.tour_list = Live reporting
 	livereporting.tours = Reporting Tours

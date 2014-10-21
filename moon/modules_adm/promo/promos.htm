@@ -17,68 +17,40 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 <div class="tabzoneHeader clrfix">
 	<h1>{title}</h1>
 	<%if {submenu} %>{submenu}<% end %>
-	<div class="fr"><a href="{url.add_entry}" class="button buttonAddNew">Add item</a></div>
 </div>
 
-<%if {show_sync} %>
-	<div class="n sync"><a href="javascript:;" id="sync_promos">Synchronize promotions</a></div>
-	<div class="n sync" style="margin-left: 40px"><a href="javascript:;" id="check_translations">Check translations</a></div>
-	<div id="sync_result" style="margin: -10px 0 10px 20px"></div>
-<%end%>
-
-<%if {filter} %>{filter}<% end %>
-
-<table class="list">
-	<colgroup>
-		<col style="width: 20px" />
-		<col style="width: 75px" />
-		<col style="width: 75px" />
-		<col />
-		<col style="width: 120px" />
-		<col style="width: 40px" />
-	</colgroup>
-	<thead>
-	<tr>
-		<th> </th>
-		<th><span>Start date</span></th>
-		<th><span>End date</span></th>
-		<th><span>Title</span></th>
-		<th><span>Room</span></th>
-		<th class="checkall"><a href="javascript:;" title="Check / uncheck all" id="check-uncheck-entries"></a></th>
-	</tr>
-	</thead>
-	<tbody>
-	{list.entries}
-	</tbody>
-</table>
-<br />
-{paging}
-<div class="list-footer clrfix"><input type="button" id="delete-level" class="button fr btDel" value="Delete selected" /></div>
-
-
-<% if {synced_notice} %>
-	<div class="explain">Some entries are imported from an external source. Such entries are marked with special icons:<br/>
-	<span class="sync1" title="Status: up to date"></span> - the entry is up to date,<br/>
-	<span class="sync2" title="Status: needs attention"></span> - the entry was updated, so you have to check it and update.</div>
-<% end %>
-
-
-<script type="text/javascript">
-	var js_action_delete = '{event.delete}';
-</script>
-<form method="post" id="js-action-form" action="{!action}">
-	<input type="hidden" name="ids" value="" id="js-action-form-ids" />
-	<input type="hidden" name="event" value="" id="js-action-form-event" />
+<form method="post" name="list-form" action="{!action}">
+	<table class="list">
+		<colgroup>
+			<col style="width: 20px" />
+			<col style="width: 75px" />
+			<col style="width: 75px" />
+			<col />
+			<col style="width: 120px" />
+		</colgroup>
+		<thead>
+		<tr>
+			<th> </th>
+			<th><span>Start date</span></th>
+			<th><span>End date</span></th>
+			<th><span>Title</span></th>
+			<th><span>Room</span></th>
+		</tr>
+		</thead>
+		<tbody>
+		{list.entries}
+		</tbody>
+	</table>
+	<div class="footer">{paging}</div>
+	<div class="explain"><br>
+		<span class="sync1" title="Status: up to date"></span> - the entry is up to date,<br/>
+		<span class="sync2" title="Status: needs attention"></span> - the entry was updated, so you have to check it and update.
+	</div>
 </form>
 
 <% list:entries.item %>
-<style>
-.promo-not-prepared {
-	color: red !important;
-}
-</style>
 <tr class="{class}">
-	<td><%if{synced}%><span class="sync{sync_state}"></span><%end%></td>
+	<td><span class="sync{sync_state}"></span></td>
 	<td>{date_start}</td>
 	<td>{date_end}</td>
 	<td>
@@ -89,193 +61,48 @@ e.bad_lb_columns=Leaderboard columns must include player name and player points
 		</div>
 	</td>
 	<td>{room}</td>
-	<td><% if {deletable} %><input type="checkbox" class="row-mark" id="row:{id}" /><% end %></td>
 </tr>
 
 
 
-
-
-<% entry:main %>
-<div class="tabzoneHeader clrfix">
-	<h1>{title}</h1>
-	<%if {submenu} %>{submenu}<% end %>
-	<a href="{url.back}" class="goBack">Back to list</a>
+<% sync_tool:main %>
+<div>
+	<div style="height:32px" class="clrfix">
+		<div id="progress" style="margin:10px 40px 10px 0;border:1px solid #DCDCDC;">
+			<div style="height:10px;background:#39f;width:0"></div>
+		</div>
+	</div>
+	<ul id="siteList" class="clrfix" style="margin-bottom: 0">
+		<li>
+			<table class="list">
+			<%loop{sync_column_0+=sync_site}%><tr><td><b>{name}</b></td><td><span data-site="{site_id}" data-promo="{promo_id}">&nbsp;</span></td></tr><%end%>
+			</table>
+		</li>
+		<li><table class="list">{sync_column_1}</table></li>
+		<li><table class="list">{sync_column_2}</table></li>
+		<li><table class="list">{sync_column_3}</table></li>
+	</ul>
+	<span class="clrb"></span>
 </div>
 
-<form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
-	<input type="hidden" name="event" value="{event.save}" />
-	<input type="hidden" name="id" value="{entry.id}" />
-	<h2 class="formTitle">Entry :: {title}</h2>
-	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
-	<span class="clr"></span>
-
-	<dl>
-		<dt><label>Title</label></dt>
-		<dd class="w100"><input type="text" maxlength="{form.title.maxlen}" size="70" class="required" name="title" id="entry-title" value="{entry.title}" />
-		<%if {url.preview} %><div><a href="{url.preview}" target="_blank" class="newwindow">View in new window</a></div><%end%></dd>
-
-		<dt></dt>
-		<dd><label><input type="checkbox" name="is_hidden" id="i_hide" value="{form.hide}" /> Hide this item</label></dd>
-
-		<%if {form.is_live_league.show} %>
-		<dt></dt>
-		<dd><label><input type="checkbox" name="is_live_league" id="i_is_live_league" value="{form.is_live_league}" /> Live league</label></dd>
-		<%end%>
-
-		<dt><label>Uri</label></dt>
-		<dd>/promos/ <input type="text" maxlength="{form.alias.maxlen}" size="50" class="required" name="alias" value="{entry.alias}" onfocus="fillUri(this,'entry-title')" /> /</dd>
-		<%if {url.view_promo} %><dd class="explain"><a href="{url.view_promo}" target="_blank">View this promo</a></dd><%end%>
-
-		<dt><label>Menu title</label></dt>
-		<dd class="w100"><input type="text" maxlength="{form.menu_title.maxlen}" size="50" name="menu_title" value="{entry.menu_title}" /></dd>
-
-		<dt><label>Room</label></dt>
-		<dd><select name="room_id[]" class="required" multiple size="6">
-				<% loop {form.rooms += entry:rooms.item} %>
-				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
-				<% end %>
-			</select></dd>
-
-		<%if {form.is_master} %><dt><label>Sites</label></dt>
-		<dd>
-			<fieldset style="border: 1px solid #ccc">
-				<legend><input type="checkbox" id="sites-all" value="1" onclick="checkAllLangs();"/> <label for="sites-all">Check all sites</label></legend>
-				<div id="sites-all-cnt">
-				<table style="width: 100%" id="sites-checkboxes"><tr>
-					<td valign="top"><%loop {languages0 += entry:sites.item} %>
-						<input type="checkbox" id="site-{value}" name="sites[]" value="{value}" <%if {selected} %>checked="checked"<%end%> /><label for="site-{value}">{name}</label><br/>
-					<%end%></td>
-					<td valign="top">{languages1}</td>
-					<td valign="top">{languages2}</td>
-					<td valign="top">{languages3}</td>
-					</tr>
-				</table>
-			</div>
-			</fieldset>
-		</dd><%end%>
-
- 		<dt><label>Start date</label></dt>
-		<dd><input type="text" maxlength="10" size="14" class="isDate required" id="date-start" name="date_start" value="{form.date_start}" /></dd>
- 		<dt><label>End date</label></dt>
-		<dd><input type="text" maxlength="10" size="14" class="isDate" id="date-end" name="date_end" value="{form.date_end}" /></dd>
-		<dt><label>Timezone</label></dt>
-		<dd><select name="timezone">
-				<% loop {form.timezones += entry:timezones.item} %>
-				<option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option>
-				<% end %>
-			</select></dd>
-		<dt><label>Weight</label></dt>
-		<dd><input type="text" maxlength="3" size="14" name="weight" value="{entry.weight}" /></dd>
-
-		<dt><label>Main image:</label></dt>
-		<dd><input type="file" name="img_main" accept="image/*" />
-			<%if {form.img_main} %><br /><label><input type="checkbox" name="delete_img_main" />
-			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{form.img_main}" alt="" style="max-width: 200px" /><%end%>
-			<div class="explain">w: 1000px; h: 735px</div>
-		</dd>
-
-		<dt><label>List image:</label></dt>
-		<dd><input type="file" name="img_list" accept="image/*" />
-			<%if {form.img_list} %><br /><label><input type="checkbox" name="delete_img_list" />
-			<span class="checkbox" style="position:relative;top:-2px;">Delete</span></label><br />
-			<img src="{form.img_list}" alt="" style="max-width: 200px" /><%end%>
-			<div class="explain">w: 332px; h: 300px</div>
-		</dd>
-
-		<dt><label>CSS</label></dt>
-		<dd class="w100">
-			<textarea name="css" cols="105" rows="2" id="css">{entry.css}</textarea>
-			<input type="hidden" name="skin_dir" value="{entry.skin_dir}" />
-		</dd>
-
-		<dt><label>Prize value</label></dt>
-		<dd><input type="text" maxlength="{form.prize.maxlen}" size="50" name="prize" value="{entry.prize}" /></dd>
-
-		<dt><label>Intro text</label></dt>
-		<dd class="w100"><textarea name="descr_intro" cols="105" rows="2" id="descr_intro">{entry.descr_intro}</textarea></dd>
-
-		<dt><label>Steps</label></dt>
-		<dd>
-			<input type="text" size="50" name="descr_steps[0]" value="{form.descr_steps_0}" /><select name="descr_steps_images[0]">
-				<% loop {form.descr_steps_images_0 += entry:descr_steps_images.item} %><option value="{value}"<%if {selected} %> selected="selected"<%end%>>{name}</option> <% end %></select><br />
-			<input type="text" size="50" name="descr_steps[1]" value="{form.descr_steps_1}" /><select name="descr_steps_images[1]">{form.descr_steps_images_1}</select><br />
-			<input type="text" size="50" name="descr_steps[2]" value="{form.descr_steps_2}" /><select name="descr_steps_images[2]">{form.descr_steps_images_2}</select>
-		</dd>
-
-		<dt><label>Qualification description</label></dt>
-		<dd class="w100"><textarea name="descr_qualify" cols="105" rows="4" id="descr_qualify">{entry.descr_qualify}</textarea></dd>
-
-		<dt><label>Prize/home description</label></dt>
-		<dd class="w100">{entry.descr_prize.toolbar}<textarea name="descr_prize" cols="105" rows="15" id="descr_prize">{entry.descr_prize}</textarea></dd>
-
-		<dt><label>Terms and conditions</label></dt>
-		<dd class="w100">{entry.terms_conditions.toolbar}<textarea name="terms_conditions" cols="105" rows="15" id="terms_conditions">{entry.terms_conditions}</textarea></dd>
-
-		<dt><label>Leaderboard description</label></dt>
-		<dd class="w100"><textarea name="lb_descr" cols="105" rows="3">{entry.lb_descr}</textarea></dd>
-
-		<dt><label>Leaderboard</label></dt>
-		<dd style="margin-bottom: 2px"><input type="checkbox" name="lb_auto" id="lb_auto" value="{form.lb_auto}" /> <label for="lb_auto">Calculate leaderboard automatically</label></dd>
-
-		<dt><label>Leaderboard Results Columns</label></dt>
-		<dd class="w100"><input type="text" maxlength="form.lb_columns.maxlen}" size="50" class="width60" name="lb_columns" value="{entry.lb_columns}" />
-		    <div class="explain">The order of columns in the Excel Spreadsheet or the text area. Values must be ';' separated.<br />
-		        "*" at the beginning of column name marks Player Name, "+" marks Player Points.
-		    </div>
-		    <div class="explain lb_auto_dep_i">
-		    	For automatic leaderboard, you should have a localised counterpart of &quot;*Player; +Points&quot; as value of this field (key point: only 2 fields).
-		    </div>
-		</dd>
-
-		<dt><label>Meta description</label></dt>
-		<dd class="w100"><input type="text" maxlength="{form.descr_meta.maxlen}" size="50" name="descr_meta" value="{entry.descr_meta}" /></dd>
-	</dl>
-	<div class="formButton clrfix"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /><input type="button" value="Cancel" onclick="window.location.href='{url.back}'" /></div>
-</form>
-<%if{edits}%>{edits}<%end%>
-<script type="text/javascript">
-function cToggleByCheckboxI(ctrl, dep, idep) {
-	if (!$(ctrl)[0].checked) {
-		$(dep).show();
-		$(idep).hide();
-	} else {
-		$(dep).hide();
-		$(idep).show();
-	}
-}
-$(document).ready(function(){
-	jQuery('#lb_auto').click(function(){
-		cToggleByCheckboxI('#lb_auto', '.lb_auto_dep', '.lb_auto_dep_i');
-	});
-	cToggleByCheckboxI('#lb_auto', '.lb_auto_dep', '.lb_auto_dep_i');
-});
-</script>
-
-
-<% entry:descr_steps_images.list %>
-=None
-step1.png=Deposit
-step2.png=Enter Bonus Code
-step3.png=Sign Up
-step4.png=Generate Rake
-step5.png=First Deposit
 
 
 <% entry:slaveMain %>
 <div class="tabzoneHeader clrfix">
 	<h1>{title}</h1>
+	<div class="fr">
+		<a href="javascript:;" class="button buttonRefresh" data-action="sync" data-loading-text="Sending to subdomains..." data-url="{url.sync}">Send to subdomains</a>
+	</div><span class="clr"></span>
 	<%if {submenu} %>{submenu}<% end %>
-	<a href="{url.back}" class="goBack">Back to list</a>
+	<div class="fr">
+		<a href="{url.back}" class="goBack">Back to list</a>
+	</div>
 </div>
 
 <form action="{!action}" method="post" class="editForm aform" enctype="multipart/form-data">
 	<input type="hidden" name="event" value="{event.save}" />
 	<input type="hidden" name="id" value="{entry.id}" />
-	<input type="hidden" name="remote_id" value="{entry.remote_id}" />
-	<h2 class="formTitle">Entry :: {title}</h2>
-	<div class="formButton fr"><input type="submit" name="save" value="Save" /><input type="submit" name="stayhere" value="Save &amp; return" /></div>
+
 	<span class="clr"></span>
 
 	<p><span class="sync1"></span>This entry is synchronized. You must ensure that your translation will correspond to the original.</p>

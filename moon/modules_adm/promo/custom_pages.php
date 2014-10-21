@@ -22,16 +22,6 @@ class custom_pages extends moon_com_ext
 				$savedId = $this->saveEntry($data);
 				return $this->eventSaveRedirect($savedId, $data, ['#', $this->promoId], ['#', '{id}.' . $this->promoId]);
 
-			case 'delete':
-				$data = $this->eventPostData('ids');
-				$this->deleteEntry(explode(',', $data['ids']));
-				$this->redirect('#', $this->promoId);
-				exit;
-
-			case 'new':
-				$this->set_var('render', 'entry');
-				break;
-
 			default:
 				if (isset($argv[0]) && false !== ($id = filter_var($argv[0], FILTER_VALIDATE_INT))) {
 					$this->set_var('render', 'entry');
@@ -49,11 +39,8 @@ class custom_pages extends moon_com_ext
 
 	private function getPromo($id)
 	{
-		$flds = $this->isSlaveHost()
-			? 'id, alias, title, lb_auto, remote_id'
-			: 'id, alias, title, lb_auto';
 		$promo = $this->db->single_query_assoc('
-			SELECT ' . $flds . ' FROM promos
+			SELECT id, alias, title, lb_auto FROM promos
 			WHERE id=' . intval($id) . '
 			  AND is_hidden<2
 		');
@@ -75,21 +62,11 @@ class custom_pages extends moon_com_ext
 		$page   = moon::page();
 		$tpl    = $this->load_template();
 
-		$page->js('/js/modules_adm/ng-list.js');
-
-		$iAmHere = array_reverse(moon::shared('admin')->breadcrumb());
 		$mainArgv  = array(
-			'title' => isset($iAmHere[0])
-				? $iAmHere[0]['name']
-				: '',
-			'url.add_entry' => !$this->isSlaveHost() || empty($this->promo['remote_id'])
-				? $this->link('#new', $this->promoId) : null,
-			'event.delete'  => !$this->isSlaveHost() || empty($this->promo['remote_id'])
-				? $this->my('fullname') . '#delete' : null,
+			'title' => htmlspecialchars($this->promo['title']),
 			'list.entries'  => '',
 			'paging' => '',
 			'submenu' => $this->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname')),
-			'synced_notice' => $this->isSlaveHost() && !empty($this->promo['remote_id']),
 		);
 
 		$pn = moon::shared('paginate');
@@ -105,13 +82,9 @@ class custom_pages extends moon_com_ext
 				'class' => $row['is_hidden'] ? 'item-hidden' : '',
 				'url' => $this->link('#', $row['id'] . '.' . $this->promoId),
 				'name' => htmlspecialchars($this->getEntryTitle($row)),
-				'deletable' => empty($row['remote_id']),
 				'pos' => $row['position'],
+				'sync_state' => intval($row['updated_on'])>intval($row['remote_updated_on']) ? 1 : 2,
 			);
-			if (!empty($row['remote_id'])) {
-				$rowArgv['synced'] = true;
-				$rowArgv['sync_state'] = intval($row['updated_on'])>intval($row['remote_updated_on']) ? 1 : 2;
-			}
 			$mainArgv['list.entries'] .= $tpl->parse('list:entries.item', $rowArgv);
 		}
 		return $tpl->parse('list:main', $mainArgv);
@@ -131,12 +104,8 @@ class custom_pages extends moon_com_ext
 	{
 		$fields = array(
 			'id', 'title', 'is_hidden', 'UNIX_TIMESTAMP(updated_on) updated_on',
-			'position'
+			'position', 'UNIX_TIMESTAMP(remote_updated_on) remote_updated_on'
 		);
-		if ($this->isSlaveHost()) {
-			$fields[] = 'remote_id';
-			$fields[] = 'UNIX_TIMESTAMP(remote_updated_on) remote_updated_on';
-		}
 		return $this->db->array_query_assoc('
 			SELECT ' . implode(',', $fields) . '
 			FROM ' . $this->table('Entries') . ' e
@@ -156,27 +125,18 @@ class custom_pages extends moon_com_ext
 		$locale = moon::locale();
 		$text = moon::shared('text');
 		$mainArgv  = array(
+			'title' => htmlspecialchars($this->promo['title']),
+			'submenu' => $this->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname')),
 			'url.back' => $this->link('#', $this->promoId),
 			'event.save' => $this->my('fullname') . '#save'
 		);
 
-		if (NULL === $argv['id']) {
-			$entryData = $this->entryFromVoid();
-		} else {
-			if (NULL === ($entryData = $this->entryFromDB($argv['id']))) {
-				$messages = $tpl->parse_array('messages');
-				$e  = $messages['e.entry_not_found'];
-				return ;
-			}
+		if (NULL === ($entryData = $this->entryFromDB($argv['id']))) {
+			$messages = $tpl->parse_array('messages');
+			$e  = $messages['e.entry_not_found'];
+			return ;
 		}
 		$entryData = array_merge($entryData, $this->popFailedFormData());
-
-		if (NULL !== $argv['id']) {
-			$mainArgv['submenu'] = $this->getPreferredSubmenu($this->promoId, $this->promo, $this->my('fullname'));
-		}
-		if (!isset($mainArgv['title'])) {
-			$mainArgv['title'] = htmlspecialchars($this->getEntryTitle($entryData));
-		}
 
 		//
 		foreach ($entryData as $key => $value) {
@@ -197,26 +157,25 @@ class custom_pages extends moon_com_ext
 		//
 		$mainArgv['form.hide'] = empty($entryData['is_hidden']) && !(NULL === $argv['id']) ? '1' : '1" checked="checked';
 
-		//
-		if ($this->isSlaveHost() && !empty($entryData['remote_id'])) {
-			$mainArgv['syncStatus'] = intval($entryData['updated_on'])>intval($entryData['remote_updated_on']) ? 1 : 2;
-			$mainArgv['remote_id'] = $entryData['remote_id'];
-			$remote = $this->getOriginInfo($entryData['remote_id']);
-			foreach ($this->getEntryTranslatables() as $k) {
-				$mainArgv['form.origin_' . $k] = !empty($remote[$k . '_prev']) || $entryData['updated_on'] != '0'
-					? nl2br($text->htmlDiff($remote[$k . '_prev'], $remote[$k]))
-					: nl2br(htmlspecialchars(@$remote[$k]));
-			}
+		$mainArgv['syncStatus'] = intval($entryData['updated_on'])>intval($entryData['remote_updated_on']) ? 1 : 2;
+		$mainArgv['remote_id'] = $entryData['remote_id'];
+		$remote = $this->getOriginInfo($entryData['id']);
+		foreach ($this->getEntryTranslatables() as $k) {
+			$mainArgv['form.origin_' . $k] = !empty($remote[$k . '_prev']) || $entryData['updated_on'] != '0'
+				? nl2br($text->htmlDiff($remote[$k . '_prev'], $remote[$k]))
+				: nl2br(htmlspecialchars(@$remote[$k]));
 		}
+		$mainArgv['promo_uri'] = htmlspecialchars($this->promo['alias']);
 
-		if (empty($entryData['remote_id'])) {
-			$mainArgv['promo_uri'] = htmlspecialchars($this->promo['alias']);
-		}
+		return $tpl->parse('entry:slaveMain', $mainArgv);
+	}
 
-		$tplName = empty($entryData['remote_id'])
-			? 'entry:main'
-			: 'entry:slaveMain';
-		return $tpl->parse($tplName, $mainArgv);
+	private function getOriginInfo($id)
+	{
+		return $this->db->single_query_assoc('
+			SELECT * FROM ' . $this->table('EntriesMaster') . '
+			WHERE id=' . intval($id)
+		);
 	}
 
 	/**
@@ -253,38 +212,25 @@ class custom_pages extends moon_com_ext
 		}
 		return $entry;
 	}
+	protected function getEntryRtfFields()
+	{
+		return ['description'];
+	}
+	public function getEntryTranslatables()
+	{
+		return ['title', 'description', 'meta_kwd', 'meta_descr'];
+	}
+	protected function getEntrySlaveRequiredFields()
+	{
+		return ['title'];
+	}
+
 
 	/**
 	 * Save
 	 */
 	protected function saveEntry($data)
 	{
-		return $this->saveEntryFlow($data, [
-			'origin_validate' => function($data) {
-				$errors = array();
-				$uriDupe = $this->db->single_query_assoc('
-					SELECT COUNT(id) cid FROM ' . $this->table('Entries') . '
-					WHERE promo_id=' . $this->promoId . ' AND alias="' . $this->db->escape($data['alias'])  . '"' .
-					(($data['id'] !== NULL)
-						? ' AND id!=' . $data['id']
-						: '') . '
-				');
-				if ('0' != $uriDupe['cid']) {
-					$errors[] = 'e.dupe_alias';
-				}
-				if (in_array($data['alias'], array('results', 'schedule', 'terms-and-conditions'))) {
-					$errors[] = 'e.reserved_alias';
-				}
-				return $errors;
-			}
-		]);
-	}
-
-	/**
-	 * Delete
-	 */
-	private function deleteEntry($ids)
-	{
-		return $this->deleteEntryWorkflow($ids);
+		return $this->saveEntryFlow($data, []);
 	}
 }
