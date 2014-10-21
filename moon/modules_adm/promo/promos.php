@@ -256,7 +256,7 @@ class promos extends moon_com_ext
 		$entryData = array_merge($entryData, $this->popFailedFormData());
 
 		$mainArgv['submenu'] = $this->getPreferredSubmenu($argv['id'], $entryData, $this->my('fullname'));
-		$mainArgv['edits'] = $this->object('sys.blame_edits')->getEditsSnippet($this->my('fullname'), $argv['id']);
+		$mainArgv['edits'] = ''; // $this->object('sys.blame_edits')->getEditsSnippet($this->my('fullname'), $argv['id']);
 		if (!isset($mainArgv['title'])) {
 			$mainArgv['title'] = htmlspecialchars($this->getEntryTitle($entryData));
 		}
