@@ -4,6 +4,7 @@ class promos_transfer extends moon_com
 {
 	function onload()
 	{
+		exit;
 		$this->adb = moon::db('database-adm');
 		$this->db->exceptions(true);
 		$this->adb->exceptions(true);
