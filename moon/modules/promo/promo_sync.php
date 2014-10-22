@@ -154,7 +154,6 @@ class promo_sync extends moon_com
 
 				$this->db->insert($data, $this->table($localTable));
 				$this->db->insert($data_push, $this->table($localTablePush));
-				echo 'inserted: ' . $data['id'] . "\n";
 			} else { // existing item
 
 				// if some translatable fields were updated
