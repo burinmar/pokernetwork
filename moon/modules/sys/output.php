@@ -156,7 +156,6 @@ class output extends moon_com {
 		else {
 			$ini = & moon :: moon_ini();
 			$m['googleID'] = $ini->get('other', 'googleStatsID');
-			$m['gaCustomVars'] = '';
 			$gaVars = $p->get_local('gaCustomVars');
 			$gaUniversalVars = array();
 			if (!is_array($gaVars)) $gaVars = array();
@@ -174,7 +173,6 @@ class output extends moon_com {
 					'value' => json_encode((string)$gaVar['value']),
 					'scope' => intval($gaVar['scope'])
 				);
-				$m['gaCustomVars'] .= $t->parse('gaCustomVars', $tplVars);
 				if ($gaVar['name'] == 'User Type')
 					$gaUniversalVars['dimension1'] = $gaVar['value'];
 				else if ($gaVar['name'] == 'Author')
