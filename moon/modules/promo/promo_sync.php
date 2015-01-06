@@ -108,7 +108,7 @@ class promo_sync extends moon_com
 	) {
 		$local_rows = $this->db->array_query_assoc('
 			SELECT id, is_hidden, base_version,
-				UNIX_TIMESTAMP(updated_on) updated_on, UNIX_TIMESTAMP(remote_updated_on) remote_updated_on
+				UNIX_TIMESTAMP(updated_on) updated_on
 			FROM ' . $this->table($localTable) . '
 		', 'id');
 
@@ -239,6 +239,8 @@ class promo_sync extends moon_com
 				'terms_conditions',
 				'lb_columns',
 				'lb_descr',
+				'review_title',
+				'review_descr'
 			]);
 
 			$domainData = array();
