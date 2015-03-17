@@ -1,5 +1,5 @@
 <?php
-class header extends moon_com 
+class header extends moon_com
 {
 	function main($argv)
 	{
@@ -44,41 +44,12 @@ if ($this->wallpaper($res, array(
 	//'startDate'=> '2014-12-11 00:00:01',
 	'endDate'=> '2015-03-20 23:59:59',
 )
-)) /*{
-	$trID = strtoupper(moon::locale()->language());
-	$psb =$tpl->parse('pokerstars', array('siteID'=>$trID));
-	$tb = '<div style="background: #000; margin: 0; width: 1000px"><a href="/pokerstars/download/" target="_blank"><img src="/img/wallpaper/SpinGo_EN_1000x150.jpg" alt=""></a></div>';
-	$res = $tb . $res;
-	return $res;
-}*/
+))  {
 
-// PKR Iron Gamer
-/*if ($this->wallpaper($res, array(
-'url'=> 'http://www.pokernetwork.com/leagues/pokernews-pkr-iron-gamer/',
-'imgPath'=> '/img/wallpaper/pkr_irongamer_wallpaper.jpg',
-'bgColor'=> '#081520',
-'showIn'=> '/pkr/',
-'endDate'=> '2013-08-31 23:59:59',
-)
-)) return $res;*/
-
-		/************* SLAMSTAS *************/
-		/*
-		// PokerStars SCOOP 2012
-		//banner
-		$psb =$tpl->parse('pokerstars', array('siteID'=>'EN'));
-		$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px;">' .$psb. '</div>';
-		//background
+}
 
 
-		//wallpaper
-		//banner
-		$psb =$tpl->parse('pokerstars', array('siteID'=>'EN'));
-		$tb = '<div style="background: #000; margin: 0 auto; text-align: center; width: 1000px;">' .$psb. '</div>';
-		//moon::page()->set_local('topbanner', $tb);
-        //background
-		$bgURL = 'http://pokerstars.com/EN/ad/11216421/1000x150scoop.gif.click?rq=noscript&vs=';
-		*/
+
 	return $res;
 
 	}
@@ -211,7 +182,7 @@ if ($this->wallpaper($res, array(
 		return $a['parent'] > $b['parent'];
 	}
 
-	private function isMenuItemHidden($item) 
+	private function isMenuItemHidden($item)
 	{
 		return !empty ($item['hide']) || !isset ($item['url']);
 	}
