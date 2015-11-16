@@ -358,8 +358,8 @@ function img($dir, $name, $arg3=null) {
 		case 'game' :
 		case 'gamec' :
 		case 'deposit' :
-		case 'reporting-tour-small':
-		case 'reporting-tour-big':
+		//case 'reporting-tour-small':
+		//case 'reporting-tour-big':
 
 			$s = 'http://i.pokernews.' . $com . '/' . $dir . '/' . $name;
 		break;
@@ -535,8 +535,8 @@ function poker_tours()
 				WHERE is_hidden=0
 			', 'id');
 			foreach ($data as $k => $row) {
-				$data[$k]['img1'] = img('reporting-tour-small', $row['id'], $row['img1']);
-				$data[$k]['img2'] = img('reporting-tour-big',   $row['id'], $row['img2']);
+				$data[$k]['img1'] = 'http://pnimg.net/w/reporting-tour/0/' . substr_replace($row['img1'], '/', 3, 0);
+				$data[$k]['img2'] = 'http://pnimg.net/w/reporting-tour/0/' . substr_replace($row['img2'], '/', 3, 0);;
 			}
 			$cache->save(serialize($data), 60);
 		} else {
