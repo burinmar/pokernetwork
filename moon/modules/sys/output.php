@@ -137,6 +137,8 @@ class output extends moon_com {
 				});
 				</script>';
 		}
+		//PN-5613 krux tags
+		$m['head.tags'] .= "\t" . $t->parse('krux') . "\n";
 		//
 		$hl = $p->head_link();
 		foreach ($hl as $k => $v) {
