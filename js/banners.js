@@ -70,7 +70,7 @@ $.extend(Banners.prototype, {
 							}*/
 							// room id
 							if (roomId && roomId !== banner.room_id) continue;
-							
+
 							// url mode -> url targeting
 							if (opt.urlMode && $.inArray(opt.urlMode, modeOpt) !== -1) {
 								urlMode = opt.urlMode;
@@ -142,7 +142,7 @@ $.extend(Banners.prototype, {
 		}
 		// track viewed banners
 		this.trackViews(); // only first from live rotation is tracked
-		
+
 		if (liveRotationOn) {
 			setInterval(function () { o.rotateLive(); }, 30000);
 		}
@@ -245,7 +245,7 @@ $.extend(Banners.prototype, {
 		}
 		bIds = this._arrayShuffle(bIds);
 		bIds.push(lastId);
-		
+
 		if (idsCnt >= 10 || (idsCntUnique == bannersCnt && idsCnt == priorityBnCnt)) { // 2* all priority and less than 10
 			eraseCookie(cookieName);
 			idsShown = [];
@@ -258,13 +258,13 @@ $.extend(Banners.prototype, {
 			if (zoneBanners.hasOwnProperty(id)) {
 				var banner = zoneBanners[id];
 				var priority = (banner.priority) ? banner.priority : 0;
-				
+
 				if (
 				(priority && idsShownTbl.hasOwnProperty(banner.id) && idsShownTbl[banner.id] >= priority) || // 4* priority banner shown >= than his priority
 				(!priority && idsCnt < priorityBnCnt) || // 3* show first with priority
 				(activeBanners.hasOwnProperty(banner.id)) // 5 * already displayed
 				) continue;
-				
+
 				if (bannersCnt > 1) {
 					idsShown.push(banner.id);
 					createCookie(cookieName, idsShown.toString());
@@ -286,7 +286,11 @@ $.extend(Banners.prototype, {
 			}
 
 			Banners.currPosID = '#' + cId;
-			$('#' + cId).html(html).show();//fadeOut('fast').fadeIn('normal');
+			if (banner.type == 'html') {
+				this.createIframe($('#' + cId), html);
+			} else {
+				$('#' + cId).html(html).show();//fadeOut('fast').fadeIn('normal');
+			}
 
 			if (typeof(banner.gid) == 'undefined') {
 				this.activeBanners[banner.id] = 1; // not show same bn
@@ -294,6 +298,72 @@ $.extend(Banners.prototype, {
 				this.activeBanners[banner.id] = {'gid':banner.gid, 'cid':banner.cid, 'sid':banner.sid, 'zone': zone}; // not show same bn
 			}
 		}
+	},
+	createIframe: function($div, html) {
+		var iframe = document.createElement('iframe');
+		iframe.style.height = 0;
+		iframe.style.width = '100%';
+		iframe.marginWidth = 0;
+		iframe.marginHeight = 0;
+		iframe.frameBorder = 0;
+		iframe.width = 0;
+		iframe.height = 0;
+		iframe.className = 'bnid_' + $div.attr('data-ready');
+		//slaideriui reikia i .parent diva deti
+		var $hasWrap = $('.parent', $div);
+		if ($hasWrap.length) {
+			$hasWrap.append(iframe);
+		} else {
+			$div.append(iframe);
+		}
+
+		//kazkodel kartais du kart loading ivyksta (1)
+		$div.data('fwaiting',1);
+
+		function iframeLoaded() {
+			//kazkodel kartais du kart loading ivyksta (2)
+			if (!$div.data('fwaiting')) return;
+			$div.data('fwaiting',0);
+			//reikia parodyti nes kitaip height nepaims
+			$div.show();
+			try {
+				var h = iframe.contentWindow.document.body.scrollHeight;
+			} catch (e) {
+				var h = -1;
+			}
+
+			if (h>20) {
+				iframe.style.height = h + 'px';
+				$('#sideBar').trigger('updated-content');
+			}
+			else {
+				iframe.style.display = "none";
+				$div.hide();
+				$div.attr('data-ready','');
+				if ($div.attr('data-ad-element')) {
+					$($div.attr('data-ad-element')).hide();
+				}
+			}
+		}
+
+		$(iframe).bind('load', function(){
+			setTimeout( iframeLoaded, 100);
+		});
+		iframe.src = "javascript:void(0)";
+		var content;
+		content = "<html>";
+		content += '<title>8</title>';
+		content += '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
+		content += '<base target="_blank">';
+		content += '<style>body{margin:0;padding:0;text-align:center;line-height:4px}</style>';
+		content += '<body>';
+		content += html;
+		content += "</body></html>";
+		try {
+			var doc = iframe.contentWindow.document;
+			doc.write(content);
+			doc.close();
+		} catch (e) {}
 	},
 	tplParse: function (tpl, vars, opt) {
 		var q;
@@ -309,15 +379,13 @@ $.extend(Banners.prototype, {
 	trackViews: function () {
 		if (!this.statsUrl) return;
 		var activeBn = this.activeBanners, d = [], bn = {};
-		var dataStr = '';
 		for (var bId in activeBn) {
 			if (activeBn.hasOwnProperty(bId)) {
 				bn = activeBn[bId];
 				if (typeof(bn.gid) == 'undefined') {
 					d.push(bId);
 				} else {
-					dataStr = '{"gid":' + bn.gid + ', "cid": ' + bn.cid + ', "sid": ' + bn.sid + ', "zone": "' + bn.zone + '"}';
-					d.push(dataStr);
+					d.push('{"gid":' + bn.gid + ', "cid": ' + bn.cid + ', "sid": ' + bn.sid + ', "zone": "' + bn.zone + '"}');
 				}
 			}
 		}

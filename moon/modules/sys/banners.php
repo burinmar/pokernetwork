@@ -276,13 +276,15 @@ class banners extends moon_com
 				setcookie('pnadpr', serialize($cookie), $p['expire'], $p['path'], $p['domain'], $p['secure'], $p['httponly']);
 			}
 
-			$sql = '
-				INSERT DELAYED INTO ' . $this->table('BannersStats') . '
-				(banner_id, campaign_id, site_id, zone, date, views, clicks)
-				VALUES (' . intval($d['gid']) . ', ' . intval($d['cid']) . ', ' . intval($d['sid']) . ', "' . $this->db->escape($d['zone']) . '", ' . floor(time() / 3600)*3600 . ', 1, 0)
-				ON DUPLICATE KEY UPDATE views=views+1
-			';
-			$this->db->query($sql);
+			if (isset($d['gid']) && isset($d['cid']) && isset($d['zone'])) {
+				$sql = '
+					INSERT DELAYED INTO ' . $this->table('BannersStats') . '
+					(banner_id, campaign_id, site_id, zone, date, views, clicks)
+					VALUES (' . intval($d['gid']) . ', ' . intval($d['cid']) . ', ' . intval($d['sid']) . ', "' . $this->db->escape($d['zone']) . '", ' . floor(time() / 3600)*3600 . ', 1, 0)
+					ON DUPLICATE KEY UPDATE views=views+1
+				';
+				$this->db->query($sql);
+			}
 		}
 	}
 
@@ -453,7 +455,7 @@ class banners extends moon_com
 					$ad['alternative'] = str_replace('{url}', $this->makeRedirectUrl($ad['mediaId'], $urlParam), $ad['alternative']);
 				}
 				$params += array(
-					'text' => $this->escapeJs($ad['alternative']),
+					'text' => $ad['alternative'],
 					'type' => 'html',
 
 					// for views stats
@@ -500,11 +502,6 @@ class banners extends moon_com
 					'timestamp' => $ad['created'],
 					'path' => $page->home_url() . $this->get_var('srcBanners') . $ad['filename'],
 					'alternative' => addslashes($ad['alternative']),
-
-					// for views stats
-					'cid' => $ad['campaignId'],
-					'gid' => $ad['bannerId'],
-					'sid' => $ad['site_id']
 				);
 				break;
 			case 'flashXml':
@@ -526,14 +523,16 @@ class banners extends moon_com
 					'path' => $page->home_url() . $this->get_var('srcBanners') . $ad['filename'],
 
 					'params' => 'f=' . $this->escapeJs($data[0]) . '&t=' . urlencode($this->escapeJs($data[1])),
-
-					// for views stats
-					'cid' => $ad['campaignId'],
-					'gid' => $ad['bannerId'],
-					'sid' => $ad['site_id']
 				);
 				break;
 		}
+
+		$params += array(
+			// for views stats
+			'cid' => $ad['campaignId'],
+			'gid' => $ad['bannerId'],
+			'sid' => $ad['site_id']
+		);
 		return $params;
 	}
 

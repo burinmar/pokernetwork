@@ -332,7 +332,7 @@ class rotation extends moon_com
 			return $items;
 		}
 		foreach ($this->get_var('sitesUrls') as $id => $r) {
-			$items[$id] = $r['url'];
+			$items[$id] = $r;
 		}
 		return $items;
 	}
