@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<product productid="moon" active="1">
+	<title>Moon integration</title>
+	<description />
+	<version>0.1</version>
+	<url />
+	<versioncheckurl />
+	<dependencies>
+		<dependency dependencytype="vbulletin" minversion="4.1.10" maxversion="" />
+	</dependencies>
+	<codes>
+	</codes>
+	<templates>
+		<template name="footer" templatetype="template" date="1329312371" username="dshugo" version="4.2.2"><![CDATA[<vb:if condition="!empty($ad_location['ad_footer_start']) or !empty($ad_location['global_above_footer'])">
+<div style="clear: {vb:stylevar left}">
+  {vb:raw ad_location.ad_footer_start}
+  {vb:raw ad_location.global_above_footer}
+</div>
+</vb:if>
+<div id="footer" class="floatcontainer footer">
+
+	<form action="{vb:link forumhome|nosession}" method="get" id="footer_select" class="footer_select">
+
+
+		<vb:if condition="$show['quickchooser']">
+			<select name="styleid" onchange="switch_id(this, 'style')">
+				<optgroup label="{vb:rawphrase quick_style_chooser}">
+					{vb:raw quickchooserbits}
+				</optgroup>
+			</select>
+		</vb:if>
+
+		<vb:if condition="$show['languagechooser']">
+			<select name="langid" onchange="switch_id(this, 'lang')">
+				<optgroup label="{vb:rawphrase quick_language_chooser}">
+					{vb:raw languagechooserbits}
+				</optgroup>
+			</select>
+		</vb:if>
+	</form>
+
+	<ul id="footer_links" class="footer_links">
+		<vb:if condition="$show['contactus']"><li><a href="{vb:raw vboptions.contactuslink}" rel="nofollow" accesskey="9">{vb:rawphrase contact_us}</a></li></vb:if>
+		<vb:if condition="$vboptions['hometitle']"><li><a href="{vb:raw vboptions.homeurl}">{vb:raw vboptions.hometitle}</a></li></vb:if>
+		<vb:if condition="$show['admincplink']"><li><a href="{vb:raw admincpdir}/index.php{vb:raw session.sessionurl_q}">{vb:rawphrase admin}</a></li></vb:if>
+		<vb:if condition="$show['modcplink']"><li><a href="{vb:raw modcpdir}/index.php{vb:raw session.sessionurl_q}">{vb:rawphrase mod}</a></li></vb:if>
+		<vb:if condition="$vboptions['archiveenabled']"><li><a href="archive/index.php{vb:raw session.sessionurl_q}">{vb:rawphrase archive}</a></li></vb:if>
+		{vb:raw template_hook.footer_links}
+		<vb:if condition="$vboptions['privacyurl']"><li><a href="{vb:raw vboptions.privacyurl}">{vb:rawphrase privacy_statement}</a></li></vb:if>
+		<vb:if condition="$vboptions['tosurl']"><li><a href="{vb:raw vboptions.tosurl}">{vb:rawphrase terms_of_service}</a></li></vb:if>
+		<li><a href="{vb:raw relpath}#top" onclick="document.location.hash='top'; return false;">{vb:rawphrase top}</a></li>
+	</ul>
+
+
+	<vb:if condition="$show['dst_correction']">
+	<!-- auto DST correction code -->
+		<form action="profile.php?do=dst" method="post" name="dstform">
+			<input type="hidden" name="s" value="{vb:raw session.sessionhash}" />
+			<input type="hidden" name="securitytoken" value="{vb:raw bbuserinfo.securitytoken}" />
+			<input type="hidden" name="do" value="dst" />
+		</form>
+		<script type="text/javascript">
+		<!--
+			var tzOffset = {vb:raw bbuserinfo.timezoneoffset} + {vb:raw bbuserinfo.dstonoff};
+			var utcOffset = new Date().getTimezoneOffset() / 60;
+			if (Math.abs(tzOffset + utcOffset) == 1)
+			{	// Dst offset is 1 so its changed
+				document.forms.dstform.submit();
+			}
+		//-->
+		</script>
+		<!-- / auto DST correction code -->
+	</vb:if>
+
+	<script type="text/javascript">
+	<!--
+		// Main vBulletin Javascript Initialization
+		vBulletin_init();
+	//-->
+	</script>
+        {vb:raw template_hook.footer_javascript}
+</div>
+</div> <!-- closing div for body_wrapper -->
+
+<div class="below_body">
+<div id="footer_time" class="shade footer_time">{vb:rawphrase all_times_are_gmt_x_time_now_is_y}</div>
+
+<div id="footer_copyright" class="shade footer_copyright">
+	<!-- Do not remove this copyright notice -->
+	{vb:rawphrase powered_by_vbulletin}
+	<!-- Do not remove this copyright notice -->
+</div>
+<div id="footer_morecopyright" class="shade footer_morecopyright">
+	<!-- Do not remove cronimage or your scheduled tasks will cease to function -->
+	{vb:raw cronimage}
+	<!-- Do not remove cronimage or your scheduled tasks will cease to function -->
+	{vb:raw vboptions.copyrighttext}
+</div>
+{vb:raw ad_location.ad_footer_end}
+<vb:if condition="$vboptions['enablefacebookconnect']">
+	{vb:raw facebook_footer}
+</vb:if>
+</div>
+{vb:raw moon_footer} ]]></template>
+		<template name="header" templatetype="template" date="1329306774" username="dshugo" version="4.2.2"><![CDATA[{vb:raw moon_header}]]></template>
+	</templates>
+	<stylevardfns>
+	</stylevardfns>
+	<stylevars>
+	</stylevars>
+	<plugins>
+		<plugin active="1" executionorder="5">
+			<title>Init</title>
+			<hookname>global_start</hookname>
+			<phpcode><![CDATA[require(DIR . '/packages/moon/hooks/global_start.php');]]></phpcode>
+		</plugin>
+		<plugin active="1" executionorder="5">
+			<title>Header (meta)</title>
+			<hookname>parse_templates</hookname>
+			<phpcode><![CDATA[require(DIR . '/packages/moon/hooks/parse_templates.php');]]></phpcode>
+		</plugin>
+	</plugins>
+	<phrases>
+	</phrases>
+	<options>
+	</options>
+	<helptopics>
+	</helptopics>
+	<cronentries>
+	</cronentries>
+	<faqentries>
+	</faqentries>
+</product>

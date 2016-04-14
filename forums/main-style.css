@@ -1,0 +1,354 @@
+.pnw-main {
+	padding: 2px 1px;
+}
+.wide { background: #fff; !important; }
+.page { width: auto !important; }
+
+table {
+	margin: 0 0 1px;
+	border-collapse: collapse;
+}
+td {
+	border: none;
+	vertical-align: middle;
+}
+td.status_icon {
+	padding: 0;
+}
+
+.controlbar td {
+	padding: 0;
+}
+
+a:link, body_alink
+{
+	color: #326095;
+}
+a:visited, body_avisited
+{
+	color: #3F83BA;
+}
+a:hover, a:active, body_ahover
+{
+	color: #FF4400;
+}
+.page
+{
+	background: #FFFFFF;
+	color: #000000;
+}
+.tborder
+{
+	background: #D1D1E1;
+	color: #000000;
+/*	border: 1px solid #0B198C;*/
+}
+.tcat
+{
+	background: #869BBF url(images/gradients/gradient_tcat.gif) repeat-x top left;
+	color: #FFFFFF;
+	
+}
+.tcat a:link, .tcat_alink
+{
+	color: #ffffff;
+	text-decoration: none;
+}
+.tcat a:visited, .tcat_avisited
+{
+	color: #ffffff;
+	text-decoration: none;
+}
+.tcat a:hover, .tcat a:active, .tcat_ahover
+{
+	color: #FFFF66;
+	text-decoration: underline;
+}
+.thead
+{
+	background: #5C7099 url(images/gradients/gradient_thead.gif) repeat-x top left;
+	color: #FFFFFF;
+	
+}
+.thead a:link, .thead_alink
+{
+	color: #FFFFFF;
+}
+.thead a:visited, .thead_avisited
+{
+	color: #FFFFFF;
+}
+.thead a:hover, .thead a:active, .thead_ahover
+{
+	color: #FFFF00;
+}
+.tfoot
+{
+	background: #3E5C92;
+	color: #E0E0F6;
+}
+.tfoot a:link, .tfoot_alink
+{
+	color: #E0E0F6;
+}
+.tfoot a:visited, .tfoot_avisited
+{
+	color: #E0E0F6;
+}
+.tfoot a:hover, .tfoot a:active, .tfoot_ahover
+{
+	color: #FFFF66;
+}
+.alt1, .alt1Active
+{
+	background: #F5F5FF;
+	background: #F7F8FF;
+	color: #000000;
+	border-bottom: 1px solid #E6EAF5;
+}
+.alt2, .alt2Active
+{
+	background: #E1E4F2;
+	color: #000000;
+	border-bottom: 1px solid #F7F7FF;
+}
+td.inlinemod
+{
+	background: #FFFFCC;
+	color: #000000;
+}
+.wysiwyg
+{
+	background: #F5F5FF;
+	color: #000000;
+	font: 10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+}
+textarea, .bginput
+{
+	font: 10pt verdana, geneva, lucida, 'lucida grande', arial, helvetica, sans-serif;
+}
+.button
+{
+	
+}
+select
+{
+	
+}
+option, optgroup
+{
+	font-size: 11px;
+	
+}
+.smallfont {
+	font-size: 11px;
+}
+	
+
+.time
+{
+	color: #666686;
+}
+.navbar {
+	color: #253043;
+	font-weight: bold;
+}
+.highlight {
+	color: #FF0000;
+	font-weight: bold;
+}
+.fjsel
+{
+	background: #3E5C92;
+	color: #E0E0F6;
+}
+.fjdpth0
+{
+	background: #F7F7F7;
+	color: #000000;
+}
+.panel
+{
+	background: #E4E7F5 url(images/gradients/gradient_panel.gif) repeat-x top left;
+	color: #000000;
+	padding: 10px;
+}
+.panelsurround
+{
+	background: #D1D4E0 url(images/gradients/gradient_panelsurround.gif) repeat-x top left;
+	color: #000000;
+	padding: 5px;
+	vertical-align: top;
+}
+legend
+{
+	color: #22229C;
+	
+}
+.vbmenu_control
+{
+	background: #738FBF;
+	color: #FFFFFF;
+	
+	padding: 3px 6px 3px 6px;
+	white-space: nowrap;
+}
+.vbmenu_control a:link, .vbmenu_control_alink
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.vbmenu_control a:visited, .vbmenu_control_avisited
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.vbmenu_control a:hover, .vbmenu_control a:active, .vbmenu_control_ahover
+{
+	color: #FFFFFF;
+	text-decoration: underline;
+}
+.vbmenu_popup
+{
+	background: #FFFFFF;
+	color: #000000;
+	border: 1px solid #0B198C;
+	width: 250px;
+	margin-top: -227px;
+	margin-left: -138px;
+	
+/*	position: absolute;
+	width: 200px;
+	top: 0; left: 0;*/
+}
+.vbmenu_option
+{
+	background: #BBC7CE;
+	color: #000000;
+	
+	white-space: nowrap;
+	cursor: pointer;
+}
+.vbmenu_option a:link, .vbmenu_option_alink
+{
+	color: #22229C;
+	text-decoration: none;
+}
+.vbmenu_option a:visited, .vbmenu_option_avisited
+{
+	color: #22229C;
+	text-decoration: none;
+}
+.vbmenu_option a:hover, .vbmenu_option a:active, .vbmenu_option_ahover
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.vbmenu_hilite
+{
+	background: #8A949E;
+	color: #FFFFFF;
+	
+	white-space: nowrap;
+	cursor: pointer;
+}
+.vbmenu_hilite a:link, .vbmenu_hilite_alink
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.vbmenu_hilite a:visited, .vbmenu_hilite_avisited
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+.vbmenu_hilite a:hover, .vbmenu_hilite a:active, .vbmenu_hilite_ahover
+{
+	color: #FFFFFF;
+	text-decoration: none;
+}
+/* ***** styling for 'big' usernames on postbit etc. ***** */
+.bigusername { font-size: 14pt; }
+
+/* ***** small padding on 'thead' elements ***** */
+td.thead, th.thead, div.thead { padding: 4px; }
+
+/* ***** basic styles for multi-page nav elements */
+.pagenav a { text-decoration: none; }
+.pagenav td { padding: 2px 4px 2px 4px; }
+
+/* ***** de-emphasized text */
+.shade, a.shade:link, a.shade:visited { color: #777777; text-decoration: none; }
+a.shade:active, a.shade:hover { color: #FF4400; text-decoration: underline; }
+.tcat .shade, .thead .shade, .tfoot .shade { color: #DDDDDD; }
+
+/* ***** define margin and font-size for elements inside panels ***** */
+.fieldset { margin-bottom: 6px; }
+.fieldset, .fieldset td, .fieldset p, .fieldset li { font-size: 11px; }
+
+fieldset {
+	border: 1px solid #ddd;
+}
+
+/* ***** don't change the following ***** */
+form { display: inline; }
+label { cursor: default; }
+.normal { font-weight: normal; }
+.inlineimg { vertical-align: middle; }
+.underline { text-decoration: underline; }
+
+a.lastpost {
+	margin: 0 5px;
+}
+	a.lastpost img {
+		position: relative;
+		top: -1px;
+	}
+
+hr {
+	border-top: 1px solid #ddd;
+}
+.thead .normal {
+	line-height: 17px;
+	font-size: 11px;
+}
+.post_message {
+	padding: 5px 0 10px;
+}
+.wf {
+	width: 100%;
+}
+.calendar {
+	border-collapse: separate;
+}
+	.calendar td {
+		padding: 0;
+		vertical-align: top;
+	}
+
+ol {
+	margin: 0 0 0 25px;
+}
+
+.vatop {
+	vertical-align: top;
+}
+
+.buddylist {
+	background: none !important;
+}
+
+h1, h2 {
+	border: none;
+}
+
+#minicontact {
+	position: relative;
+	float: none !important;
+}
+#minicontact_menu.vbmenu_popup {
+	top: 170px !important;
+	left: 100px !important;
+}
+#link_bar li.thead {
+}
