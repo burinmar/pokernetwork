@@ -1,4 +1,4 @@
-<?
+<?php
 $cfg = array();
 $cfg['users'] = array(
 	//'sys.moduleDir' => 'user/',
