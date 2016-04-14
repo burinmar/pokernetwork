@@ -1,7 +1,7 @@
 #<?die();?>
 [database]
 dbclass=mysql
-server=192.168.0.11:3307
+server=mysql.ibus.lt
 user=pnteam
 password=8yWYJa
 database=pokernetwork
@@ -11,7 +11,7 @@ page503=503.htm
 [memcache]
 server=
 port=11211
-failover=
+failover=tmp/
 prefix=
 
 [database-vb]
