@@ -332,7 +332,7 @@ html {
 			padding: 0 10px;
 		}
 		.sepBottom {background-position: bottom right}
-	
+
 	.widgetW50 {margin-bottom: 0}
 	.widgetW50.sep {background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAABCAIAAAEMR9hLAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABNJREFUeNpiuHHtOECAMXz+9BoAFH8FRpwJ+yQAAAAASUVORK5CYII=') repeat-y top right}
 		.wHalf .right .widgetW50.fl {width: 239px} /*.wHalf .left .widgetW50.fl {width: 221px}*/
@@ -376,7 +376,7 @@ html {
 	line-height: 28px;
 	text-transform: uppercase;
 	position: relative;
-	
+
 }
 .filterTabsTopLine {
 	border-top: 1px solid #d8d6c7;
@@ -393,7 +393,7 @@ html {
 		padding: 0 13px;
 		border-right: 1px solid #b1b0a8;
 		border-bottom: 1px solid #b1b0a8;
-		color: #79776a; 
+		color: #79776a;
 		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAA4CAIAAAHEBTUtAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAI1JREFUeNpi2rN7MxMLCwsTAwMDEz+/ILOWpirTjx/fmf7+/QsQQEwH9m8Hi4Pw/fsPmF69eglmv3nzFiCAUORgGAQkJGSYdXTUmT59+sT0799fuNyXL1+Zvn79ChBgWPXhwuzsHCA3MbGysTHr62ky/fz5E4x///6FVf3///+Bcr+B9nxj+gWkGf7/BwBFZzurE4K7KgAAAABJRU5ErkJggg==') repeat-x top left
 	}
 	.filterTabs .on a, .filterTabs li a:hover {
@@ -518,7 +518,7 @@ html {
 			z-index: 1;
 		}
 		#header .userControl span {margin-right: 20px}
-			
+
 			#header .userControl a:hover {color: #d4e7ff}
 			#header .userControl a:after {
 				content: '♣';
@@ -548,7 +548,7 @@ html {
 			-webkit-box-shadow: 0 0 7px #000;
 			box-shadow: 0 0 7px #000;
 		} #header .userControl .signIn:hover .loginForm {display: block}
-		
+
 		#header .userControl input {width: 183px}
 		#header .userControl .username {margin-bottom: 7px}
 		#header .userControl button {
@@ -574,7 +574,7 @@ html {
 		line-height: 16px;
 		position: relative;
 		z-index: 1000;
-		
+
 	}
 	#langBar:hover .langBarCurrent {color: #0050bd;}
 		#langBar .langBarCurrent img {
@@ -745,7 +745,7 @@ html {
 	.banner728x90 {
 		margin: -15px 0 10px;
 		text-align: center;
-		padding: 5px;
+		padding: 5px 0 5px 0;
 	}
 	.twoBanners .banner {float: left; width: 220px}
 	.right .baneris object {max-width: 200px; max-height: 200px;}
@@ -814,7 +814,7 @@ html {
 	bottom: -5px;
 	right: 5px;
 	display: none;
-	
+
 } .tweets li:hover .tweetActions {display: block;}
 	.tweetActions a {
 		float: left;
@@ -928,7 +928,7 @@ html {
 		margin-left: 20px;
 		margin-bottom: 7px;
 		margin-top: -3px;
-		
+
 	}
 		.poll .rating .ratingBarBackground {
 			background: #d2d0c4 url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAGCAIAAAH6dVPwAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAClJREFUeNpiunThCEAAMd2/ewkggJhuXDsJEGBMVy8fY2JnZ2diZeUAAJ8mCg3/Tk5XAAAAAElFTkSuQmCC') repeat-x;
@@ -956,7 +956,7 @@ html {
 	#roomsIndexBox .roomsNav {
 		width: 200px;
 		margin-left: -10px;
-		
+
 	}
 	#roomsIndexBox .roomsNav td {
 		padding: 7px 10px 7px 0;
@@ -1082,7 +1082,7 @@ html {
 	.yearList > li > a {
 		background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAAGXy9/eAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAF1JREFUeNpiYAjYWw4QQAxAggEggBiBxH8GBgZGgAAC85iArHcAAQQTAoFZAAEE4ggCGe9BPLA0EINklZigSiqA+B5AgCHr6QTpAwkygM1FSMAAyKxOFiijAqoaDgCyNxhT08uWtAAAAABJRU5ErkJggg==') no-repeat right 4px;
 		padding-right: 10px;
-		
+
 	} .yearList > li.expand > a {background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAGCAYAAAGXy9/eAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAF5JREFUeNpiYAjY+w4ggBiAxH+AAGIEEgwgABBAYB4TkPEeIIBgQv+BuBMggECc/1AFFWBpKKcTxBEC4lkgHkCAgZSlAemZDKhAiAmqogJJUBlkDAvMHCi9GojvgRgAfswVsc8xq+sAAAAASUVORK5CYII=');}
 	.yearList > li ul {margin: 5px 0 20px 15px;}
 
@@ -1236,7 +1236,7 @@ html {
 		*float: right;
 	} .reviewHeader .bonusCode span {margin-bottom: 0}
 	.reviewHeader .reviewBonus {padding-bottom: 0}
-	
+
 	.review .commingPromos {
 		border-bottom: 1px solid #d8d6c7;
 		padding-bottom: 10px;
